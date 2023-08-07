@@ -27,6 +27,7 @@ class Schacht(ClassObject):
     entwart: str = ""
     strasse: str = ""
     knotentyp: int = 0
+    schachttyp: str = ""
     material: str = ""
     simstatus: int = 0
     kommentar: str = ""
@@ -57,6 +58,7 @@ class Schacht_untersucht(ClassObject):
 class Untersuchdat_schacht(ClassObject):
     untersuchsch: str = ""
     id: int = 0
+    bandnr: int = 0
     videozaehler: int = 0
     timecode: int = 0
     kuerzel: str = ""
@@ -148,6 +150,7 @@ class Untersuchdat_haltung(ClassObject):
     pos_bis: int = 0
     foto_dateiname: str = ""
     film_dateiname: str = ""
+    bandnr: int = 0
     ordner_bild: str = ""
     ordner_video: str = ""
     richtung: str = ""
@@ -452,6 +455,10 @@ class ImportTask:
 
             for block in blocks:
                 name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+                schachttyp = 'Schacht'
+
+                if knoten_typ == 1:
+                    schachttyp = 'Anschlussschacht'
 
 
                 yield Schacht(
@@ -471,6 +478,7 @@ class ImportTask:
                     entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     knotentyp=knoten_typ,
+                    schachttyp=schachttyp,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", "not found", self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -784,6 +792,7 @@ class ImportTask:
             name = ""
             inspektionslaenge = 0.0
             id = 0
+            bandnr = 0
             videozaehler = 0
             timecode = 0
             kuerzel = ""
@@ -1949,9 +1958,12 @@ class ImportTask:
 
                         film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", "not found", self.NS)
 
+                        bandnr = _strip_int(_untersuchdat_haltung.findtext("d:Videoablagereferenz", 0, self.NS))
+
                         yield Untersuchdat_haltung(
                             untersuchhal=name,
                             film_dateiname=film_dateiname,
+                            bandnr=bandnr
                         )
 
         for untersuchdat_haltung in _iter():
@@ -2049,10 +2061,10 @@ class ImportTask:
 
         for untersuchdat_haltung in _iter2():
             if not self.db_qkan.sql(
-                "UPDATE untersuchdat_haltung SET film_dateiname=?" 
+                "UPDATE untersuchdat_haltung SET film_dateiname=?, bandnr=?" 
                 " WHERE  untersuchhal= ?",
                 "xml_import untersuchhal [2a]",
-                parameters=(untersuchdat_haltung.film_dateiname, untersuchdat_haltung.untersuchhal),
+                parameters=(untersuchdat_haltung.film_dateiname,untersuchdat_haltung.bandnr, untersuchdat_haltung.untersuchhal),
             ):
                 return None
 

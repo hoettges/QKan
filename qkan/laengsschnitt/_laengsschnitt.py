@@ -488,6 +488,12 @@ class LaengsTask:
         plt.figure(figure.number)
         new_plot = figure.add_subplot(111)
 
+        points = self.point.split(",", 1)
+        massstab_liste = self.massstab.split(":", 1)
+        pointx = float(points[0])
+        pointy = float(points[1])
+        massstab = float(massstab_liste[1])
+
         #aktuellen layer auswählen
         layer = iface.activeLayer()
         x = layer.source()
@@ -572,6 +578,10 @@ class LaengsTask:
         sohle_l = []
         entwart_s =[]
 
+        z_deckel = []
+        z_sohle = []
+        z_sohle_h = []
+
         sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
         sql = f"""
             SELECT
@@ -613,6 +623,9 @@ class LaengsTask:
                 schob_typ, schun_typ, entwart_o, entwart_u, laenge2
             ) = attr
 
+            hschoben = sohleoben
+            hschunten = sohleunten
+
             if int(haltung_sohle_o) == 0:
                 haltung_sohle_o = sohleoben
             if int(haltung_sohle_u) == 0:
@@ -643,8 +656,8 @@ class LaengsTask:
                 y_sohle2.append(sohleunten + hoehe)
             else:
                 y_sohle2.append(sohleunten)
-            x_sohle2.append(laenge2 - laenge)
-            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(round(laenge2 - laenge,2))
+            x_sohle2.append(round(laenge2 - laenge,2))
             x_sohle2.append(laenge2)
             x_sohle2.append(laenge2)
 
@@ -652,13 +665,20 @@ class LaengsTask:
             y_deckel.append(deckeloben)
             y_deckel.append(deckelunten)
             y_deckel.append(deckelunten)
-            x_deckel.append(laenge2 - laenge)
-            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(round(laenge2 - laenge,2))
+            x_deckel.append(round(laenge2 - laenge,2))
             x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
-            y_label.append((deckeloben+sohleoben-hoehe)/2)
-            y_label.append((deckelunten+sohleunten-hoehe)/2)
+            z_sohle_h.append(hschoben)
+            z_sohle_h.append(hschunten)
+            z_deckel.append(deckeloben)
+            z_deckel.append(deckelunten)
+            z_sohle.append(sohleoben)
+            z_sohle.append(sohleunten)
+
+            y_label.append(round((deckeloben+sohleoben-hoehe)/2,2))
+            y_label.append(round((deckelunten+sohleunten-hoehe)/2,2))
 
             name.append(schoben)
             name.append(schunten)
@@ -892,6 +912,7 @@ class LaengsTask:
             if i not in y_label_neu:
                 y_label_neu.append(i)
 
+
         for x, y, nam in zip(x_deckel_neu, y_label_neu, name_neu):
             plt.annotate(nam, (x, y),
                          textcoords="offset points",
@@ -938,19 +959,103 @@ class LaengsTask:
         plt.vlines(x_deckel, y_sohle, y_deckel_n, color="red", linestyles='solid', label='Schacht', linewidth=5)
         plt.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht', linewidth=5)
 
+
+        x_min = -0.5
+        y_min = float(min(y_sohle)) - 0.5
+        y_max = float(max(y_deckel)) + 0.5
+        #x_max = laenge2 / massstab + 2.5 + pointx
+        x_max = laenge2 + 2.5
+        x=[x_min, x_max]
+        y=[y_min, y_min]
+        plt.hlines(y_min, x_min, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min, x_min-60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min-0.6 , x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 1.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 1.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 2.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 2.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 3.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+
+        plt.annotate("Deckelhöhe [m ü. NHN]", (x_min-30, y_min-0.4), textcoords="offset points", xytext=(-10, 0), ha='center')
+        plt.annotate("Schachtname", (x_min - 40, y_min - 0.9), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Sohlehöhe Schacht [m ü. NHN]", (x_min - 30, y_min - 1.4), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Sohlhöhe Haltung [m ü. NHN]", (x_min - 30, y_min - 1.9), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Länge [m]", (x_min - 30, y_min - 2.5), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Nennweite / Material [mm]", (x_min - 30, y_min - 3), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+
+
+        z_sohle_neu = []
+        for i in z_sohle:
+            if i not in z_sohle_neu:
+                z_sohle_neu.append(i)
+        z_deckel_neu = []
+        for i in z_deckel:
+            if i not in z_deckel_neu:
+                z_deckel_neu.append(i)
+
+
+        for i, j, x, y in zip(x_deckel_neu, name_neu, z_deckel_neu, z_sohle_neu):
+            plt.vlines(i, y_min, y_min-3.1, color="grey", linestyles='solid')
+
+            plt.annotate(x, (i+0.1, y_min - 0.4), bbox=dict(facecolor='white', edgecolor='none'),
+                          ha='center')
+
+            plt.annotate(j, (i +0.1, y_min - 0.9), bbox=dict(facecolor='white', edgecolor='none'),
+                          ha='center')
+
+            plt.annotate(y, (i +0.1, y_min - 1.4), bbox=dict(facecolor='white', edgecolor='none'),
+                          ha='center')
+
+        x = 0
+
+        for i, j in zip(x_deckel_neu, z_sohle_h):
+            # so verschieben, dass die TExte passend stehen
+            if x % 2:
+                plt.annotate(j, (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                              ha='center')
+            else:
+                plt.annotate(j, (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                              ha='center')
+            x += 1
+
+        laenge = laenge_l
+        dn = breite_l
+        material = material_l
+
+        x_mitte = []
+        x = 0
+        while x + 1 < len(x_deckel_neu):
+            m = (x_deckel_neu[x] + x_deckel_neu[x + 1]) / 2
+            x += 1
+            x_mitte.append(m)
+
+        # mittig zwischen zwei Schächte schreiben Länge, Nennweite und Material, Gefälle, Stationierung
+        for i, k, l, m in zip(x_mitte, laenge, dn, material):
+            plt.annotate(k, (i , y_min - 2.5), textcoords="offset points",
+                         xytext=(-10, 0), ha='center')
+
+            plt.annotate(str(l * 1000), (i, y_min - 3), textcoords="offset points",
+                         xytext=(-10, 0), ha='center')
+
+
         plt.xlabel('Länge [m]')
         plt.ylabel('Höhe [m NHN]')
         new_plot.legend()
-        plt.table(cellText=data, rowLabels=rows, colLabels=columns, loc='bottom', bbox=[0.0, -0.65, 1, 0.45], cellLoc='center')
-        plt.subplots_adjust(top=0.98,
-                            bottom=0.4,
-                            left=0.13,
-                            right=0.99,
-                            hspace=0.2,
-                            wspace=0.2)
+        plt.tight_layout()
+        # plt.table(cellText=data, rowLabels=rows, colLabels=columns, loc='bottom', bbox=[0.0, -0.65, 1, 0.45], cellLoc='center')
+        # plt.subplots_adjust(top=0.98,
+        #                      bottom=0.4,
+        #                      left=0.13,
+        #                      right=0.99,
+        #                      hspace=0.2,
+        #                      wspace=0.2)
 
         self.auswahl[figure.number] = self.selected
-
 
     def show(self):
         """selektierte Elemente anzeigen"""
@@ -1135,14 +1240,14 @@ class LaengsTask:
             y_deckel.append(deckeloben + pointy)
             y_deckel.append(deckelunten + pointy)
             y_deckel.append(deckelunten + pointy)
-            x_deckel.append(((laenge2 - laenge)/massstab)+pointx)
-            x_deckel.append(((laenge2 - laenge)/massstab)+pointx)
-            x_deckel.append((laenge2 / massstab) + pointx)
-            x_deckel.append((laenge2 / massstab) + pointx)
+            x_deckel.append(round(((laenge2 - laenge)/massstab)+pointx,2))
+            x_deckel.append(round(((laenge2 - laenge)/massstab)+pointx,2))
+            x_deckel.append(round((laenge2 / massstab) + pointx,2))
+            x_deckel.append(round((laenge2 / massstab) + pointx,2))
 
 
-            y_label.append(((deckeloben + sohleoben) / 2)+pointy)
-            y_label.append(((deckelunten + sohleunten) / 2)+pointy)
+            y_label.append(round(((deckeloben + sohleoben) / 2)+pointy,2))
+            y_label.append(round(((deckelunten + sohleunten) / 2)+pointy,2))
 
             name.append(schoben)
             name.append(schunten)

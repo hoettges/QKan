@@ -21,6 +21,7 @@ FORM_CLASS_videoplayer, _ = uic.loadUiType(
 class Videoplayer(QDialog, FORM_CLASS_videoplayer):
     playpause: QPushButton
     screenshot: QPushButton
+    geschw: QSlider
     frame: QFrame
     horizontalSlider: QSlider
 
@@ -35,6 +36,7 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
         self.mediaplayer = self.instance.media_player_new()
 
         self.playpause.clicked.connect(self.play_pause)
+        self.geschw.sliderMoved.connect(self.geschwingigkeit)
         #self.playpause.clicked.connect(self.update_time)
         self.screenshot.clicked.connect(self.take_screenshot)
         self.horizontalSlider.setMaximum(1000)
@@ -69,6 +71,25 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
             self.playpause.setText("Pause")
             self.timer.start()
             self.isPaused = False
+
+    def geschwingigkeit(self):
+        #aktuelle geschwindigkeit
+        #value = self.media_player.get_rate()
+
+        if self.geschw.value() == 0:
+            self.mediaplayer.set_rate(0.25)
+
+        if self.geschw.value() == 1:
+            self.mediaplayer.set_rate(0.5)
+
+        if self.geschw.value() == 2:
+            self.mediaplayer.set_rate(1)
+
+        if self.geschw.value() == 3:
+            self.mediaplayer.set_rate(2)
+
+        if self.geschw.value() == 4:
+            self.mediaplayer.set_rate(4)
 
 
     def take_screenshot(self):

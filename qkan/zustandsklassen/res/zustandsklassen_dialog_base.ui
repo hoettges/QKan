@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>606</height>
+    <width>599</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>568</width>
-        <height>586</height>
+        <width>579</width>
+        <height>649</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -190,6 +190,34 @@
         <widget class="QCheckBox" name="checkBox_13">
          <property name="text">
           <string>Zustandsklassifizierung nach ISYBAU</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_16">
+         <property name="text">
+          <string>Einzelfallbetrachtungen mit ISYBAU-Bewertung ergänzen für die Haltungen</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_18">
+         <property name="text">
+          <string>Einzelfallbetrachtungen mit ISYBAU-Bewertung ergänzen für die Leitungen</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_17">
+         <property name="text">
+          <string>Einzelfallbetrachtungen mit ISYBAU-Bewertung ergänzen für die Schächte</string>
          </property>
         </widget>
        </item>
