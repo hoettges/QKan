@@ -231,6 +231,11 @@ class ExportTask:
                 f2.write(allgemein)
 
         elif self.status == 'append' or self.status == 'update':
+            if self.template == "":
+                temp = os.path.join(os.path.dirname(__file__), "vorlage_swmm.inp")
+                self.template = temp
+                self.status = 'new'
+
             with open(self.template) as f:
                 lines = [line for line in f.readlines()]
                 with open(self.ergfileSwmm, "w") as f2:
@@ -1022,8 +1027,8 @@ class ExportTask:
             text = ("\n[MAP]\n")
             self.file = open(self.ergfileSwmm, 'a')
             self.file.write(text)
-            dataco=''
-            list=''
+            dataco = ''
+            list = ''
 
             extent = iface.mapCanvas().extent()
             ext = str(extent)

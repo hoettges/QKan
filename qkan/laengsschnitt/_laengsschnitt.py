@@ -162,35 +162,35 @@ class LaengsTask:
         strasse_l = []
         haltungstyp_l = []
 
-        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])  # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
         sql = f"""
-            SELECT
-                h.schoben,
-                h.hoehe,
-                h.schunten,
-                h.laenge,
-                schob.deckelhoehe,
-                schob.sohlhoehe,            -- hier nicht verwendet
-                schun.deckelhoehe,
-                schun.sohlhoehe,            -- hier nicht verwendet
-                h.entwart,
-                h.haltnam,
-                h.breite,
-                h.material,
-                h.strasse,
-                h.haltungstyp,
-                h.sohleoben,
-                h.sohleunten
-                schob.knotentyp,            -- hier nicht verwendet
-                schun.knotentyp,            -- hier nicht verwendet
-                schob.entwart,              -- hier nicht verwendet
-                schun.entwart,              -- hier nicht verwendet
-                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
-            FROM haltungen AS h
-            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
-            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
-            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
-            """
+                    SELECT
+                        h.schoben,
+                        h.hoehe,
+                        h.schunten,
+                        h.laenge,
+                        schob.deckelhoehe,
+                        schob.sohlhoehe,
+                        schun.deckelhoehe,
+                        schun.sohlhoehe,
+                        h.entwart,
+                        h.haltnam,
+                        h.breite,
+                        h.material,
+                        h.strasse,
+                        h.haltungstyp,
+                        h.sohleoben,
+                        h.sohleunten,
+                        schob.knotentyp,
+                        schun.knotentyp,
+                        schob.entwart,
+                        schun.entwart,
+                        sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+                    FROM haltungen AS h
+                    INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+                    INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+                    INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+                    """
 
         if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen.1"):
             logger.error(f"{__file__}: Fehler in laengsschnitt.zeichnen.1: Datenbankzugriff nicht möglich")
@@ -198,24 +198,53 @@ class LaengsTask:
 
         for attr in self.db_qkan.fetchall():
             (
-                schoben, hoehe, schunten, laenge, deckeloben, _, deckelunten, _, entwart,
-                haltnam, breite, material, strasse, haltungstyp, sohleoben, sohleunten,
-                _, _, _, _, laenge2
+                schoben, hoehe, schunten, laenge, deckeloben, sohleoben, deckelunten, sohleunten, entwart,
+                haltnam, breite, material, strasse, haltungstyp, haltung_sohle_o, haltung_sohle_u,
+                schob_typ, schun_typ, entwart_o, entwart_u, laenge2
             ) = attr
 
+            if int(haltung_sohle_o) == 0:
+                haltung_sohle_o = sohleoben
+            if int(haltung_sohle_u) == 0:
+                haltung_sohle_u = sohleunten
+
             y_sohle.append(sohleoben)
+            y_sohle.append(haltung_sohle_o)
+            y_sohle.append(haltung_sohle_u)
             y_sohle.append(sohleunten)
             x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2)
             x_sohle.append(laenge2)
 
-            y_sohle2.append(sohleoben + hoehe)
-            y_sohle2.append(sohleunten + hoehe)
+            if sohleoben > 0:
+                y_sohle2.append(sohleoben + hoehe)
+            else:
+                y_sohle2.append(sohleoben)
+            if haltung_sohle_o > 0:
+                y_sohle2.append(haltung_sohle_o + hoehe)
+            else:
+                y_sohle2.append(haltung_sohle_o)
+            if haltung_sohle_u > 0:
+                y_sohle2.append(haltung_sohle_u + hoehe)
+            else:
+                y_sohle2.append(haltung_sohle_u)
+            if sohleunten > 0:
+                y_sohle2.append(sohleunten + hoehe)
+            else:
+                y_sohle2.append(sohleunten)
             x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2)
             x_sohle2.append(laenge2)
 
             y_deckel.append(deckeloben)
+            y_deckel.append(deckeloben)
+            y_deckel.append(deckelunten)
             y_deckel.append(deckelunten)
             x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
             y_label.append((deckeloben + sohleoben - hoehe) / 2)
@@ -233,6 +262,39 @@ class LaengsTask:
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
+
+        x = [i for i in y_deckel if i != 0]
+        x2 = [i for i in y_sohle if i != 0]
+        x3 = [i for i in y_sohle2 if i != 0]
+
+        max_deckel = max(x)
+        min_sohle = min(x2)
+        min_sohle2 = min(x3)
+        y_deckel_n = []
+        y_sohle_n = []
+        y_sohle2_n = []
+
+        i = 0
+        for x in y_deckel:
+            if x == 0:
+                y_deckel_n.append(max_deckel)
+            else:
+                y_deckel_n.append(y_deckel[i])
+            i += 1
+        i = 0
+        for x in y_sohle:
+            if x == 0:
+                y_sohle_n.append(min_sohle)
+            else:
+                y_sohle_n.append(y_sohle[i])
+            i += 1
+        i = 0
+        for x in y_sohle2:
+            if x == 0:
+                y_sohle2_n.append(min_sohle2)
+            else:
+                y_sohle2_n.append(y_sohle2[i])
+            i += 1
 
         haltungen = {}
         schaechte = {}
@@ -288,6 +350,31 @@ class LaengsTask:
                 x_liste.append(x)
                 y_liste.append(y)
 
+            y_sohle_2 = []
+            y_deckel_3 = []
+            x_deckel_2 = []
+            delete = []
+            # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
+            y1 = [i for i in y_sohle if i != 0]
+            y2 = [i for i in y_deckel if i != 0]
+
+            min_sohle = min(y1)
+            max_deckel = max(y2)
+
+            i = 0
+            for x, y in zip(y_sohle, y_deckel_n):
+                if y_sohle[i] == 0.0 or y_deckel_n[i] == 0.0:
+                    y_sohle_2.append(min_sohle)
+                    y_deckel_3.append(max_deckel)
+                    x_deckel_2.append(x_deckel[i])
+                    delete.append(i)
+                i += 1
+
+            for x in delete[::-1]:
+                y_sohle.pop(x)
+                y_deckel_n.pop(x)
+                x_deckel.pop(x)
+
         if table == 'schaechte':
             x_deckel_neu = []
 
@@ -342,6 +429,32 @@ class LaengsTask:
                 x_liste.append(x)
                 y_liste.append(y)
 
+            y_sohle_2 = []
+            y_deckel_3 = []
+            x_deckel_2 = []
+            delete = []
+
+            # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
+            y1 = [i for i in y_sohle if i != 0]
+            y2 = [i for i in y_deckel if i != 0]
+
+            min_sohle = min(y1)
+            max_deckel = max(y2)
+
+            i = 0
+            for x, y in zip(y_sohle, y_deckel_n):
+                if y_sohle[i] == 0.0 or y_deckel_n[i] == 0.0:
+                    y_sohle_2.append(min_sohle)
+                    y_deckel_3.append(max_deckel)
+                    x_deckel_2.append(x_deckel[i])
+                    delete.append(i)
+                i += 1
+
+            for x in delete[::-1]:
+                y_sohle.pop(x)
+                y_deckel_n.pop(x)
+                x_deckel.pop(x)
+
         self.anf = self.horizontalSlider_3.value()
         #self.anim.frames = range(self.anf, len(zeit))
         self.anim.event_source.frames = range(self.anf, len(zeit))
@@ -374,6 +487,12 @@ class LaengsTask:
         figure.clear()
         plt.figure(figure.number)
         new_plot = figure.add_subplot(111)
+
+        points = self.point.split(",", 1)
+        massstab_liste = self.massstab.split(":", 1)
+        pointx = float(points[0])
+        pointy = float(points[1])
+        massstab = float(massstab_liste[1])
 
         #aktuellen layer auswählen
         layer = iface.activeLayer()
@@ -459,6 +578,10 @@ class LaengsTask:
         sohle_l = []
         entwart_s =[]
 
+        z_deckel = []
+        z_sohle = []
+        z_sohle_h = []
+
         sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
         sql = f"""
             SELECT
@@ -500,6 +623,9 @@ class LaengsTask:
                 schob_typ, schun_typ, entwart_o, entwart_u, laenge2
             ) = attr
 
+            hschoben = sohleoben
+            hschunten = sohleunten
+
             if int(haltung_sohle_o) == 0:
                 haltung_sohle_o = sohleoben
             if int(haltung_sohle_u) == 0:
@@ -530,8 +656,8 @@ class LaengsTask:
                 y_sohle2.append(sohleunten + hoehe)
             else:
                 y_sohle2.append(sohleunten)
-            x_sohle2.append(laenge2 - laenge)
-            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(round(laenge2 - laenge,2))
+            x_sohle2.append(round(laenge2 - laenge,2))
             x_sohle2.append(laenge2)
             x_sohle2.append(laenge2)
 
@@ -539,13 +665,20 @@ class LaengsTask:
             y_deckel.append(deckeloben)
             y_deckel.append(deckelunten)
             y_deckel.append(deckelunten)
-            x_deckel.append(laenge2 - laenge)
-            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(round(laenge2 - laenge,2))
+            x_deckel.append(round(laenge2 - laenge,2))
             x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
-            y_label.append((deckeloben+sohleoben-hoehe)/2)
-            y_label.append((deckelunten+sohleunten-hoehe)/2)
+            z_sohle_h.append(hschoben)
+            z_sohle_h.append(hschunten)
+            z_deckel.append(deckeloben)
+            z_deckel.append(deckelunten)
+            z_sohle.append(sohleoben)
+            z_sohle.append(sohleunten)
+
+            y_label.append(round((deckeloben+sohleoben-hoehe)/2,2))
+            y_label.append(round((deckelunten+sohleunten-hoehe)/2,2))
 
             name.append(schoben)
             name.append(schunten)
@@ -779,6 +912,7 @@ class LaengsTask:
             if i not in y_label_neu:
                 y_label_neu.append(i)
 
+
         for x, y, nam in zip(x_deckel_neu, y_label_neu, name_neu):
             plt.annotate(nam, (x, y),
                          textcoords="offset points",
@@ -825,19 +959,103 @@ class LaengsTask:
         plt.vlines(x_deckel, y_sohle, y_deckel_n, color="red", linestyles='solid', label='Schacht', linewidth=5)
         plt.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht', linewidth=5)
 
+
+        x_min = -0.5
+        y_min = float(min(y_sohle)) - 0.5
+        y_max = float(max(y_deckel)) + 0.5
+        #x_max = laenge2 / massstab + 2.5 + pointx
+        x_max = laenge2 + 2.5
+        x=[x_min, x_max]
+        y=[y_min, y_min]
+        plt.hlines(y_min, x_min, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min, x_min-60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min-0.6 , x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 1.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 1.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 2.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 2.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min - 3.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+
+        plt.annotate("Deckelhöhe [m ü. NHN]", (x_min-30, y_min-0.4), textcoords="offset points", xytext=(-10, 0), ha='center')
+        plt.annotate("Schachtname", (x_min - 40, y_min - 0.9), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Sohlehöhe Schacht [m ü. NHN]", (x_min - 30, y_min - 1.4), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Sohlhöhe Haltung [m ü. NHN]", (x_min - 30, y_min - 1.9), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Länge [m]", (x_min - 30, y_min - 2.5), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+        plt.annotate("Nennweite / Material [mm]", (x_min - 30, y_min - 3), textcoords="offset points", xytext=(-10, 0),
+                     ha='center')
+
+
+        z_sohle_neu = []
+        for i in z_sohle:
+            if i not in z_sohle_neu:
+                z_sohle_neu.append(i)
+        z_deckel_neu = []
+        for i in z_deckel:
+            if i not in z_deckel_neu:
+                z_deckel_neu.append(i)
+
+
+        for i, j, x, y in zip(x_deckel_neu, name_neu, z_deckel_neu, z_sohle_neu):
+            plt.vlines(i, y_min, y_min-3.1, color="grey", linestyles='solid')
+
+            plt.annotate(x, (i+0.1, y_min - 0.4), bbox=dict(facecolor='white', edgecolor='none'),
+                          ha='center')
+
+            plt.annotate(j, (i +0.1, y_min - 0.9), bbox=dict(facecolor='white', edgecolor='none'),
+                          ha='center')
+
+            plt.annotate(y, (i +0.1, y_min - 1.4), bbox=dict(facecolor='white', edgecolor='none'),
+                          ha='center')
+
+        x = 0
+
+        for i, j in zip(x_deckel_neu, z_sohle_h):
+            # so verschieben, dass die TExte passend stehen
+            if x % 2:
+                plt.annotate(j, (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                              ha='center')
+            else:
+                plt.annotate(j, (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                              ha='center')
+            x += 1
+
+        laenge = laenge_l
+        dn = breite_l
+        material = material_l
+
+        x_mitte = []
+        x = 0
+        while x + 1 < len(x_deckel_neu):
+            m = (x_deckel_neu[x] + x_deckel_neu[x + 1]) / 2
+            x += 1
+            x_mitte.append(m)
+
+        # mittig zwischen zwei Schächte schreiben Länge, Nennweite und Material, Gefälle, Stationierung
+        for i, k, l, m in zip(x_mitte, laenge, dn, material):
+            plt.annotate(k, (i , y_min - 2.5), textcoords="offset points",
+                         xytext=(-10, 0), ha='center')
+
+            plt.annotate(str(l * 1000), (i, y_min - 3), textcoords="offset points",
+                         xytext=(-10, 0), ha='center')
+
+
         plt.xlabel('Länge [m]')
         plt.ylabel('Höhe [m NHN]')
         new_plot.legend()
-        plt.table(cellText=data, rowLabels=rows, colLabels=columns, loc='bottom', bbox=[0.0, -0.65, 1, 0.45], cellLoc='center')
-        plt.subplots_adjust(top=0.98,
-                            bottom=0.4,
-                            left=0.13,
-                            right=0.99,
-                            hspace=0.2,
-                            wspace=0.2)
+        plt.tight_layout()
+        # plt.table(cellText=data, rowLabels=rows, colLabels=columns, loc='bottom', bbox=[0.0, -0.65, 1, 0.45], cellLoc='center')
+        # plt.subplots_adjust(top=0.98,
+        #                      bottom=0.4,
+        #                      left=0.13,
+        #                      right=0.99,
+        #                      hspace=0.2,
+        #                      wspace=0.2)
 
         self.auswahl[figure.number] = self.selected
-
 
     def show(self):
         """selektierte Elemente anzeigen"""
@@ -847,15 +1065,12 @@ class LaengsTask:
 
     def cad(self):
         """Längsschnitt in CAD zeichnen"""
-        #TODO: max Wasserstand ergänzen
         points = self.point.split(",", 1)
         massstab_liste = self.massstab.split(":", 1)
 
         #Koordinaten für Einfügepunkt
         pointx = float(points[0])
         pointy = float(points[1])
-        #iface.messageBar().pushMessage("Fehler", str(pointx), level=Qgis.Critical)
-        #iface.messageBar().pushMessage("Fehler", str(pointy), level=Qgis.Critical)
         # Maßstab
         massstab = float(massstab_liste[1])
 
@@ -937,35 +1152,36 @@ class LaengsTask:
         strasse_l = ['Strasse']
         haltungstyp_l = ['Typ']
 
-        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sel = '), ('.join(
+            [f"'{num}', {el}" for el, num in enumerate(route[1])])  # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
         sql = f"""
-            SELECT
-                h.schoben,
-                h.hoehe,
-                h.schunten,
-                h.laenge,
-                schob.deckelhoehe,
-                schob.sohlhoehe,            -- hier nicht verwendet
-                schun.deckelhoehe,
-                schun.sohlhoehe,            -- hier nicht verwendet
-                h.entwart,
-                h.haltnam,
-                h.breite,
-                h.material,
-                h.strasse,
-                h.haltungstyp,
-                h.sohleoben,
-                h.sohleunten
-                schob.knotentyp,            -- hier nicht verwendet
-                schun.knotentyp,            -- hier nicht verwendet
-                schob.entwart,              -- hier nicht verwendet
-                schun.entwart,              -- hier nicht verwendet
-                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
-            FROM haltungen AS h
-            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
-            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
-            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
-            """
+                    SELECT
+                        h.schoben,
+                        h.hoehe,
+                        h.schunten,
+                        h.laenge,
+                        schob.deckelhoehe,
+                        schob.sohlhoehe,
+                        schun.deckelhoehe,
+                        schun.sohlhoehe,
+                        h.entwart,
+                        h.haltnam,
+                        h.breite,
+                        h.material,
+                        h.strasse,
+                        h.haltungstyp,
+                        h.sohleoben,
+                        h.sohleunten,
+                        schob.knotentyp,
+                        schun.knotentyp,
+                        schob.entwart,
+                        schun.entwart,
+                        sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+                    FROM haltungen AS h
+                    INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+                    INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+                    INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+                    """
 
         if not self.db_qkan.sql(sql, "laengsschnitt.3"):
             logger.error(f"{__file__}: Fehler in laengsschnitt.3: Datenbankzugriff nicht möglich")
@@ -973,34 +1189,65 @@ class LaengsTask:
 
         for attr in self.db_qkan.fetchall():
             (
-                schoben, hoehe, schunten, laenge, deckeloben, _, deckelunten, _, entwart,
-                haltnam, breite, material, strasse, haltungstyp, sohleoben, sohleunten,
-                _, _, _, _, laenge2
+                schoben, hoehe, schunten, laenge, deckeloben, sohleoben, deckelunten, sohleunten, entwart,
+                haltnam, breite, material, strasse, haltungstyp, haltung_sohle_o, haltung_sohle_u,
+                schob_typ, schun_typ, entwart_o, entwart_u, laenge2
             ) = attr
 
             hschoben = sohleoben
             hschunten = sohleunten
 
+            if int(haltung_sohle_o) == 0:
+                haltung_sohle_o = sohleoben
+            if int(haltung_sohle_u) == 0:
+                haltung_sohle_u = sohleunten
+
+            y_sohle.append(sohleoben+pointy)
+            y_sohle.append(haltung_sohle_o+pointy)
+            y_sohle.append(haltung_sohle_u+pointy)
+            y_sohle.append(sohleunten+pointy)
+            x_sohle.append(((laenge2 - laenge)/massstab)+pointx)
+            x_sohle.append(((laenge2 - laenge)/massstab)+pointx)
+            x_sohle.append((laenge2/massstab)+pointx)
+            x_sohle.append((laenge2/massstab)+pointx)
+
+            if sohleoben > 0:
+                y_sohle2.append(sohleoben + hoehe+pointy)
+            else:
+                y_sohle2.append(sohleoben+pointy)
+            if haltung_sohle_o > 0:
+                y_sohle2.append(haltung_sohle_o + hoehe+pointy)
+            else:
+                y_sohle2.append(haltung_sohle_o+pointy)
+            if haltung_sohle_u > 0:
+                y_sohle2.append(haltung_sohle_u + hoehe+pointy)
+            else:
+                y_sohle2.append(haltung_sohle_u+pointy)
+            if sohleunten > 0:
+                y_sohle2.append(sohleunten + hoehe+pointy)
+            else:
+                y_sohle2.append(sohleunten+pointy)
+            x_sohle2.append(((laenge2 - laenge)/massstab)+pointx)
+            x_sohle2.append(((laenge2 - laenge)/massstab)+pointx)
+            x_sohle2.append((laenge2/massstab)+pointx)
+            x_sohle2.append((laenge2/massstab)+pointx)
+
+
             z_sohle_h.append(hschoben)
             z_sohle_h.append(hschunten)
 
-            y_sohle.append(sohleoben+pointy)
-            y_sohle.append(sohleunten+pointy)
-            x_sohle.append(((laenge2 - laenge)/massstab)+pointx)
-            x_sohle.append((laenge2/massstab)+pointx)
+            y_deckel.append(deckeloben + pointy)
+            y_deckel.append(deckeloben + pointy)
+            y_deckel.append(deckelunten + pointy)
+            y_deckel.append(deckelunten + pointy)
+            x_deckel.append(round(((laenge2 - laenge)/massstab)+pointx,2))
+            x_deckel.append(round(((laenge2 - laenge)/massstab)+pointx,2))
+            x_deckel.append(round((laenge2 / massstab) + pointx,2))
+            x_deckel.append(round((laenge2 / massstab) + pointx,2))
 
-            y_sohle2.append(sohleoben + hoehe+pointy)
-            y_sohle2.append(sohleunten + hoehe+pointy)
-            x_sohle2.append(((laenge2 - laenge)/massstab)+pointx)
-            x_sohle2.append((laenge2/massstab)+pointx)
 
-            y_deckel.append(deckeloben+pointy)
-            y_deckel.append(deckelunten+pointy)
-            x_deckel.append(((laenge2 - laenge)/massstab)+pointx)
-            x_deckel.append((laenge2/massstab)+pointx)
-
-            y_label.append(((deckeloben + sohleoben) / 2)+pointy)
-            y_label.append(((deckelunten + sohleunten) / 2)+pointy)
+            y_label.append(round(((deckeloben + sohleoben) / 2)+pointy,2))
+            y_label.append(round(((deckelunten + sohleunten) / 2)+pointy,2))
 
             name.append(schoben)
             name.append(schunten)
@@ -1021,6 +1268,68 @@ class LaengsTask:
             haltungstyp_l.append(haltungstyp)
 
         y_liste = []
+
+        if all(num == 0 for num in x_deckel) and len(x_deckel) > 0 and all(num == 0 for num in x_sohle) and len(x_sohle) > 0:
+            iface.messageBar().pushMessage("Fehler", 'Es sind keine Höhenangaben vorhanden!', level=Qgis.Critical)
+
+        x = [i for i in y_deckel if i != 0]
+        x2 = [i for i in y_sohle if i != 0]
+        x3 = [i for i in y_sohle2 if i != 0]
+
+        max_deckel = max(x)
+        min_sohle = min(x2)
+        min_sohle2 = min(x3)
+        y_deckel_n = []
+        y_sohle_n = []
+        y_sohle2_n = []
+
+        i = 0
+        for x in y_deckel:
+            if x == 0:
+                y_deckel_n.append(max_deckel)
+            else:
+                y_deckel_n.append(y_deckel[i])
+            i += 1
+        i = 0
+        for x in y_sohle:
+            if x == 0:
+                y_sohle_n.append(min_sohle)
+            else:
+                y_sohle_n.append(y_sohle[i])
+            i += 1
+        i = 0
+        for x in y_sohle2:
+            if x == 0:
+                y_sohle2_n.append(min_sohle2)
+            else:
+                y_sohle2_n.append(y_sohle2[i])
+            i += 1
+
+        # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
+        y1 = [i for i in y_sohle if i != 0]
+        y2 = [i for i in y_deckel if i != 0]
+
+        min_sohle = min(y1)
+        max_deckel = max(y2)
+
+        y_sohle_2 = []
+        y_deckel_3 = []
+        x_deckel_2 = []
+        delete = []
+
+        i = 0
+        for x, y in zip(y_sohle, y_deckel_n):
+            if y_sohle[i] == 0.0 or y_deckel_n[i] == 0.0:
+                y_sohle_2.append(min_sohle)
+                y_deckel_3.append(max_deckel)
+                x_deckel_2.append(x_deckel[i])
+                delete.append(i)
+            i += 1
+
+        for x in delete[::-1]:
+            y_sohle.pop(x)
+            y_deckel_n.pop(x)
+            x_deckel.pop(x)
 
         if self.max == True:
             haltungen = {}
@@ -1089,20 +1398,20 @@ class LaengsTask:
             if i not in x_deckel_neu:
                 x_deckel_neu.append(i)
 
-        #deckelkoordinaten
-        for i, j in zip(x_deckel, y_deckel):
+        # deckelkoordinaten
+        for i, j in zip(x_deckel, y_deckel_n):
             deckel += " " + str(i) + "," + str(j)
 
         deckel += "\n" "\n"
 
-        #scheitelkoordinaten
-        for i, j in zip(x_sohle2, y_sohle2):
+        # scheitelkoordinaten
+        for i, j in zip(x_sohle2, y_sohle2_n):
             scheitel += " " + str(i) + "," + str(j)
 
         scheitel += "\n" "\n"
 
-        #sohlenkoordinaten
-        for i, j in zip(x_sohle, y_sohle):
+        # sohlenkoordinaten
+        for i, j in zip(x_sohle, y_sohle_n):
             sohle += " " + str(i) + "," + str(j)
 
         sohle += "\n" "\n"
@@ -1120,19 +1429,6 @@ class LaengsTask:
 
         max_wasser += "\n" "\n"
 
-        #new_plot.plot(x_deckel, y_liste, color="blue", label='maximaler Wasserstand')
-
-        #CSV-Tabelle erstellen
-        #path = Path(__file__).parent.absolute()
-        #path = str(path)+'/some.csv'
-        #with open(path, 'w', newline='') as f:
-         #   writer = csv.writer(f)
-          #  rows = tuple(haltnam_l)
-           # writer.writerow(rows)
-
-            #data = [schoben_l, schunten_l, laenge_l, entwart_l, hoehe_l, breite_l, material_l, strasse_l, haltungstyp_l]
-            #for i in data:
-             #   writer.writerow(i)
 
         #cad anbindung starten
         acad = None
@@ -1177,10 +1473,20 @@ class LaengsTask:
             doc.SendCommand(farbe)
             doc.SendCommand(sohle)
             doc.SendCommand("-FARBE" + "\n" + "5\n" "\n")
-            doc.SendCommand(max_wasser)
+            if len(y_liste) > 0:
+                doc.SendCommand(max_wasser)
 
             # schacht linien einzeichnen
-            for i, j, z in zip(x_deckel, y_sohle, y_deckel):
+            for i, j, z in zip(x_deckel, y_sohle, y_deckel_n):
+                schacht = "LINIE"
+                schacht += " " + str(i) + "," + str(j)
+                schacht += " " + str(i) + "," + str(z)
+                schacht += "\n" "\n"
+                doc.SendCommand("-FARBE" + "\n" + "1\n" "\n")
+                doc.SendCommand(schacht)
+
+            # schacht linien einzeichnen
+            for i, j, z in zip(x_deckel_2, y_sohle_2, y_deckel_3):
                 schacht = "LINIE"
                 schacht += " " + str(i) + "," + str(j)
                 schacht += " " + str(i) + "," + str(z)
@@ -1647,35 +1953,36 @@ class LaengsTask:
         strasse_l = []
         haltungstyp_l = []
 
-        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sel = '), ('.join(
+            [f"'{num}', {el}" for el, num in enumerate(route[1])])  # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
         sql = f"""
-            SELECT
-                h.schoben,
-                h.hoehe,
-                h.schunten,
-                h.laenge,
-                schob.deckelhoehe,
-                schob.sohlhoehe,            -- hier nicht verwendet
-                schun.deckelhoehe,
-                schun.sohlhoehe,            -- hier nicht verwendet
-                h.entwart,
-                h.haltnam,
-                h.breite,
-                h.material,
-                h.strasse,
-                h.haltungstyp,
-                h.sohleoben,
-                h.sohleunten
-                schob.knotentyp,            -- hier nicht verwendet
-                schun.knotentyp,            -- hier nicht verwendet
-                schob.entwart,              -- hier nicht verwendet
-                schun.entwart,              -- hier nicht verwendet
-                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
-            FROM haltungen AS h
-            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
-            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
-            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
-            """
+                    SELECT
+                        h.schoben,
+                        h.hoehe,
+                        h.schunten,
+                        h.laenge,
+                        schob.deckelhoehe,
+                        schob.sohlhoehe,
+                        schun.deckelhoehe,
+                        schun.sohlhoehe,
+                        h.entwart,
+                        h.haltnam,
+                        h.breite,
+                        h.material,
+                        h.strasse,
+                        h.haltungstyp,
+                        h.sohleoben,
+                        h.sohleunten,
+                        schob.knotentyp,
+                        schun.knotentyp,
+                        schob.entwart,
+                        schun.entwart,
+                        sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+                    FROM haltungen AS h
+                    INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+                    INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+                    INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+                    """
 
         if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen.4"):
             logger.error(f"{__file__}: Fehler in laengsschnitt.zeichnen.4: Datenbankzugriff nicht möglich")
@@ -1683,28 +1990,57 @@ class LaengsTask:
 
         for attr in self.db_qkan.fetchall():
             (
-                schoben, hoehe, schunten, laenge, deckeloben, _, deckelunten, _, entwart, haltnam,
-                breite, material, strasse, haltungstyp, sohleoben, sohleunten,
-                _, _, _, _, laenge2
+                schoben, hoehe, schunten, laenge, deckeloben, sohleoben, deckelunten, sohleunten, entwart,
+                haltnam, breite, material, strasse, haltungstyp, haltung_sohle_o, haltung_sohle_u,
+                schob_typ, schun_typ, entwart_o, entwart_u, laenge2
             ) = attr
 
+            if int(haltung_sohle_o) == 0:
+                haltung_sohle_o = sohleoben
+            if int(haltung_sohle_u) == 0:
+                haltung_sohle_u = sohleunten
+
             y_sohle.append(sohleoben)
+            y_sohle.append(haltung_sohle_o)
+            y_sohle.append(haltung_sohle_u)
             y_sohle.append(sohleunten)
             x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2)
             x_sohle.append(laenge2)
 
-            y_sohle2.append(sohleoben + hoehe)
-            y_sohle2.append(sohleunten + hoehe)
+            if sohleoben > 0:
+                y_sohle2.append(sohleoben + hoehe)
+            else:
+                y_sohle2.append(sohleoben)
+            if haltung_sohle_o > 0:
+                y_sohle2.append(haltung_sohle_o + hoehe)
+            else:
+                y_sohle2.append(haltung_sohle_o)
+            if haltung_sohle_u > 0:
+                y_sohle2.append(haltung_sohle_u + hoehe)
+            else:
+                y_sohle2.append(haltung_sohle_u)
+            if sohleunten > 0:
+                y_sohle2.append(sohleunten + hoehe)
+            else:
+                y_sohle2.append(sohleunten)
             x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2)
             x_sohle2.append(laenge2)
 
             y_deckel.append(deckeloben)
+            y_deckel.append(deckeloben)
+            y_deckel.append(deckelunten)
             y_deckel.append(deckelunten)
             x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
-            y_label.append((deckeloben+sohleoben-hoehe)/2)
-            y_label.append((deckelunten+sohleunten-hoehe)/2)
+            y_label.append((deckeloben + sohleoben - hoehe) / 2)
+            y_label.append((deckelunten + sohleunten - hoehe) / 2)
 
             name.append(schoben)
             name.append(schunten)
@@ -1718,6 +2054,39 @@ class LaengsTask:
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
+
+        x = [i for i in y_deckel if i != 0]
+        x2 = [i for i in y_sohle if i != 0]
+        x3 = [i for i in y_sohle2 if i != 0]
+
+        max_deckel = max(x)
+        min_sohle = min(x2)
+        min_sohle2 = min(x3)
+        y_deckel_n = []
+        y_sohle_n = []
+        y_sohle2_n = []
+
+        i = 0
+        for x in y_deckel:
+            if x == 0:
+                y_deckel_n.append(max_deckel)
+            else:
+                y_deckel_n.append(y_deckel[i])
+            i += 1
+        i = 0
+        for x in y_sohle:
+            if x == 0:
+                y_sohle_n.append(min_sohle)
+            else:
+                y_sohle_n.append(y_sohle[i])
+            i += 1
+        i = 0
+        for x in y_sohle2:
+            if x == 0:
+                y_sohle2_n.append(min_sohle2)
+            else:
+                y_sohle2_n.append(y_sohle2[i])
+            i += 1
 
         haltungen = {}
         schaechte = {}
@@ -1778,15 +2147,40 @@ class LaengsTask:
             horizontalSlider_3.setMinimum(0)
             horizontalSlider_3.setMaximum(len(zeit))
 
+            y_sohle_2 = []
+            y_deckel_3 = []
+            x_deckel_2 = []
+            delete = []
+            # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
+            y1 = [i for i in y_sohle if i != 0]
+            y2 = [i for i in y_deckel if i != 0]
+
+            min_sohle = min(y1)
+            max_deckel = max(y2)
+
+            i = 0
+            for x, y in zip(y_sohle, y_deckel_n):
+                if y_sohle[i] == 0.0 or y_deckel_n[i] == 0.0:
+                    y_sohle_2.append(min_sohle)
+                    y_deckel_3.append(max_deckel)
+                    x_deckel_2.append(x_deckel[i])
+                    delete.append(i)
+                i += 1
+
+            for x in delete[::-1]:
+                y_sohle.pop(x)
+                y_deckel_n.pop(x)
+                x_deckel.pop(x)
+
             def animate(t):
 
                 plt.cla()  # clear the previous image
                 plt.xlabel('Länge [m]')
                 plt.ylabel('Höhe [m NHN]')
                 x_deckel_neu = []
-                new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
-                new_plot.plot(x_sohle, y_sohle, color="black", label='Kanalsohle')
-                new_plot.plot(x_sohle2, y_sohle2, color="black", label='Kanalscheitel')
+                new_plot.plot(x_deckel, y_deckel_n, color="black", label='Deckel')
+                new_plot.plot(x_sohle, y_sohle_n, color="black", label='Kanalsohle')
+                new_plot.plot(x_sohle2, y_sohle2_n, color="black", label='Kanalscheitel')
 
                 name_neu = []
                 y_label_neu = []
@@ -1811,6 +2205,8 @@ class LaengsTask:
                                  ha='center')
 
                 new_plot.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht',
+                                linewidth=5)
+                new_plot.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht',
                                 linewidth=5)
 
                 new_plot.plot(x_liste[t], y_liste[t], color="blue", label='Wasserstand')  # plot the line
@@ -1887,15 +2283,41 @@ class LaengsTask:
             horizontalSlider_3.setMinimum(0)
             horizontalSlider_3.setMaximum(len(zeit))
 
+            y_sohle_2 = []
+            y_deckel_3 = []
+            x_deckel_2 = []
+            delete = []
+
+            # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
+            y1 = [i for i in y_sohle if i != 0]
+            y2 = [i for i in y_deckel if i != 0]
+
+            min_sohle = min(y1)
+            max_deckel = max(y2)
+
+            i = 0
+            for x, y in zip(y_sohle, y_deckel_n):
+                if y_sohle[i] == 0.0 or y_deckel_n[i] == 0.0:
+                    y_sohle_2.append(min_sohle)
+                    y_deckel_3.append(max_deckel)
+                    x_deckel_2.append(x_deckel[i])
+                    delete.append(i)
+                i += 1
+
+            for x in delete[::-1]:
+                y_sohle.pop(x)
+                y_deckel_n.pop(x)
+                x_deckel.pop(x)
+
             def animate(t):
 
                 plt.cla()  # clear the previous image
                 plt.xlabel('Länge [m]')
                 plt.ylabel('Höhe [m NHN]')
                 x_deckel_neu = []
-                new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
-                new_plot.plot(x_sohle, y_sohle, color="black", label='Kanalsohle')
-                new_plot.plot(x_sohle2, y_sohle2, color="black", label='Kanalscheitel')
+                new_plot.plot(x_deckel, y_deckel_n, color="black", label='Deckel')
+                new_plot.plot(x_sohle, y_sohle_n, color="black", label='Kanalsohle')
+                new_plot.plot(x_sohle2, y_sohle2_n, color="black", label='Kanalscheitel')
 
                 name_neu = []
                 y_label_neu = []
@@ -1919,7 +2341,9 @@ class LaengsTask:
                                  rotation=90,
                                  ha='center')
 
-                new_plot.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht',
+                new_plot.vlines(x_deckel, y_sohle, y_deckel_n, color="red", linestyles='solid', label='Schacht',
+                                linewidth=5)
+                new_plot.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht',
                                 linewidth=5)
 
                 new_plot.plot(x_liste[t], y_liste[t], color="blue", label='Wasserstand')  # plot the line

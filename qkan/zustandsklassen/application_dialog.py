@@ -55,6 +55,10 @@ class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
     checkBox_12: QCheckBox
     checkBox_13: QCheckBox
     checkBox_14: QCheckBox
+    checkBox_15: QCheckBox
+    checkBox_16: QCheckBox
+    checkBox_17: QCheckBox
+    checkBox_18: QCheckBox
 
 
     def __init__(
@@ -89,59 +93,34 @@ class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
 
 
     def checkBox_click(self):
-        if self.checkBox.isChecked():
+        if self.checkBox_3.isChecked():
             self.checkBox.setChecked(1)
             self.checkBox_2.setChecked(0)
-
-        else:
-            self.checkBox.setChecked(0)
-            self.checkBox_2.setChecked(1)
 
     def checkBox_click_2(self):
-        if self.checkBox.isChecked():
+        if self.checkBox_3.isChecked():
             self.checkBox.setChecked(0)
             self.checkBox_2.setChecked(1)
 
-        else:
-            self.checkBox.setChecked(1)
-            self.checkBox_2.setChecked(0)
-
     def checkBox_click_4(self):
-        if self.checkBox.isChecked():
+        if self.checkBox_5.isChecked():
             self.checkBox_6.setChecked(0)
             self.checkBox_4.setChecked(1)
-
-        else:
-            self.checkBox_6.setChecked(1)
-            self.checkBox_4.setChecked(0)
 
     def checkBox_click_6(self):
-        if self.checkBox.isChecked():
+        if self.checkBox_5.isChecked():
             self.checkBox_6.setChecked(1)
             self.checkBox_4.setChecked(0)
 
-        else:
-            self.checkBox_6.setChecked(0)
-            self.checkBox_4.setChecked(1)
-
     def checkBox_click_12(self):
-        if self.checkBox.isChecked():
+        if self.checkBox_11.isChecked():
             self.checkBox_13.setChecked(0)
             self.checkBox_12.setChecked(1)
-
-        else:
-            self.checkBox_13.setChecked(1)
-            self.checkBox_12.setChecked(0)
 
     def checkBox_click_13(self):
-        if self.checkBox.isChecked():
+        if self.checkBox_11.isChecked():
             self.checkBox_13.setChecked(1)
             self.checkBox_12.setChecked(0)
-
-        else:
-            self.checkBox_13.setChecked(0)
-            self.checkBox_12.setChecked(1)
-
 
     def select_db(self):
         filename, _filter = QFileDialog.getOpenFileName(self, "Datenbank wählen", "", '*.sqlite')

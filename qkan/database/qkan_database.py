@@ -283,6 +283,7 @@ def createdbtables(
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,
+            bandnr INTEGER,
             videozaehler INTEGER,
             inspektionslaenge REAL,
             station REAL,
@@ -322,7 +323,7 @@ def createdbtables(
 
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                   SELECT
-                    untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
+                    untersuchhal, untersuchrichtung, schoben, schunten, id, bandnr, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat
                   FROM untersuchdat_haltung;"""
     try:
@@ -339,11 +340,11 @@ def createdbtables(
                         INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
                       BEGIN
                         INSERT INTO untersuchdat_haltung
-                          (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
+                          (untersuchhal, untersuchrichtung, schoben, schunten, id, bandnr, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
                             charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat, geom)
                         SELECT
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
-                            new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
+                            new.id, new.bandnr, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
                             new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, coalesce(new.ZD, 63), coalesce(new.ZB, 63), coalesce(new.ZS, 63),
                             coalesce(new.createdat, CURRENT_TIMESTAMP),
                             CASE
@@ -437,7 +438,7 @@ def createdbtables(
                         UNION
                         SELECT
                         new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
-                            new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
+                            new.id, new.bandnr, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
                             new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, coalesce(new.ZD, 63), coalesce(new.ZB, 63), coalesce(new.ZS, 63),
                             coalesce(new.createdat, CURRENT_TIMESTAMP),
                             CASE
@@ -798,6 +799,7 @@ def createdbtables(
             pk INTEGER PRIMARY KEY,
             untersuchsch TEXT,
             id INTEGER,
+            bandnr INTEGER,
             videozaehler INTEGER,
             timecode INTEGER,
             kuerzel TEXT,
@@ -835,7 +837,7 @@ def createdbtables(
 
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
               SELECT
-                untersuchsch, id, videozaehler, timecode, kuerzel, 
+                untersuchsch, id, bandnr, videozaehler, timecode, kuerzel, 
                     charakt1, charakt2, quantnr1, quantnr2, streckenschaden,streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS, createdat 
               FROM Untersuchdat_schacht;"""
     try:
@@ -852,10 +854,10 @@ def createdbtables(
                 INSTEAD OF INSERT ON untersuchdat_schacht_data FOR EACH ROW
               BEGIN
                 INSERT INTO Untersuchdat_schacht
-                  (untersuchsch, id, videozaehler, timecode, kuerzel, 
+                  (untersuchsch, id, bandnr, videozaehler, timecode, kuerzel, 
                     charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS, createdat, geop)
                 SELECT 
-                  new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
+                  new.untersuchsch, new.id, new.bandnr, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.vertikale_lage, new.inspektionslaenge,
                     new.bereich, new.foto_dateiname, new.ordner, coalesce(new.ZD, 63), coalesce(new.ZB, 63), coalesce(new.ZS, 63), coalesce(new.createdat, CURRENT_TIMESTAMP), sch.geop
                 FROM
