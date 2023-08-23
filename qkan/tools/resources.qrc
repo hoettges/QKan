@@ -8,6 +8,6 @@
         <file>res/icon_emptyDB.png</file>
         <file>res/icon_readData.png</file>
         <file>res/icon_readCheck.png</file>
-        <file>res/icon_qkanDoku.png</file>
+	<file>res/icon_help.png</file>
     </qresource>
 </RCC>

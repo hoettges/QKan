@@ -5,6 +5,7 @@ Diverse Tools zur QKan-Datenbank
 """
 
 import os
+import webbrowser
 from typing import Optional, cast
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
@@ -51,6 +52,7 @@ class QKanTools(QKanPlugin):
         self.dlgrd = ReadData(self, proceed=True)
         self.dlgrc = ReadData(self, proceed=False)
         self.dlgdb = DbAdaptDialog(self)
+        #self.dlghp = Help(self)
         self.iface = iface
 
     # noinspection PyPep8Naming
@@ -122,11 +124,11 @@ class QKanTools(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-        icon_QKanDoku_path = ":/plugins/qkan/tools/res/icon_qkanDoku.png"
+        icon_help_path = ":/plugins/qkan/tools/res/icon_help.png"
         QKan.instance.add_action(
-            icon_QKanDoku_path,
-            text=self.tr("QKan-Doku anzeigen"),
-            callback=self.openQKanDoku,
+            icon_help_path,
+            text=self.tr("QKan Dokumentation öffnen"),
+            callback=self.run_help,
             parent=self.iface.mainWindow(),
         )
 
@@ -777,7 +779,6 @@ class QKanTools(QKanPlugin):
                 project,
             )
 
-    def openQKanDoku(self) -> None:
-        """QKan-Doku-Icon"""
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/index.html"
-        os.startfile(help_file)
+    def run_help(self) -> None:
+        webbrowser.open('https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/index.html')
+
