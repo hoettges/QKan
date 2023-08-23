@@ -128,8 +128,8 @@ class He8Porter(QKanPlugin):
             QKan.config.check_export.tezg = self.export_dlg.cb_tezg.isChecked()
             QKan.config.check_export.tezg_hf = self.export_dlg.cb_tezg_hf.isChecked()
 
-            QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
-            QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
+            QKan.config.check_export.append = True # self.export_dlg.rb_append.isChecked()
+            # QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
 
             teilgebiete = [
                 _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
@@ -231,8 +231,8 @@ class He8Porter(QKanPlugin):
             QKan.config.check_import.tezg_hf = self.import_dlg.cb_tezg_hf.isChecked()
             QKan.config.check_import.tezg_tf = self.import_dlg.cb_tezg_tf.isChecked()
 
-            QKan.config.check_import.append = self.import_dlg.rb_append.isChecked()
-            QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
+            QKan.config.check_import.append = True # self.import_dlg.rb_append.isChecked()
+            # QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
 
             if not QKan.config.he8.import_file:
                 fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")

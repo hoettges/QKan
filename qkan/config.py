@@ -197,6 +197,9 @@ class CheckImport(ClassObject):
     einleitdirekt: bool = True
     aussengebiete: bool = True
     einzugsgebiete: bool = True
+    hausanschluesse: bool = True
+    schachtschaeden: bool = True
+    haltungsschaeden: bool = True
 
     # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
     tezg_ef: bool = True
@@ -283,6 +286,10 @@ class HE8Config(ClassObject):
     import_file: str = ""  # Import-Datenbank *.idbm
     export_file: str = ""  # Export-Datenbank *.idbm
     results_file: str = ""  # Ergebnis-Datenbank *.idbr
+
+
+class STRAKATConfig(ClassObject):
+    import_dir: str = ""  # Importverzeichnis mit den STRAKAT-Dateien, u. a. kanal.rwtopen
 
 
 class MUConfig(ClassObject):
@@ -749,6 +756,7 @@ class Config(ClassObject):
     max_loops: int = 1000
     mindestflaeche: float = 0.5
     mit_verschneidung: bool = True
+    database_typ: str = 'sqlite'
     # ---
     adapt: AdaptConfig = AdaptConfig()
     check_export: CheckExport = CheckExport()
@@ -759,6 +767,7 @@ class Config(ClassObject):
     swmm: SWMMConfig = SWMMConfig()
     he: HEConfig = HEConfig()
     he8: HE8Config = HE8Config()
+    strakat: STRAKATConfig = STRAKATConfig()
     mu: MUConfig = MUConfig()
     swmm: SWMMConfig = SWMMConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()

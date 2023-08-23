@@ -36,7 +36,8 @@ class TestMUQKan(QgisTest):
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class _wip_TestQKanMU_not_ready_to_run(QgisTest):
+"""
+class TestQKanMU_not_ready_to_run(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -100,7 +101,7 @@ class _wip_TestQKanMU_not_ready_to_run(QgisTest):
 
         del imp
         # self.assertTrue(False, "Fehlernachricht")
-
+"""
 
 if __name__ == "__main__":
     unittest.main()

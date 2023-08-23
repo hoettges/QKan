@@ -122,6 +122,14 @@ class QKanTools(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
+        icon_QKanDoku_path = ":/plugins/qkan/tools/res/icon_qkanDoku.png"
+        QKan.instance.add_action(
+            icon_QKanDoku_path,
+            text=self.tr("QKan-Doku anzeigen"),
+            callback=self.openQKanDoku,
+            parent=self.iface.mainWindow(),
+        )
+
     def unload(self) -> None:
         self.dlgla.close()
         self.dlgop.close()
@@ -768,3 +776,8 @@ class QKanTools(QKanPlugin):
                 project_file,
                 project,
             )
+
+    def openQKanDoku(self) -> None:
+        """QKan-Doku-Icon"""
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/index.html"
+        os.startfile(help_file)

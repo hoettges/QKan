@@ -1021,7 +1021,7 @@ class DBConnection:
                 'entfernen2 TEXT              /* nur so...*/',
                 "simstatus TEXT DEFAULT 'vorhanden'",
                 'teilgebiet TEXT',
-                "createdat TEXT DEFAULT (datetime('now'))"]
+                "createdat TEXT DEFAULT CURRENT_TIMESTAMP"]
             ['entfernen1', 'entfernen2'])
         """
 

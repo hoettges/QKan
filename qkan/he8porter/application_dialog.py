@@ -53,7 +53,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_template: QLineEdit
     tf_exportdb: QLineEdit
 
-    cb_use_templatedir: QCheckBox
+    # cb_use_templatedir: QCheckBox
 
     pb_database: QPushButton
     pb_template: QPushButton
@@ -158,12 +158,12 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
     def select_template(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
-        if self.cb_use_templatedir.isChecked():
-
-            # TODO: Replace with QKan.config.project.template?
-            searchdir = str(Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs")
-        else:
-            searchdir = self.default_dir
+        # if self.cb_use_templatedir.isChecked():
+        #
+        #     # TODO: Replace with QKan.config.project.template?
+        #     searchdir = str(Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs")
+        # else:
+        searchdir = self.default_dir
 
         # noinspection PyCallByClass,PyArgumentList
         filename, _ = QFileDialog.getOpenFileName(
@@ -433,8 +433,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_tezg_hf.setChecked(QKan.config.check_import.tezg_hf)
         self.cb_tezg_tf.setChecked(QKan.config.check_import.tezg_tf)
 
-        self.rb_append.setChecked(QKan.config.check_import.append)
-        self.rb_update.setChecked(QKan.config.check_import.update)
+        # self.rb_append.setChecked(QKan.config.check_import.append)
+        # self.rb_update.setChecked(QKan.config.check_import.update)
 
         self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
 

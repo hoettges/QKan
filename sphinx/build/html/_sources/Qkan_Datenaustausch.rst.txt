@@ -1,5 +1,8 @@
+Datenaustausch
+==============
+
 Import von Kanaldaten aus einfachen Tabellen
-============================================
+--------------------------------------------
 
 Der Import von Daten aus einfachen Tabellen ist prinzipiell mit allen Methoden möglich, die QGIS zur Verfügung 
 stellt. Leider funktioniert das Einfügen aus der Zwischenablage nur dann, wenn alle Attribute einer Tabelle 
@@ -52,7 +55,7 @@ Beispiel zum Ausprobieren:
 | D110036;388798.8302;5709945.165;79.51;82.56
 | D119801;388784.1633;5709985.519;78.84;81.86
 
-| 3. Haltungsdaten (in Layer "Haltungen" einfügen):
+| 3. Haltungsdaten (in Layer "Haltungen" einfügen): 
 |
 | Haltung;Schacht_oben;Schacht_unten;Höhe;Breite;Länge;Sohleoben;Sohleunten;Profilname
 | 410;D110076;D110077;0.3;0.3;12.55;80.5;80.32;Kreisquerschnitt
@@ -66,3 +69,72 @@ Beispiel zum Ausprobieren:
 .. image:: ./QKan_Bilder/netz_aus_clipboard.png
 
 Abbildung: Eingefügtes Kanalnetz in QKan
+
+
+Projektdatei übertragen
+-----------------------
+
+Die Funktion |Tool_projektdatei_uebertragen| :guilabel:`Projektdatei übertragen` dient dazu, eine Vorlage-Projektdatei zu laden, 
+um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei können z.B. Beschriftungsstile 
+oder Linientypdarstellungen definiert sein. In der Maske wird oben zunächst die aktuelle geladene Projektdatenbank angezeigt, 
+welche sich nicht ändern lässt. Durch anklicken der Box darunter, kann die Q-Kan-Datenbank mit dem Laden der neuen Datei 
+aktualisiert werden - dies sollte in der Regel jedoch nicht nötig sein, da die Datenbank sich automatisch durch die 
+Update-Funktion aktualisiert. 
+
+Ist noch keine Firmenstandard-Datei vorhanden, gibt es die Möglichkeit über das Auswahlfeld :guilabel:`Standarad-Q-Kan-Vorlage verwenden` 
+einen allgemeinen Stil zu laden. Diese Vorlage bietet eine gute Grundlage, um einen eigenen Standard zu entwickeln. 
+Liegt bereits eine Firmenstandard-Datei vor, kann diese in dem Auswahlfeld darunter geöffnet werden. Die Projektdatei wird auf 
+das aktuelle QKan-Projekt angepasst und anschließend unter dem Namen gespeichert, welcher unter :guilabel:`Erzeugte Projektdatei speichern als...` 
+ausgewählt wird. Dieser Name kann der Name der aktuell geladenen Projektdatei sein, wenn die Vorlage auf diese angewendet 
+werden soll. Mit :guilabel:`OK` wird die Projektdatei geschrieben, jedoch aus programmtechnischen Gründen nicht sofort geladen.
+
+Die neue Projektdatei kann geladen werden, indem das aktuelle Projekt über :guilabel:`Projekt` → :guilabel:`Zuletzt verwendet` 
+neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein. 
+
+.. |Tool_projektdatei_uebertragen| image:: ./QKan_Bilder/Tool_projektdatei_uebertragen.png
+                                    :width: 1.25 em
+
+..
+    Export mit HYSTEM-EXTRAN
+    ------------------------
+    
+
+Import aus HYSTEM-EXTRAN
+------------------------
+Eine Videoerläuterung des Formulars zum Import aus HYSTEM-EXTRAN ist |video_import_he| zu finden. 
+
+.. |video_import_he| raw:: html
+
+   <a href="https://fh-aachen.sciebo.de/s/cZPuvpgKkeBE56Q" target="_blank">hier</a>
+
+Daten können leicht von einem HYSTEM-EXTRAN Projekt nach QKan übertragen werden mit dem Tool |Tool_Import_HE| :guilabel:`Import aus HYSTEM-EXTRAN`.
+
+.. image:: ./QKan_Bilder/Formular_Import_HE.png
+.. |Tool_Import_HE| image:: ./QKan_Bilder/Tool_Import_HE.png
+                                    :width: 1.25 em
+
+Unter Datenquelle wird die mit HE erstellte Quelldatenbank (Endung *.idbf) ausgewählt.
+Darunter muss das Projektionssystem ausgewählt werden, in dem die Daten **in der Datenquelle** gespeichert sind.
+In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide Projektionssysteme identisch sind.
+Als nächstes wird das Datenziel, die Sqlite-Datenbank und optional die zugehörige Projektdatei, ausgewählt.
+Ist noch keine Zieldatenbank oder Projektdatei vorhanden, können diese hier auch erstellt werden.
+
+Im rechten Bereich der Maske befinden sich die Auswahlfelder zur Selektion der zu importierenden Daten.
+In dem Bereich "Tabellen importieren", können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. 
+Darunter schließt sich der Bereich zur Auswahl der Flächen an.
+Dabei steht "Flächen (RW)" für Regenwasserflächen und "SW-Einleiter" für Schmutzwasser-Einleiter.
+Die Selektion, die im Block "Haltungsflächen importieren, markiert als:" angeboten wird, bezieht sich auf die Auswahl der entsprechenden Datensätze in HE (siehe Bild unten).
+Hierbei kann man bei Bedarf bestimmte Flächentypen, durch löschen des Hakens, vom Import ausschließen. 
+
+|bild_einzugsfl_he| 
+
+.. |bild_einzugsfl_he| image:: ./QKan_Bilder/Einzugsflaeche_HE.png
+                                    :width: 30 em
+
+Eingabeformular aus dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/softwareprodukte/desktop/hystem-extran/>`_
+
+Im rechten unteren Feld der Maske lässt sich festlegen, welche Referenztabellen importiert werden sollen. 
+Wenn nur die Daten importiert werden sollen, die auch mit Daten aus den anderen zu importierenden Tabellen (z.B. den Haltungs-Tabellen) 
+verbunden sind, dann sollte in diesem Bereich kein Feld selektiert werden.
+Sollen die gesamten Referenztabellen der aufgeführten Bereiche importiert werden, so können diese hier ausgewählt werden.
+Die Entwässerungsarten, welche sich ebenfalls in einer Referenztabelle befinden, sind schon fertig in QKan angelegt, da... 

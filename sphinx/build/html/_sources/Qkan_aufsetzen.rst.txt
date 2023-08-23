@@ -1,5 +1,5 @@
-QKan - Plugin Installation
-==========================
+Installation
+============
 
 Willkommen beim Step by Step Tutorial zur Installation von QKan mit dem Betriebssystem Windows. QKan kann auch unter 
 Linux verwendet werden, wo QGIS zum größten Teil weiterhin entwickelt wird. Die nachfolgenden Schritte sind dort in 
@@ -36,8 +36,8 @@ Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die
 Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf "Installieren", um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.
 
 .. _QKan_plugins_fuer_QGIS
-QKan Plugins für QGIS
----------------------
+QKan-Plugin Installation
+------------------------
 
 Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, kann nun das QKan-Plugin installiert werden. 
 Dieses kann unter Erweiterungen -> Erweiterungen verwalten und installieren... auf dem Reiter "Alle" in der Liste der Plug-Ins gefunden werden. 

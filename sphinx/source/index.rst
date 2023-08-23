@@ -6,50 +6,20 @@
 
 .. toctree::
     :maxdepth: 2
-    :caption: Kanaldaten mit QGIS 
-		
+    :caption: Allgemeines 
+
     Qkan_allgemein
-
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Installation
-
     Qkan_aufsetzen
-
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Datenaustausch
-
-    Qkan_Datenaustausch
 
 
 .. toctree::
     :maxdepth: 2
     :caption: Funktionen
 
+    Qkan_Datenaustausch
     Qkan_flaechen
-    Qkan_Formulare
-
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Beispielprojekt
-
     Qkan_workflow
-    Qkan_import_flaechendaten
-    Qkan_erstellung_unbef_fl
-    Qkan_flaechen_vorbereiten
-    Qkan_flaechen_verknuepfen
-    Qkan_export_he
-    Qkan_Videoanleitungen
-
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Tabellen
-
+    Qkan_Formulare
     Qkan_Tabellen
 
 

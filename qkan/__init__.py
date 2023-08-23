@@ -121,13 +121,13 @@ class QKan:
         QCoreApplication.installTranslator(self.translator)
 
         from .createunbeffl import CreateUnbefFl
-        from .dynaporter import DynaPorter
         from .he8porter import He8Porter
-        from .linkflaechen import LinkFl
+        from .dynaporter import DynaPorter
         from .muporter import MuPorter
-        from .surfaceTools import SurfaceTools
         from .swmmporter import SWMMPorter
-        from .tools import QKanTools
+        # from .strakatporter import StrakatPorter
+        from .linkflaechen import LinkFl
+        from .surfaceTools import SurfaceTools
         from .isyporter import IsyPorter
         from .m145porter import M145Porter
         from .ganglinienhe8 import GanglinienHE8
@@ -135,16 +135,17 @@ class QKan:
         from .zustandsklassen import zustandsklassen
         from .sanierungsbedarfszahl import sanierungsbedarfszahl
         from .laengsschnitt import Laengsschnitt
+        from .tools import QKanTools
 
         self.plugins: List = [
             CreateUnbefFl(iface),
-            DynaPorter(iface),
             He8Porter(iface),
+            DynaPorter(iface),
             MuPorter(iface),
+            SWMMPorter(iface),
+            # StrakatPorter(iface),
             LinkFl(iface),
             SurfaceTools(iface),
-            SWMMPorter(iface),
-            QKanTools(iface),
             IsyPorter(iface),
             M145Porter(iface),
             GanglinienHE8(iface),
@@ -152,6 +153,7 @@ class QKan:
             zustandsklassen(iface),
             sanierungsbedarfszahl(iface),
             Laengsschnitt(iface),
+            QKanTools(iface),
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()

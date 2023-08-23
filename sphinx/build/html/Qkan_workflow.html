@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Best practice Beispiel „Workflow“ &mdash; QKan 3.2.38 Dokumentation</title>
+  <title>Beispielprojekt &mdash; QKan 3.3.1 Dokumentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
-    <link rel="next" title="Import von Flächendaten" href="Qkan_import_flaechendaten.html" />
-    <link rel="prev" title="QKan-Formulare" href="Qkan_Formulare.html" /> 
+    <link rel="next" title="QKan-Formulare" href="Qkan_Formulare.html" />
+    <link rel="prev" title="Arbeiten mit Flächen" href="Qkan_flaechen.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,43 +46,56 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Kanaldaten mit QGIS</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Allgemeines</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">QKan - Plugin Installation</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Datenaustausch</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Import von Kanaldaten aus einfachen Tabellen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Kanaldaten mit QGIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Verarbeitung von befestigten und unbefestigten Flächen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">Vorgehen bei der Flächenzuordnung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Beispielprojekt</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Best practice Beispiel „Workflow“</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vorbereitung">Vorbereitung</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#anlegen-einer-neuen-qkan-datenbank">Anlegen einer neuen QKan-Datenbank</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hinterlegung-einer-karte">Hinterlegung einer Karte</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ubernahme-von-kanaldaten-aus-excel">Übernahme von Kanaldaten aus Excel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#korrektur-von-demodaten">Korrektur von Demodaten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Datenaustausch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Arbeiten mit Flächen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Beispielprojekt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#einfuhrung-best-practice-beispiel-workflow">Einführung - Best Practice Beispiel „Workflow“</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vorbereitung">Vorbereitung</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#anlegen-einer-neuen-qkan-datenbank">Anlegen einer neuen QKan-Datenbank</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hinterlegung-einer-karte">Hinterlegung einer Karte</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ubernahme-von-kanaldaten-aus-excel">Übernahme von Kanaldaten aus Excel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#korrektur-von-demodaten">Korrektur von Demodaten</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">Import von Flächendaten</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">Erzeugung unbefestigter Flächen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_vorbereiten.html">Vorbereitung zur Flächenzuordnung</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_verknuepfen.html">Flächen mit Haltungen verknüpfen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_export_he.html">Export nach HYSTEM-EXTRAN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">Übersicht: Videoanleitungen zum Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-von-flachendaten">Import von Flächendaten</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-gebaudedaten">Import Gebäudedaten</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-flurstucke">Import Flurstücke</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-straszen">Import Straßen</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Tabellen</span></p>
-<ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#erzeugung-unbefestigter-flachen">Erzeugung unbefestigter Flächen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vorbereitung-zur-flachenzuordnung">Vorbereitung zur Flächenzuordnung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flachen-mit-haltungen-verknupfen">Flächen mit Haltungen verknüpfen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#verbindungslinien-hinzufugen">Verbindungslinien hinzufügen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verbindungslinien-bearbeiten">Verbindungslinien bearbeiten</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#export-nach-hystem-extran">Export nach HYSTEM-EXTRAN</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#anpassung-des-datumsformates">Anpassung des Datumsformates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#erstellung-einer-vorlagen-datenbank-in-hystem-extran">Erstellung einer Vorlagen-Datenbank in HYSTEM-EXTRAN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export-nach-hystem-extran-8">Export nach HYSTEM-EXTRAN 8</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ubersicht-videoanleitungen-zum-workflow">Übersicht: Videoanleitungen zum Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#anlegen-eines-neuen-qkan-projektes">Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export">Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">Übertragen einer anderen Projektdatei auf eine QKan-Datenbank</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x">Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage">Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-eines-kanal-projektes-nach-qkan">Import eines Kanal++ Projektes nach QKan</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
 </ul>
 
@@ -100,7 +113,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Best practice Beispiel „Workflow“</li>
+      <li class="breadcrumb-item active">Beispielprojekt</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Qkan_workflow.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
       </li>
@@ -110,19 +123,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="best-practice-beispiel-workflow">
-<h1>Best practice Beispiel „Workflow“<a class="headerlink" href="#best-practice-beispiel-workflow" title="Permalink to this heading"></a></h1>
+  <section id="beispielprojekt">
+<h1>Beispielprojekt<a class="headerlink" href="#beispielprojekt" title="Permalink to this heading"></a></h1>
+<section id="einfuhrung-best-practice-beispiel-workflow">
+<h2>Einführung - Best Practice Beispiel „Workflow“<a class="headerlink" href="#einfuhrung-best-practice-beispiel-workflow" title="Permalink to this heading"></a></h2>
 <p>Anhand des Projekts „Workflow“ sollen exemplarisch die Arbeitsschritte von der Datenerfassung über die Datenaufbereitung bis
 hin zum Export in das Simulationsprogramm HYSTEM-EXTRAN 8 erläutert werden. Es handelt sich dabei um ein Teilnetz im Norden
 des Bochumer Stadtteils Hiltrop.</p>
 <section id="vorbereitung">
-<h2>Vorbereitung<a class="headerlink" href="#vorbereitung" title="Permalink to this heading"></a></h2>
+<h3>Vorbereitung<a class="headerlink" href="#vorbereitung" title="Permalink to this heading"></a></h3>
 <p>Die Daten, die in diesem Workflow benutzt werden, stehen in dieser <a class="reference external" href="https://fh-aachen.sciebo.de/s/Bvbz2c9cbCYDkaG">Excel-Datei</a> zum download bereit.
-Eine Videoanleitung zur Vorbereitung des Projektes ist <a class="reference external" href="https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s">hier</a> zu finden.</p>
+Eine Videoanleitung zur Vorbereitung des Projektes ist <a href="https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s" target="_blank">hier</a> zu finden.</p>
 <p>Falls QKan noch nicht auf dem Rechner installiert ist, ist <a class="reference external" href="QKan_plugins_fuer_QGIS">hier</a> eine Anleitung zur Installation des QKan Plugins zu finden.</p>
 </section>
 <section id="anlegen-einer-neuen-qkan-datenbank">
-<h2>Anlegen einer neuen QKan-Datenbank<a class="headerlink" href="#anlegen-einer-neuen-qkan-datenbank" title="Permalink to this heading"></a></h2>
+<h3>Anlegen einer neuen QKan-Datenbank<a class="headerlink" href="#anlegen-einer-neuen-qkan-datenbank" title="Permalink to this heading"></a></h3>
 <p>Zu Beginn eines jeden Projektes muss eine neue QKan-Datenbank erzeugt werden.
 Mit <a class="reference internal" href="_images/Tool_datenbank_erstellen.png"><img alt="Tool_datenbank_erstellen" src="_images/Tool_datenbank_erstellen.png" style="width: 1.25em;" /></a> <span class="guilabel">Neue QKan-Datenbank erstellen</span> öffnet sich ein Fenster für die automatische Erzeugung einer neuen Datenbank.
 Als erstes muss der Pfad und der Name der Datenbank gewählt und das gewünschte Projektionssystem festgelegt werden.
@@ -130,7 +145,7 @@ Dann wird das entsprechende Projekt gewählt. Das Fenster sollte nun vollständi
 <img alt="_images/QKan_datenbank_erstellen_fenster.png" src="_images/QKan_datenbank_erstellen_fenster.png" />
 </section>
 <section id="hinterlegung-einer-karte">
-<h2>Hinterlegung einer Karte<a class="headerlink" href="#hinterlegung-einer-karte" title="Permalink to this heading"></a></h2>
+<h3>Hinterlegung einer Karte<a class="headerlink" href="#hinterlegung-einer-karte" title="Permalink to this heading"></a></h3>
 <p>Zur Orientierung und ansprechenderen Darstellung sollte ein passender Kartendienst hinterlegt werden.
 Über „Strg + L“ wird die Datenquellenverwaltung geöffnet. Unter „WMS/WMTS“ kann ein entsprechender Kartendienst ausgesucht werden.
 Für dieses Projekt wird der Kartendienst (über <span class="guilabel">neu</span>) „DTK Open Data NRW“ genommen mit der URL „<a class="reference external" href="https://www.wmts.nrw.de/geobasis/wmts_nw_dtk">https://www.wmts.nrw.de/geobasis/wmts_nw_dtk</a>“.
@@ -142,7 +157,7 @@ Um die Karte sich anzeigen zu lassen kann über einen Rechtsklick auf den entspr
 Nun sollte die Karte im Fenster erscheinen.</p>
 </section>
 <section id="ubernahme-von-kanaldaten-aus-excel">
-<h2>Übernahme von Kanaldaten aus Excel<a class="headerlink" href="#ubernahme-von-kanaldaten-aus-excel" title="Permalink to this heading"></a></h2>
+<h3>Übernahme von Kanaldaten aus Excel<a class="headerlink" href="#ubernahme-von-kanaldaten-aus-excel" title="Permalink to this heading"></a></h3>
 <p>Als nächstes werden die Kanaldaten aus der Excel-Tabelle übernommen.
 Dafür können die Daten ganz einfach mit copy &amp; paste aus der Excel-Tabelle nach QKan übernommen werden.
 Beispielhaft wird dies hier an den Daten für die Schächte gezeigt.</p>
@@ -159,7 +174,7 @@ Wurden alle Daten aus der Excel-Tabelle übernommen, sollte die Karte wie unten 
 <img alt="_images/Ergebnis_vorbereitung.png" src="_images/Ergebnis_vorbereitung.png" />
 </section>
 <section id="korrektur-von-demodaten">
-<h2>Korrektur von Demodaten<a class="headerlink" href="#korrektur-von-demodaten" title="Permalink to this heading"></a></h2>
+<h3>Korrektur von Demodaten<a class="headerlink" href="#korrektur-von-demodaten" title="Permalink to this heading"></a></h3>
 <p>Es kann bei Datenimporten häufiger vorkommen, dass eine Korrektur notwendig ist, da die verwendeten Bezeichnungen mit den in QKan vorhandenen Bezeichnungen in den Referenztabellen übereinstimmen muss.
 Fehler in der Bezeichnung werden in den Attributtabellen durch Klammern () um den in der Referenztabelle nicht vorhandenen Begriff gekennzeichnet.
 In diesem Workflow ist so beispielsweise die Profilbezeichnung der Haltungen fehlerhaft.
@@ -174,13 +189,366 @@ In der Attributtabelle sollte nun die Profilbezeichnung ohne Klammern erscheinen
 <p>Als nächstes kann mit dem Import der Flächendaten begonnen werden.</p>
 </section>
 </section>
+<section id="import-von-flachendaten">
+<h2>Import von Flächendaten<a class="headerlink" href="#import-von-flachendaten" title="Permalink to this heading"></a></h2>
+<p>Eine Videoanleitung zum Import von Flächendaten ist <a href="https://fh-aachen.sciebo.de/s/fWvLMPr4f9A6JoZ" target="_blank">hier</a> zu finden.</p>
+<p>Für die Abflussberechnung mit einem Simulationsprogramm ist es notwendig, das Einzugsgebiet in Flächen mit einheitlichen
+Abflussparametern/Flächendaten zu unterteilen. Dafür können Flächendaten (für NRW) aus dem <a class="reference external" href="https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/inspire/index.html">INSPIRE-Portal</a> genutzt werden.
+Um diese Daten laden zu können, wird das Plug-in „WFS 2.0 Client“ benötigt, das unter <span class="guilabel">Erweiterungen</span> installiert werden kann.</p>
+<section id="import-gebaudedaten">
+<h3>Import Gebäudedaten<a class="headerlink" href="#import-gebaudedaten" title="Permalink to this heading"></a></h3>
+<p>Als erstes sollen nun die Flächen der Gebäude in das QKan Projekt eingefügt werden. Von der INSPIRE-Startseite kann über einen Klick
+auf das entsprechende Thema (INSPIRE NW <a class="reference external" href="https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/inspire/inspire_gebaeude/index.html">Gebäude</a>) der Link für die WFS-Daten gefunden werden. Dieser befindet sich auf der Seite
+weiter unten unter „Webdienste“. Wichtig hierbei ist, dass der WFS-Link kopiert wird und nicht der WMS-Link:</p>
+<img alt="_images/INSPIRE_WFS_gebaeude.png" src="_images/INSPIRE_WFS_gebaeude.png" />
+<p>In QGIS muss nun der „WFS 2.0 Client“ unter <span class="guilabel">Web</span> → <span class="guilabel">WFS 2.0 Client</span> geöffnet werden. Dort wird der kopierte Link in der ersten Zeile eingefügt
+und die angebotenen Themen werden über <span class="guilabel">GetCapabilities</span> abgerufen:</p>
+<img alt="_images/WFS_Client_getcapabilities.png" src="_images/WFS_Client_getcapabilities.png" />
+<p>Da der Dienst eine Begrenzung der Datenmenge verlangt empfiehlt es sich, eine räumliche Beschränkung zu aktivieren.
+Diese ist möglich indem <span class="guilabel">Use current Extent as Bounding Box Filter</span> aktiviert wird (siehe Bild unten).
+Dadurch übernimmt das Programm die Grenzen der auf dem Bildschirm angezeigten Fläche für den Datenzugriff.
+Es ist daher wichtig, zunächst einen geeigneten Anzeigebereich einzustellen.
+Anschließend sollte das Feature Limit erhöht werden (z.B. auf 5000), welches die Anzahl der übertragenen Objekte beschränkt,
+damit sichergestellt wird, dass alle Objekte übertragen werden. Nun können die Objekte über <span class="guilabel">Get Feature(s)</span> geladen werden:</p>
+<img alt="_images/WFS_Client_getfeatures.png" src="_images/WFS_Client_getfeatures.png" />
+<p>Als Kontrolle sollte anschließend die Anzahl der übertragenen Objekte mit dem Feature Limit verglichen werden. Ist diese Zahl identisch,
+dann ist davon auszugehen, dass nicht alle Objekte übertragen wurden. In diesem Fall müssten die Objekte erneut mit einem erhöhten Feature Limit
+geladen werden.</p>
+<p>Die geladenen Objekte erscheinen nun in dem neuen temporären Layer „Building“. Zur weiteren Bearbeitung müssen diese jedoch in den Layer „Flächen“
+kopiert werden. Dafür ist es empfehlenswert nur die Objekte im relevanten Teilgebiet zu übertragen.
+Die Objekte im Teilgebiet können über <span class="guilabel">Verarbeitungswerkzeuge</span> → <span class="guilabel">Vektorauswahl</span> → <span class="guilabel">Nach Position selektieren</span> ausgewählt werden.
+Dabei sind die Eingaben-Layer die Layer „Building“ und „Teilgebiet“. Außerdem sollten bei der Optionswahl bei dem Ort der Objekte nur die Objekte,
+welche sich innerhalb des Teilgebietes befinden, ausgewählt werden. Nun können die ausgewählten Objekte kopiert werden
+(<span class="guilabel">Bearbeiten</span> → <span class="guilabel">Objekte kopieren</span>) und in den Layer „Flächen“ eingefügt werden. Dieser muss dafür im <span class="guilabel">Bearbeitungsmodus</span> <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> sein.
+Die Objekte werden dann über <span class="guilabel">Bearbeiten</span> → <span class="guilabel">Objekte einfügen</span> → <span class="guilabel">Alle einfügen (einschl. Ungültigen)</span> eingefügt:</p>
+<img alt="_images/gebaeude_Objekte_einfuegen.png" src="_images/gebaeude_Objekte_einfuegen.png" />
+<p>Für die Abflussberechnung ist es nun erforderlich, dass die Attributtabelle ergänzt wird. Dafür sollte die Tabelle wie folgt ergänzt werden:</p>
+<ul class="simple">
+<li><p><strong>Name:</strong> beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.: <code class="docutils literal notranslate"><span class="pre">'fl_'</span>&#160; <span class="pre">||</span>&#160; <span class="pre">lpad(format_number(</span> <span class="pre">pk),4,0)</span></code></p></li>
+<li><p><strong>Teilgebiet:</strong> Name/Nummer des zu bearbeitenden Teilgebiets</p></li>
+<li><p><strong>Regenschreiber:</strong> Name/Nummer des Regenschreibers der zur Berechnung verwendet wird</p></li>
+<li><p><strong>Abflussparameter:</strong> ‚Dach‘ (Erscheint der Name in Klammern () in der Tabelle muss die Bezeichnung in der Abflussparameter-Tabelle von HYSTEM-EXTRAN angepasst werden. Diese liegt auf dem Layer → Referenztabellen → Abflussparameter HE. In diesem Fall muss die Bezeichnung „Gebäude“ in „Dach“ geändert werden:</p></li>
+</ul>
+<img alt="_images/abflussparameter_HE_gebaeude.png" src="_images/abflussparameter_HE_gebaeude.png" />
+<p>Die Attributtabelle sollte nun ungefähr wie hier dargestellt aussehen:</p>
+<img alt="_images/attributtabelle_dach.png" src="_images/attributtabelle_dach.png" />
+<p>Die Objekte sollten nun im Plan in der Schraffur des Layers „Dach“ angezeigt werden. Die Daten der Gebäudeflächen
+sind nun ausreichend vorbereitet und sollten gespeichert werden und anschließend der Bearbeitungsmodus deaktiviert werden.
+Analog können nun die weiteren Flächen hinzugefügt werden.</p>
+<img alt="_images/gebaeude.png" id="ergebnis-import-gebaudedaten" src="_images/gebaeude.png" />
+<p>Abbildung: Ergebnis Import Gebäudedaten</p>
+</section>
+<section id="import-flurstucke">
+<h3>Import Flurstücke<a class="headerlink" href="#import-flurstucke" title="Permalink to this heading"></a></h3>
+<p>Analog zu dem Import der Gebäudedaten verläuft nun der Import der Daten für die unbefestigten Flächen (Flurstücke).
+Den WFS-Link findet man auf der INSPIRE-Seite unter dem Thema „INSPIRE NW Flurstücke/<a class="reference external" href="https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/inspire/inspire_furstuecke_Grundstuecke/index.html">Grundstücke</a>“.
+Die importierten Objekte werden auf dem Layer „CadestralParcel“ angezeigt.</p>
+<p>Um nur die Flächen, welche innerhalb des Teilgebietes liegen, für die weitere Bearbeitung zu nutzen, sollte hier mit dem Verschneidungs-Tool
+(<span class="guilabel">Vektor</span> → <span class="guilabel">Geoverarbeitungswerkzeuge</span> → <span class="guilabel">Verschneidung</span>) gearbeitet werden.
+Als Eingabelayer sollte der Layer mit den importierten Daten „CadestralParcel“ gewählt werden, als Layer zur Überlagerung der Layer „Teilgebiete“.
+Die zugeschnitten Objekte liegen nun auf dem temporären Layer „Verschneidung“ und können alles ausgewählt
+(<span class="guilabel">Bearbeiten</span> → <span class="guilabel">Auswählen</span> → <span class="guilabel">Alle Objekte wählen</span>) und kopiert werden (<span class="guilabel">Bearbeiten</span> → <span class="guilabel">Objekte kopieren</span>).
+Die kopierten Objekte sollen nun auf dem Layer „Haltungsflächen“ hinzugefügt werden. Dieser muss hierzu im Bearbeitungsmodus sein.</p>
+<img alt="_images/verschneidung_flurstuecke.png" src="_images/verschneidung_flurstuecke.png" />
+<p>Analog zu den Gebäude-Daten muss auch hier die Attributtabelle angepasst werden:</p>
+<ul class="simple">
+<li><p><strong>Name:</strong> beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.:  <code class="docutils literal notranslate"><span class="pre">'hf_'</span>&#160; <span class="pre">||</span>&#160; <span class="pre">lpad(</span>&#160; <span class="pre">format_number(</span> <span class="pre">pk),4,0)</span></code></p></li>
+<li><p><strong>Teilgebiet:</strong> Name/Nummer des zu bearbeitenden Teilgebiets</p></li>
+<li><p><strong>Regenschreiber:</strong> Name/Nummer des Regenschreibers der zur Berechnung verwendet wird</p></li>
+<li><p><strong>Abflussparameter:</strong> Um Fehler zu vermeiden kann hier sofort der Name für unbefestigte Flächen ‚$Default_Unbef‘ aus der Attributtabelle „Abflussparameter HE“ kopiert und eingefügt werden.</p></li>
+</ul>
+<p>Die Änderungen müssen gespeichert werden und der Bearbeitungsmodus kann deaktiviert werden.
+Die Attributtabelle sollte nun ungefähr wie unten dargestellt aussehen.
+Die Schraffur (Kontur) der Objekte sollte ebenfalls dem Layer „Haltungsflächen“ entsprechen.</p>
+<img alt="_images/attributtabelle_unbef_fl.png" id="attributtabelle-nach-bearbeitung" src="_images/attributtabelle_unbef_fl.png" />
+<p>Abbildung: Attributtabelle nach Bearbeitung</p>
+</section>
+<section id="import-straszen">
+<h3>Import Straßen<a class="headerlink" href="#import-straszen" title="Permalink to this heading"></a></h3>
+<p>Als letzter Datensatz sind noch die Straßenflächen zu importieren.
+Der Link für die WFS-Daten kann auf der INSPIRE-Seite unter dem Thema „<a class="reference external" href="https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/inspire/inspire_verkehrsnetze/index.html">Verkehrsnetze</a>“ gefunden werden. Es muss der ALKIS-Link (s.u.) kopiert werden.</p>
+<img alt="_images/INSPIRE_WFS_strassen.png" src="_images/INSPIRE_WFS_strassen.png" />
+<p>Bei der Datenabfrage mit WFS 2.0 Client ist darauf zu achten, dass hier in dem Drop-down Menü als Feature Type „RoadArea“ ausgewählt wird.
+Der Rest des Vorgehens läuft analog zu den vorher beschriebenen Vorgängen ab.</p>
+<img alt="_images/WFS_Client_roadarea.png" src="_images/WFS_Client_roadarea.png" />
+<p>Auch hier sollten mit dem Verschneidungs-Tool die importierten Objekte auf die Ausdehnung des Teilgebietes reduziert werden (Vorgehen analog zu Import Flurstücke).
+Alle Daten des neuen Layers „Verschneidung“ sollten nun wieder kopiert und in den Layer „Flächen“ eingefügt werden.</p>
+<p>Bei der Ergänzung der Attributtabelle muss darauf geachtet werden, dass die Änderungen durch <span class="guilabel">Gewählte aktualisieren</span> (<strong>!</strong>) vorgenommen werden,
+damit nicht auch die schon vorhandenen Gebäudeflächen geändert werden. Die Tabelle wird ebenfalls um folgende Attribute ergänzt:</p>
+<ul class="simple">
+<li><p><strong>Name:</strong> beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.:  <code class="docutils literal notranslate"><span class="pre">'fl_'</span>&#160; <span class="pre">||</span>&#160; <span class="pre">lpad(</span>&#160; <span class="pre">format_number(</span> <span class="pre">pk),4,0)</span></code></p></li>
+<li><p><strong>Teilgebiet:</strong> Name/Nummer des zu bearbeitenden Teilgebiets</p></li>
+<li><p><strong>Regenschreiber:</strong> Name/Nummer des Regenschreibers der zur Berechnung verwendet wird</p></li>
+<li><p><strong>Abflussparameter:</strong> ‚Strasse‘ (Erscheint der Name in Klammern () in der Tabelle muss die Bezeichnung in der Abflussparameter-Tabelle von HYSTEM-EXTRAN angepasst werden. In diesem Fall muss die Bezeichnung „Straße“ in „Strasse“ umgeändert werden.)</p></li>
+</ul>
+<p>Alle nötigen Flächendaten sind nun importiert und vorbereitet. Als nächstes sollten die unbefestigten Flächen erzeugt werden.</p>
+<img alt="_images/fertig_import.png" id="planschraffur-nach-fertigem-import" src="_images/fertig_import.png" />
+<p>Abbildung: Planschraffur nach fertigem Import</p>
+</section>
+</section>
+<section id="erzeugung-unbefestigter-flachen">
+<h2>Erzeugung unbefestigter Flächen<a class="headerlink" href="#erzeugung-unbefestigter-flachen" title="Permalink to this heading"></a></h2>
+<p>Eine Videoanleitung zur Erzeugung von unbefestigten Flächen ist <a href="https://fh-aachen.sciebo.de/s/DPMnlKBMS9jjqTC" target="_blank">hier</a> zu finden.</p>
+<p>Bevor die unbefestigten Flächen erzeugt werden können, ist es wichtig, zu prüfen, ob die Attributtabellen der Flächenobjekte
+(„Haltungsflächen“ und „Flächen“) vollständig ausgefüllt sind. Das bedeutet, die Spalten „Name“, „Teilgebiet“, „Regenschreiber“ und
+„Abflussparameter“ müssen vollständig ausgefüllt sein. Wenn keine Flächen vorhanden sind oder die Tabellen unvollständig sind,
+ist <a class="reference external" href="Import_gebaeudedaten">hier</a> eine Beschreibung des Vorgehens.</p>
+<p>Eine Verschmelzung der kleinen Flächen ist nicht mehr notwendig, da eine hohe Anzahl an Flächenschwerpunkten für die Programme heute kein Problem mehr darstellen.</p>
+<p>Die unbefestigten Flächen können nun also direkt erstellt werden. Dies geschieht mit <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span>.
+Das geöffnete Fenster kann ohne eine Auswahl mit <span class="guilabel">OK</span> bestätigt werden.</p>
+<img alt="_images/Fenster.png" src="_images/Fenster.png" />
+<p>Die unbefestigten Flächen werden so automatisch erstellt und liegen auf dem Layer „$Default_Unbef“ welches auch die Schraffur der Flächen anzeigt.</p>
+<img alt="_images/vor_unbef_fl.png" id="flachen-vor-anwendung-des-tools" src="_images/vor_unbef_fl.png" />
+<p>Abbildung: Flächen vor Anwendung des Tools</p>
+<img alt="_images/nach_unbef_fl.png" id="schraffur-der-unbefestigten-flachen" src="_images/nach_unbef_fl.png" />
+<p>Abbildung: Schraffur der unbefestigten Flächen</p>
+<p>Als nächstes müssen die befestigten Flächen für die Zuordnung zu den Haltungen vorbereitet werden.</p>
+</section>
+<section id="vorbereitung-zur-flachenzuordnung">
+<h2>Vorbereitung zur Flächenzuordnung<a class="headerlink" href="#vorbereitung-zur-flachenzuordnung" title="Permalink to this heading"></a></h2>
+<p>Eine Videoanleitung zur Vorbereitung zur Flächenaufteilung ist <a href="https://fh-aachen.sciebo.de/s/cu4krqOti0rf8Vq" target="_blank">hier</a> zu finden.</p>
+<p>Nachdem die unbefestigten Flächen erstellt wurden, ist nun noch ein letzter Vorbereitungsschritt notwendig, bevor der Export in ein Simulationsprogramm (HYSTEM-EXTRAN, Mike++ o.ä.) durchgeführt werden kann.
+Simulationsprogrammme erfordern, dass alle Flächen genau einer Haltung zugeordnet werden können.
+Große Flächen (welche sich über mehrere Haltungen erstrecken), müssen hierfür aufgeteilt werden, damit die Teilstücke der entsprechenden Haltung zugeordnet werden können. Dies ist mit QKan nun automatisch möglich.
+Hierfür zerteilt QKan die Flächenobjekte selber nicht, was den Vorteil hat, dass die Flächendaten im originalen Zustand erhalten bleiben und einzelne Objekte ohne Probleme ausgetauscht werden können.
+Die Aufteilung der Flächen geschieht erst beim Export in das Simulationsprogramm anhand der Haltungsflächen.</p>
+<p>Bevor die automatische Flächenzuordnung jedoch durchgeführt werden kann, müssen die Daten noch entsprechend vorbereitet werden.
+Dafür sollten als erstes die Haltungen markiert werden, an welche kein Regenwasser angeschlossen ist, da sie bei der automatischen Flächenzuordnung ignoriert werden sollen.
+Diese Markierung geschieht über das Attribut „Entwässerungssysteme“ der Haltungsdaten.
+Hierfür muss der Layer Haltungen → Haltungen ausgewählt und im <span class="guilabel">Bearbeitungsmodus</span> <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> sein.
+Es sollten nun alle Haltungen ausgewählt werden, an die kein Regenwasser angeschlossen ist (z.B. Haltungen die „nur“ zum Auslauf führen; kurze Haltungen in Kreuzungsbereichen etc.).
+Anschließend können die gewählten Haltungen in der Attributtabelle über den Filter <span class="guilabel">Alle gewählten Objekte anzeigen</span> (siehe Bild unten) angezeigt werden.
+Das Entwässerungssystem muss nun für diese Haltungen von „Mischwasser“ auf „MW nicht angeschlossen“ geändert werden.
+Dafür sollte von der Listen-Ansicht auf die Formular-Ansicht gewechselt werden (Schaltfäche rechts unten, siehe Bild unten).</p>
+<img alt="_images/liste_gewaehlte_haltungen.png" src="_images/liste_gewaehlte_haltungen.png" />
+<p>Hierbei sollte darauf geachtet werden, dass eine der gewählten Haltungen ausgewählt ist (und nicht die erste Haltung der Liste).
+Dies kann sichergestellt werden, indem man über den Pfeil links unten, einen Schritt nach vorne geht (siehe Bild unten).
+Der Haltungsname oben im Formular sollte nun mit einem Eintrag aus der Liste (links, grau hinterlegt) übereinstimmen.
+Anschließend kann das <span class="guilabel">Entwässerungssystem</span> über die Drop-Down-Liste von „Mischwasser“ zu „MW nicht angeschlossen“ geändert werden.</p>
+<img alt="_images/formular_haltung.png" src="_images/formular_haltung.png" />
+<p>Nun kann wieder in die Listen-Ansicht gewechselt werden.
+Mit einem Rechtsklick auf die geänderte Zelle kann der Zellinhalt kopiert werden.
+Anschließend kann in der Drop-Down-Liste der Quick Field Calculation Bar die Spalte <span class="guilabel">Entwässerungssystem</span> gewählt werden.
+In das Formelfenster wird der kopierte Zellinhalt <strong>mit Anführungsstrichen</strong> eingefügt und mit <span class="guilabel">Gewählte aktualisieren</span> werden alle ausgewählten Haltungen entsprechend angepasst.</p>
+<img alt="_images/liste_gewaehlte_aktualisieren.png" src="_images/liste_gewaehlte_aktualisieren.png" />
+<p>Nun können die Änderungen gespeichert, der Bearbeitungsmodus ausgeschalten und die Auswahl aufgehoben werden.</p>
+<p>Als nächstes sollten die großen Flächen markiert werden, welche bei einem Export aufgeteilt werden müssen.
+In der Attributtabelle der Flächen ist hierfür eine extra Spalte <span class="guilabel">Aufteilen</span> vorgesehen.
+Diese sollte zunächst für alle Flächen das Attribut „false“ enthalten.
+Ist dies nicht der Fall, kann dies einfach geändert werden, indem aus der Drop-Down-Liste der Quick Field Calculation Bar die Spalte <span class="guilabel">Aufteilen</span> gewählt wird und in das Formelfenster der Wert „0“ eingegeben wird.
+Mit <span class="guilabel">Alle aktualisieren</span> wird die Änderung für alle Flächen übernommen.
+(In der Spalte sollte nun „false“ ohne Klammern erscheinen.)</p>
+<p>Danach müssen alle Flächen ausgewählt werden, die mehreren Haltungen zugeordnet werden können (z.B. Straßen, große Gebäude oder große unbefestigte Flächen).</p>
+<p>Die Auswahl könnte beispielsweiße so aussehen:</p>
+<img alt="_images/auswahl_grosse_flaechen.png" src="_images/auswahl_grosse_flaechen.png" />
+<p>Jetzt kann in der Attributtabelle die Spalte <span class="guilabel">Aufteilen</span> für die gewählten Flächen angepasst werden.
+Dabei muss für die entsprechende Spalte der Wert „1“ in die Calculation Bar eingegeben werden und mit <span class="guilabel">Gewählte aktualisieren</span> wird er Wert für die gewünschten Flächen übernommen.
+Die Flächen sollten nun den Wert „true“ (ohne Klammern) in der Spalte <span class="guilabel">Aufteilen</span> enthalten.
+Anschließend können die Änderungen wieder gespeichert und die Auswahl aufgehoben werden.</p>
+<p>Als letzten Schritt müssen die Voronoiflächen erzeugt werden.
+Diese Flächen verfeinern die Haltungsflächen an den Stellen, wo eine Aufteilung der darin enthaltenen Flächen (z.B. Straßen) notwendig ist.
+Dies ist mit <a class="reference internal" href="_images/Tool_voronoiflaechen.png"><img alt="Tool_voronoiflaechen" src="_images/Tool_voronoiflaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Voronoiflächen zu Haltungen</span> ganz einfach möglich.
+Nach einem Klick auf die Schaltfläche, muss in dem sich öffnenden Fenster nur die richtige Entwässerungsart (Mischwasser) ausgewählt werden und kann anschließend mit <span class="guilabel">OK</span> bestätigt werden.
+Das Programm nimmt nun die Verfeinerung der Haltungsflächen selbstständig vor.</p>
+</section>
+<section id="flachen-mit-haltungen-verknupfen">
+<h2>Flächen mit Haltungen verknüpfen<a class="headerlink" href="#flachen-mit-haltungen-verknupfen" title="Permalink to this heading"></a></h2>
+<p>Nachdem die Flächen vorbereitet wurden, können diese nun mit den Haltungsflächen verknüpft werden, zu denen sie entwässern.
+.. Eine Videoanleitung zur Verknüpfung der Flächen mit Haltungen ist <a class="reference external" href="LINK">hier</a> zu finden.</p>
+<p>Die Verknüpfung geschieht über das Tool <a class="reference internal" href="_images/Tool_verknuepfungslinien_fl_haltung.png"><img alt="Tool_Verknuepfungslinie" src="_images/Tool_verknuepfungslinien_fl_haltung.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Flächen zu Haltungen</span>.
+In der Regel werden bei den Filteroptionen, in dem nun geöffneten Fenster, nur die Haltungen spezifiziert.
+Dafür wird in der Tabelle „Haltungen“ der Eintrag „Mischwasser“ ausgewählt (siehe Bild).
+Bei den Optionen zur Erzeugung von Zuordnungen kann gegebenenfalls der Suchradius (siehe Bild) vergrößert werden.
+Der Suchradius begrenzt den Bereich, indem die Zuordnung vorgenommen wird.
+Daher ist die Anpassung vor allem sinnvoll, wenn einige Flächen weit entfernt von Haltungen liegen und dennoch angeschlossen werden sollen.
+Auch die anderen Optionen sollten entsprechend dem hier dargestellten Beispiel ausgewählt werden.</p>
+<img alt="_images/Fenster_verbindungslinien_erstellen.png" src="_images/Fenster_verbindungslinien_erstellen.png" />
+<p>Das Fenster kann dann mit <span class="guilabel">OK</span> geschlossen werden. Die Verknüpfungslinien erscheinen nun im Plan.</p>
+<img alt="_images/angeschlossene_flaechen.png" src="_images/angeschlossene_flaechen.png" />
+<p>Nachdem die Verknüpfungslinien erstellt wurden, müssen noch die Parameter zur Oberflächenabflussberechnung angepasst werden.
+Die entsprechenden Parameter sind in QKan in den Verknüpfungslinien gespeichert.
+Erzeugt werden können diese mit <a class="reference internal" href="_images/Tool_oberflaechenabflussparameter.png"><img alt="Tool_oberflaechenabflussparameter" src="_images/Tool_oberflaechenabflussparameter.png" style="width: 1.25em;" /></a> <span class="guilabel">Oberflächenabflussparameter eintragen</span>.
+Dabei kann das sich öffnende Fenster ohne eine Änderung (siehe Bild unten) mit <span class="guilabel">OK</span> geschlossen werden.</p>
+<img alt="_images/berechnung_oberflaechenabflussparameter.png" src="_images/berechnung_oberflaechenabflussparameter.png" />
+<p>In der Attributtabelle ist nun die Spalte <span class="guilabel">Fließzeit Fläche</span> mit Werten gefüllt.
+Alle nötigen Vorbereitungen für einen Export nach HYSTEM-EXTRAN sind nun durchgeführt.</p>
+<p>Es können auch nachträglich Verbindungslinien bearbeitet oder hinzugefügt werden.</p>
+<section id="verbindungslinien-hinzufugen">
+<h3>Verbindungslinien hinzufügen<a class="headerlink" href="#verbindungslinien-hinzufugen" title="Permalink to this heading"></a></h3>
+<p>War der Suchradius zu gering gewählt, kann es vorkommen, dass Flächen nicht mit Haltungen automatisch verknüpft werden.
+Soll eine Fläche von Hand mit einer Haltung verknüpft werden,
+muss dafür der entsprechende Layer „Anbindungen Flächen“ ausgewählt und im <span class="guilabel">Bearbeitungsmodus</span> <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> sein.
+Anschließend kann über <a class="reference internal" href="_images/Tool_linienobjekt_hinzufuegen.png"><img alt="Tool_linienobjekt_hinzufuegen" src="_images/Tool_linienobjekt_hinzufuegen.png" style="width: 1.25em;" /></a> <span class="guilabel">Linienobjekt hinzufügen</span> durch Anklicken der entsprechenden Fläche,
+danach der gewünschten Haltung und anschließend durch Bestätigung mit einem Rechtsklick, eine Verknüpfungslinie erstellt werden.
+Im Gegensatz zu anderen Geo-Objekten, öffnet sich bei der Erstellung von Verknüpfungslinien kein Formularfenster.
+Dies ist über die Layereigenschaften so vorgegeben, da es standartmäßig nicht benötigt wird.</p>
+</section>
+<section id="verbindungslinien-bearbeiten">
+<h3>Verbindungslinien bearbeiten<a class="headerlink" href="#verbindungslinien-bearbeiten" title="Permalink to this heading"></a></h3>
+<p>Vorhandene Verbindungslinien können auch im Nachhinein geändert werden.
+Dazu muss im <span class="guilabel">Bearbeitungsmodus</span> <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> das <span class="guilabel">Stützpunkt-Werkzeug</span> <a class="reference internal" href="_images/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunkt_werkzeug" src="_images/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a> ausgewählt werden.
+Nun kann die zu ändernde Verbindungslinie editiert werden, indem der Endpunkt angeklickt und auf die gewünschte Haltung gezogen wird.
+Wichtig hierbei ist, dass der Menüpunkt <span class="guilabel">Topologisches Editieren</span> <a class="reference internal" href="_images/Tool_topologisches_editieren.png"><img alt="Tool_topologisches_editieren" src="_images/Tool_topologisches_editieren.png" style="width: 1.25em;" /></a> deaktiviert ist,
+da sonst alle Haltungen, die an dieser Stelle verknüpft sind mitausgewählt werden.</p>
+</section>
+</section>
+<section id="export-nach-hystem-extran">
+<h2>Export nach HYSTEM-EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Permalink to this heading"></a></h2>
+<section id="anpassung-des-datumsformates">
+<h3>Anpassung des Datumsformates<a class="headerlink" href="#anpassung-des-datumsformates" title="Permalink to this heading"></a></h3>
+<p>Bevor der Export-Vorgang gestartet wird, sollte das Datumsformat geprüft werden, da dieses häufiger zu Problemen führt.
+Das Datumsformat muss für den Export in der Form „yyyy-mm-dd hh:mm:ss“ in der Tabelle vorliegen.
+In dem hier verwendeten Datensatz fehlt die Sekundenangabe.
+Um dies zu ändern muss die Attributtabelle geöffnet und im <span class="guilabel">Bearbeitungsmodus</span> <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> sein.
+Anschließed sollte das Feld „bearbeitet“ aus der Drop-Down-Liste ausgewählt werden.
+In die Schnellfeldberechnungsleiste sollte nun das Datum in dem benötigten Format 'yyyy-mm-dd hh:mm:ss' (Achtung: einfache Anführungszeichen verwenden!) eingetragen werden.
+Mit „Alle aktualisieren“ kann der Zellinhalt für alle Zellen übernommen werden.
+Es ist zu empfehlne die Eingabe zu kopieren, da dieser Schritt für alle Attributtabellen wiederholt werden muss.</p>
+<img alt="_images/Datum_unbearbeitet_kurz.png" id="datumsformat-vor-bearbeitung" src="_images/Datum_unbearbeitet_kurz.png" />
+<p>Datumsformat <strong>vor</strong> Bearbeitung</p>
+<img alt="_images/Datum_bearbeitet_kurz.png" id="datumsformat-nach-bearbeitung" src="_images/Datum_bearbeitet_kurz.png" />
+<p>Datumsformat <strong>nach</strong> Bearbeitung</p>
+<p>Nun muss das Datum in allen Attributtabellen angepasst werden, die aus Excel übernommen wurden.
+Daten, die das Programm selber erstellt hat, sind automatisch im richtigen Format gespeichert.</p>
+</section>
+<section id="erstellung-einer-vorlagen-datenbank-in-hystem-extran">
+<h3>Erstellung einer Vorlagen-Datenbank in HYSTEM-EXTRAN<a class="headerlink" href="#erstellung-einer-vorlagen-datenbank-in-hystem-extran" title="Permalink to this heading"></a></h3>
+<p>Für den Export der Daten von QKan nach HYSTEM-EXTRAN wird eine Vorlage-Datenbank benötigt.
+Zur Erstellung dieser muss HYSTEM-EXTRAN gestartet werden.
+Über <span class="guilabel">Datei</span> und <span class="guilabel">Neu…</span> kann eine neue Datenbank angelegt werden.
+Für den Export ist es notwenidg, eine Regenreihe mit einem dazugehörigen Regenschreiber anzulegen.
+In dem Dialogfenster des Regenschreibers können die Daten wie unten dargestellt ergänzt werden.
+Wichtig hierbei ist, dass der Regenschreiber den Namen erhält, der auch in den Flächendaten verwendet wurde (hier: „1“).</p>
+<img alt="_images/Regenschreiber.png" src="_images/Regenschreiber.png" />
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+<p>Die Regenreihe kann über <span class="guilabel">Assistenten</span> und <span class="guilabel">Modellregen…</span> hinzugefügt werden.
+In diesem Beispiel wird eine Modellregen des Euler Typ II mit einer Jährlichkeit von drei Jahren erstellt.
+Der Name kann frei gewählt werden (hier: Euler_II_3a).
+Auch das Datum ist frei wählbar.
+Es sollte jedoch darauf geachtet werden, dass die Dauer realistisch ist (hier: 60 Minuten mit einer Intervallbreite von 5 min.).
+Anschließend sollte die Modellregen-Art „Euler Typ II“ mit einer Jährlichkeit von 3 Jahren („a“) festgesetzt werden.
+Die Regenmenge soll nach KOSTRA-DWD ermittelt werden.
+Zum Definieren des KOSTRA-DWD-Datensatzes können die Daten wie unten abgebildet übernommen werden.</p>
+<img alt="_images/Kostra_assistent_modellregen.png" src="_images/Kostra_assistent_modellregen.png" />
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+<p>Diese Daten können aus einem Projekt, welches <a class="reference external" href="https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/kostra_dwd_2010r.zip">hier</a> zum download zur Verfügung steht, übernommen werden.
+Dazu muss das zu bearbeitende Gebiet auf der Karte gesucht werden.
+Im Anschluss können die Daten über <a class="reference internal" href="_images/Tool_info.png"><img alt="Tool_info" src="_images/Tool_info.png" style="width: 1.25em;" /></a> <span class="guilabel">Info-Tool</span> mit einem Klick auf die Karte abgerufen werden.</p>
+<img alt="_images/Koastra_objektattribute.png" src="_images/Koastra_objektattribute.png" />
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+<p>Nun wurden alle nötigen Definitionen getroffen und der Modellregen kann erstellt werden.
+Bei der nun erstellten Regenreihe muss noch der Name der Station mit dem Namen welcher beim Regenschreiber gewählt wurde angepasst werden (hier: „1234“).
+Anschließend kann die Maske geschlossen werden und das Projekt kann gespeichert werden.
+Da das Beispielprojekt keine Sonderbauwerke (z.B. Drosseln, Pumpen oder Wehre) besitzt, müssen diese hier auch nicht angelegt werden.
+So ist die Vorlage-Datenbank nun ausreichend vorbereitet und HYSTEM-EXTRAN muss geschlossen werden.
+(HYSTEM-EXTRAN öffnet eine Datenbank exklusiv, dass heißt, dass es nicht möglich ist, gleichzeitig mit einer anderen Anwendung auf diese Datenbank zuzugreifen.
+Dies würde daher zu einer Fehlermeldung beim QKan Export führen.)</p>
+</section>
+<section id="export-nach-hystem-extran-8">
+<h3>Export nach HYSTEM-EXTRAN 8<a class="headerlink" href="#export-nach-hystem-extran-8" title="Permalink to this heading"></a></h3>
+<p>Jetzt kann das Formular „Export to HE“ mit <a class="reference internal" href="_images/Tool_export_he.png"><img alt="Tool_export" src="_images/Tool_export_he.png" style="width: 1.25em;" /></a> <span class="guilabel">Export nach HE</span> geöffnet werden.
+In dem Formular wird die soeben erstellte Vorlage-Datenbank und ein Datenziel, welches definiert werden muss, ausgewählt.
+Die übrigen Auswahlfelder sollten wie unten dargestellt übernommen werden.
+Dann kann der Export mit <span class="guilabel">OK</span> gestartet werden.</p>
+<img alt="_images/export_he.png" src="_images/export_he.png" />
+<p>Die fertige Export-Datenbank kann nun mit HYSTEM-EXTRAN geöffnet werden.
+Es sollten nur kleinere Fehler in den Meldungen erscheinen (z.B. fehlerhafte Sohlhöhen und zu lange Namen) die zum Teil händisch angepasst bzw. ignoriert werden können.
+Damit ist der Workflow abgeschlossen.</p>
+<img alt="_images/Ergebnis_HE.png" id="ergebnis" src="_images/Ergebnis_HE.png" />
+<p>Ergebnis mit dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+</section>
+</section>
+<section id="ubersicht-videoanleitungen-zum-workflow">
+<h2>Übersicht: Videoanleitungen zum Workflow<a class="headerlink" href="#ubersicht-videoanleitungen-zum-workflow" title="Permalink to this heading"></a></h2>
+<p id="index-0">An einem Beispielprojekt wird der Workflow beginnend mit dem Datenimport über die Datenaufbereitung bis zum Export in ein
+Simulationsprogramm demonstriert und erläutert.</p>
+<p><a class="reference external" href="https://fh-aachen.sciebo.de/s/Bvbz2c9cbCYDkaG">Excel-Datei mit Vorlagedaten (Anzeige und Download)</a></p>
+<dl class="simple">
+<dt>Zu den Videos:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s">Daten per Clipboard übernehmen</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/fWvLMPr4f9A6JoZ">Flächendaten zu Gebäuden, Grundstücken und Straßen importieren</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/DPMnlKBMS9jjqTC">Flächen vorbereiten</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/cu4krqOti0rf8Vq">Flächenaufteilung vorbereiten</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/Z0a5sIPUd0EWrTD">Flächen mit Haltungen verknüpfen</a></p></li>
+</ul>
+</dd>
+</dl>
+<section id="anlegen-eines-neuen-qkan-projektes">
+<h3>Anlegen eines neuen QKan-Projektes<a class="headerlink" href="#anlegen-eines-neuen-qkan-projektes" title="Permalink to this heading"></a></h3>
+<p id="index-1">Eine Videoanleitung zum Anlegen eines neuen QKan-Projektes aus einer bestehenden HYSTEM-EXTRAN-Datenbank und zum
+anschließenden Einbinden von Flächendaten finden Sie hier:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/PK3WwcNaaGJJQVi">Video: Neues QKan-Projekt erstellen</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">
+<h3>Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen<a class="headerlink" href="#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen" title="Permalink to this heading"></a></h3>
+<dl class="simple" id="index-2">
+<dt>Eine Anleitung zum Einfügen von Kanaldaten aus Tabellendaten</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/J1MC92ShnQWzUtD">Video: Daten aus dem Clipboard einfügen</a></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export">
+<h3>Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export<a class="headerlink" href="#vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export" title="Permalink to this heading"></a></h3>
+<p id="index-3">In der Videoanleitung wird an einem einfachen Beispiel die Datenvorbereitung für einen Export
+nach HYSTEM-EXTRAN 8.4 gezeigt. In diesem Projekt wird auf die Verwendung von Haltungsflächen
+verzichtet.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/zoSzm5br6fmsJnj">Video: QKan Vorbereitung HE8-Export</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">
+<h3>Übertragen einer anderen Projektdatei auf eine QKan-Datenbank<a class="headerlink" href="#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank" title="Permalink to this heading"></a></h3>
+<dl class="simple" id="index-4">
+<dt>Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-Projektdatei geladen werden kann:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/JOjxXdF72eLrJsw">Video: QKan Projekt laden</a></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x">
+<span id="index-5"></span><h3>Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x<a class="headerlink" href="#anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>Eine Videoanleitung, wie Ergebnisdaten als Ganglinien und als animierte Längsschnitte angezeigt werden können:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/mbWT9CwP2ljEwCW">Video: Anzeige von Längsschnitten zu Berechnungsergebnissen</a></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage">
+<span id="index-6"></span><h3>Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage<a class="headerlink" href="#einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage" title="Permalink to this heading"></a></h3>
+<p>Eine Videoanleitung, wie ein mit AutoCAD erstellter Zeichnungsrahmen in ein QGIS-Layout eingefügt wird,
+finden Sie hier:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/pJZayVce4VQMiFl">Video: Einfügen eines Zeichnungsrahmens in QGIS</a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="import-eines-kanal-projektes-nach-qkan">
+<span id="index-7"></span><h3>Import eines Kanal++ Projektes nach QKan<a class="headerlink" href="#import-eines-kanal-projektes-nach-qkan" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>Eine Videoanleitung, wie ein Kanal++ Projekt nach QKan übertragen werden kann, finden Sie hier:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/1VwlghfBHcHZWRi">Video: Export auf Kanal++ nach QKan</a></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Qkan_Formulare.html" class="btn btn-neutral float-left" title="QKan-Formulare" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
-        <a href="Qkan_import_flaechendaten.html" class="btn btn-neutral float-right" title="Import von Flächendaten" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Qkan_flaechen.html" class="btn btn-neutral float-left" title="Arbeiten mit Flächen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="Qkan_Formulare.html" class="btn btn-neutral float-right" title="QKan-Formulare" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

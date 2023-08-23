@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>770</width>
-    <height>490</height>
+    <height>470</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>770</width>
-    <height>490</height>
+    <height>470</height>
    </size>
   </property>
   <property name="font">
@@ -28,7 +28,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>440</y>
+     <y>420</y>
      <width>731</width>
      <height>32</height>
     </rect>
@@ -60,7 +60,7 @@
      <x>20</x>
      <y>20</y>
      <width>401</width>
-     <height>131</height>
+     <height>141</height>
     </rect>
    </property>
    <property name="font">
@@ -205,9 +205,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
+     <y>310</y>
      <width>401</width>
-     <height>81</height>
+     <height>91</height>
     </rect>
    </property>
    <property name="font">
@@ -310,9 +310,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>170</y>
+     <y>200</y>
      <width>401</width>
-     <height>81</height>
+     <height>91</height>
     </rect>
    </property>
    <property name="font">
@@ -876,118 +876,13 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>370</y>
-     <width>401</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Tahoma</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="title">
-    <string>Aktionen beim Import</string>
-   </property>
-   <widget class="QRadioButton" name="rb_synch">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>20</y>
-      <width>101</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Hinzufügen, aktualisieren und Löschen von Datensätzen in der QKan-Datenbank</string>
-    </property>
-    <property name="statusTip">
-     <string>Synchronisation der QKan-Daten</string>
-    </property>
-    <property name="text">
-     <string>synchronisieren</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_update">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Überschreiben aller Attribute von bereits vorhandenen Datensätzen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Aktualisieren bereits vorhandenen Datensätzen. </string>
-    </property>
-    <property name="text">
-     <string>ändern</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_append">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>101</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hinzufügen noch nicht vorhandene Datensätze&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Hinzufügen noch nicht vorhandene Datensätze</string>
-    </property>
-    <property name="text">
-     <string>hinzufügen</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>440</x>
      <y>320</y>
      <width>311</width>
-     <height>101</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">

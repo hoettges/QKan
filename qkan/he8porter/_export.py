@@ -646,10 +646,13 @@ class ExportTask:
                     ( SELECT 
                         haltnam AS Haltung, flaeche AS Groesse, regenschreiber AS Regenschreiber, 
                         flaechentypnr AS Flaechentyp, 
-                        abflusstyp AS BerechnungSpeicherkonstante, typbef AS Typ, speicherzahl AS AnzahlSpeicher, 
-                        speicherkonst AS Speicherkonstante, 
-                        coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
-                        fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
+                        COALESCE(abflusstyp, 2) AS BerechnungSpeicherkonstante, 
+                        COALESCE(typbef,0) AS Typ, 
+                        COALESCE(speicherzahl,3) AS AnzahlSpeicher, 
+                        COALESCE(speicherkonst, 0.0) AS Speicherkonstante, 
+                        COALESCE(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
+                        COALESCE(fliesszeitflaeche,0.0) AS FliesszeitOberflaeche, 
+                        COALESCE(fliesszeitkanal,0.0) AS LaengsteFliesszeitKanal, 
                         abflussparameter AS Parametersatz, coalesce(neigkl, 1) AS Neigungsklasse, 
                         coalesce(createdat, datetime('now')) AS lastmodified, 
                         kommentar AS Kommentar, 
@@ -721,10 +724,13 @@ class ExportTask:
                       id AS id, 
                       flnam AS Name, haltnam AS Haltung, flaeche AS Groesse, regenschreiber AS Regenschreiber, 
                       flaechentypnr AS Flaechentyp, 
-                      abflusstyp AS BerechnungSpeicherkonstante, typbef AS Typ, speicherzahl AS AnzahlSpeicher, 
-                      speicherkonst AS Speicherkonstante, 
-                      coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
-                      fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
+                      COALESCE(abflusstyp, 2) AS BerechnungSpeicherkonstante, 
+                      COALESCE(typbef,0) AS Typ, 
+                      COALESCE(speicherzahl,3) AS AnzahlSpeicher, 
+                      COALESCE(speicherkonst, 0.0) AS Speicherkonstante, 
+                      COALESCE(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
+                      COALESCE(fliesszeitflaeche,0.0) AS FliesszeitOberflaeche, 
+                      COALESCE(fliesszeitkanal,0.0) AS LaengsteFliesszeitKanal, 
                       abflussparameter AS Parametersatz, coalesce(neigkl, 1) AS Neigungsklasse, 
                       1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
                       coalesce(createdat, datetime('now')) AS lastmodified, 
@@ -959,7 +965,7 @@ class ExportTask:
                     Geometry 
                 ) 
                 SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name,
                     ha.schoben AS SchachtOben,
                     ha.schunten AS SchachtUnten,
@@ -1056,7 +1062,7 @@ class ExportTask:
                     Geometry
                 ) 
                 SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name,
                     ha.schoben AS SchachtOben,
                     ha.schunten AS SchachtUnten,
@@ -1151,7 +1157,7 @@ class ExportTask:
                     Geometry
                 ) 
                 SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name,
                     ha.schoben AS SchachtOben,
                     ha.schunten AS SchachtUnten,
@@ -1262,7 +1268,7 @@ class ExportTask:
                     Geometry
                 ) 
                 SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name,
                     ha.schoben AS SchachtOben,
                     ha.schunten AS SchachtUnten,
@@ -1377,7 +1383,7 @@ class ExportTask:
                     Geometry
                 ) 
                 SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name,
                     ha.schoben AS SchachtOben,
                     ha.schunten AS SchachtUnten,
@@ -1511,7 +1517,7 @@ class ExportTask:
                     BefestigteFlaeche, 
                     UnbefestigteFlaeche, Geometry)
                   SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name, ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
                     coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
                     coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
@@ -1655,7 +1661,7 @@ class ExportTask:
                     BefestigteFlaeche, 
                     UnbefestigteFlaeche, Geometry)
                   SELECT
-                    {nr0} + row_number() OVER (ORDER BY haltungen.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
                     ha.haltnam AS Name, ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
                     coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
                     coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
@@ -1731,7 +1737,7 @@ class ExportTask:
                     Kommentar, LastModified
                     )
                 SELECT 
-                    {nr0} + row_number() OVER (ORDER BY ha.haltnam) AS Id, 
+                    {nr0} + row_number() OVER (ORDER BY ap.apnam) AS Id, 
                     ap.apnam,
                     ap.anfangsabflussbeiwert, ap.endabflussbeiwert,
                     ap.muldenverlust, ap.benetzungsverlust, 

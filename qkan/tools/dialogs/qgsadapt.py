@@ -42,6 +42,7 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # t
 
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
         self.cb_applyQKanTemplate.clicked.connect(self.click_apply_template)
+        self.button_box.helpRequested.connect(self.click_help)
 
     def click_apply_template(self) -> None:
         """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""
@@ -64,3 +65,9 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # t
         )
         if os.path.dirname(filename) != "":
             self.tf_projectTemplate.setText(filename)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Datenaustausch.html#projektdatei-ubertragen"
+        os.startfile(help_file)

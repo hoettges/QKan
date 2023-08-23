@@ -69,19 +69,19 @@ class TestQKanHE8(QgisTest):
         #     anpassen_auswahl=enums.SelectedLayers.NONE,
         # )
         QKan.config.check_export.schaechte = True
-        QKan.config.check_export.auslaesse = False
+        QKan.config.check_export.auslaesse = True
         QKan.config.check_export.speicher = True
         QKan.config.check_export.haltungen = True
-        QKan.config.check_export.pumpen = False
-        QKan.config.check_export.wehre = False
+        QKan.config.check_export.pumpen = True
+        QKan.config.check_export.wehre = True
         QKan.config.check_export.flaechen = True
         QKan.config.check_export.einleitdirekt = False
         QKan.config.check_export.aussengebiete = False
-        QKan.config.check_export.einzugsgebiete = False
+        QKan.config.check_export.einzugsgebiete = True
         QKan.config.check_export.tezg = True
 
-        QKan.config.check_export.abflussparameter = False
-        QKan.config.check_export.bodenklassen = False
+        QKan.config.check_export.abflussparameter = True
+        QKan.config.check_export.bodenklassen = True
 
         QKan.config.check_export.append = True
         QKan.config.check_export.update = False

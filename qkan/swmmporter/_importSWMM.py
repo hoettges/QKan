@@ -9,16 +9,11 @@ import logging
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, cast
-from lxml import etree
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import QgsCoordinateReferenceSystem
 from qgis.utils import pluginDirectory
-from qkan import QKan, enums
-from qkan.config import ClassObject
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
-from qkan.tools.k_qgsadapt import qgsadapt
-from qgis.core import Qgis
-from qgis.utils import iface
 
 logger = logging.getLogger("QKan.importswmm")
 
@@ -75,16 +70,6 @@ class ImportTask:
         self.projectfile = projectfile
         #self.xoffset, self.yoffset = offset
         self.xoffset, self.yoffset = [0.0,0.0]
-
-        self.connected = self.db_qkan.connected
-
-        if not self.db_qkan.connected:
-            fehlermeldung(
-                "Fehler in import_from_swmm:\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    db_qkan
-                ),
-            )
 
     def __del__(self) -> None:
         self.db_qkan.sql("SELECT RecoverSpatialIndex()")

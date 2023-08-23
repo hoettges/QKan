@@ -1,5 +1,5 @@
-Allgemeines
-===========
+Was ist QKan?
+=============
 
 QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu in einer SQLite-Datenbank. 
 

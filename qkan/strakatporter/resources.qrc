@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/strakatporter" >
+        <file>res/icon_import.png</file>
+    </qresource>
+</RCC>
