@@ -48,7 +48,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Kanaldaten mit QGIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Was ist QKan?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
@@ -69,17 +69,22 @@
 <li class="toctree-l3"><a class="reference internal" href="#id1">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#erzeugen-der-unbefestigten-flachen">Erzeugen der unbefestigten Flächen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#erzeugen-von-unbefestigten-flachen">Erzeugen von unbefestigten Flächen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen">Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#export-nach-hystem-extran">Export nach HYSTEM/EXTRAN</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#export-nach-hystem-extran">Export nach HYSTEM-EXTRAN</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten">Tabelle zur Auswahl der zu exportierenden Daten</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#import-aus-hystem-extran">Import aus HYSTEM-EXTRAN</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-importierenden-daten">Tabelle zur Auswahl der zu importierenden Daten</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#projektlayer-aktualisieren">Projektlayer aktualisieren</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#datenbank-aktualisieren">Datenbank aktualisieren</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#projektdatei-auf-andere-datenbank-ubertragen">Projektdatei auf andere Datenbank übertragen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#elemente-des-entwasserungsnetzes-einem-teilgebiet-zuordnen">Elemente des Entwässerungsnetzes einem Teilgebiet zuordnen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">Allgemeine Funktionselemente in Formularen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#auswahl-in-listen">Auswahl in Listen</a></li>
 </ul>
@@ -118,7 +123,7 @@
 <section id="berechnung-von-oberflachenabflussparametern">
 <span id="index-0"></span><h2>Berechnung von Oberflächenabflussparametern<a class="headerlink" href="#berechnung-von-oberflachenabflussparametern" title="Permalink to this heading"></a></h2>
 <p>Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
-nach HYSTEM/EXTRAN (geplante Alternative: Kanal++) berechnet.</p>
+nach HYSTEM-EXTRAN (geplante Alternative: Kanal++) berechnet.</p>
 <section id="tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen">
 <h3>Tabellen zur Auswahl der zu berücksichtigenden Flächen<a class="headerlink" href="#tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen" title="Permalink to this heading"></a></h3>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
@@ -136,7 +141,7 @@ endet.</p>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
 auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
-<p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createlinksw"><span class="std std-ref">Anbindungen von Einzeleinleitern</span></a></p>
+<p>Ausführliche Erläuterung zu diesem Thema: <span class="xref std std-ref">Anbindungen von Einzeleinleitern</span></p>
 </section>
 </section>
 <section id="automatisches-erzeugen-von-flachenanbindungen">
@@ -154,8 +159,8 @@ werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createlinkfl"><span class="std std-ref">Grundprinzip</span></a></p>
 </section>
 </section>
-<section id="erzeugen-der-unbefestigten-flachen">
-<span id="index-3"></span><h2>Erzeugen der unbefestigten Flächen<a class="headerlink" href="#erzeugen-der-unbefestigten-flachen" title="Permalink to this heading"></a></h2>
+<section id="erzeugen-von-unbefestigten-flachen">
+<span id="index-3"></span><h2>Erzeugen von unbefestigten Flächen<a class="headerlink" href="#erzeugen-von-unbefestigten-flachen" title="Permalink to this heading"></a></h2>
 <p>Für jede Haltungsfläche (Tabelle tezg) wird aus dem Zwischenraum der befestigten Flächen ein Flächenobjekt angelegt.
 Dieses kann aus mehreren Flächenteilen bestehen.</p>
 <p>Die Attributdaten werden dabei aus den Haltungsflächen übernommen.</p>
@@ -166,18 +171,31 @@ Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsfläc
 Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination
 aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createunbeffl"><span class="std std-ref">Erzeugen von unbefestigten Flächen</span></a></p>
+<p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_workflow.html#workflunbeffl"><span class="std std-ref">hier</span></a> zu sehen.</p>
 </section>
 </section>
 <section id="export-nach-hystem-extran">
-<span id="index-4"></span><h2>Export nach HYSTEM/EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Permalink to this heading"></a></h2>
-<p>Der Export funktioniert für Version 7.8 und 7.9.</p>
+<span id="index-4"></span><h2>Export nach HYSTEM-EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Permalink to this heading"></a></h2>
+<p>Der Export funktioniert für Version 7.8 und 7.9. Die in diesem Formular geforderte HYSTEM-EXTRAN Vorlage-Datenbank benötigt eine Regenreihe
+mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Flächendaten haben).</p>
+<p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_workflow.html#workflexporthe"><span class="std std-ref">hier</span></a> zu sehen.</p>
 <section id="tabelle-zur-auswahl-der-zu-exportierenden-daten">
 <h3>Tabelle zur Auswahl der zu exportierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten" title="Permalink to this heading"></a></h3>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Export auf ausgewählte Teilgebiete beschränkt werden.</p>
 </section>
 </section>
+<section id="import-aus-hystem-extran">
+<span id="index-5"></span><h2>Import aus HYSTEM-EXTRAN<a class="headerlink" href="#import-aus-hystem-extran" title="Permalink to this heading"></a></h2>
+<p>Der Import aus HYSTEM-EXTRAN geschieht mit Hilfe einer HE Quelldatenbank (Endung .idbf).</p>
+<section id="tabelle-zur-auswahl-der-zu-importierenden-daten">
+<h3>Tabelle zur Auswahl der zu importierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-importierenden-daten" title="Permalink to this heading"></a></h3>
+<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Import auf bestimmte Datentabellen des Kanalnetzes, bestimmte Flächen
+oder Referenztabellen beschränkt werden.</p>
+<p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_Datenaustausch.html#datenaustimporthe"><span class="std std-ref">Import aus HYSTEM-EXTRAN</span></a></p>
+</section>
+</section>
 <section id="projektlayer-aktualisieren">
-<span id="index-5"></span><h2>Projektlayer aktualisieren<a class="headerlink" href="#projektlayer-aktualisieren" title="Permalink to this heading"></a></h2>
+<h2>Projektlayer aktualisieren<a class="headerlink" href="#projektlayer-aktualisieren" title="Permalink to this heading"></a></h2>
 <p>Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem <a class="reference internal" href="#image-qkan-layersadapt"><span class="std std-ref">Formular</span></a> unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift „Layer anpassen“) aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option „Formularanbindungen auf QKan-Standard setzen“ aktiviert ist.</p>
 <ol class="arabic simple">
 <li><p>Aktivieren Sie „QKan-Standard verwenden“. Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche […] rechts daneben auswählen.</p></li>
@@ -203,6 +221,12 @@ wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor de
 <li><p>Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus.</p></li>
 </ol>
 <img alt="_images/qkan_qgsAdapt.png" id="image-qkan-qgsadapt" src="_images/qkan_qgsAdapt.png" />
+</section>
+<section id="elemente-des-entwasserungsnetzes-einem-teilgebiet-zuordnen">
+<h2>Elemente des Entwässerungsnetzes einem Teilgebiet zuordnen<a class="headerlink" href="#elemente-des-entwasserungsnetzes-einem-teilgebiet-zuordnen" title="Permalink to this heading"></a></h2>
+<p>Mit diesem Formular ist die automatische Zuordnung von Kanalnetz-Elementen zu einem Teilgebiet möglich. Dabei wird das Teilgebiet automatisch
+in die jeweilige Spalte der Datentabellen</p>
+<p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_flaechen.html#linkteilgebiete"><span class="std std-ref">hier</span></a> zu sehen.</p>
 </section>
 <section id="allgemeine-funktionselemente-in-formularen">
 <h2>Allgemeine Funktionselemente in Formularen<a class="headerlink" href="#allgemeine-funktionselemente-in-formularen" title="Permalink to this heading"></a></h2>

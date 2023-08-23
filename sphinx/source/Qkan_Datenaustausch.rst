@@ -97,7 +97,7 @@ neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein.
 ..
     Export mit HYSTEM-EXTRAN
     ------------------------
-    
+.. _datenaustimporthe:    
 
 Import aus HYSTEM-EXTRAN
 ------------------------
@@ -113,7 +113,7 @@ Daten können leicht von einem HYSTEM-EXTRAN Projekt nach QKan übertragen werde
 .. |Tool_Import_HE| image:: ./QKan_Bilder/Tool_Import_HE.png
                                     :width: 1.25 em
 
-Unter Datenquelle wird die mit HE erstellte Quelldatenbank (Endung *.idbf) ausgewählt.
+Unter Datenquelle wird die mit HE erstellte Quelldatenbank (Endung .idbf) ausgewählt. 
 Darunter muss das Projektionssystem ausgewählt werden, in dem die Daten **in der Datenquelle** gespeichert sind.
 In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide Projektionssysteme identisch sind.
 Als nächstes wird das Datenziel, die Sqlite-Datenbank und optional die zugehörige Projektdatei, ausgewählt.
@@ -124,7 +124,7 @@ In dem Bereich "Tabellen importieren", können die klassischen Datentabellen, di
 Darunter schließt sich der Bereich zur Auswahl der Flächen an.
 Dabei steht "Flächen (RW)" für Regenwasserflächen und "SW-Einleiter" für Schmutzwasser-Einleiter.
 Die Selektion, die im Block "Haltungsflächen importieren, markiert als:" angeboten wird, bezieht sich auf die Auswahl der entsprechenden Datensätze in HE (siehe Bild unten).
-Hierbei kann man bei Bedarf bestimmte Flächentypen, durch löschen des Hakens, vom Import ausschließen. 
+Hierbei können bei Bedarf bestimmte Flächentypen, durch löschen des Hakens im QKan-Formular, vom Import ausgeschlossen werden. 
 
 |bild_einzugsfl_he| 
 
@@ -133,8 +133,11 @@ Hierbei kann man bei Bedarf bestimmte Flächentypen, durch löschen des Hakens, 
 
 Eingabeformular aus dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/softwareprodukte/desktop/hystem-extran/>`_
 
-Im rechten unteren Feld der Maske lässt sich festlegen, welche Referenztabellen importiert werden sollen. 
-Wenn nur die Daten importiert werden sollen, die auch mit Daten aus den anderen zu importierenden Tabellen (z.B. den Haltungs-Tabellen) 
-verbunden sind, dann sollte in diesem Bereich kein Feld selektiert werden.
-Sollen die gesamten Referenztabellen der aufgeführten Bereiche importiert werden, so können diese hier ausgewählt werden.
-Die Entwässerungsarten, welche sich ebenfalls in einer Referenztabelle befinden, sind schon fertig in QKan angelegt, da... 
+Im rechten unteren Feld der Maske lässt sich festlegen, welche Referenztabellen importiert werden sollen. Wird hier keine Auswahl getroffen, 
+so füllt QKan selbstständig entsprechende Referenztabellen mit Standardwerten. Werden die zur Auswahl stehenden Referenztabellen gewählt, 
+so importiert QKan nur genutzte, das heißt, mit anderen Tabellen verbundene, Werte. Einträge, die Angelegt wurden, aber in diesem Projekt 
+nicht verwendet wurden, werden nur importiert, wenn die Option "Auch nicht verwendete Datensätze importieren" gewählt wird. Diese Option 
+sollte nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen) in HYSTEM-EXTRAN angelegt wurden und davon auszugehen ist, 
+dass diese in der Zukunft benötigt werden. 
+
+Nun kann das Formular mit :guilabel:`OK` geschlossen werden und der Import wird gestartet. 

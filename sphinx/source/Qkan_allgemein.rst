@@ -1,13 +1,20 @@
 Was ist QKan?
 =============
 
-QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu in einer SQLite-Datenbank. 
+QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu 
+in Tabellen-Struktur in einer SQLite-Datenbank. Ein Übersichtsvideo über die Funktionen von QKan ist |video_einfuehrung| zu finden.
+
+.. |video_einfuehrung| raw:: html
+
+   <a href="https://fh-aachen.sciebo.de/s/CHB80Ezu6lbRfu6" target="_blank">hier</a>
 
 QKan baut auf QGIS ab Version 3.22 auf und besteht aus einer Vielzahl von Plugins, die u.a. folgende Funktionsbereiche umfassen: 
 
- - Datenimport von Kanalnetzdaten aus Tabellen und einer Vielzahl von Austauschformaten und Darstellung in QGIS. 
+ - Datenimport von Kanalnetzdaten aus Tabellen und einer Vielzahl von Austauschformaten und Darstellung in QGIS
+ - Bearbeitung der Kanalnetzdaten mit üblichen QGIS-Werkzeugen in Tabellen oder Formularen 
  - Aufbereitung für die Nutzung in Simulationsprogrammen
  - Weitergabe eines vollständigen Kanalkatasters an Nutzer, die über keine Lizenz eines Simulationsprogramms verfügen
+ - Weitergabe eines vollständigen Projektes (Projektdatei + SQLite-Datenbank) an beliebige QGIS-Nutzer
  - Ergebnisdarstellung
  - Darstellung von Kanalzustandsdaten und deren Auswertung nach ISYBAU oder DWA-Richtlinie
 
@@ -15,7 +22,8 @@ Ein besonderer Schwerpunkt ist die Verarbeitung der befestigten und unbefestigte
 Zuordnung dieser Flächen zu den Haltungen, die optional beim Export in das Simulationsprogramm mit Haltungflächen verschnitten werden. 
 Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilgebiete als auch automatisch für große Kanalnetze durchzuführen. 
 
-Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits realisiert sind: 
+Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits 
+realisiert sind: 
 
  - Kanal++/DYNA
  - HYSTEM-EXTRAN 8.x
@@ -23,7 +31,8 @@ Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hyd
  - SWMM
  - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
 
-Grundsätzlich enthält QKan die Möglichkeit, Daten über das Clipboard in alle QKan-Tabellen einzufügen. Dabei werden automatisch grafische Objekte (Schächte, Haltungen) erzeugt. 
+Grundsätzlich enthält QKan die Möglichkeit, Daten über das Clipboard in alle QKan-Tabellen einzufügen. Dabei werden automatisch grafische 
+Objekte (Schächte, Haltungen) erzeugt. 
 
 Außerdem bestehen mit den Grundfunktionen von QGIS verschiedene Möglichkeiten des Datenim- und Exports:
 
@@ -33,9 +42,13 @@ Außerdem bestehen mit den Grundfunktionen von QGIS verschiedene Möglichkeiten 
  - MS-Access-Datenbanken
  - (fast) beliebige OGC-konforme Geodaten
 
-Wesentlicher Bestandteil von QKan ist eine Datenstruktur, die einen gemeinsamen Nenner der verschiedenen in Deutschland eingesetzten Programme darstellt. Das bedeutet insbesondere, dass die sogenannten "Sonderbauwerke", also Speicher, Pumpen, Wehre, Drosseln, Auslässe etc. nur mit den allgemeinen Daten in QKan verwaltet werden, programmspezifische Attribute jedoch in den Daten des jeweiligen Simulationsprogramms verwaltet werden müssen. 
+Wesentlicher Bestandteil von QKan ist eine Datenstruktur, die einen gemeinsamen Nenner der verschiedenen in Deutschland eingesetzten 
+Programme darstellt. Das bedeutet insbesondere, dass die sogenannten "Sonderbauwerke", also Speicher, Pumpen, Wehre, Drosseln, Auslässe 
+etc. nur mit den allgemeinen Daten in QKan verwaltet werden, programmspezifische Attribute jedoch in den Daten des jeweiligen 
+Simulationsprogramms verwaltet werden müssen. 
 
-Die Daten können sowohl mit den QKan-Funktionen verarbeitet werden, gleichzeitig stehen aber auch die vielfältigen und umfassenden Funktionen von QGIS zur Verfügung. Insbesondere kann mit Hilfe der Datenbanksprache SQL beinahe jede denkbare Aufgabe realisiert werden. 
+Die Daten können sowohl mit den QKan-Funktionen verarbeitet werden, gleichzeitig stehen aber auch die vielfältigen und umfassenden 
+Funktionen von QGIS zur Verfügung. Insbesondere kann mit Hilfe der Datenbanksprache SQL beinahe jede denkbare Aufgabe realisiert werden. 
 
 Grundlagen
 ----------

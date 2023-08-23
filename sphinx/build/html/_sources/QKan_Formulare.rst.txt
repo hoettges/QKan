@@ -8,7 +8,7 @@ Berechnung von Oberflächenabflussparametern
 -------------------------------------------
 
 Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
-nach HYSTEM/EXTRAN (geplante Alternative: Kanal++) berechnet. 
+nach HYSTEM-EXTRAN (geplante Alternative: Kanal++) berechnet. 
 
 
 Tabellen zur Auswahl der zu berücksichtigenden Flächen
@@ -69,7 +69,7 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`createlinkfl`
 .. index:: Unbefestigte Fläche (Menü)
 
 
-Erzeugen der unbefestigten Flächen
+Erzeugen von unbefestigten Flächen
 ----------------------------------
 
 Für jede Haltungsfläche (Tabelle tezg) wird aus dem Zwischenraum der befestigten Flächen ein Flächenobjekt angelegt. 
@@ -88,15 +88,18 @@ aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.
 
 Ausführliche Erläuterung zu diesem Thema: :ref:`Erzeugen von unbefestigten Flächen <createunbeffl>`
 
+Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <workflunbeffl>` zu sehen. 
+
+.. index:: Export nach HYSTEM-EXTRAN (Menü)
 
 
-.. index:: Export nach HYSTEM/EXTRAN (Menü)
-
-
-Export nach HYSTEM/EXTRAN
+Export nach HYSTEM-EXTRAN
 -------------------------
 
-Der Export funktioniert für Version 7.8 und 7.9.
+Der Export funktioniert für Version 7.8 und 7.9. Die in diesem Formular geforderte HYSTEM-EXTRAN Vorlage-Datenbank benötigt eine Regenreihe 
+mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Flächendaten haben). 
+
+Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <workflexporthe>` zu sehen.
 
 
 Tabelle zur Auswahl der zu exportierenden Daten
@@ -107,6 +110,20 @@ Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann der Export auf ausgewä
 
 .. index:: Projektlayer aktualisieren (Menü)
 
+
+Import aus HYSTEM-EXTRAN
+------------------------
+
+Der Import aus HYSTEM-EXTRAN geschieht mit Hilfe einer HE Quelldatenbank (Endung .idbf).
+
+
+Tabelle zur Auswahl der zu importierenden Daten
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann der Import auf bestimmte Datentabellen des Kanalnetzes, bestimmte Flächen 
+oder Referenztabellen beschränkt werden.
+
+Ausführliche Erläuterung zu diesem Thema: :ref:`Import aus HYSTEM-EXTRAN <datenaustimporthe>`
 
 Projektlayer aktualisieren
 --------------------------
@@ -149,6 +166,15 @@ Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdars
 
 .. _image_qkan_qgsAdapt:
 .. image:: ./QKan_Bilder/qkan_qgsAdapt.png
+
+
+Elemente des Entwässerungsnetzes einem Teilgebiet zuordnen
+----------------------------------------------------------
+
+Mit diesem Formular ist die automatische Zuordnung von Kanalnetz-Elementen zu einem Teilgebiet möglich. Dabei wird das Teilgebiet automatisch 
+in die jeweilige Spalte der Datentabellen
+
+Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <linkteilgebiete>` zu sehen.
 
 
 Allgemeine Funktionselemente in Formularen

@@ -236,6 +236,7 @@ Alle nötigen Flächendaten sind nun importiert und vorbereitet. Als nächstes s
 
 Abbildung: Planschraffur nach fertigem Import
 
+.. _workflunbeffl:
 
 Erzeugung unbefestigter Flächen
 -------------------------------
@@ -492,6 +493,8 @@ Da das Beispielprojekt keine Sonderbauwerke (z.B. Drosseln, Pumpen oder Wehre) b
 So ist die Vorlage-Datenbank nun ausreichend vorbereitet und HYSTEM-EXTRAN muss geschlossen werden.
 (HYSTEM-EXTRAN öffnet eine Datenbank exklusiv, dass heißt, dass es nicht möglich ist, gleichzeitig mit einer anderen Anwendung auf diese Datenbank zuzugreifen.
 Dies würde daher zu einer Fehlermeldung beim QKan Export führen.)
+
+.. _workflexporthe:
 
 Export nach HYSTEM-EXTRAN 8
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -277,7 +277,7 @@ die nächste Kante einer Fläche zu einer Haltung oder über den Mittelpunkt der
 Der Suchradius sollte ausreichend groß gewählt werden, sodass alle Elemente bei der Zuordnung berücksichtigt werden. Dahingegen sollte der 
 Fangradius möglichst klein sein, da sonst die Auswahl einzelner Verbindungslinien erschwert wird. Der Rest der Optionen sollte in der Regel 
 nicht verändert werden. (Ist zu befürchten, dass Flächenobjekte Fehler haben, wie z.B. doppelte Stützstellen, so sollte die Option 
-"Flächenobjekte bereinigen" zusätzlich ausgewählt werden. Das Formular kann mit :guilabel:`OK`geschlossen werden und die Verbindungslinien 
+"Flächenobjekte bereinigen" zusätzlich ausgewählt werden. Das Formular kann mit :guilabel:`OK` geschlossen werden und die Verbindungslinien 
 erscheinen nun auf dem Plan.
 
 .. image:: ./QKan_Bilder/Verbindungslinien_erstellen.png
@@ -286,7 +286,7 @@ Abbildung: Formular Verbindungslinien erstellen
 .. |Tool_verknuepfungslinien_erstellen| image:: ./QKan_Bilder/Tool_verknuepfungslinien_erstellen.png
                              :width: 1.25 em
 
-Die Zuordnung sollte visuel überprüft werden.
+Die Zuordnung sollte visuell überprüft werden.
 
 Verbindungslinien bearbeiten
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

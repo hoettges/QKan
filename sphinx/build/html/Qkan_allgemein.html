@@ -92,13 +92,16 @@
              
   <section id="was-ist-qkan">
 <h1>Was ist QKan?<a class="headerlink" href="#was-ist-qkan" title="Permalink to this heading"></a></h1>
-<p>QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu in einer SQLite-Datenbank.</p>
+<p>QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu
+in Tabellen-Struktur in einer SQLite-Datenbank. Ein Übersichtsvideo über die Funktionen von QKan ist <a href="https://fh-aachen.sciebo.de/s/CHB80Ezu6lbRfu6" target="_blank">hier</a> zu finden.</p>
 <p>QKan baut auf QGIS ab Version 3.22 auf und besteht aus einer Vielzahl von Plugins, die u.a. folgende Funktionsbereiche umfassen:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Datenimport von Kanalnetzdaten aus Tabellen und einer Vielzahl von Austauschformaten und Darstellung in QGIS.</p></li>
+<li><p>Datenimport von Kanalnetzdaten aus Tabellen und einer Vielzahl von Austauschformaten und Darstellung in QGIS</p></li>
+<li><p>Bearbeitung der Kanalnetzdaten mit üblichen QGIS-Werkzeugen in Tabellen oder Formularen</p></li>
 <li><p>Aufbereitung für die Nutzung in Simulationsprogrammen</p></li>
 <li><p>Weitergabe eines vollständigen Kanalkatasters an Nutzer, die über keine Lizenz eines Simulationsprogramms verfügen</p></li>
+<li><p>Weitergabe eines vollständigen Projektes (Projektdatei + SQLite-Datenbank) an beliebige QGIS-Nutzer</p></li>
 <li><p>Ergebnisdarstellung</p></li>
 <li><p>Darstellung von Kanalzustandsdaten und deren Auswertung nach ISYBAU oder DWA-Richtlinie</p></li>
 </ul>
@@ -106,7 +109,8 @@
 <p>Ein besonderer Schwerpunkt ist die Verarbeitung der befestigten und unbefestigten Flächen. QKan enthält eine Funktion zur automatisierten
 Zuordnung dieser Flächen zu den Haltungen, die optional beim Export in das Simulationsprogramm mit Haltungflächen verschnitten werden.
 Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilgebiete als auch automatisch für große Kanalnetze durchzuführen.</p>
-<p>Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits realisiert sind:</p>
+<p>Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits
+realisiert sind:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Kanal++/DYNA</p></li>
@@ -116,7 +120,8 @@ Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilg
 <li><p>HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)</p></li>
 </ul>
 </div></blockquote>
-<p>Grundsätzlich enthält QKan die Möglichkeit, Daten über das Clipboard in alle QKan-Tabellen einzufügen. Dabei werden automatisch grafische Objekte (Schächte, Haltungen) erzeugt.</p>
+<p>Grundsätzlich enthält QKan die Möglichkeit, Daten über das Clipboard in alle QKan-Tabellen einzufügen. Dabei werden automatisch grafische
+Objekte (Schächte, Haltungen) erzeugt.</p>
 <p>Außerdem bestehen mit den Grundfunktionen von QGIS verschiedene Möglichkeiten des Datenim- und Exports:</p>
 <blockquote>
 <div><ul class="simple">
@@ -127,8 +132,12 @@ Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilg
 <li><p>(fast) beliebige OGC-konforme Geodaten</p></li>
 </ul>
 </div></blockquote>
-<p>Wesentlicher Bestandteil von QKan ist eine Datenstruktur, die einen gemeinsamen Nenner der verschiedenen in Deutschland eingesetzten Programme darstellt. Das bedeutet insbesondere, dass die sogenannten „Sonderbauwerke“, also Speicher, Pumpen, Wehre, Drosseln, Auslässe etc. nur mit den allgemeinen Daten in QKan verwaltet werden, programmspezifische Attribute jedoch in den Daten des jeweiligen Simulationsprogramms verwaltet werden müssen.</p>
-<p>Die Daten können sowohl mit den QKan-Funktionen verarbeitet werden, gleichzeitig stehen aber auch die vielfältigen und umfassenden Funktionen von QGIS zur Verfügung. Insbesondere kann mit Hilfe der Datenbanksprache SQL beinahe jede denkbare Aufgabe realisiert werden.</p>
+<p>Wesentlicher Bestandteil von QKan ist eine Datenstruktur, die einen gemeinsamen Nenner der verschiedenen in Deutschland eingesetzten
+Programme darstellt. Das bedeutet insbesondere, dass die sogenannten „Sonderbauwerke“, also Speicher, Pumpen, Wehre, Drosseln, Auslässe
+etc. nur mit den allgemeinen Daten in QKan verwaltet werden, programmspezifische Attribute jedoch in den Daten des jeweiligen
+Simulationsprogramms verwaltet werden müssen.</p>
+<p>Die Daten können sowohl mit den QKan-Funktionen verarbeitet werden, gleichzeitig stehen aber auch die vielfältigen und umfassenden
+Funktionen von QGIS zur Verfügung. Insbesondere kann mit Hilfe der Datenbanksprache SQL beinahe jede denkbare Aufgabe realisiert werden.</p>
 <section id="grundlagen">
 <h2>Grundlagen<a class="headerlink" href="#grundlagen" title="Permalink to this heading"></a></h2>
 <p>QKan ist ein Open-Source-Projekt von <a class="reference external" href="https://www.fh-aachen.de/menschen/hoettges">Jörg Höttges</a> . Es wird seit Aug 2016 an der FH Aachen entwickelt.</p>
