@@ -5,7 +5,6 @@ Diverse Tools zur QKan-Datenbank
 """
 
 import os
-import webbrowser
 from typing import Optional, cast
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
@@ -30,6 +29,7 @@ from .dialogs.qgsadapt import QgsAdaptDialog
 from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadData
 from .dialogs.runoffparams import RunoffParamsDialog
+from .dialogs.help import QgsHelpDialog
 from .k_dbAdapt import dbAdapt
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
@@ -52,7 +52,7 @@ class QKanTools(QKanPlugin):
         self.dlgrd = ReadData(self, proceed=True)
         self.dlgrc = ReadData(self, proceed=False)
         self.dlgdb = DbAdaptDialog(self)
-        #self.dlghp = Help(self)
+        self.dlghp = QgsHelpDialog(self)
         self.iface = iface
 
     # noinspection PyPep8Naming
@@ -138,6 +138,7 @@ class QKanTools(QKanPlugin):
         self.dlgpr.close()
         self.dlgro.close()
         self.dlged.close()
+        self.dlghp.close()
         # self.dlgrd.close()                    # doesn't use a form
         self.dlgdb.close()
 
@@ -780,5 +781,14 @@ class QKanTools(QKanPlugin):
             )
 
     def run_help(self) -> None:
-        webbrowser.open('https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/index.html')
+        #TODO: Versionsnummer aus Datenbank auslesen
+
+        self.dlghp.textBrowser_2.setText('Version')
+
+        # show the dialog
+        self.dlghp.show()
+        # Run the dialog event loop
+        result = self.dlghp.exec_()
+
+
 
