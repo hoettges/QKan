@@ -22,7 +22,7 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.40"  # Version der QKan-Datenbank
+__dbVersion__ = "3.2.41"  # Version der QKan-Datenbank
 __qgsVersion__ = "3.3.2"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
@@ -124,6 +124,43 @@ def createdbtables(
 
     :returns: Testergebnis: True = alles o.k.
     """
+
+    # Notizen ----------------------------------------------------------------
+
+    sqls = [""" CREATE TABLE notizen (
+            pk INTEGER PRIMARY KEY,
+            notiz TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+        """SELECT AddGeometryColumn('notizen','geop',{},'POINT',2);""".format(epsg),
+        """SELECT CreateSpatialIndex('notizen','geop')""",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Notizen" konnte nicht erstellt werden',
+            )
+            consl.close()
+            return False
+
+    sql = f"""CREATE VIEW IF NOT EXISTS notizen_data AS 
+              SELECT
+                notiz, createdat,
+                geop
+              FROM notizen;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "notizen_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
 
     # Haltungen ----------------------------------------------------------------
 
