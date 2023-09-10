@@ -73,7 +73,7 @@ class QKan:
                 fmt="%(name)s - %(message)s",
             )
         )
-        qgis_handler.setLevel(logging.DEBUG)
+        qgis_handler.setLevel(logging.INFO)
 
         self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(file_handler)
@@ -125,7 +125,7 @@ class QKan:
         from .dynaporter import DynaPorter
         from .muporter import MuPorter
         from .swmmporter import SWMMPorter
-        # from .strakatporter import StrakatPorter
+        from .strakatporter import StrakatPorter
         from .linkflaechen import LinkFl
         from .surfaceTools import SurfaceTools
         from .isyporter import IsyPorter
@@ -143,7 +143,7 @@ class QKan:
             DynaPorter(iface),
             MuPorter(iface),
             SWMMPorter(iface),
-            # StrakatPorter(iface),
+            StrakatPorter(iface),
             LinkFl(iface),
             SurfaceTools(iface),
             IsyPorter(iface),

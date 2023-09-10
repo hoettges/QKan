@@ -3,7 +3,7 @@ import logging
 from qkan.database.dbfunc import DBConnection
 from qgis.utils import pluginDirectory
 
-VERSION = "3.2.39"
+VERSION = "3.2.39"              # must be higher than previous one
 
 logger = logging.getLogger("QKan.database.migrations")
 

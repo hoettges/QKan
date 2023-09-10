@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ImportFromHEDialogBase</class>
- <widget class="QDialog" name="ImportFromHEDialogBase">
+ <class>ImportFromSTRAKATDialogBase</class>
+ <widget class="QDialog" name="ImportFromSTRAKATDialogBase">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Hystem-Extran</string>
+   <string>QKan Import from STRAKAT</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
@@ -816,7 +816,7 @@ Datensätze importieren</string>
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>ImportFromHEDialogBase</receiver>
+   <receiver>ImportFromSTRAKATDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -832,7 +832,7 @@ Datensätze importieren</string>
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>ImportFromHEDialogBase</receiver>
+   <receiver>ImportFromSTRAKATDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

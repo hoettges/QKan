@@ -424,11 +424,17 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltung ohne Regenwasserzuleitung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Haltung ohne Regenwasserzuleitung</string>
+     </property>
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
      <property name="tristate">
       <bool>true</bool>
@@ -492,6 +498,12 @@
        <family>Tahoma</family>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="toolTip">
+      <string>Druckleitung</string>
+     </property>
+     <property name="statusTip">
+      <string>Druckleitung</string>
      </property>
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>

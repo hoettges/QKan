@@ -2,7 +2,7 @@ import logging
 
 from qkan.database.dbfunc import DBConnection
 
-VERSION = "3.2.29"
+VERSION = "3.3.2"
 
 logger = logging.getLogger("QKan.database.migrations")
 
