@@ -125,6 +125,43 @@ def createdbtables(
     :returns: Testergebnis: True = alles o.k.
     """
 
+    # Notizen ----------------------------------------------------------------
+
+    sqls = [""" CREATE TABLE notizen (
+            pk INTEGER PRIMARY KEY,
+            notiz TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+        """SELECT AddGeometryColumn('notizen','geop',{},'POINT',2);""".format(epsg),
+        """SELECT CreateSpatialIndex('notizen','geop')""",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Notizen" konnte nicht erstellt werden',
+            )
+            consl.close()
+            return False
+
+    sql = f"""CREATE VIEW IF NOT EXISTS notizen_data AS 
+              SELECT
+                notiz, createdat,
+                geop
+              FROM notizen;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "notizen_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
     # Haltungen ----------------------------------------------------------------
 
     sqls = [

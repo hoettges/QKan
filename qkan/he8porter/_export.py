@@ -789,7 +789,7 @@ class ExportTask:
                       Kommentar, 
                       Geometry)
                     SELECT 
-                      {nr0} + row_number() OVER (ORDER BY tezg.flnam) AS Id, 
+                      {nr0} + row_number() OVER (ORDER BY tg.flnam) AS Id, 
                       CASE WHEN tb.bef = 0
                         THEN printf('%s_b', tg.flnam)
                         ELSE printf('%s_u', tg.flnam) 

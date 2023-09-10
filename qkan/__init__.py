@@ -6,7 +6,7 @@ import os
 import tempfile
 from pathlib import Path
 from typing import Callable, List, Optional, cast
-
+from qgis.core import Qgis
 import qgis
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
 from qgis.PyQt.QtGui import QIcon
@@ -157,12 +157,15 @@ class QKan:
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()
+
         self.menu: Optional[QMenu] = None
         for menu in actions:
             if menu.text() == "QKan":
                 self.menu = menu.menu()
                 self.menu_action = menu
                 break
+
+        #mnuSub1 = self.menu.addMenu('Sub-menu')
 
         self.toolbar = self.iface.addToolBar("QKan")
         self.toolbar.setObjectName("QKan")
@@ -189,9 +192,57 @@ class QKan:
     def sort_actions(self) -> None:
         # Finally sort all actions
         self.actions.sort(key=lambda x: cast(str, cast(QAction, x).text().lower()))
+        list={}
+        e=0
+        for x in self.actions:
+            list[x.text()] = e
+            e+=1
+
         if self.menu:
             self.menu.clear()
-            self.menu.addActions(self.actions)
+            allgemein = self.menu.addMenu("Allgemein")
+            hyex = self.menu.addMenu("Hystem-Extran")
+            laengs = self.menu.addMenu("Längsschnitt")
+            xml = self.menu.addMenu("XML")
+            flaechen = self.menu.addMenu("Flächenverabeitung")
+            zustand = self.menu.addMenu("Zustandsbewertung")
+            dyna = self.menu.addMenu("DYNA")
+            swmm = self.menu.addMenu("SWMM")
+
+            allgemein.addAction(self.actions[list['QKan Dokumentation öffnen']])
+            allgemein.addAction(self.actions[list['Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen']])
+            allgemein.addAction(self.actions[list['Allgemeine Optionen']])
+            allgemein.addAction(self.actions[list['QKan-Datenbank aktualisieren']])
+            allgemein.addAction(self.actions[list['QKan-Projekt aktualisieren']])
+            allgemein.addAction(self.actions[list['Neue QKan-Datenbank erstellen']])
+            allgemein.addAction(self.actions[list['Projektdatei auf bestehende QKan-Datenbank übertragen']])
+            allgemein.addAction(self.actions[list['Teilgebietszuordnungen als Gruppen verwalten']])
+            allgemein.addAction(self.actions[list['Oberflächenabflussparameter eintragen']])
+            allgemein.addAction(self.actions[list['Plausibilitätsprüfungen']])
+            allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard einfügen']])
+            allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard: Zuordnung anzeigen']])
+            flaechen.addAction(self.actions[list['Erzeuge unbefestigte Flächen...']])
+            flaechen.addAction(self.actions[list['Erzeuge Voronoiflächen zu Haltungen']])
+            flaechen.addAction(self.actions[list['Entferne Überlappungen']])
+            flaechen.addAction(self.actions[list['Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen']])
+            flaechen.addAction(self.actions[list['Erzeuge Verknüpfungslinien von Flächen zu Haltungen']])
+            flaechen.addAction(self.actions[list['Verknüpfungen bereinigen']])
+            hyex.addAction(self.actions[list['Import aus Hystem-Extran 8']])
+            hyex.addAction(self.actions[list['Export nach Hystem-Extran 8']])
+            hyex.addAction(self.actions[list['Ergebnisse aus Hystem-Extran 8']])
+            dyna.addAction(self.actions[list['Import aus Mike+']])
+            dyna.addAction(self.actions[list['Import aus DYNA-Datei (*.EIN)']])
+            dyna.addAction(self.actions[list['Export in DYNA-Datei...']])
+            xml.addAction(self.actions[list['Import aus DWA-XML']])
+            xml.addAction(self.actions[list['Import aus ISYBAU-XML']])
+            xml.addAction(self.actions[list['Export nach ISYBAU-XML']])
+            swmm.addAction(self.actions[list['Import von SWMM-Datei (*.INP)']])
+            swmm.addAction(self.actions[list['Export nach SWMM-Datei (*.INP)']])
+            laengs.addAction(self.actions[list['Laengsschnitt']])
+            laengs.addAction(self.actions[list['Längsschnitt-Tool für HE8']])
+            laengs.addAction(self.actions[list['Ganglinien-Tool für HE8']])
+            zustand.addAction(self.actions[list['Zustandsklassen ermitteln']])
+            zustand.addAction(self.actions[list['Sanierungsbedarfszahl ermitteln']])
 
     def unload(self) -> None:
         from qgis.utils import unloadPlugin

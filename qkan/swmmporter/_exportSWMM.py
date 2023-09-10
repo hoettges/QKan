@@ -886,6 +886,7 @@ class ExportTask:
                 pass
 
     def xsection(self):
+        #TODO: wehre ergänzen
 
         if QKan.config.check_export.haltungen:
 
@@ -897,7 +898,7 @@ class ExportTask:
 
             sql = f"""
                 SELECT
-                    haltnam AS name, schoben AS schoben, schunten AS schunten, laenge, ks, haltungstyp
+                    haltnam AS name, breite AS breite, hoehe AS hoehe
                 FROM
                     haltungen
                 WHERE lower(haltungstyp) = 'haltung'{auswahl}
@@ -909,21 +910,23 @@ class ExportTask:
 
             for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
+                shape = 'Circular'
 
                 (
                     name_t,
-                    schoben,
-                    schunten,
-                    laenge,
-                    ks,
-                    haltungstyp,
+                    breite,
+                    hoehe,
                 ) = [0 if el is None else el for el in b]
 
                 name = "" if name_t == 0 else name_t.replace(" ", "_")
 
+                if breite != hoehe:
+                    shape = 'Rectangular'
+
                 dataxs += (
-                    f"{name:<16s} {schoben:<16s}{schunten:<<16s}{laenge:<10.3f}{ks:<10.3f}  0          0          1                    \n"
+                    f"{name:<16s} {shape:<13s}{breite:<17.3f}{hoehe:<10.3f} 0          0          1                    \n"
                 )
+
 
             if self.status == 'append' or self.status == 'update':
                 self.insertfunk("[XSECTIONS]", dataxs)
