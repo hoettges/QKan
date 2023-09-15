@@ -1,5 +1,7 @@
 import logging, os
 from struct import unpack
+from qgis.core import Qgis
+from qgis.PyQt.QtWidgets import QProgressBar
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
@@ -23,20 +25,35 @@ class ImportTask:
 
     def run(self) -> bool:
 
+        iface = QKan.instance.iface
+
+        # Create progress bar
+        self.progress_bar = QProgressBar(iface.messageBar())
+        self.progress_bar.setRange(0, 100)
+
+        status_message = iface.messageBar().createMessage(
+            "", "Import aus STRAKAT läuft. Bitte warten..."
+        )
+        status_message.layout().addWidget(self.progress_bar)
+        iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+
         result = all(
             [
                 self._strakat_kanaltabelle(),
                 self._strakat_reftables(),
+                self._strakat_hausanschl(),
                 # self._strakat_berichte(),
-                # self._strakat_hausanschl(),
                 self._reftables(),
                 self._schaechte(),
                 self._haltungen(),
-                # self._anschlussleitungen(),
+                self._anschlussleitungen(),
                 # self._schachtschaeden(),
                 # self._haltungsschaeden(),
             ]
         )
+
+        self.progress_bar.setValue(100)
+        status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
 
         return result
 
@@ -119,7 +136,7 @@ class ImportTask:
         blength = 1024                      # Blocklänge in der STRAKAT-Datei
         with open(os.path.join(self.strakatdir, 'kanal.rwtopen'), 'rb') as fo:
             _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
-            for n in range(1000000):
+            for n in range(1, 1000000):
                 """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
                 b = fo.read(blength)
                 if not b:
@@ -155,7 +172,7 @@ class ImportTask:
                 (
                     deckel_oben_v, deckel_oben_g, deckel_unten_v, deckel_unten_g,
                     sohle_oben___v, sohle_oben___g, sohle_unten__v, sohle_unten__g
-                ) = unpack('d' * 8, b[202:266])
+                ) = unpack('ffffffff', b[202:234])
 
                 (
                     sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4, sohle_zufluss5, sohle_zufluss6,
@@ -271,6 +288,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        self.progress_bar.setValue(20)
+
         return True
 
     def _strakat_reftables(self) -> bool:
@@ -327,7 +346,7 @@ class ImportTask:
         blength = 128                       # Blocklänge in der STRAKAT-Datei
         with open(os.path.join(self.strakatdir, 'system', 'referenztabelle.strakat'), 'rb') as fo:
             idvor = -1                          # Erkennung eines neuen Tabellentyps
-            for n in range(1000000):
+            for n in range(1, 1000000):
                 """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
                 b = fo.read(blength)
 
@@ -383,20 +402,144 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        self.progress_bar.setValue(40)
+
         return True
 
     def _strakat_hausanschl(self) -> bool:
         """Import der Hausanschlussdaten aus der STRAKAT-Datei 'haus.rwtopen', ACCESS-Tabelle 'HAUSANSCHLUSSTABELLE'
         """
 
-        sql = """
-        """
+        # Erstellung Tabelle t_strakathausanschluesse
+        sql = "PRAGMA table_list('t_strakathausanschluesse')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_strakathausanschluesse', vorhanden ist"):
+            return False                                        # Abbruch weil Anfrage fehlgeschlagen
+        if not self.db_qkan.fetchone():
+            sql = """ 
+            CREATE TABLE IF NOT EXISTS t_strakathausanschluesse (
+                pk INTEGER PRIMARY KEY,
+                nummer INTEGER,
+                nextnum INTEGER,
+                x1 REAL,
+                x2 REAL,
+                x3 REAL,
+                x4 REAL,
+                x5 REAL,
+                x6 REAL,
+                x7 REAL,
+                x8 REAL,
+                x9 REAL,
+                y1 REAL,
+                y2 REAL,
+                y3 REAL,
+                y4 REAL,
+                y5 REAL,
+                y6 REAL,
+                y7 REAL,
+                y8 REAL,
+                y9 REAL,
+                rohrbreite REAL,
+                berichtnr INTEGER,
+                anschlusshalnr INTEGER,
+                anschlusshalname TEXT,
+                haschob TEXT,
+                haschun TEXT,
+                urstation REAL,
+                strakatid TEXT,
+                hausanschlid TEXT
+            )"""
 
-        params = {}
-        if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
-            return False
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakathausanschluesse"'):
+                return False
+
+        # Datei haus.rwtopen einlesen und in Tabelle schreiben
+        blength = 640                      # Blocklänge in der STRAKAT-Datei
+        with open(os.path.join(self.strakatdir, 'haus.rwtopen'), 'rb') as fo:
+            _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
+            for nummer in range(1, 1000000):
+                """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
+                b = fo.read(blength)
+                if not b or len(b) < blength:
+                    break
+                (x1, x2, x3, x4, x5, x6, x7, x8, x9) = unpack('ddddddddd', b[20:92])
+                (y1, y2, y3, y4, y5, y6, y7, y8, y9) = unpack('ddddddddd', b[100:172])
+                # d1, d2, d3, d4, d5, d6, d7, d8, d9 = unpack('fffffffff', b[220:256])
+
+                rohrbreite = unpack('f', b[220:224])[0]  # nur erste von 9 Rohrbreiten lesen
+
+                berichtnr = unpack('i', b[299:303])[0]
+                anschlusshalnr = unpack('i', b[303:307])[0]
+                nextnum = unpack('i', b[311:315])[0]
+
+                haschob = unpack('20s', b[326:346])[0].replace(b'\x00', b' ').decode('ansi').strip()
+                haschun = unpack('20s', b[362:382])[0].replace(b'\x00', b' ').decode('ansi').strip()
+
+                urstation = unpack('f', b[515:519])[0]
+
+                anschlusshalname = unpack('20s', b[611:631])[0].replace(b'\x00', b' ').decode('ansi').strip()
+
+                (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
+                 ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[524:540])]
+                strakatid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
+                (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
+                 ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[540:556])]
+                hausanschlid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
+
+                params = {
+                    'nummer': nummer, 'nextnum': nextnum,
+                    'x1': x1, 'x2': x2, 'x3': x3,
+                    'x4': x4, 'x5': x5, 'x6': x6,
+                    'x7': x7, 'x8': x8, 'x9': x9,
+                    'y1': y1, 'y2': y2, 'y3': y3,
+                    'y4': y4, 'y5': y5, 'y6': y6,
+                    'y7': y7, 'y8': y8, 'y9': y9,
+                    'rohrbreite': rohrbreite,
+                    'berichtnr': berichtnr,
+                    'anschlusshalnr': anschlusshalnr, 'anschlusshalname': anschlusshalname,
+                    'haschob': haschob, 'haschun': haschun, 'urstation': urstation,
+                    'strakatid': strakatid, 'hausanschlid': hausanschlid,
+                }
+
+                sql = """INSERT INTO t_strakathausanschluesse (
+                    nummer, nextnum,
+                    x1, x2, x3,
+                    x4, x5, x6,
+                    x7, x8, x9,
+                    y1, y2, y3,
+                    y4, y5, y6,
+                    y7, y8, y9,
+                    rohrbreite,
+                    berichtnr,
+                    anschlusshalnr, anschlusshalname,
+                    haschob, haschun, urstation,
+                    strakatid, hausanschlid
+                )
+                VALUES (
+                    :nummer, :nextnum,
+                    :x1, :x2, :x3,
+                    :x4, :x5, :x6,
+                    :x7, :x8, :x9,
+                    :y1, :y2, :y3,
+                    :y4, :y5, :y6,
+                    :y7, :y8, :y9,
+                    :rohrbreite,
+                    :berichtnr,
+                    :anschlusshalnr, :anschlusshalname,
+                    :haschob, :haschun, :urstation,
+                    :strakatid, :hausanschlid
+                )"""
+
+                if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
+                    logger.error('Fehler beim Lesen der Datei "haus.rwtopen"')
+                    return False
+            else:
+                logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nicht '
+                             'ordnungsgemäß abgeschlossen!"')
+                return False
 
         self.db_qkan.commit()
+
+        self.progress_bar.setValue(60)
 
         return True
 
@@ -627,6 +770,9 @@ class ImportTask:
             return False
 
         self.db_qkan.commit()
+
+        self.progress_bar.setValue(70)
+
         return True
 
         # Liste der Kanalarten entspricht im Wesentlichen der QKan-Tabelle 'Entwässerungsarten'
@@ -728,6 +874,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        self.progress_bar.setValue(80)
+
         return True
 
     def _haltungen(self) -> bool:
@@ -815,19 +963,95 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        self.progress_bar.setValue(90)
+
         return True
 
     def _anschlussleitungen(self) -> bool:
-        """Import der STRAKAT-Tabelle KANALTABELLE"""
+        """Import der STRAKAT-Tabelle anschlussleitungen"""
 
         sql = """
-        """
+            WITH lo AS (
+                SELECT
+                    h.pk, 
+                    0 AS n, 
+                MakePoint(k.[rw_gerinne_u]+(k.[rw_gerinne_o]-k.[rw_gerinne_u])*h.urstation/
+                    sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
+                          k.[hw_gerinne_u]+(k.[hw_gerinne_o]-k.[hw_gerinne_u])*h.urstation/
+                    sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
+                    :epsg) AS p
+                FROM t_strakathausanschluesse AS h
+                JOIN t_strakatkanal AS k ON k.nummer = h.anschlusshalnr
+                UNION
+                SELECT pk, 1 AS n, Makepoint(x1, y1, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x1 > 1
+                UNION 
+                SELECT pk, 2 AS n, Makepoint(x2, y2, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x2 > 1
+                UNION 
+                SELECT pk, 3 AS n, Makepoint(x3, y3, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x3 > 1
+                UNION 
+                SELECT pk, 4 AS n, Makepoint(x4, y4, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x4 > 1
+                UNION 
+                SELECT pk, 5 AS n, Makepoint(x5, y5, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x5 > 1
+                UNION 
+                SELECT pk, 6 AS n, Makepoint(x6, y6, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x6 > 1
+                UNION 
+                SELECT pk, 7 AS n, Makepoint(x7, y7, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x7 > 1
+                UNION 
+                SELECT pk, 8 AS n, Makepoint(x8, y8, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x8 > 1
+                UNION 
+                SELECT pk, 9 AS n, Makepoint(x9, y9, :epsg) AS p
+                FROM t_strakathausanschluesse
+                WHERE x9 > 1
+            ),
+            lp AS (
+            SELECT pk, p
+            FROM lo
+            ORDER BY n
+            )
+            INSERT INTO anschlussleitungen (leitnam, schoben, schunten, 
+                hoehe, breite, 
+                simstatus, kommentar, geom)
+            SELECT
+                CASE WHEN Trim(ha.anschlusshalname) = ''
+                THEN replace(printf('ha_%d', 1000000 + ha.nummer), 'ha_1', 'ha')
+                ELSE Trim(ha.anschlusshalname)
+                END                         AS leitnam,
+                Trim(ha.haschob)            AS schoben,
+                Trim(ha.haschun)            AS schunten,
+                ha.rohrbreite/1000.         AS hoehe,
+                ha.rohrbreite/1000.         AS breite,
+                'vorhanden'                 AS simstatus,
+                'QKan-STRAKAT-Import'       AS kommentar,
+                MakeLine(lp.p)          AS geom
+            FROM
+                t_strakathausanschluesse AS ha
+                JOIN lp USING (pk)
+			GROUP BY pk"""
 
-        params = {}
-        if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
+        params = {"epsg": self.epsg}
+
+        if not self.db_qkan.sql(sql, "strakat_import anschlussleitungen", params):
             return False
 
         self.db_qkan.commit()
+
+        self.progress_bar.setValue(98)
 
         return True
 

@@ -130,7 +130,7 @@ class QKan:
         from .surfaceTools import SurfaceTools
         from .isyporter import IsyPorter
         from .m145porter import M145Porter
-        from .ganglinienhe8 import GanglinienHE8
+        # from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
         from .zustandsklassen import zustandsklassen
         from .sanierungsbedarfszahl import sanierungsbedarfszahl
@@ -148,7 +148,7 @@ class QKan:
             SurfaceTools(iface),
             IsyPorter(iface),
             M145Porter(iface),
-            GanglinienHE8(iface),
+            # GanglinienHE8(iface),
             Plausi(iface),
             zustandsklassen(iface),
             sanierungsbedarfszahl(iface),
@@ -202,35 +202,37 @@ class QKan:
             self.menu.clear()
             allgemein = self.menu.addMenu("Allgemein")
             hyex = self.menu.addMenu("Hystem-Extran")
-            laengs = self.menu.addMenu("Längsschnitt")
             xml = self.menu.addMenu("XML")
+            dyna = self.menu.addMenu("DYNA")
+            mike = self.menu.addMenu("Mike+")
+            swmm = self.menu.addMenu("SWMM")
+            strakat = self.menu.addMenu("STRAKAT")
             flaechen = self.menu.addMenu("Flächenverabeitung")
             zustand = self.menu.addMenu("Zustandsbewertung")
-            dyna = self.menu.addMenu("DYNA")
-            swmm = self.menu.addMenu("SWMM")
 
             allgemein.addAction(self.actions[list['QKan Dokumentation öffnen']])
-            allgemein.addAction(self.actions[list['Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen']])
             allgemein.addAction(self.actions[list['Allgemeine Optionen']])
             allgemein.addAction(self.actions[list['QKan-Datenbank aktualisieren']])
             allgemein.addAction(self.actions[list['QKan-Projekt aktualisieren']])
             allgemein.addAction(self.actions[list['Neue QKan-Datenbank erstellen']])
             allgemein.addAction(self.actions[list['Projektdatei auf bestehende QKan-Datenbank übertragen']])
-            allgemein.addAction(self.actions[list['Teilgebietszuordnungen als Gruppen verwalten']])
-            allgemein.addAction(self.actions[list['Oberflächenabflussparameter eintragen']])
             allgemein.addAction(self.actions[list['Plausibilitätsprüfungen']])
             allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard einfügen']])
             allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard: Zuordnung anzeigen']])
+            allgemein.addAction(self.actions[list['Laengsschnitt']])
             flaechen.addAction(self.actions[list['Erzeuge unbefestigte Flächen...']])
             flaechen.addAction(self.actions[list['Erzeuge Voronoiflächen zu Haltungen']])
             flaechen.addAction(self.actions[list['Entferne Überlappungen']])
+            flaechen.addAction(self.actions[list['Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen']])
+            flaechen.addAction(self.actions[list['Teilgebietszuordnungen als Gruppen verwalten']])
             flaechen.addAction(self.actions[list['Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen']])
             flaechen.addAction(self.actions[list['Erzeuge Verknüpfungslinien von Flächen zu Haltungen']])
             flaechen.addAction(self.actions[list['Verknüpfungen bereinigen']])
+            flaechen.addAction(self.actions[list['Oberflächenabflussparameter eintragen']])
             hyex.addAction(self.actions[list['Import aus Hystem-Extran 8']])
             hyex.addAction(self.actions[list['Export nach Hystem-Extran 8']])
             hyex.addAction(self.actions[list['Ergebnisse aus Hystem-Extran 8']])
-            dyna.addAction(self.actions[list['Import aus Mike+']])
+            mike.addAction(self.actions[list['Import aus Mike+']])
             dyna.addAction(self.actions[list['Import aus DYNA-Datei (*.EIN)']])
             dyna.addAction(self.actions[list['Export in DYNA-Datei...']])
             xml.addAction(self.actions[list['Import aus DWA-XML']])
@@ -238,11 +240,11 @@ class QKan:
             xml.addAction(self.actions[list['Export nach ISYBAU-XML']])
             swmm.addAction(self.actions[list['Import von SWMM-Datei (*.INP)']])
             swmm.addAction(self.actions[list['Export nach SWMM-Datei (*.INP)']])
-            laengs.addAction(self.actions[list['Laengsschnitt']])
-            laengs.addAction(self.actions[list['Längsschnitt-Tool für HE8']])
-            laengs.addAction(self.actions[list['Ganglinien-Tool für HE8']])
+            # laengs.addAction(self.actions[list['Längsschnitt-Tool für HE8']])
+            # laengs.addAction(self.actions[list['Ganglinien-Tool für HE8']])
             zustand.addAction(self.actions[list['Zustandsklassen ermitteln']])
             zustand.addAction(self.actions[list['Sanierungsbedarfszahl ermitteln']])
+            strakat.addAction(self.actions[list['Import aus STRAKAT']])
 
     def unload(self) -> None:
         from qgis.utils import unloadPlugin

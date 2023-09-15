@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="Nora" projectname="QKan Version 3.3.2" version="3.22.7-Białowieża" saveUserFull="Nora Blase" saveDateTime="2023-09-01T18:02:46">
+<qgis saveUser="Nora" projectname="QKan Version 3.3.3" version="3.22.7-Białowieża" saveUserFull="Nora Blase" saveDateTime="2023-09-01T18:02:46">
   <homePath path=""/>
-  <title>QKan Version 3.3.2</title>
+  <title>QKan Version 3.3.3</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -23,39 +23,41 @@
       <Option/>
     </customproperties>
     <layer-tree-group checked="Qt::Checked" expanded="1" name="QKan">
-      <customproperties>
-        <Option/>
-      </customproperties>
-      <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;notizen&quot; (geop)" checked="Qt::Checked" expanded="1" id="notizen_44ce74cb_9331_498b_b3eb_21297d3bc559" name="notizen">
+      <layer-tree-group checked="Qt::Checked" expanded="1" name="Allgemein">
         <customproperties>
           <Option/>
         </customproperties>
-      </layer-tree-layer>
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;notizen&quot; (geom)" checked="Qt::Checked" expanded="1" id="notizen_44ce74cb_9331_498b_b3eb_21297d3bc559" name="notizen">
+          <customproperties>
+            <Option/>
+          </customproperties>
+        </layer-tree-layer>
+      </layer-tree-group>
       <layer-tree-group checked="Qt::Checked" expanded="1" name="Schächte">
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" checked="Qt::Checked" expanded="0" id="schaechte20161220162259105" name="Schächte">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" checked="Qt::Checked" expanded="0" id="schaechte20161220162259105" name="Schächte">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" checked="Qt::Checked" expanded="1" id="Speicher_Kopie20161221080207994" name="Auslässe">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" checked="Qt::Checked" expanded="1" id="Speicher_Kopie20161221080207994" name="Auslässe">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" checked="Qt::Checked" expanded="1" id="schaechte_Kopie20161221075653754" name="Speicher">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" checked="Qt::Checked" expanded="1" id="schaechte_Kopie20161221075653754" name="Speicher">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schaechte&quot; (geop)" checked="Qt::Unchecked" expanded="0" id="schaechte_Kopie20161204084617148" name="Knotentyp">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geop)" checked="Qt::Unchecked" expanded="0" id="schaechte_Kopie20161204084617148" name="Knotentyp">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schaechte&quot; (geom)" checked="Qt::Unchecked" expanded="1" id="schaechte20161016203756252" name="Knotenpunkte">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geom)" checked="Qt::Unchecked" expanded="1" id="schaechte20161016203756252" name="Knotenpunkte">
           <customproperties>
             <Option/>
           </customproperties>
@@ -65,14 +67,14 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" checked="Qt::Checked" expanded="0" id="haltungen20161016203756230" name="Haltungen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" checked="Qt::Checked" expanded="0" id="haltungen20161016203756230" name="Haltungen">
           <customproperties>
             <Option type="Map">
               <Option type="invalid" name="expandedLegendNodes"/>
             </Option>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;anschlussleitungen&quot; (geom)" checked="Qt::Checked" expanded="1" id="anschlussleitungen_920de3f5_da30_411a_a85a_8f9a25d53312" name="Anschlussleitungen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;anschlussleitungen&quot; (geom)" checked="Qt::Checked" expanded="1" id="anschlussleitungen_920de3f5_da30_411a_a85a_8f9a25d53312" name="Anschlussleitungen">
           <customproperties>
             <Option/>
           </customproperties>
@@ -82,37 +84,37 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Drossel'" checked="Qt::Checked" expanded="1" id="haltungen_207f9ebd_6ea3_471f_b2d6_f8075b271b18" name="Drosseln">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Drossel'" checked="Qt::Checked" expanded="1" id="haltungen_207f9ebd_6ea3_471f_b2d6_f8075b271b18" name="Drosseln">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Schieber'" checked="Qt::Checked" expanded="1" id="Drosseln_fbf0962b_83f8_4716_9e1d_81e730cc38c8" name="Schieber">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Schieber'" checked="Qt::Checked" expanded="1" id="Drosseln_fbf0962b_83f8_4716_9e1d_81e730cc38c8" name="Schieber">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'GrundSeitenauslass'" checked="Qt::Checked" expanded="1" id="Schieber_a55e1f5b_c607_42b6_ac36_7a95ac6d12c2" name="Grund-/Seitenauslässe">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'GrundSeitenauslass'" checked="Qt::Checked" expanded="1" id="Schieber_a55e1f5b_c607_42b6_ac36_7a95ac6d12c2" name="Grund-/Seitenauslässe">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'H-Regler'" checked="Qt::Checked" expanded="1" id="Schieber_01cd099d_d829_448e_a928_ffc1040ce5dd" name="H-Regler">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'H-Regler'" checked="Qt::Checked" expanded="1" id="Schieber_01cd099d_d829_448e_a928_ffc1040ce5dd" name="H-Regler">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Q-Regler'" checked="Qt::Checked" expanded="1" id="H_Regler_57813400_9ca1_47b5_a8c4_12a9903c1eb9" name="Q-Regler">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Q-Regler'" checked="Qt::Checked" expanded="1" id="H_Regler_57813400_9ca1_47b5_a8c4_12a9903c1eb9" name="Q-Regler">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Pumpe'" checked="Qt::Checked" expanded="1" id="Q_Regler_583cb538_0769_4e29_854e_673651cf1dc8" name="Pumpen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Pumpe'" checked="Qt::Checked" expanded="1" id="Q_Regler_583cb538_0769_4e29_854e_673651cf1dc8" name="Pumpen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Wehr'" checked="Qt::Checked" expanded="1" id="Pumpen_ff594268_95b1_4bc1_a517_1fdcbebaf19c" name="Wehre">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Wehr'" checked="Qt::Checked" expanded="1" id="Pumpen_ff594268_95b1_4bc1_a517_1fdcbebaf19c" name="Wehre">
           <customproperties>
             <Option/>
           </customproperties>
@@ -122,22 +124,22 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;linkfl&quot; (glink)" checked="Qt::Checked" expanded="1" id="Anbindung20170920132347429" name="Anbindungen Flächen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;linkfl&quot; (glink)" checked="Qt::Checked" expanded="1" id="Anbindung20170920132347429" name="Anbindungen Flächen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;teilgebiete&quot; (geom)" checked="Qt::Checked" expanded="1" id="Teilgebiete_786fa926_704f_4cb1_bc67_eb8571f2f6c0" name="Teilgebiete">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;teilgebiete&quot; (geom)" checked="Qt::Checked" expanded="1" id="Teilgebiete_786fa926_704f_4cb1_bc67_eb8571f2f6c0" name="Teilgebiete">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;tezg&quot; (geom)" checked="Qt::Checked" expanded="1" id="Haltungsflächen_38cc9a58_a57d_487e_bbac_6000457b0748" name="Haltungsflächen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;tezg&quot; (geom)" checked="Qt::Checked" expanded="1" id="Haltungsflächen_38cc9a58_a57d_487e_bbac_6000457b0748" name="Haltungsflächen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;flaechen&quot; (geom)" checked="Qt::Checked" expanded="0" id="Flächen_2449ac97_6c2e_49df_96bc_5b9cc1d96e2c" name="Flächen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;flaechen&quot; (geom)" checked="Qt::Checked" expanded="0" id="Flächen_2449ac97_6c2e_49df_96bc_5b9cc1d96e2c" name="Flächen">
           <customproperties>
             <Option/>
           </customproperties>
@@ -147,12 +149,12 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;einleit&quot; (geom)" checked="Qt::Checked" expanded="1" id="einleit20171004110830029" name="Direkteinleitungen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;einleit&quot; (geom)" checked="Qt::Checked" expanded="1" id="einleit20171004110830029" name="Direkteinleitungen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;linksw&quot; (glink)" checked="Qt::Checked" expanded="1" id="Anbindungen_Direkteinleitungen_e3cf7f26_ce12_4d64_aca5_2d557b56cd0c" name="Anbindungen Direkteinleitungen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;linksw&quot; (glink)" checked="Qt::Checked" expanded="1" id="Anbindungen_Direkteinleitungen_e3cf7f26_ce12_4d64_aca5_2d557b56cd0c" name="Anbindungen Direkteinleitungen">
           <customproperties>
             <Option/>
           </customproperties>
@@ -162,12 +164,12 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;aussengebiete&quot; (geom)" checked="Qt::Checked" expanded="1" id="aussengebiete_f10e164f_ca69_4195_a242_7885980a6eae" name="Außengebiete">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;aussengebiete&quot; (geom)" checked="Qt::Checked" expanded="1" id="aussengebiete_f10e164f_ca69_4195_a242_7885980a6eae" name="Außengebiete">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;linkageb&quot; (glink)" checked="Qt::Checked" expanded="1" id="linkageb_909dd60e_8c02_42d6_bb33_7e4cc1b5f81d" name="Anbindungen Außengebiete">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;linkageb&quot; (glink)" checked="Qt::Checked" expanded="1" id="linkageb_909dd60e_8c02_42d6_bb33_7e4cc1b5f81d" name="Anbindungen Außengebiete">
           <customproperties>
             <Option/>
           </customproperties>
@@ -177,22 +179,22 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schaechte_untersucht&quot; (geop)" checked="Qt::Checked" expanded="1" id="schaechte_untersucht_057f1e2b_23bd_4c9b_b3d6_15bb6eedc796" name="Schächte untersucht">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schaechte_untersucht&quot; (geop)" checked="Qt::Checked" expanded="1" id="schaechte_untersucht_057f1e2b_23bd_4c9b_b3d6_15bb6eedc796" name="Schächte untersucht">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;untersuchdat_schacht&quot; (geop)" checked="Qt::Checked" expanded="1" id="Untersuchdat_schacht_2cb42d68_83d5_4574_932c_36fe3ccc7135" name="Untersuchungsdaten Schacht">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;untersuchdat_schacht&quot; (geop)" checked="Qt::Checked" expanded="1" id="Untersuchdat_schacht_2cb42d68_83d5_4574_932c_36fe3ccc7135" name="Untersuchungsdaten Schacht">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;haltungen_untersucht&quot; (geom)" checked="Qt::Checked" expanded="0" id="haltungen_untersucht_aa82edb8_17a1_46de_9c85_52ebc93a3d0d" name="Haltungen untersucht">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;haltungen_untersucht&quot; (geom)" checked="Qt::Checked" expanded="0" id="haltungen_untersucht_aa82edb8_17a1_46de_9c85_52ebc93a3d0d" name="Haltungen untersucht">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;untersuchdat_haltung&quot; (geom)" checked="Qt::Checked" expanded="0" id="Untersuchdat_haltung_a6c1b54a_8938_44e9_b4a6_9b9f7c4f76b0" name="Untersuchungsdaten Haltung">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;untersuchdat_haltung&quot; (geom)" checked="Qt::Checked" expanded="0" id="Untersuchdat_haltung_a6c1b54a_8938_44e9_b4a6_9b9f7c4f76b0" name="Untersuchungsdaten Haltung">
           <customproperties>
             <Option/>
           </customproperties>
@@ -202,57 +204,57 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;entwaesserungsarten&quot;" checked="Qt::Checked" expanded="1" id="entwaesserungsarten20161018090806784" name="Entwässerungsarten">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;entwaesserungsarten&quot;" checked="Qt::Checked" expanded="1" id="entwaesserungsarten20161018090806784" name="Entwässerungsarten">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;pumpentypen&quot;" checked="Qt::Checked" expanded="1" id="pumpentypen20161018090730556" name="Pumpentypen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;pumpentypen&quot;" checked="Qt::Checked" expanded="1" id="pumpentypen20161018090730556" name="Pumpentypen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;profile&quot;" checked="Qt::Checked" expanded="1" id="profile20161018090721921" name="Profile">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;profile&quot;" checked="Qt::Checked" expanded="1" id="profile20161018090721921" name="Profile">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;auslasstypen&quot;" checked="Qt::Checked" expanded="1" id="auslasstypen20161201095045204" name="Auslasstypen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;auslasstypen&quot;" checked="Qt::Checked" expanded="1" id="auslasstypen20161201095045204" name="Auslasstypen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;simulationsstatus&quot;" checked="Qt::Checked" expanded="0" id="simulationsstatus20161201095050780" name="Planungsstatus">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;simulationsstatus&quot;" checked="Qt::Checked" expanded="0" id="simulationsstatus20161201095050780" name="Planungsstatus">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;bodenklassen&quot;" checked="Qt::Checked" expanded="1" id="bodenklassen20170516122309914" name="Bodenklassen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;bodenklassen&quot;" checked="Qt::Checked" expanded="1" id="bodenklassen20170516122309914" name="Bodenklassen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;abflussparameter&quot;" checked="Qt::Checked" expanded="1" id="Abflussparameter_KP_e16f4a36_8f43_4398_a67c_53cbd2e8d3e9" name="Abflussparameter">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;abflussparameter&quot;" checked="Qt::Checked" expanded="1" id="Abflussparameter_KP_e16f4a36_8f43_4398_a67c_53cbd2e8d3e9" name="Abflussparameter">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;abflusstypen&quot;" checked="Qt::Checked" expanded="1" id="abflusstypen_b1368d23_11b7_4b53_86a9_44feb5d66c5f" name="Abflusstypen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;abflusstypen&quot;" checked="Qt::Checked" expanded="1" id="abflusstypen_b1368d23_11b7_4b53_86a9_44feb5d66c5f" name="Abflusstypen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;knotentypen&quot;" checked="Qt::Checked" expanded="1" id="knotentypen_52223d4a_7631_4169_b6e4_0fa742c73d3c" name="Knotentypen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;knotentypen&quot;" checked="Qt::Checked" expanded="1" id="knotentypen_52223d4a_7631_4169_b6e4_0fa742c73d3c" name="Knotentypen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;schachttypen&quot;" checked="Qt::Checked" expanded="1" id="schachttypen_4be33fc7_32a2_4f96_b120_4253af1bd597" name="Schachttypen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;schachttypen&quot;" checked="Qt::Checked" expanded="1" id="schachttypen_4be33fc7_32a2_4f96_b120_4253af1bd597" name="Schachttypen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;flaechentypen&quot;" checked="Qt::Checked" expanded="1" id="flaechentypen_ca71f66a_50bb_41cb_86df_8046fae64926" name="Flächentypen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="0,0" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;flaechentypen&quot;" checked="Qt::Checked" expanded="1" id="flaechentypen_ca71f66a_50bb_41cb_86df_8046fae64926" name="Flächentypen">
           <customproperties>
             <Option/>
           </customproperties>
@@ -262,12 +264,12 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;pruefliste&quot;" checked="Qt::Checked" expanded="1" id="Fehlerliste_40e8abd8_6a45_4509_99a4_ee2cc507f346" name="Fehlerliste">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;pruefliste&quot;" checked="Qt::Checked" expanded="1" id="Fehlerliste_40e8abd8_6a45_4509_99a4_ee2cc507f346" name="Fehlerliste">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='C:/Users/Nora/Desktop/Test_zustandsklassse_sanierungsbedarf/Validierung_Zustandsklassen/demo.sqlite' table=&quot;pruefsql&quot;" checked="Qt::Checked" expanded="1" id="Plausibilitätsprüfungen_fceb60e7_099b_4aaa_8c0f_1cf2e6b99ff5" name="Plausibilitätsprüfungen">
+        <layer-tree-layer providerKey="spatialite" legend_exp="" patch_size="-1,-1" legend_split_behavior="0" source="dbname='./demo.sqlite' table=&quot;pruefsql&quot;" checked="Qt::Checked" expanded="1" id="Plausibilitätsprüfungen_fceb60e7_099b_4aaa_8c0f_1cf2e6b99ff5" name="Plausibilitätsprüfungen">
           <customproperties>
             <Option/>
           </customproperties>
@@ -23850,7 +23852,7 @@ def my_form_open(dialog, layer, feature):
         <rules key="{f8d17c1f-c219-4858-b7c3-0dbc2b817264}">
           <rule key="{ee0df292-6a24-4ded-80bc-2401d543099d}" description="Beschriftung Kreisquerschnitt 1:1000" scalemaxdenom="1000">
             <settings calloutType="simple">
-              <text-style fontStrikeout="0" fieldName="&quot;haltnam&quot; || '  -  ' || &quot;profilnam&quot;  || '  -  ' ||'DN ' || ( &quot;hoehe&quot; * 1000) || '  -  ' || round(((( &quot;schoben&quot; - &quot;schunten&quot; ) /  &quot;laenge&quot; )*1000),1) || ' ‰'" fontSize="9" fontSizeMapUnitScale="3x:0,0,0,0,0,0" namedStyle="Standard" fontUnderline="0" textColor="0,0,0,255" textOrientation="horizontal" multilineHeight="1" fontWeight="50" isExpression="1" textOpacity="1" fontItalic="0" fontSizeUnit="Point" previewBkgrdColor="255,255,255,255" allowHtml="0" fontKerning="1" legendString="Aa" fontLetterSpacing="0" useSubstitutions="0" capitalization="0" blendMode="0" fontWordSpacing="0" fontFamily="MS Shell Dlg 2">
+              <text-style fontStrikeout="0" fieldName="&quot;haltnam&quot; || '  -  ' || &quot;profilnam&quot;  || '  -  ' ||'DN ' || ( &quot;hoehe&quot; * 1000) || '  -  ' || round(((( &quot;sohleoben&quot; - &quot;sohleunten&quot; ) /  &quot;laenge&quot; )*1000),1) || ' ‰'" fontSize="9" fontSizeMapUnitScale="3x:0,0,0,0,0,0" namedStyle="Standard" fontUnderline="0" textColor="0,0,0,255" textOrientation="horizontal" multilineHeight="1" fontWeight="50" isExpression="1" textOpacity="1" fontItalic="0" fontSizeUnit="Point" previewBkgrdColor="255,255,255,255" allowHtml="0" fontKerning="1" legendString="Aa" fontLetterSpacing="0" useSubstitutions="0" capitalization="0" blendMode="0" fontWordSpacing="0" fontFamily="MS Shell Dlg 2">
                 <families/>
                 <text-buffer bufferColor="255,255,255,255" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferNoFill="0" bufferOpacity="1" bufferSize="1" bufferBlendMode="0" bufferDraw="1" bufferSizeUnits="MM" bufferJoinStyle="64"/>
                 <text-mask maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskSize="0" maskOpacity="1" maskType="0" maskEnabled="0" maskJoinStyle="128" maskSizeUnits="MM" maskedSymbolLayers=""/>
@@ -27606,7 +27608,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyDrawingTol="1" readOnly="0" labelsEnabled="0" styleCategories="AllStyleCategories" wkbType="Point" type="vector" symbologyReferenceScale="-1" minScale="100000000" hasScaleBasedVisibilityFlag="0" geometry="Point" maxScale="0" autoRefreshTime="0" legendPlaceholderImage="" simplifyMaxScale="1" simplifyDrawingHints="0" simplifyAlgorithm="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" autoRefreshEnabled="0" simplifyLocal="1">
       <id>notizen_44ce74cb_9331_498b_b3eb_21297d3bc559</id>
-      <datasource>dbname='./demo.sqlite' table="notizen" (geop)</datasource>
+      <datasource>dbname='./demo.sqlite' table="notizen" (geom)</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -33838,7 +33840,7 @@ def closeProject():&#xd;&#xd;
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan Version 3.3.2</title>
+    <title>QKan Version 3.3.3</title>
     <abstract></abstract>
     <contact>
       <name></name>

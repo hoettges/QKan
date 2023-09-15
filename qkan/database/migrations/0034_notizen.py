@@ -2,7 +2,7 @@ import logging
 
 from qkan.database.dbfunc import DBConnection
 
-VERSION = "3.2.41"
+VERSION = "3.2.41"              # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
 
 logger = logging.getLogger("QKan.database.migrations")
 
@@ -15,21 +15,9 @@ def run(dbcon: DBConnection) -> bool:
             pk INTEGER PRIMARY KEY,
             notiz TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP),
-        SELECT AddGeometryColumn('notiz','geop',{},'POINT',2)
+        SELECT AddGeometryColumn('notiz','geom',{},'POINT',2)
         )
         """
-
-    if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.2.41)"):
-        return False
-
-    sql = """
-            CREATE TABLE IF NOT EXISTS notizen_data (
-                pk INTEGER PRIMARY KEY,
-                notiz TEXT,
-                createdat TEXT DEFAULT CURRENT_TIMESTAMP),
-            SELECT AddGeometryColumn('notiz','geop',{},'POINT',2)
-            )
-            """
 
     if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.2.41)"):
         return False
