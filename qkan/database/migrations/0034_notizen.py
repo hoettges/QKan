@@ -14,13 +14,19 @@ def run(dbcon: DBConnection) -> bool:
         CREATE TABLE IF NOT EXISTS notizen (
             pk INTEGER PRIMARY KEY,
             notiz TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP),
-        SELECT AddGeometryColumn('notiz','geom',{},'POINT',2)
-        )
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
         """
 
     if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.2.41)"):
         return False
 
+    sql = f"""
+        SELECT AddGeometryColumn('notizen','geom',{dbcon.epsg},'POINT',2)
+    """
+
+    if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.2.41)"):
+        return False
+
     dbcon.commit()  # Wurde schon durchgeführt
+
     return True
