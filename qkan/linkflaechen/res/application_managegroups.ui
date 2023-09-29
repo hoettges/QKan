@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Aus Verbindungslinien zugeordnete Haltungen in Flächen eintragen</string>
+   <string>Teilgebietszuordnungen als Gruppe verwalten</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
@@ -48,7 +48,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Close</set>
+    <set>QDialogButtonBox::Close|QDialogButtonBox::Help</set>
    </property>
    <property name="centerButtons">
     <bool>true</bool>

@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>QKan Erzeugen von unbefestigten Flächen</string>
+   <string>Erzeugen von unbefestigten Flächen</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">

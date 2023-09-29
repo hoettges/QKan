@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>250</height>
+    <width>309</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -134,6 +134,9 @@
      <property name="statusTip">
       <string>Schacht, an den das Außengebiet angeschlossen ist</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_4">
      <property name="geometry">
@@ -174,6 +177,12 @@
      </property>
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Angebundenes Außengebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Angebundenes Außengebiet</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>QKan Import aus SWMM</string>
+   <string>Import aus SWMM</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
@@ -378,7 +378,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsProjectionSelectionWidget" name="epsg" native="true">
+   <widget class="QgsProjectionSelectionWidget" name="epsg">
     <property name="geometry">
      <rect>
       <x>130</x>

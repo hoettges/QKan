@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Mike+ (2021)</string>
+   <string>Import aus Mike+ (2021)</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">

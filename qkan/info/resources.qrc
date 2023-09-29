@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/info" >
+        <file>res/info.png</file>
+    </qresource>
+</RCC>

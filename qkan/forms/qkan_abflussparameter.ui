@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>370</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>520</width>
-    <height>370</height>
+    <height>400</height>
    </size>
   </property>
   <property name="font">
@@ -23,7 +23,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Abflussparameter</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -447,6 +447,9 @@
      <property name="accessibleName">
       <string>bodenklasse</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="bodenklasse">
      <property name="geometry">
@@ -473,6 +476,9 @@
      </property>
      <property name="accessibleName">
       <string>bodenklasse</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_19">
@@ -678,7 +684,7 @@
      <x>0</x>
      <y>0</y>
      <width>520</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

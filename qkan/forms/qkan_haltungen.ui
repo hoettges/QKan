@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>642</width>
-    <height>457</height>
+    <height>470</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>640</width>
-    <height>450</height>
+    <height>470</height>
    </size>
   </property>
   <property name="baseSize">
@@ -152,6 +152,9 @@
      </property>
      <property name="statusTip">
       <string>Name des oberen Schachtes</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLineEdit" name="sohleoben">
@@ -294,6 +297,9 @@
      </property>
      <property name="statusTip">
       <string>Name des unteren Schachtes</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -500,6 +506,9 @@
      <property name="statusTip">
       <string>vorh. Entwässerungssystem (z.B. Mischwasser, Regenwasser etc.)</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="profilnam">
      <property name="geometry">
@@ -509,6 +518,12 @@
        <width>151</width>
        <height>22</height>
       </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="font">
       <font>
@@ -521,6 +536,9 @@
      </property>
      <property name="statusTip">
       <string>Profil der Haltung gem. HE</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_54">
@@ -762,6 +780,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_10">
      <property name="geometry">
@@ -805,6 +826,9 @@
      </property>
      <property name="statusTip">
       <string>aktueller Status (z.B. vorhanden, in Planung etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_71">

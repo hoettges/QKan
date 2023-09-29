@@ -136,6 +136,7 @@ class QKan:
         from .sanierungsbedarfszahl import sanierungsbedarfszahl
         from .laengsschnitt import Laengsschnitt
         from .tools import QKanTools
+        from .info import Infos
 
         self.plugins: List = [
             CreateUnbefFl(iface),
@@ -154,6 +155,7 @@ class QKan:
             sanierungsbedarfszahl(iface),
             Laengsschnitt(iface),
             QKanTools(iface),
+            Infos(iface),
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()
@@ -220,6 +222,7 @@ class QKan:
             allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard einfügen']])
             allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard: Zuordnung anzeigen']])
             allgemein.addAction(self.actions[list['Laengsschnitt']])
+            allgemein.addAction(self.actions[list['Infos zum QKan Projekt']])
             flaechen.addAction(self.actions[list['Erzeuge unbefestigte Flächen...']])
             flaechen.addAction(self.actions[list['Erzeuge Voronoiflächen zu Haltungen']])
             flaechen.addAction(self.actions[list['Entferne Überlappungen']])

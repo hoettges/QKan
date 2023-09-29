@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>570</width>
-    <height>360</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>570</width>
-    <height>360</height>
+    <height>390</height>
    </size>
   </property>
   <property name="font">
@@ -88,6 +88,9 @@
      <property name="statusTip">
       <string>Name der angebundenen Haltung</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_20">
      <property name="geometry">
@@ -127,6 +130,9 @@
      </property>
      <property name="statusTip">
       <string>Name der angebundenen Fläche</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_4">
@@ -168,6 +174,9 @@
      <property name="statusTip">
       <string>Name der angebundenen Haltungsfläche (für aufzuteilende Flächen)</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="teilgebiet">
      <property name="geometry">
@@ -183,6 +192,9 @@
      </property>
      <property name="statusTip">
       <string>Zuordnung zu einem benutzerdefinierten Teilgebiet</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_22">
@@ -336,6 +348,9 @@
      </property>
      <property name="statusTip">
       <string>Auswahl aus Tabelle &quot;Abflusstypen&quot;</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLineEdit" name="fliesszeitflaeche">

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>610</width>
-    <height>330</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>610</width>
-    <height>330</height>
+    <height>360</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -127,6 +127,9 @@
      <property name="statusTip">
       <string>vorh. Entwässerungssystem (z.B. Mischwasser, Regenwasser etc.)</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_16">
      <property name="geometry">
@@ -185,7 +188,10 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri','sans-serif';&quot;&gt;Name des unteren Schachts&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="statusTip">
-      <string>Name des oberen Schachts</string>
+      <string>Name des unteren Schachts</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_6">
@@ -227,6 +233,9 @@
      </property>
      <property name="statusTip">
       <string>Name des oberen Schachts</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_3">
@@ -430,6 +439,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_11">
      <property name="geometry">
@@ -473,6 +485,9 @@
      </property>
      <property name="statusTip">
       <string>aktueller Status (z.B. vorhanden, in Planung etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QgsDateTimeEdit" name="createdat">

@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>580</width>
-    <height>310</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>580</width>
-    <height>310</height>
+    <height>330</height>
    </size>
   </property>
   <property name="font">
@@ -135,6 +135,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mittelwert der Einleitmenge&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Mittelwert der Einleitmenge</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
@@ -212,7 +218,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Wasserverbrauch</string>
+      <string>Einleitmenge</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -238,6 +244,9 @@
      </property>
      <property name="statusTip">
       <string>Name der Haltung, der die Fläche zugeordnet ist</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_20">
@@ -304,6 +313,9 @@
      </property>
      <property name="statusTip">
       <string>Auswahl des Einzugsgebiets</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_7">
@@ -449,6 +461,9 @@
      </property>
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_70">

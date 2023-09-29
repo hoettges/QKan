@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>775</height>
+    <width>531</width>
+    <height>795</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Xml-Transfer</string>
+   <string>Import aus DWA-XML</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -33,8 +33,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>557</width>
-        <height>755</height>
+        <width>511</width>
+        <height>775</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -126,7 +126,7 @@
            </font>
           </property>
           <property name="text">
-           <string>ISYBAU-XML-Datei (*.xml):</string>
+           <string>DWA-XML-Datei (*.xml):</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -138,7 +138,7 @@
             <x>10</x>
             <y>80</y>
             <width>451</width>
-            <height>43</height>
+            <height>44</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -160,7 +160,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QgsProjectionSelectionWidget" name="epsg" native="true"/>
+            <widget class="QgsProjectionSelectionWidget" name="epsg"/>
            </item>
           </layout>
          </widget>
@@ -239,12 +239,12 @@
           </property>
           <item>
            <property name="text">
-            <string>ISYBAU Daten</string>
+            <string>DWA M-150 Daten</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>DWA M-150 Daten</string>
+            <string>ISYBAU Daten</string>
            </property>
           </item>
          </widget>
@@ -490,6 +490,12 @@
             <height>17</height>
            </rect>
           </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Stammdaten</string>
           </property>
@@ -503,6 +509,12 @@
             <height>17</height>
            </rect>
           </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Hausanschlüsse</string>
           </property>
@@ -515,6 +527,12 @@
             <width>131</width>
             <height>17</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
           </property>
           <property name="text">
            <string>Zustandsdaten</string>
@@ -710,7 +728,7 @@
           <string comment="Nach dem Import eine Projektdatei neu erzeugen und speichern (optional)"/>
          </property>
          <property name="title">
-          <string>Anzeige der Schadenskürzel</string>
+          <string>Schadensklassen</string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -762,7 +780,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="standardButtons">
-          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
          </property>
          <property name="centerButtons">
           <bool>true</bool>

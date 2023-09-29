@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>690</width>
-    <height>370</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>690</width>
-    <height>370</height>
+    <height>390</height>
    </size>
   </property>
   <property name="font">
@@ -26,7 +26,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Auslass</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -219,6 +219,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="simstatus">
      <property name="enabled">
@@ -243,6 +246,9 @@
      </property>
      <property name="statusTip">
       <string>aktueller Status (z.B. vorhanden, in Planung etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QgsDateTimeEdit" name="createdat">
@@ -613,6 +619,9 @@
      <property name="statusTip">
       <string>vorh. Entwässerungssystem (z.B. Mischwasser, Regenwasser etc.)</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_40">
      <property name="geometry">
@@ -653,6 +662,9 @@
      </property>
      <property name="statusTip">
       <string>Auslasstyp gem. HYSTEM-EXTRAN (z.B.: Frei, Normal, Konstant etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

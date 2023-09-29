@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>330</height>
+    <height>340</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>700</width>
-    <height>330</height>
+    <height>340</height>
    </size>
   </property>
   <property name="font">
@@ -26,7 +26,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Bodenklasse</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
