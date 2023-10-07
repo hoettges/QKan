@@ -35,7 +35,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Haltung Untersuchungsdaten</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -115,6 +115,9 @@
      <property name="statusTip">
       <string>Name des oberen Schachts</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -174,6 +177,9 @@
      </property>
      <property name="statusTip">
       <string>Name des unteren Schachts</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -472,6 +478,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Baujahr der Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Baujahr der Haltung</string>
+     </property>
     </widget>
    </widget>
    <widget class="QLabel" name="label_71">
@@ -561,6 +573,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Datum des Untersuchungstages&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Datum des Untersuchungstages</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_62">
      <property name="geometry">
@@ -595,6 +613,12 @@
        <family>Tahoma</family>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name bzw. Kürzel des Untersuchers&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name bzw. Kürzel des Untersuchers</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_63">
@@ -631,6 +655,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;kurzer Kommentar zum Wetter am Untersuchungstag&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>kurzer Kommentar zum Wetter am Untersuchungstag</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_64">
      <property name="geometry">
@@ -666,6 +696,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name des verwndeten Bewertungsmodells (z.B. DWA-M 149-3)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name des verwndeten Bewertungsmodells (z.B. DWA-M 149-3)</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_65">
      <property name="geometry">
@@ -700,6 +736,12 @@
        <family>Tahoma</family>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Datum des Tages, an dem die Bewertung durchgeführt wird&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Datum des Tages, an dem die Bewertung durchgeführt wird</string>
      </property>
     </widget>
    </widget>

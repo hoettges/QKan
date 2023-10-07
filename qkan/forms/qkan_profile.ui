@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
+    <width>300</width>
     <height>280</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>320</width>
+    <width>300</width>
     <height>280</height>
    </size>
   </property>
@@ -23,7 +23,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Profil</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -56,7 +56,7 @@
      <rect>
       <x>120</x>
       <y>10</y>
-      <width>171</width>
+      <width>161</width>
       <height>20</height>
      </rect>
     </property>
@@ -88,7 +88,7 @@
      <rect>
       <x>10</x>
       <y>200</y>
-      <width>301</width>
+      <width>271</width>
       <height>71</height>
      </rect>
     </property>
@@ -110,7 +110,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>301</width>
+      <width>271</width>
       <height>131</height>
      </rect>
     </property>
@@ -126,9 +126,9 @@
     <widget class="QLineEdit" name="kp_key">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>160</x>
        <y>90</y>
-       <width>51</width>
+       <width>91</width>
        <height>20</height>
       </rect>
      </property>
@@ -176,9 +176,9 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>160</x>
        <y>60</y>
-       <width>51</width>
+       <width>91</width>
        <height>20</height>
       </rect>
      </property>
@@ -235,9 +235,9 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>160</x>
        <y>30</y>
-       <width>51</width>
+       <width>91</width>
        <height>20</height>
       </rect>
      </property>

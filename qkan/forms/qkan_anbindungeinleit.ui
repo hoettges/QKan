@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>310</width>
-    <height>280</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>310</width>
-    <height>280</height>
+    <height>310</height>
    </size>
   </property>
   <property name="font">
@@ -103,6 +103,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_14">
      <property name="geometry">
@@ -185,6 +188,9 @@
      <property name="statusTip">
       <string>Name der angebundenen Haltung</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_21">
      <property name="geometry">
@@ -250,6 +256,9 @@
      </property>
      <property name="statusTip">
       <string>Name des angebundenen Direkteinleiters</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

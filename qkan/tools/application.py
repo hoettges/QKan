@@ -34,6 +34,7 @@ from .k_dbAdapt import dbAdapt
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
+from qkan.database.qkan_database import db_version
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
@@ -781,9 +782,10 @@ class QKanTools(QKanPlugin):
             )
 
     def run_help(self) -> None:
-        #TODO: Versionsnummer aus Datenbank auslesen
 
-        self.dlghp.textBrowser_2.setText('Version')
+        version = db_version()
+
+        self.dlghp.textBrowser_2.setText(str(version))
 
         # show the dialog
         self.dlghp.show()

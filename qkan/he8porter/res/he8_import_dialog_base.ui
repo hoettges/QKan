@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Hystem-Extran</string>
+   <string>Import aus Hystem-Extran 8</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">

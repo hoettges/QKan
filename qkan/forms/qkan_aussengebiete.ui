@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>390</height>
+    <height>410</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>520</width>
-    <height>390</height>
+    <height>410</height>
    </size>
   </property>
   <property name="font">
@@ -26,7 +26,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Aussengebiet</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -170,6 +170,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QgsDateTimeEdit" name="createdat">
      <property name="geometry">
@@ -257,6 +260,9 @@
      </property>
      <property name="statusTip">
       <string>Schacht, an den das Außengebiet angeschlossen ist</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_12">

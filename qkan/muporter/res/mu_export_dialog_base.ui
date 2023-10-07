@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Export to HE</string>
+   <string>Export nach Hystem-Extran</string>
   </property>
   <property name="toolTip">
    <string>Export der aktuell geladenen Kanaldaten in eine Mike+-Datenbank</string>

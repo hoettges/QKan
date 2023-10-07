@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Export to SWMM</string>
+   <string>Export nach SWMM</string>
   </property>
   <property name="toolTip">
    <string>Export der aktuell geladenen Kanaldaten in eine Hystem-Extran-Datenbank</string>

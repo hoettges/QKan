@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>290</width>
-    <height>280</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>290</width>
-    <height>280</height>
+    <height>300</height>
    </size>
   </property>
   <property name="font">
@@ -23,7 +23,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Auslasstyp</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>

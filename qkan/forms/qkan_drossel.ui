@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>300</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>660</width>
-    <height>300</height>
+    <height>310</height>
    </size>
   </property>
   <property name="font">
@@ -84,6 +84,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_11">
      <property name="geometry">
@@ -127,6 +130,9 @@
      </property>
      <property name="statusTip">
       <string>aktueller Status (z.B. vorhanden, in Planung etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QgsDateTimeEdit" name="createdat">
@@ -232,6 +238,9 @@
      <property name="statusTip">
       <string>vorh. Entwässerungssystem (z.B. Mischwasser, Regenwasser etc.)</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
@@ -273,6 +282,9 @@
      <property name="statusTip">
       <string>Name des unteren Schachts</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="schoben">
      <property name="geometry">
@@ -294,6 +306,9 @@
      </property>
      <property name="statusTip">
       <string>Name des oberen Schachts</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_3">
