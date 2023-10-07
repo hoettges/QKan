@@ -81,9 +81,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-importierenden-daten">Tabelle zur Auswahl der zu importierenden Daten</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#projektlayer-aktualisieren">Projektlayer aktualisieren</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#datenbank-aktualisieren">Datenbank aktualisieren</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#projektdatei-auf-andere-datenbank-ubertragen">Projektdatei auf andere Datenbank übertragen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#elemente-des-entwasserungsnetzes-einem-teilgebiet-zuordnen">Elemente des Entwässerungsnetzes einem Teilgebiet zuordnen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">Allgemeine Funktionselemente in Formularen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#auswahl-in-listen">Auswahl in Listen</a></li>
@@ -193,34 +190,6 @@ mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Fl�
 oder Referenztabellen beschränkt werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_Datenaustausch.html#datenaustimporthe"><span class="std std-ref">Import aus HYSTEM-EXTRAN</span></a></p>
 </section>
-</section>
-<section id="projektlayer-aktualisieren">
-<h2>Projektlayer aktualisieren<a class="headerlink" href="#projektlayer-aktualisieren" title="Permalink to this heading"></a></h2>
-<p>Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem <a class="reference internal" href="#image-qkan-layersadapt"><span class="std std-ref">Formular</span></a> unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift „Layer anpassen“) aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option „Formularanbindungen auf QKan-Standard setzen“ aktiviert ist.</p>
-<ol class="arabic simple">
-<li><p>Aktivieren Sie „QKan-Standard verwenden“. Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche […] rechts daneben auswählen.</p></li>
-<li><p>Wählen unter der Überschrift „Layer anpassen“ Sie die Option „Datenbankanbindung der Layer anpassen“ und wählen Sie Ihre Datenbank aus, an die das Projekt angebunden werden soll. Aktivieren Sie auch die Übrigen Optionen unter dieser Überschrift</p></li>
-<li><p>Unter der Überschrift „QKan-Layer“ können Sie auswählen, welche Layer bearbeitet werden sollen. In diesem Fall ist „alle anpassen“ empfehlenswert.</p></li>
-<li><p>Falls Sie nicht sicher sind, ob Ihre Datenbank auf dem aktuellen Stand ist, können sie unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ aktivieren.</p></li>
-<li><p>Legen Sie mit der Schaltfläche […] Namen und Standort des angepassten Projekts fest.</p></li>
-</ol>
-<img alt="_images/qkan_layersadapt.png" id="image-qkan-layersadapt" src="_images/qkan_layersadapt.png" />
-</section>
-<section id="datenbank-aktualisieren">
-<span id="index-6"></span><h2>Datenbank aktualisieren<a class="headerlink" href="#datenbank-aktualisieren" title="Permalink to this heading"></a></h2>
-<p>Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen. wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist.
-Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert
-wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll.</p>
-</section>
-<section id="projektdatei-auf-andere-datenbank-ubertragen">
-<span id="index-7"></span><h2>Projektdatei auf andere Datenbank übertragen<a class="headerlink" href="#projektdatei-auf-andere-datenbank-ubertragen" title="Permalink to this heading"></a></h2>
-<p>Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi „Firmenstandards“ darstellen. Solch eine Projektdatei kann mit dem <a class="reference internal" href="#image-qkan-qgsadapt"><span class="std std-ref">Formular</span></a> folgendermaßen auf ein anderes Projekt übertragen werden:</p>
-<ol class="arabic simple">
-<li><p>Wählen Sie die einzubindende QKan-Datenbank.</p></li>
-<li><p>Wählen Sie die Projektdatei, die Sie mit dieser Datenbank verknüpfen möchten. Sie können stattdessen auch die QKan-Standardvorlage verwenden.</p></li>
-<li><p>Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus.</p></li>
-</ol>
-<img alt="_images/qkan_qgsAdapt.png" id="image-qkan-qgsadapt" src="_images/qkan_qgsAdapt.png" />
 </section>
 <section id="elemente-des-entwasserungsnetzes-einem-teilgebiet-zuordnen">
 <h2>Elemente des Entwässerungsnetzes einem Teilgebiet zuordnen<a class="headerlink" href="#elemente-des-entwasserungsnetzes-einem-teilgebiet-zuordnen" title="Permalink to this heading"></a></h2>

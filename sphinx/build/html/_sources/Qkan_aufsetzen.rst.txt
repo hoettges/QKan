@@ -36,6 +36,7 @@ Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die
 Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf "Installieren", um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.
 
 .. _QKan_plugins_fuer_QGIS
+
 QKan-Plugin Installation
 ------------------------
 
@@ -46,3 +47,14 @@ Es sollte darauf geachtet werden, dass immer mit der aktuellsten Version gearbei
 Installationen von weiteren Plugins für den Export nach HYSTEM-EXTRAN sind nun nicht mehr nötig. 
 
 .. image:: ./QKan_Bilder/QKan_Plugin.png
+
+Grafikeinstellung für QKan
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wenn QKan auf einem Laptop genutzt wird, kann es vorkommen, dass die Formulare fehlerhaft angezeigt werden (Beispiel siehe Bild unten). 
+Dies beeinträchtigt die Funktion der Formulare nicht, kann jedoch die Nutzung dieser erschweren. 
+
+.. image:: ./QKan_Bilder/Formular_fehlerhaft.png
+
+Um dieses Problem zu beheben kann über die Windows-Suchleiste mit "Systemumgebungsvariablen bearbeiten" die Systemeigenschaften geöffnet 
+werden. 

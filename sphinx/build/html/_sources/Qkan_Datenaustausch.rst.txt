@@ -20,17 +20,16 @@ sich dabei nicht im Bearbeitungsmodus befinden. Dabei gelten folgende Anforderun
    "Schachtbezeichnung"). Die Synonyme werden anhand vorgegebener "regulärer Ausdrücke" den Attributnamen der 
    QKan-Tabellen zugeordnet, die gegebenenfalls erweitert werden können. 
 
-Zum Einfügen der Daten muss nur noch die Schaltfläche "Tabellendaten aus Clipboard einfügen" angeklickt werden (siehe nachfolgende Abbildung)
+Zum Einfügen der Daten muss nur noch |Tool_clipboard_einfuegen| :guilabel:`Tabellendaten aus Clipboard einfügen` angeklickt werden.
 
-.. image:: ./QKan_Bilder/clipboard_einfuegen.png
+.. |Tool_clipboard_einfuegen| image:: ./QKan_Bilder/Tool_clipboard_einfügen.png
+                             :width: 1.25 em
 
-Abbildung: Schaltfläche zum Einfügen von Tabellendaten aus dem Clipboard
+Um vorab zu überprüfen, welche Spaltennamen erkannt werden, kann zuvor |Tool_clipboard_zuordnung| :guilabel:`Tabellen aus Clipboard: Zuordnung anzeigen`
+angeklickt werden.
 
-Um vorab zu überprüfen, welche Spaltennamen erkannt werden, kann vorab die Schaltfläche "Tabellen aus Clipboard: Zuordnung anzeigen" (siehe nachfolgende Abbildung) angeklickt werden.
-
-.. image:: ./QKan_Bilder/clipboard_testen.png
-
-Abbildung: Überprüfen der automatischen Spaltennamenerkennung
+.. |Tool_clipboard_zuordnung| image:: ./QKan_Bilder/Tool_clipboard_zuordnung.png
+                             :width: 1.25 em
 
 Bei Tabellen mit Geometrien (Schächte, Haltungen, Fläche, etc.) werden in den Fällen, wo Punktkoordinaten 
 oder Paare davon ausreichen (z. B. Schächte: Punktkoordinate, Haltungen und Wehre: 2 Punktkoordinaten für 
@@ -71,22 +70,28 @@ Beispiel zum Ausprobieren:
 Abbildung: Eingefügtes Kanalnetz in QKan
 
 
+Arbeiten mit Projektdateien
+---------------------------
+
 Projektdatei übertragen
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Die Funktion |Tool_projektdatei_uebertragen| :guilabel:`Projektdatei übertragen` dient dazu, eine Vorlage-Projektdatei zu laden, 
 um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei können z.B. Beschriftungsstile 
-oder Linientypdarstellungen definiert sein. In der Maske wird oben zunächst die aktuelle geladene Projektdatenbank angezeigt, 
-welche sich nicht ändern lässt. Durch anklicken der Box darunter, kann die Q-Kan-Datenbank mit dem Laden der neuen Datei 
+oder Linientypdarstellungen definiert sein. (1) In der Maske wird oben zunächst die aktuelle geladene Projektdatenbank angezeigt, 
+welche sich nicht ändern lässt. Durch anklicken der Box darunter, kann die QKan-Datenbank mit dem Laden der neuen Datei 
 aktualisiert werden - dies sollte in der Regel jedoch nicht nötig sein, da die Datenbank sich automatisch durch die 
 Update-Funktion aktualisiert. 
 
-Ist noch keine Firmenstandard-Datei vorhanden, gibt es die Möglichkeit über das Auswahlfeld :guilabel:`Standarad-Q-Kan-Vorlage verwenden` 
+(2) Ist noch keine Firmenstandard-Datei vorhanden, gibt es die Möglichkeit über das Auswahlfeld :guilabel:`Standarad-QKan-Vorlage verwenden` 
 einen allgemeinen Stil zu laden. Diese Vorlage bietet eine gute Grundlage, um einen eigenen Standard zu entwickeln. 
-Liegt bereits eine Firmenstandard-Datei vor, kann diese in dem Auswahlfeld darunter geöffnet werden. Die Projektdatei wird auf 
+Liegt bereits eine Firmenstandard-Datei vor, kann diese in dem Auswahlfeld darunter geöffnet werden. (3) Die Projektdatei wird auf 
 das aktuelle QKan-Projekt angepasst und anschließend unter dem Namen gespeichert, welcher unter :guilabel:`Erzeugte Projektdatei speichern als...` 
 ausgewählt wird. Dieser Name kann der Name der aktuell geladenen Projektdatei sein, wenn die Vorlage auf diese angewendet 
 werden soll. Mit :guilabel:`OK` wird die Projektdatei geschrieben, jedoch aus programmtechnischen Gründen nicht sofort geladen.
+
+.. _image_qkan_qgsAdapt:
+.. image:: ./QKan_Bilder/qkan_qgsAdapt.png
 
 Die neue Projektdatei kann geladen werden, indem das aktuelle Projekt über :guilabel:`Projekt` → :guilabel:`Zuletzt verwendet` 
 neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein. 
@@ -97,7 +102,24 @@ neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein.
 ..
     Export mit HYSTEM-EXTRAN
     ------------------------
-.. _datenaustimporthe:    
+ 
+ 
+Projektlayer aktualisieren
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem :ref:`Formular<image_qkan_layersadapt>` unter der Überschrift "QKan-Datenbank" die Option "auf aktuelle Version anpassen" (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift "Layer anpassen") aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option "Formularanbindungen auf QKan-Standard setzen" aktiviert ist. 
+
+1. Aktivieren Sie "QKan-Standard verwenden". Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter "Einstellungen aus Projektdatei übernehmen" mit der Schaltfläche [...] rechts daneben auswählen. 
+2. Wählen unter der Überschrift "Layer anpassen" Sie die Option "Datenbankanbindung der Layer anpassen" und wählen Sie Ihre Datenbank aus, an die das Projekt angebunden werden soll. Aktivieren Sie auch die Übrigen Optionen unter dieser Überschrift
+3. Unter der Überschrift "QKan-Layer" können Sie auswählen, welche Layer bearbeitet werden sollen. In diesem Fall ist "alle anpassen" empfehlenswert. 
+4. Falls Sie nicht sicher sind, ob Ihre Datenbank auf dem aktuellen Stand ist, können sie unter der Überschrift "QKan-Datenbank" die Option "auf aktuelle Version anpassen" aktivieren. 
+5. Legen Sie mit der Schaltfläche [...] Namen und Standort des angepassten Projekts fest. 
+
+.. _image_qkan_layersadapt:
+.. image:: ./QKan_Bilder/qkan_layersadapt.png
+
+
+.. _datenaustimporthe:  
 
 Import aus HYSTEM-EXTRAN
 ------------------------
@@ -141,3 +163,15 @@ sollte nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen
 dass diese in der Zukunft benötigt werden. 
 
 Nun kann das Formular mit :guilabel:`OK` geschlossen werden und der Import wird gestartet. 
+
+.. index:: Datenbank aktualisieren
+
+Datenbank aktualisieren
+-----------------------
+
+Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen. wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist. 
+Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert 
+wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll. 
+
+
+.. index:: Projektdatei übertragen
