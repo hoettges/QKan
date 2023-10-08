@@ -1,14 +1,10 @@
-from pathlib import Path
-
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory
+from qgis.core import QgsProject
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
-from qkan.tools.k_qgsadapt import qgsadapt
 from qkan.database.qkan_database import db_version
+from qkan.database.qkan_utils import warnung
 
 from ._info import Info
 from .application_dialog import InfoDialog
@@ -38,29 +34,29 @@ class Infos(QKanPlugin):
 
 
     def run_info(self) -> None:
-        with DBConnection() as db_qkan:
-            dbname = db_qkan.dbname
+        # Prüfen, ob ein Projekt geladen ist
+        project = QgsProject.instance()
+        layers = project.mapLayers()
+        if len(layers) > 0:
 
-        test = Info(DBConnection())
-        test.run()
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        #self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
+            # with DBConnection() as db_qkan:
+            #     connected = db_qkan.connected
 
-        self.info_dlg.show()
+            test = Info(DBConnection())
+            test.run()
+            # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+            #self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
 
-        version = db_version()
+            self.info_dlg.show()
+            version = db_version()
+            self.info_dlg.textBrowser_2.setText(str(version))
+            self.info_dlg.textBrowser_3.setText(str(test.anz_haltungen))
+            self.info_dlg.textBrowser_4.setText(str(test.anz_schaechte))
+            self.info_dlg.textBrowser_5.setText(str(test.laenge_haltungen))
+            self.info_dlg.textBrowser_6.setText(str(test.anz_teilgeb))
 
-        self.info_dlg.textBrowser_2.setText(str(version))
+            # Run the dialog event loop
+            result = self.info_dlg.exec_()
 
-        self.info_dlg.textBrowser_3.setText(str(test.anz_haltungen))
-
-        self.info_dlg.textBrowser_4.setText(str(test.anz_schaechte))
-
-        self.info_dlg.textBrowser_5.setText(str(test.laenge_haltungen))
-
-        self.info_dlg.textBrowser_6.setText(str(test.anz_teilgeb))
-
-
-        # Run the dialog event loop
-        result = self.info_dlg.exec_()
-
+        else:
+            warnung( 'Hinweis', 'Es ist kein Projekt geladen!')

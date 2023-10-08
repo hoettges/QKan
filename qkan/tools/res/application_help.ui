@@ -117,7 +117,7 @@ p, li { white-space: pre-wrap; }
    <item>
     <widget class="QPushButton" name="pushButton">
      <property name="text">
-      <string>QKan Dokumentation öffnen</string>
+      <string>Über QKan</string>
      </property>
     </widget>
    </item>

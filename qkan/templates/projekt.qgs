@@ -2794,7 +2794,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="S" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -2813,7 +2813,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="S"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -2897,7 +2897,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="S" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -2916,7 +2916,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="S"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -5309,7 +5309,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="Q" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -5328,7 +5328,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="Q"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -5412,7 +5412,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="Q" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -5431,7 +5431,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="Q"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -7277,7 +7277,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="W" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -7296,7 +7296,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="W"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -7380,7 +7380,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="W" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -7399,7 +7399,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="W"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -8304,7 +8304,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="P" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -8323,7 +8323,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="P"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -8407,7 +8407,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="P" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -8426,7 +8426,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="P"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -9228,7 +9228,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="H" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -9247,7 +9247,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="H"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -9331,7 +9331,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="H" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -9350,7 +9350,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="H"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -10229,7 +10229,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="G" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -10248,7 +10248,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="G"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -10332,7 +10332,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="G" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -10351,7 +10351,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="G"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -25125,7 +25125,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="D" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -25144,7 +25144,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="D"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -25228,7 +25228,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="D" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Source Sans Pro" name="font" type="QString"/>
+                    <Option value="Open Sans" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -25247,7 +25247,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="D"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Source Sans Pro"/>
+                  <prop k="font" v="Open Sans"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -33320,422 +33320,23 @@ def my_form_open(dialog, layer, feature):
       <filterByMap type="bool">false</filterByMap>
     </Legend>
     <Macros>
-      <pythonCode type="QString">import logging&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-from qgis.core import Qgis, QgsMessageLog, QgsProject&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-from qgis.gui import QgisInterface&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-from qgis.utils import iface&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-def openProject():&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-    """Check actual version of database and project file"""&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-    try:&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        from qkan import QKan&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        from qkan.database.dbfunc import DBConnection&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        from qkan.database.qkan_utils import get_database_QKan, warnung&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        from qkan.tools.application import QKanTools&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        logger = logging.getLogger("QKan.openProject")&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        logger.debug("openProjekt started\n")&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        database_qkan, _ = get_database_QKan(silent=True)&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        db_qkan = DBConnection(dbname=database_qkan)&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        isActual = db_qkan.isCurrentVersion&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        if not isActual:&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-            qkt = QKanTools(QKan.instance.iface)&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-            warnung("Versionskontrolle", "Die Datenbank muss aktualisiert werden!", duration=5)&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-            qkt.run_dbAdapt()&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-    except ImportError:&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        import traceback&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        traceback.print_exc()&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        QgsMessageLog.logMessage(&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-            message=msg, level=Qgis.Info,&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        )&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-def saveProject():&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-    pass&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-def closeProject():&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-    pass&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
-&#xd;&#xd;&#xd;
+      <pythonCode type="QString">from qkan.openproject import update_dbversion
+def openProject():
+    """Check actual version of database and project file"""
+    try:
+        update_dbversion()
+    except ImportError:
+        import traceback
+        traceback.print_exc()
+        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."
+        QgsMessageLog.logMessage(
+            message=msg, level=Qgis.Info,
+        )
+        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)
+def saveProject():
+    pass
+def closeProject():
+    pass
       </pythonCode>
     </Macros>
     <Measure>

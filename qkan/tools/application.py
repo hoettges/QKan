@@ -128,7 +128,7 @@ class QKanTools(QKanPlugin):
         icon_help_path = ":/plugins/qkan/tools/res/icon_help.png"
         QKan.instance.add_action(
             icon_help_path,
-            text=self.tr("QKan Dokumentation öffnen"),
+            text=self.tr("Über QKan"),
             callback=self.run_help,
             parent=self.iface.mainWindow(),
         )

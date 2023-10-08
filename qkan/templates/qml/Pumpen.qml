@@ -174,7 +174,7 @@
                 <Option value="0" name="angle" type="QString"/>
                 <Option value="P" name="chr" type="QString"/>
                 <Option value="227,26,28,255" name="color" type="QString"/>
-                <Option value="Source Sans Pro" name="font" type="QString"/>
+                <Option value="Open Sans" name="font" type="QString"/>
                 <Option value="Regular" name="font_style" type="QString"/>
                 <Option value="1" name="horizontal_anchor_point" type="QString"/>
                 <Option value="miter" name="joinstyle" type="QString"/>
@@ -193,7 +193,7 @@
               <prop v="0" k="angle"/>
               <prop v="P" k="chr"/>
               <prop v="227,26,28,255" k="color"/>
-              <prop v="Source Sans Pro" k="font"/>
+              <prop v="Open Sans" k="font"/>
               <prop v="Regular" k="font_style"/>
               <prop v="1" k="horizontal_anchor_point"/>
               <prop v="miter" k="joinstyle"/>

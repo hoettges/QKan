@@ -203,6 +203,8 @@ class QKan:
         if self.menu:
             self.menu.clear()
             allgemein = self.menu.addMenu("Allgemein")
+            verwaltung = self.menu.addMenu("Verwaltung")
+            daten = self.menu.addMenu("Daten")
             hyex = self.menu.addMenu("Hystem-Extran")
             xml = self.menu.addMenu("XML")
             dyna = self.menu.addMenu("DYNA")
@@ -211,18 +213,17 @@ class QKan:
             strakat = self.menu.addMenu("STRAKAT")
             flaechen = self.menu.addMenu("Flächenverabeitung")
             zustand = self.menu.addMenu("Zustandsbewertung")
+            info = self.menu.addMenu("Info")
 
-            allgemein.addAction(self.actions[list['QKan Dokumentation öffnen']])
             allgemein.addAction(self.actions[list['Allgemeine Optionen']])
-            allgemein.addAction(self.actions[list['QKan-Datenbank aktualisieren']])
+            verwaltung.addAction(self.actions[list['QKan-Datenbank aktualisieren']])
             allgemein.addAction(self.actions[list['QKan-Projekt aktualisieren']])
-            allgemein.addAction(self.actions[list['Neue QKan-Datenbank erstellen']])
+            verwaltung.addAction(self.actions[list['Neue QKan-Datenbank erstellen']])
             allgemein.addAction(self.actions[list['Projektdatei auf bestehende QKan-Datenbank übertragen']])
-            allgemein.addAction(self.actions[list['Plausibilitätsprüfungen']])
-            allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard einfügen']])
-            allgemein.addAction(self.actions[list['Tabellendaten aus Clipboard: Zuordnung anzeigen']])
-            allgemein.addAction(self.actions[list['Laengsschnitt']])
-            allgemein.addAction(self.actions[list['Infos zum QKan Projekt']])
+            daten.addAction(self.actions[list['Plausibilitätsprüfungen']])
+            daten.addAction(self.actions[list['Tabellendaten aus Clipboard einfügen']])
+            daten.addAction(self.actions[list['Tabellendaten aus Clipboard: Zuordnung anzeigen']])
+            daten.addAction(self.actions[list['Laengsschnitt']])
             flaechen.addAction(self.actions[list['Erzeuge unbefestigte Flächen...']])
             flaechen.addAction(self.actions[list['Erzeuge Voronoiflächen zu Haltungen']])
             flaechen.addAction(self.actions[list['Entferne Überlappungen']])
@@ -248,6 +249,8 @@ class QKan:
             zustand.addAction(self.actions[list['Zustandsklassen ermitteln']])
             zustand.addAction(self.actions[list['Sanierungsbedarfszahl ermitteln']])
             strakat.addAction(self.actions[list['Import aus STRAKAT']])
+            info.addAction(self.actions[list['Über QKan']])
+            info.addAction(self.actions[list['Infos zum QKan Projekt']])
 
     def unload(self) -> None:
         from qgis.utils import unloadPlugin
