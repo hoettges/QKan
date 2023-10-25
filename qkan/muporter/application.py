@@ -160,9 +160,6 @@ class MuPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars Mike+ und anschließender Start des Import aus einer Mike+-Datenbank"""
 
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
         self.import_dlg.show()
 
         if self.import_dlg.exec_():

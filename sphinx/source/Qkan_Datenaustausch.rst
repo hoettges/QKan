@@ -73,8 +73,8 @@ Abbildung: Eingefügtes Kanalnetz in QKan
 Arbeiten mit Projektdateien
 ---------------------------
 
-Projektdatei übertragen
-^^^^^^^^^^^^^^^^^^^^^^^
+Projektdateien übertragen
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Die Funktion |Tool_projektdatei_uebertragen| :guilabel:`Projektdatei übertragen` dient dazu, eine Vorlage-Projektdatei zu laden, 
 um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei können z.B. Beschriftungsstile 
@@ -102,22 +102,6 @@ neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein.
 ..
     Export mit HYSTEM-EXTRAN
     ------------------------
- 
- 
-Projektlayer aktualisieren
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem :ref:`Formular<image_qkan_layersadapt>` unter der Überschrift "QKan-Datenbank" die Option "auf aktuelle Version anpassen" (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift "Layer anpassen") aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option "Formularanbindungen auf QKan-Standard setzen" aktiviert ist. 
-
-1. Aktivieren Sie "QKan-Standard verwenden". Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter "Einstellungen aus Projektdatei übernehmen" mit der Schaltfläche [...] rechts daneben auswählen. 
-2. Wählen unter der Überschrift "Layer anpassen" Sie die Option "Datenbankanbindung der Layer anpassen" und wählen Sie Ihre Datenbank aus, an die das Projekt angebunden werden soll. Aktivieren Sie auch die Übrigen Optionen unter dieser Überschrift
-3. Unter der Überschrift "QKan-Layer" können Sie auswählen, welche Layer bearbeitet werden sollen. In diesem Fall ist "alle anpassen" empfehlenswert. 
-4. Falls Sie nicht sicher sind, ob Ihre Datenbank auf dem aktuellen Stand ist, können sie unter der Überschrift "QKan-Datenbank" die Option "auf aktuelle Version anpassen" aktivieren. 
-5. Legen Sie mit der Schaltfläche [...] Namen und Standort des angepassten Projekts fest. 
-
-.. _image_qkan_layersadapt:
-.. image:: ./QKan_Bilder/qkan_layersadapt.png
-
 
 .. _datenaustimporthe:  
 
@@ -163,15 +147,3 @@ sollte nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen
 dass diese in der Zukunft benötigt werden. 
 
 Nun kann das Formular mit :guilabel:`OK` geschlossen werden und der Import wird gestartet. 
-
-.. index:: Datenbank aktualisieren
-
-Datenbank aktualisieren
------------------------
-
-Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen. wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist. 
-Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert 
-wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll. 
-
-
-.. index:: Projektdatei übertragen

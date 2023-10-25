@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/floodTools" >
+        <file>res/icon_animation.png</file>
+    </qresource>
+</RCC>

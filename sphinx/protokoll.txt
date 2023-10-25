@@ -6,20 +6,20 @@ intersphinx inventory has moved: https://docs.python.org/objects.inv -> https://
 building [mo]: targets for 0 po files that are out of date
 writing output... 
 building [html]: targets for 3 source files that are out of date
-updating environment: 0 added, 3 changed, 0 removed
-reading sources... [ 33%] Qkan_Datenaustausch                                  reading sources... [ 66%] Qkan_Formulare                                       reading sources... [100%] Qkan_aufsetzen                                       
+updating environment: 1 added, 4 changed, 0 removed
+reading sources... [ 20%] Qkan_Datenaustausch                                  reading sources... [ 40%] Qkan_Formulare                                       reading sources... [ 60%] Qkan_aufsetzen                                       reading sources... [ 80%] Qkan_faq                                             reading sources... [100%] index                                                
 looking for now-outdated files... none found
 pickling environment... done
 checking consistency... done
 preparing documents... done
-writing output... [ 25%] Qkan_Datenaustausch                                   writing output... [ 50%] Qkan_Formulare                                        writing output... [ 75%] Qkan_aufsetzen                                        writing output... [100%] index                                                 
+writing output... [ 20%] Qkan_Datenaustausch                                   writing output... [ 40%] Qkan_Formulare                                        writing output... [ 60%] Qkan_aufsetzen                                        writing output... [ 80%] Qkan_faq                                              writing output... [100%] index                                                 
 generating indices... genindex done
 writing additional pages... search done
-copying images... [  8%] QKan_Bilder/Tool_clipboard_einfügen.png               copying images... [ 16%] QKan_Bilder/Tool_clipboard_zuordnung.png              copying images... [ 25%] QKan_Bilder/netz_aus_clipboard.png                    copying images... [ 33%] QKan_Bilder/Tool_projektdatei_uebertragen.png         copying images... [ 41%] QKan_Bilder/qkan_qgsAdapt.png                         copying images... [ 50%] QKan_Bilder/qkan_layersadapt.png                      copying images... [ 58%] QKan_Bilder/Tool_Import_HE.png                        copying images... [ 66%] QKan_Bilder/Formular_Import_HE.png                    copying images... [ 75%] QKan_Bilder/Einzugsflaeche_HE.png                     copying images... [ 83%] QKan_Bilder/QGIS_herunterladen.png                    copying images... [ 91%] QKan_Bilder/QGIS_komponenten.png                      copying images... [100%] QKan_Bilder/QKan_Plugin.png                           
+copying images... [  5%] QKan_Bilder/Tool_clipboard_einfügen.png               copying images... [ 11%] QKan_Bilder/Tool_clipboard_zuordnung.png              copying images... [ 17%] QKan_Bilder/netz_aus_clipboard.png                    copying images... [ 23%] QKan_Bilder/Tool_projektdatei_uebertragen.png         copying images... [ 29%] QKan_Bilder/qkan_qgsAdapt.png                         copying images... [ 35%] QKan_Bilder/Tool_Import_HE.png                        copying images... [ 41%] QKan_Bilder/Formular_Import_HE.png                    copying images... [ 47%] QKan_Bilder/Einzugsflaeche_HE.png                     copying images... [ 52%] QKan_Bilder/qkan_layersadapt.png                      copying images... [ 58%] QKan_Bilder/QGIS_herunterladen.png                    copying images... [ 64%] QKan_Bilder/QGIS_komponenten.png                      copying images... [ 70%] QKan_Bilder/QKan_Plugin.png                           copying images... [ 76%] QKan_Bilder/symbole_auf_linien.png                    copying images... [ 82%] QKan_Bilder/Tool_projekt_aktualisieren.png            copying images... [ 88%] QKan_Bilder/Tool_info.png                             copying images... [ 94%] QKan_Bilder/formularpfade_wiederherstellen.png        copying images... [100%] QKan_Bilder/abfrageeinstellung_formularanzeige.png    
 copying static files... done
 copying extra files... done
 dumping search index in German (code: de)... done
 dumping object inventory... done
-build succeeded, 4 warnings.
+build succeeded, 5 warnings.
 
 The HTML pages are in build\html.

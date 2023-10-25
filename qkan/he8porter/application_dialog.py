@@ -1,9 +1,8 @@
 import logging
 import os
-from pathlib import Path
 from typing import Callable, List, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
@@ -17,17 +16,12 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
-from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.he8.application_dialog")
-
-EXPORT_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "res", "he8_export_dialog_base.ui")
-)
 
 
 class _Dialog(QDialog):
@@ -41,11 +35,12 @@ class _Dialog(QDialog):
         super().__init__(parent)
         self.setupUi(self)
         self.default_dir = default_dir
-        logger.debug(
-            f"he8porter.application_dialog._Dialog.__init__:"
-            f"\nself.default_dir: {self.default_dir}"
-        )
         self.tr = tr
+
+
+EXPORT_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "he8_export_dialog_base.ui")
+)
 
 
 class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore

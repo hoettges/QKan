@@ -463,7 +463,7 @@ class ImportTask:
         def _iter() -> Iterator[Schacht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
             blocks = self.xml.findall(
-                "KG[KG305='S']"
+                "KG"                                           # old: KG[KG305='S']
             )
 
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
@@ -474,7 +474,9 @@ class ImportTask:
                 name = block.findtext("KG001", "not found")
                 knoten_typ = 0
 
-                knoten_typ = block.findtext("KG305", -1)
+                knoten_typ = block.findtext("KG305", "-1")
+                if knoten_typ not in ("0", "S", "-1"):
+                    continue
 
                 smp = block.find("GO[GO002='G']/GP")
 

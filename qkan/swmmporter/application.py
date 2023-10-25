@@ -174,9 +174,6 @@ class SWMMPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars SWMM und anschließender Start des Imports aus einer SWMM-Datei"""
 
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        #self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -266,7 +263,6 @@ class SWMMPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
-                read_qml({'Haltunge': 'haltungen.qml'}, 'qml/he')
                 project.reloadAllLayers()
 
         self.log.debug("Closed DB")

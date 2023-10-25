@@ -292,6 +292,15 @@ class STRAKATConfig(ClassObject):
     import_dir: str = ""  # Importverzeichnis mit den STRAKAT-Dateien, u. a. kanal.rwtopen
 
 
+class FLOODConfig(ClassObject):
+    import_dir: str = ""    # Importverzeichnis mit den Geodatabase-Ergebnisdaten
+    database: str = ""      # Ergebnisdatenbank
+    velo: bool = True       # Creation of volocity arrows checked
+    wlevel: bool = True     # Creation of water level triangles checked
+    faktor_v: str = "5"     # Factor for arrow length in relation to velocity
+    gdblayer: bool = False  # Keeps GDB-Layer in layer list
+
+
 class MUConfig(ClassObject):
     database: str = ""  # QKan-Projektdatenbank
     # database_erg: str = ""                    # ist jetzt: export_file
@@ -731,9 +740,11 @@ class XmlConfig(ClassObject):
     import_haus: bool = True
     import_zustand: bool = True
 
+
 class ZustandConfig(ClassObject):
     db: str = ""
     date: str = ""
+
 
 class SanierungConfig(ClassObject):
     db: str = ""
@@ -768,6 +779,7 @@ class Config(ClassObject):
     he: HEConfig = HEConfig()
     he8: HE8Config = HE8Config()
     strakat: STRAKATConfig = STRAKATConfig()
+    flood: FLOODConfig = FLOODConfig()
     mu: MUConfig = MUConfig()
     swmm: SWMMConfig = SWMMConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()

@@ -47,9 +47,6 @@ class StrakatPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars STRAKAT und anschließender Start des Import aus einer STRAKAT-Datenbank"""
 
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -71,10 +68,10 @@ class StrakatPorter(QKanPlugin):
             QKan.config.check_import.allrefs = (self.import_dlg.cb_allrefs.isChecked())
 
             if not QKan.config.strakat.import_dir:
-                fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")
+                fehlermeldung("Fehler beim Import", "Es wurde kein Verzeichnis ausgewählt!")
                 self.iface.messageBar().pushMessage(
                     "Fehler beim Import",
-                    "Es wurde keine Datei ausgewählt!",
+                    "Es wurde kein Verzeichnis ausgewählt!",
                     level=Qgis.Critical,
                 )
                 return
@@ -158,19 +155,6 @@ class StrakatPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
-                read_qml(
-                    {
-                        'Drosseln': 'drosseln.qml',
-                        'Schieber': 'schieber.qml',
-                        'Grund-/Seitenauslässe': 'grund_seitenauslaesse.qml',
-                        'H-Regler': 'h_regler.qml',
-                        'Q-Regler': 'q_regler.qml',
-                        'Pumpen': 'pumpen.qml',
-                        'Wehre': 'wehre.qml',
-                        'Abflussparameter': 'abflussparameter.qml',
-                    },
-                    'qml/he'
-                )
                 project.reloadAllLayers()
 
         self.log.debug("Closed DB")

@@ -3,7 +3,7 @@ import logging
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 
-logger = logging.getLogger("QKan.he8.import")
+logger = logging.getLogger("QKan.he8._import")
 
 
 class ImportTask:

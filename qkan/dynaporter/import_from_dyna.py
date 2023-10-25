@@ -231,6 +231,11 @@ def import_kanaldaten(
             QKan.config.project.template = str(
                 Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
             )
+            specific_qmls = {
+                'specificqmlpath': 'qml/dyna',
+                'Haltungen': 'haltungen.qml',
+                'Abflussparameter': 'abflussparameter.qml',
+            }
             qgsadapt(
                 database_qkan,
                 db_qkan,
@@ -242,13 +247,6 @@ def import_kanaldaten(
             # noinspection PyArgumentList
             project = QgsProject.instance()
             project.read(projectfile)  # read the new project file
-            read_qml(
-                {
-                    'Haltungen': 'haltungen.qml',
-                    'Abflussparameter': 'abflussparameter.qml',
-                },
-                'qml/dyna'
-            )
             project.reloadAllLayers()
 
     # ------------------------------------------------------------------------------

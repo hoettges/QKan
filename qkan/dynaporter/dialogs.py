@@ -478,9 +478,6 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
         self.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
 
         self.tf_projectFile.setText(QKan.config.project.file)
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        self.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
         # show the dialog
         self.show()
         # Run the dialog event loop

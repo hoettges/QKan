@@ -796,9 +796,10 @@ enthalten ist, werden n Nachkommastellen angenommen
         return float(zahl) / 10.0 ** n
 
 
-def read_qml(qmlfiles: dict[str, str], qmldir:str = 'qml'):
+def read_qml(qmlfiles: dict[str, str]):
     """Liest qml-Datei(en) für QKan-Layer"""
 
+    qmldir = qmlfiles.get('specificqmlpath', 'qml')
     layer_tree_root = QgsProject.instance().layerTreeRoot()
     group = layer_tree_root.findGroup('QKan')
     for layer in group.findLayers():

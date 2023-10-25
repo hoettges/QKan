@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ &mdash; QKan 3.3.1 Dokumentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Datenaustausch" href="Qkan_Datenaustausch.html" />
+    <link rel="prev" title="Installation" href="Qkan_aufsetzen.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QKan
+          </a>
+              <div class="version">
+                3.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Was ist QKan?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fehlerhafte-anzeige-linienelemente">Fehlerhafte Anzeige Linienelemente</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objektabfrage-funktioniert-nicht">Objektabfrage funktioniert nicht</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Datenaustausch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Arbeiten mit Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Formulare</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Übersicht</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FAQ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Qkan_faq.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this heading"></a></h1>
+<section id="fehlerhafte-anzeige-linienelemente">
+<h2>Fehlerhafte Anzeige Linienelemente<a class="headerlink" href="#fehlerhafte-anzeige-linienelemente" title="Permalink to this heading"></a></h2>
+<p><strong>Problem:</strong> Symbole auf Haltungen und Verbindungselementen (Pumpen, Wehre, etc.) wiederholen sich in viel zu engem Abstand</p>
+<p><strong>Lösung:</strong> Der Grund für dieses Problem ist eine Änderung in der Liniendarstellung von QGIS nach Version 3.22: Wenn Projekte mit einer
+höheren QGIS-Version erstellt und anschließend mit einer niedrigeren Version weiterverarbeitet werden, wird das Attribut zur Wiederholung
+von Symbolen auf Linien falsch gespeichert. So wird beispielsweise, wie auf dem Bild unten, der Fließpfeil statt nur mittig nun in einem
+Intervall angezeigt.</p>
+<img alt="_images/symbole_auf_linien.png" src="_images/symbole_auf_linien.png" />
+<p>Zur Fehlerbehebung wird im Menü unter <span class="guilabel">QKan</span> unter dem Punkt <span class="guilabel">Allgemein</span> mit <a class="reference internal" href="_images/Tool_projekt_aktualisieren.png"><img alt="Tool_projekt_aktualisieren" src="_images/Tool_projekt_aktualisieren.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Projekt aktualisieren</span>
+ein Fenster geöffnet, welches ohne eine weitere Auswahl mit <span class="guilabel">OK</span> geschlossen werden kann. Nun sollten die Symbole richtig
+angezeigt werden.</p>
+</section>
+<section id="objektabfrage-funktioniert-nicht">
+<h2>Objektabfrage funktioniert nicht<a class="headerlink" href="#objektabfrage-funktioniert-nicht" title="Permalink to this heading"></a></h2>
+<p><strong>Problem:</strong> Bei der Verwendung der Menüfunktion <a class="reference internal" href="_images/Tool_info.png"><img alt="Tool_info" src="_images/Tool_info.png" style="width: 1.25em;" /></a> <span class="guilabel">Objekt abfragen</span> wird nur ein Formular mit tabellarisch
+angeordneten Feldern anstelle eines QKan-Formulares angezeigt.</p>
+<p><strong>Lösung:</strong> Hierfür gibt es zwei mögliche Ursachen, welche auch beide zusammen vorliegen können:</p>
+<ol class="arabic simple">
+<li><p>Die Projektdatei wurde (in der Regel zusammen mit der eingebundenen QKan-Datenbank) in ein anderes Verzeichnis verschoben. Ist dies der Fall, kann im Menü unter <span class="guilabel">QKan</span> unter dem Punkt <span class="guilabel">Allgemein</span> mit <a class="reference internal" href="_images/Tool_projekt_aktualisieren.png"><img alt="Tool_projekt_aktualisieren" src="_images/Tool_projekt_aktualisieren.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Projekt aktualisieren</span> der Pfad wieder hergestellt werden. Dazu muss in dem sich öffnenden Fesnter das Kontrollfeld im Bereich „Layer anpassen &gt; Formularanbindung auf QKan-Standard setzten“ sowie das Optionsfeld im Bereich „QKan-Layer &gt; alle anpassen“ aktiviert werden (siehe Bild unten).</p></li>
+</ol>
+<img alt="_images/formularpfade_wiederherstellen.png" src="_images/formularpfade_wiederherstellen.png" />
+<ol class="arabic simple" start="2">
+<li><p>Der Modus für die Anzeige von Objektinformationen wurde noch nicht umgestellt. Es wird empfohlen folgende Einstellung vorzunehmen: Über dem Menüpunkt <span class="guilabel">Ansicht</span> &gt; <span class="guilabel">Bedienfelder</span> &gt; <span class="guilabel">Identifikationsergebnis</span> das Formular öffnen. Dort über den Menüpunkt <span class="guilabel">Abfrageeinstellung</span> das Kontrollfeld „Objektformular automatsich öffnen, wenn ein einzelnes Objekt abgefragt wird“ aktivieren. Außerdem sollte unten in der Auswahlliste <span class="guilabel">Modus</span> der Eintrag „Layerauswahl“ gewählt werden.</p></li>
+</ol>
+<img alt="_images/abfrageeinstellung_formularanzeige.png" src="_images/abfrageeinstellung_formularanzeige.png" />
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Qkan_aufsetzen.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="Qkan_Datenaustausch.html" class="btn btn-neutral float-right" title="Datenaustausch" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
+  </div>
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

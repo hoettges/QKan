@@ -19,7 +19,6 @@ class ImportTask:
         self.epsg = QKan.config.epsg
         self.dbtyp = QKan.config.database_typ
         self.strakatdir = QKan.config.strakat.import_dir
-        self.db_qkan = db_qkan
         self.projectfile = QKan.config.project.file
         self.db_name = QKan.config.database.qkan
 

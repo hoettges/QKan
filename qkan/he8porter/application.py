@@ -179,9 +179,6 @@ class He8Porter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
 
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -318,6 +315,17 @@ class He8Porter(QKanPlugin):
                 QKan.config.project.template = str(
                     Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
                 )
+                specific_qmls = {
+                    'specificqmlpath': 'qml/he',
+                    'Drosseln': 'drosseln.qml',
+                    'Schieber': 'schieber.qml',
+                    'Grund-/Seitenauslässe': 'grund_seitenauslaesse.qml',
+                    'H-Regler': 'h_regler.qml',
+                    'Q-Regler': 'q_regler.qml',
+                    'Pumpen': 'pumpen.qml',
+                    'Wehre': 'wehre.qml',
+                    'Abflussparameter': 'abflussparameter.qml',
+                }
                 qgsadapt(
                     QKan.config.database.qkan,
                     db_qkan,
@@ -330,19 +338,6 @@ class He8Porter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
-                read_qml(
-                    {
-                        'Drosseln': 'drosseln.qml',
-                        'Schieber': 'schieber.qml',
-                        'Grund-/Seitenauslässe': 'grund_seitenauslaesse.qml',
-                        'H-Regler': 'h_regler.qml',
-                        'Q-Regler': 'q_regler.qml',
-                        'Pumpen': 'pumpen.qml',
-                        'Wehre': 'wehre.qml',
-                        'Abflussparameter': 'abflussparameter.qml',
-                    },
-                    'qml/he'
-                )
                 project.reloadAllLayers()
 
         self.log.debug("Closed DB")

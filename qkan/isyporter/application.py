@@ -104,9 +104,6 @@ class IsyPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
 
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -206,7 +203,6 @@ class IsyPorter(QKanPlugin):
                 QKan.config.project.template = str(
                     Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
                 )
-
                 qgsadapt(
                     QKan.config.database.qkan,
                     db_qkan,
@@ -219,7 +215,6 @@ class IsyPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
-                read_qml({'Haltunge': 'haltungen'}, 'qml/isybau')
                 project.reloadAllLayers()
 
             # TODO: Some layers don't have a valid EPSG attached or wrong coordinates

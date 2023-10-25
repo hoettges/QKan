@@ -21,7 +21,7 @@
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
     <link rel="next" title="Arbeiten mit Flächen" href="Qkan_flaechen.html" />
-    <link rel="prev" title="Installation" href="Qkan_aufsetzen.html" /> 
+    <link rel="prev" title="FAQ" href="Qkan_faq.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,23 +50,25 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Was ist QKan?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Datenaustausch</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#import-von-kanaldaten-aus-einfachen-tabellen">Import von Kanaldaten aus einfachen Tabellen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arbeiten-mit-projektdateien">Arbeiten mit Projektdateien</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#projektdatei-ubertragen">Projektdatei übertragen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#projektlayer-aktualisieren">Projektlayer aktualisieren</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#projektdateien-ubertragen">Projektdateien übertragen</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#import-aus-hystem-extran">Import aus HYSTEM-EXTRAN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#datenbank-aktualisieren">Datenbank aktualisieren</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Arbeiten mit Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Formulare</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Übersicht</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
 </ul>
 
@@ -156,8 +158,8 @@ wenn Datensätze mit Geometrien kopiert und in eine Textdatei eingefügt werden.
 </section>
 <section id="arbeiten-mit-projektdateien">
 <h2>Arbeiten mit Projektdateien<a class="headerlink" href="#arbeiten-mit-projektdateien" title="Permalink to this heading"></a></h2>
-<section id="projektdatei-ubertragen">
-<h3>Projektdatei übertragen<a class="headerlink" href="#projektdatei-ubertragen" title="Permalink to this heading"></a></h3>
+<section id="projektdateien-ubertragen">
+<h3>Projektdateien übertragen<a class="headerlink" href="#projektdateien-ubertragen" title="Permalink to this heading"></a></h3>
 <p>Die Funktion <a class="reference internal" href="_images/Tool_projektdatei_uebertragen.png"><img alt="Tool_projektdatei_uebertragen" src="_images/Tool_projektdatei_uebertragen.png" style="width: 1.25em;" /></a> <span class="guilabel">Projektdatei übertragen</span> dient dazu, eine Vorlage-Projektdatei zu laden,
 um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei können z.B. Beschriftungsstile
 oder Linientypdarstellungen definiert sein. (1) In der Maske wird oben zunächst die aktuelle geladene Projektdatenbank angezeigt,
@@ -173,18 +175,6 @@ werden soll. Mit <span class="guilabel">OK</span> wird die Projektdatei geschrie
 <img alt="_images/qkan_qgsAdapt.png" id="image-qkan-qgsadapt" src="_images/qkan_qgsAdapt.png" />
 <p>Die neue Projektdatei kann geladen werden, indem das aktuelle Projekt über <span class="guilabel">Projekt</span> → <span class="guilabel">Zuletzt verwendet</span>
 neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein.</p>
-</section>
-<section id="projektlayer-aktualisieren">
-<h3>Projektlayer aktualisieren<a class="headerlink" href="#projektlayer-aktualisieren" title="Permalink to this heading"></a></h3>
-<p>Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem <a class="reference internal" href="#image-qkan-layersadapt"><span class="std std-ref">Formular</span></a> unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift „Layer anpassen“) aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option „Formularanbindungen auf QKan-Standard setzen“ aktiviert ist.</p>
-<ol class="arabic simple">
-<li><p>Aktivieren Sie „QKan-Standard verwenden“. Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche […] rechts daneben auswählen.</p></li>
-<li><p>Wählen unter der Überschrift „Layer anpassen“ Sie die Option „Datenbankanbindung der Layer anpassen“ und wählen Sie Ihre Datenbank aus, an die das Projekt angebunden werden soll. Aktivieren Sie auch die Übrigen Optionen unter dieser Überschrift</p></li>
-<li><p>Unter der Überschrift „QKan-Layer“ können Sie auswählen, welche Layer bearbeitet werden sollen. In diesem Fall ist „alle anpassen“ empfehlenswert.</p></li>
-<li><p>Falls Sie nicht sicher sind, ob Ihre Datenbank auf dem aktuellen Stand ist, können sie unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ aktivieren.</p></li>
-<li><p>Legen Sie mit der Schaltfläche […] Namen und Standort des angepassten Projekts fest.</p></li>
-</ol>
-<img alt="_images/qkan_layersadapt.png" id="image-qkan-layersadapt" src="_images/qkan_layersadapt.png" />
 </section>
 </section>
 <section id="import-aus-hystem-extran">
@@ -213,19 +203,13 @@ sollte nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen
 dass diese in der Zukunft benötigt werden.</p>
 <p>Nun kann das Formular mit <span class="guilabel">OK</span> geschlossen werden und der Import wird gestartet.</p>
 </section>
-<section id="datenbank-aktualisieren">
-<span id="index-0"></span><h2>Datenbank aktualisieren<a class="headerlink" href="#datenbank-aktualisieren" title="Permalink to this heading"></a></h2>
-<p>Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen. wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist.
-Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert
-wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll.</p>
-<span class="target" id="index-1"></span></section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Qkan_aufsetzen.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="Qkan_faq.html" class="btn btn-neutral float-left" title="FAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
         <a href="Qkan_flaechen.html" class="btn btn-neutral float-right" title="Arbeiten mit Flächen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
