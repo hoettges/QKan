@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
-    <height>873</height>
+    <width>580</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -27,8 +27,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>800</y>
+     <x>140</x>
+     <y>470</y>
      <width>271</width>
      <height>32</height>
     </rect>
@@ -58,8 +58,8 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>340</y>
-     <width>401</width>
+     <y>10</y>
+     <width>541</width>
      <height>141</height>
     </rect>
    </property>
@@ -122,7 +122,7 @@
    <widget class="QPushButton" name="pb_import">
     <property name="geometry">
      <rect>
-      <x>369</x>
+      <x>500</x>
       <y>40</y>
       <width>21</width>
       <height>20</height>
@@ -148,7 +148,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>351</width>
+      <width>481</width>
       <height>20</height>
      </rect>
     </property>
@@ -199,7 +199,7 @@
      <rect>
       <x>10</x>
       <y>90</y>
-      <width>381</width>
+      <width>511</width>
       <height>27</height>
      </rect>
     </property>
@@ -228,9 +228,9 @@
   <widget class="QGroupBox" name="gb_projectfile">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>350</y>
-     <width>401</width>
+     <x>20</x>
+     <y>250</y>
+     <width>541</width>
      <height>81</height>
     </rect>
    </property>
@@ -281,7 +281,7 @@
    <widget class="QPushButton" name="pb_project">
     <property name="geometry">
      <rect>
-      <x>369</x>
+      <x>500</x>
       <y>40</y>
       <width>21</width>
       <height>20</height>
@@ -307,7 +307,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>351</width>
+      <width>481</width>
       <height>20</height>
      </rect>
     </property>
@@ -333,9 +333,9 @@
   <widget class="QGroupBox" name="gb_db_qkan">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>260</y>
-     <width>401</width>
+     <x>20</x>
+     <y>160</y>
+     <width>541</width>
      <height>81</height>
     </rect>
    </property>
@@ -386,7 +386,7 @@
    <widget class="QPushButton" name="pb_database">
     <property name="geometry">
      <rect>
-      <x>369</x>
+      <x>500</x>
       <y>40</y>
       <width>21</width>
       <height>20</height>
@@ -412,7 +412,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>351</width>
+      <width>481</width>
       <height>20</height>
      </rect>
     </property>
@@ -425,10 +425,13 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan - Zieldatenbank (wird ggfs. neu angelegt)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flood - Zieldatenbank (wird ggfs. neu angelegt)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>QKan - Zieldatenbank (wird ggfs. neu angelegt)</string>
+     <string>Flood - Zieldatenbank (wird ggfs. neu angelegt)</string>
+    </property>
+    <property name="whatsThis">
+     <string>Flood - Zieldatenbank (wird ggfs. neu angelegt)</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -438,10 +441,10 @@
   <widget class="QGroupBox" name="gb_action">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>440</y>
-     <width>401</width>
-     <height>71</height>
+     <x>350</x>
+     <y>340</y>
+     <width>211</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="font">
@@ -473,8 +476,8 @@
    <widget class="QCheckBox" name="cb_wlevel">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>20</y>
+      <x>30</x>
+      <y>30</y>
       <width>111</width>
       <height>20</height>
      </rect>
@@ -500,7 +503,7 @@
      <string>Haltungen importieren</string>
     </property>
     <property name="text">
-     <string>Wasserstände</string>
+     <string>Wassertiefen</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -510,7 +513,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>20</y>
+      <y>50</y>
       <width>171</width>
       <height>20</height>
      </rect>
@@ -546,8 +549,8 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>40</y>
-      <width>271</width>
+      <y>80</y>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -586,9 +589,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>500</y>
-     <width>401</width>
-     <height>271</height>
+     <y>340</y>
+     <width>311</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="font">
@@ -620,8 +623,8 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>200</y>
+      <x>9</x>
+      <y>20</y>
       <width>191</width>
       <height>21</height>
      </rect>
@@ -647,9 +650,9 @@
    <widget class="QLineEdit" name="tf_faktor_v">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>200</y>
-      <width>61</width>
+      <x>219</x>
+      <y>20</y>
+      <width>41</width>
       <height>20</height>
      </rect>
     </property>
@@ -677,147 +680,12 @@
      <string/>
     </property>
    </widget>
-   <widget class="QDateTimeEdit" name="dateTimeEdit">
+   <widget class="QLineEdit" name="tf_min_w">
     <property name="geometry">
      <rect>
-      <x>209</x>
-      <y>80</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>80</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="text">
-     <string>Zeitreihenanfang</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QDateTimeEdit" name="dateTimeEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>209</x>
-      <y>110</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>110</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="text">
-     <string>Zeitreihenende</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>140</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="text">
-     <string>Zeitschritt</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QTimeEdit" name="timeEdit">
-    <property name="geometry">
-     <rect>
-      <x>279</x>
-      <y>140</y>
-      <width>71</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="tf_wlevelmin">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>230</y>
-      <width>61</width>
+      <x>219</x>
+      <y>50</y>
+      <width>41</width>
       <height>20</height>
      </rect>
     </property>
@@ -848,8 +716,8 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>230</y>
+      <x>9</x>
+      <y>50</y>
       <width>191</width>
       <height>21</height>
      </rect>
@@ -872,85 +740,12 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-  </widget>
-  <widget class="QGroupBox" name="gb_db_qkan_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>50</y>
-     <width>401</width>
-     <height>271</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Tahoma</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="toolTip">
-    <string comment="Pfade der Import- und Exportdatenbank"/>
-   </property>
-   <property name="title">
-    <string>ITWH-Simulationsdaten</string>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <widget class="QListWidget" name="listWidget">
+   <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>91</y>
-      <width>371</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Parametersatz auswählen, mit dem die Simulation durchgeführt wurde&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Parametersatz auswählen, mit dem die Simulation durchgeführt wurde</string>
-    </property>
-    <property name="whatsThis">
-     <string>Parametersatz auswählen, mit dem die Simulation durchgeführt wurde</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_database_2">
-    <property name="geometry">
-     <rect>
-      <x>369</x>
-      <y>40</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
+      <x>260</x>
       <y>20</y>
-      <width>271</width>
+      <width>31</width>
       <height>21</height>
      </rect>
     </property>
@@ -962,19 +757,49 @@
       <bold>false</bold>
      </font>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="text">
-     <string>ITWH-Simulationsdatenbank:</string>
+     <string>-fach</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_database_2">
+   <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>341</width>
+      <x>260</x>
+      <y>50</y>
+      <width>20</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_min_v">
+    <property name="geometry">
+     <rect>
+      <x>219</x>
+      <y>80</y>
+      <width>41</width>
       <height>20</height>
      </rect>
     </property>
@@ -987,24 +812,54 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Datenbank zum Auslesen der Simulationsparameter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kleinste zu berücksichtigende Wassertiefe (empfohlen: 0.10)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>ITWH-Datenbank zum Auslesen der Simulationsparameter</string>
+     <string>Kleinste zu berücksichtigende Wassertiefe (empfohlen: 0.10)</string>
     </property>
     <property name="whatsThis">
-     <string>ITWH-Datenbank zum Auslesen der Simulationsparameter</string>
+     <string>Kleinste zu berücksichtigende Wassertiefe (empfohlen: 0.10)</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="placeholderText">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>80</y>
+      <width>191</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Mindestfließgeschwindigkeit</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>271</width>
+      <x>260</x>
+      <y>80</y>
+      <width>31</width>
       <height>21</height>
      </rect>
     </property>
@@ -1016,11 +871,14 @@
       <bold>false</bold>
      </font>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="text">
-     <string>Parametersatz auswählen</string>
+     <string>m/s</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

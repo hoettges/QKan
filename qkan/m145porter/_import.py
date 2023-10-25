@@ -4,8 +4,6 @@ import re
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from fnmatch import fnmatch
-from qgis.core import Qgis
-from qgis.utils import iface
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection

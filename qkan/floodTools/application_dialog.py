@@ -54,6 +54,8 @@ class AnimationDialog(_Dialog, ANIMATION_CLASS):  # type: ignore
     cb_wlevel: QCheckBox
 
     tf_faktor_v: QLineEdit
+    tf_min_w: QLineEdit
+    tg_min_v: QLineEdit
 
     def __init__(
         self,
@@ -81,37 +83,11 @@ class AnimationDialog(_Dialog, ANIMATION_CLASS):  # type: ignore
 
         self.cb_velo.setChecked(QKan.config.flood.velo)
         self.cb_wlevel.setChecked(QKan.config.flood.wlevel)
-
-        self.tf_faktor_v.setText(QKan.config.flood.faktor_v)
         self.cb_gdb_remove.setChecked(QKan.config.flood.gdblayer)
 
-    def select_itwhdb(self) -> None:
-        # noinspection PyArgumentList,PyCallByClass
-        """Auswahl der ITWH-Projekt-Datenbank
-        Anschließend werden diverse Simulationsdaten aus dieser Datenbank gelesen"""
-
-        filename, _ = QFileDialog.getOpenFileName(
-            self,
-            self.tr("ITWH-Projektdatei mit Simulationsparametern")
-        )
-        if filename:
-            if not os.path.exists(filename):
-                logger.error("Ausgewählte ITWH-Projektdatenbank existiert nicht")
-                self.iface.messageBar().pushMessage(
-                    "Fehler:",
-                    "Ausgewählte ITWH-Projektdatenbank existiert nicht",
-                    level=Qgis.Critical,
-                )
-                return False
-
-            self.tf_itwhdb.setText(filename)
-            self.default_dir = os.path.dirname(filename)
-
-            with FloodDB(filename) as itwhdb:
-                # Koordinatensystem
-                sql = "SELECT Inhalt FROM ITWH$VARIABLEN"
-                data = db.select(sql, 'Simulationsparameter Koordinatensystem')
-                print(f'{data=}\n')
+        self.tf_faktor_v.setText(QKan.config.flood.faktor_v)
+        self.tf_min_v.setText(QKan.config.flood.min_v)
+        self.tf_min_w.setText(QKan.config.flood.min_w)
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

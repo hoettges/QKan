@@ -49,9 +49,11 @@ class FloodTools(QKanPlugin):
 
             QKan.config.flood.velo = self.animation_dlg.cb_velo.isChecked()
             QKan.config.flood.wlevel = self.animation_dlg.cb_wlevel.isChecked()
+            QKan.config.flood.gdblayer = self.animation_dlg.cb_gdb_remove.isChecked()
 
             QKan.config.flood.faktor_v = self.animation_dlg.tf_faktor_v.text()
-            QKan.config.flood.gdblayer = self.animation_dlg.cb_gdb_remove.isChecked()
+            QKan.config.flood.min_v = self.animation_dlg.tf_min_v.text()
+            QKan.config.flood.min_w = self.animation_dlg.tf_min_w.text()
 
             if not QKan.config.flood.import_dir:
 

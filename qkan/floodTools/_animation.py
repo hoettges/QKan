@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 import os.path
 import shutil
+import xml.etree.ElementTree as ET
 
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import (
@@ -21,8 +22,10 @@ class FloodanimationTask:
         self.db_name = QKan.config.flood.database
         self.velo_choice = QKan.config.flood.velo
         self.wlevel_choice = QKan.config.flood.wlevel
-        self.faktor_v = QKan.config.flood.faktor_v
         self.gdblayer_choice = QKan.config.flood.gdblayer
+        self.faktor_v = QKan.config.flood.faktor_v
+        self.min_v = QKan.config.flood.min_v
+        self.min_w = QKan.config.flood.min_w
 
     def run(self) -> bool:
 
@@ -40,6 +43,13 @@ class FloodanimationTask:
 
         datenbank_qkan_template = os.path.join(QKan.template_dir, "qkan.sqlite")
         shutil.copyfile(datenbank_qkan_template, self.db_name)
+
+        # Read simulation parameters
+        xml_file = os.path.join(self.import_dir, '..', 'report_info.xml')
+        xml = ET.ElementTree()
+        xml.parse(xml_file)
+        starttime = datetime.strptime(xml.findtext("ReportStart"), '%m/%d/%Y %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+        interval = float(xml.findtext("ReportInterval")) / 86400.
 
         if self.velo_choice:
             # Make sure that path includes 'Result2D.gdb'
@@ -176,7 +186,6 @@ class FloodanimationTask:
             nstep = int((len(data) - 6) / 2)
             db.logger.debug(f'Anzahl Zeitschritte: {nstep=}\n')
 
-            faktor = QKan.config.flood.faktor_v                              # Skalierungsfaktor für die v-Pfeile
             for tstep in range(nstep):
                 if (datetime.now() - timakt).seconds > 10:
                     timakt = datetime.now()
@@ -188,11 +197,11 @@ class FloodanimationTask:
                         INSERT INTO wlevel (h, tanf, tend, geom)
                         SELECT
                             wl_{tstep} AS h,
-                            datetime(2459215.5 + {tstep} / 288.) AS tanf,
-                            datetime(2459215.5 + {tstep + 1} / 288.) AS tend,
+                            datetime(julianday('{starttime}') + {tstep} * {interval}) AS tanf,
+                            datetime(julianday('{starttime}') + {tstep + 1} * {interval}) AS tend,
                             CastToXY(CastToPolygon(GEOMETRY)) AS geom
                         FROM result2d__topo_decimated
-                        WHERE wl_{tstep} >= 0.1
+                        WHERE wl_{tstep} >= {self.min_w}
                         '''
                     if not db.sql(sql, 'Erzeugen der wlevel-Flächen'):
                         return False
@@ -203,30 +212,22 @@ class FloodanimationTask:
                         INSERT INTO velo (v, tanf, tend, geom)
                         SELECT
                             v_{tstep} AS v,
-                            datetime(2459215.5 + {tstep} / 288.) AS tanf,
-                            datetime(2459215.5 + {tstep + 1} / 288.) AS tend,
+                            datetime(julianday('{starttime}') + {tstep} * {interval}) AS tanf,
+                            datetime(julianday('{starttime}') + {tstep + 1} * {interval}) AS tend,
                             Makeline(
                                 Makepoint(x(GEOMETRY), 
                                           y(GEOMETRY), {self.epsg}), 
-                                MakePoint(x(GEOMETRY)+v_{tstep}*cos(v_dir_{tstep}/57.2958)*{faktor}, 
-                                          y(GEOMETRY)+v_{tstep}*sin(v_dir_{tstep}/57.2958)*{faktor},{self.epsg})
+                                MakePoint(x(GEOMETRY)+v_{tstep}*cos(v_dir_{tstep}/57.2958)*{self.faktor_v}, 
+                                          y(GEOMETRY)+v_{tstep}*sin(v_dir_{tstep}/57.2958)*{self.faktor_v},
+                                          {self.epsg})
                             ) as geom
                         FROM result2d__velocity
-                        WHERE v_{tstep} >= 0.1
+                        WHERE v_{tstep} >= {self.min_v}
                         '''
                     if not db.sql(sql, 'Erzeugen der wlevel-Flächen'):
                         return False
 
             db.commit()
-
-            if self.velo_choice:
-                vlayer = QgsVectorLayer(
-                    self.db_name + '|layername=velo',
-                    "velo",
-                    "ogr"
-                )
-                QgsProject.instance().addMapLayer(vlayer)
-                vlayer.loadNamedStyle('C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_flood/snippets/velo.qml')
 
             if self.wlevel_choice:
                 vlayer = QgsVectorLayer(
@@ -235,14 +236,39 @@ class FloodanimationTask:
                     "ogr"
                 )
                 QgsProject.instance().addMapLayer(vlayer)
-                vlayer.loadNamedStyle('C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_flood/snippets/wlevel.qml')
+                qmlfile = os.path.join(QKan.template_dir, 'qml', "waterlevel.qml")
+                try:
+                    vlayer.loadNamedStyle(qmlfile)
+                except:
+                    db.logger.error(f'Die Styledatei {qmlfile} konnte nicht gelesen werden!')
+                    iface.messageBar().pushMessage("Programmfehler",
+                                                   f"Die Styledatei {qmlfile} konnte nicht gelesen werden!",
+                                                   level=Qgis.Critical)
+                    return False
+
+            if self.velo_choice:
+                vlayer = QgsVectorLayer(
+                    self.db_name + '|layername=velo',
+                    "velo",
+                    "ogr"
+                )
+                QgsProject.instance().addMapLayer(vlayer)
+                qmlfile = os.path.join(QKan.template_dir, 'qml', "velocity.qml")
+                try:
+                    vlayer.loadNamedStyle(qmlfile)
+                except:
+                    db.logger.error(f'Die Styledatei {qmlfile} konnte nicht gelesen werden!')
+                    iface.messageBar().pushMessage("Programmfehler",
+                                                   f"Die Styledatei {qmlfile} konnte nicht gelesen werden!",
+                                                   level=Qgis.Critical)
+                    return False
 
             canvas = iface.mapCanvas()
 
             # set frame duration
             timeController = canvas.temporalController()
             intervall = QgsInterval()
-            intervall.setMinutes(5.0)
+            intervall.setMinutes(interval * 1440)
             timeController.setFrameDuration(intervall)
 
             # set frame rate
