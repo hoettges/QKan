@@ -223,6 +223,7 @@ class QKan:
             allgemein.addAction(self.actions[alis['Projektdatei auf bestehende QKan-Datenbank übertragen']])
             verwaltung.addAction(self.actions[alis['QKan-Datenbank aktualisieren']])
             verwaltung.addAction(self.actions[alis['Neue QKan-Datenbank erstellen']])
+            verwaltung.addAction(self.actions[alis['Dateipfade suchen']])
             daten.addAction(self.actions[alis['Plausibilitätsprüfungen']])
             daten.addAction(self.actions[alis['Tabellendaten aus Clipboard einfügen']])
             daten.addAction(self.actions[alis['Tabellendaten aus Clipboard: Zuordnung anzeigen']])

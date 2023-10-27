@@ -32,18 +32,18 @@ class Zustandsklassen_funkt:
     def run(self):
         check_cb = self.check_cb
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        for file in os.listdir(x+"/Layouts"):
-            if file.endswith(".qpt"):
-                project = QgsProject.instance()
-                composition = QgsPrintLayout(project)
-                document = QDomDocument()
-                template = open(x+"/Layouts/" + file)
-                template_content = template.read()
-                template.close()
-                document.setContent(template_content)
-                composition.loadFromTemplate(document, QgsReadWriteContext())
-                project.layoutManager().addLayout(composition)
+        #x = os.path.dirname(os.path.abspath(__file__))
+        # for file in os.listdir(x+"/Layouts"):
+        #     if file.endswith(".qpt"):
+        #         project = QgsProject.instance()
+        #         composition = QgsPrintLayout(project)
+        #         document = QDomDocument()
+        #         template = open(x+"/Layouts/" + file)
+        #         template_content = template.read()
+        #         template.close()
+        #         document.setContent(template_content)
+        #         composition.loadFromTemplate(document, QgsReadWriteContext())
+        #         project.layoutManager().addLayout(composition)
 
         if check_cb['cb7']:
             self.haltung = True

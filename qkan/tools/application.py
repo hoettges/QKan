@@ -8,8 +8,9 @@ import os
 from typing import Optional, cast
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgisInterface
+from qgis.gui import QgisInterface, QgsMessageBar
 from qgis.PyQt.QtWidgets import QListWidgetItem
+from qgis.utils import iface
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
@@ -30,10 +31,12 @@ from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadData
 from .dialogs.runoffparams import RunoffParamsDialog
 from .dialogs.help import QgsHelpDialog
+from .dialogs.filepath import QgsFileDialog
 from .k_dbAdapt import dbAdapt
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
+from .k_filepath import setfilepath
 from qkan.database.qkan_database import db_version
 
 # noinspection PyUnresolvedReferences
@@ -54,6 +57,7 @@ class QKanTools(QKanPlugin):
         self.dlgrc = ReadData(self, proceed=False)
         self.dlgdb = DbAdaptDialog(self)
         self.dlghp = QgsHelpDialog(self)
+        self.dlgfp = QgsFileDialog(self)
         self.iface = iface
 
     # noinspection PyPep8Naming
@@ -133,6 +137,14 @@ class QKanTools(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
+        icon_file_path = ":/plugins/qkan/tools/res/icon_filepath.png"
+        QKan.instance.add_action(
+            icon_file_path,
+            text=self.tr("Dateipfade suchen"),
+            callback=self.run_filepath,
+            parent=self.iface.mainWindow(),
+        )
+
     def unload(self) -> None:
         self.dlgla.close()
         self.dlgop.close()
@@ -142,6 +154,7 @@ class QKanTools(QKanPlugin):
         self.dlghp.close()
         # self.dlgrd.close()                    # doesn't use a form
         self.dlgdb.close()
+        self.dlgfp.close()
 
     def run_qgsadapt(self) -> None:
         """Erstellen einer Projektdatei aus einer Vorlage"""
@@ -461,6 +474,7 @@ class QKanTools(QKanPlugin):
             # Run the dialog event loop
             result = self.dlgro.exec_()
             # See if OK was pressed
+
             if result:
 
                 # Abrufen der ausgewählten Elemente in den Listen
@@ -791,6 +805,51 @@ class QKanTools(QKanPlugin):
         self.dlghp.show()
         # Run the dialog event loop
         result = self.dlghp.exec_()
+
+
+    def run_filepath(self) -> None:
+        self.database_name, epsg = get_database_QKan(silent=True)
+
+        # with DBConnection(dbname=self.database_name) as db_qkan:
+        #     if not db_qkan.connected:
+        #         fehlermeldung(
+        #             "Fehler Info",
+        #             f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+        #         )
+        #         self.iface.messageBar().pushMessage(
+        #             "Fehler Info",
+        #             f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+        #             level=Qgis.Critical,
+        #         )
+        #         return False
+
+        # show the dialog
+        self.dlgfp.show()
+
+        # Run the dialog event loop
+        result = self.dlgfp.exec()
+
+        # See if OK was pressed
+        if result:
+
+            # Abrufen der ausgewählten Elemente in den Listen
+            videopath = self.dlgfp.lineEdit.text()
+            fotopath = self.dlgfp.lineEdit_2.text()
+            fotopath_2 = self.dlgfp.lineEdit_3.text()
+            ausw_haltung = self.dlgfp.checkBox.isChecked()
+            ausw_schacht = self.dlgfp.checkBox_2.isChecked()
+
+            #QKan.config.save()
+
+            setfilepath(
+                self.database_name,
+                videopath,
+                fotopath,
+                fotopath_2,
+                ausw_haltung,
+                ausw_schacht,
+            )
+
 
 
 
