@@ -8,8 +8,8 @@ logger = logging.getLogger("QKan.he8._import")
 
 class ImportTask:
     def __init__(self, db_qkan: DBConnection):
+        # all parameters are passed via QKan.config
         self.db_qkan = db_qkan
-
         self.append = QKan.config.check_import.append
         self.update = QKan.config.check_import.update
         self.allrefs = QKan.config.check_import.allrefs

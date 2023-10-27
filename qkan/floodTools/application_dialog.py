@@ -85,9 +85,9 @@ class AnimationDialog(_Dialog, ANIMATION_CLASS):  # type: ignore
         self.cb_wlevel.setChecked(QKan.config.flood.wlevel)
         self.cb_gdb_remove.setChecked(QKan.config.flood.gdblayer)
 
-        self.tf_faktor_v.setText(QKan.config.flood.faktor_v)
-        self.tf_min_v.setText(QKan.config.flood.min_v)
-        self.tf_min_w.setText(QKan.config.flood.min_w)
+        self.tf_faktor_v.setText(str(QKan.config.flood.faktor_v))
+        self.tf_min_v.setText(str(QKan.config.flood.min_v))
+        self.tf_min_w.setText(str(QKan.config.flood.min_w))
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

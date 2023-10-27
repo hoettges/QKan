@@ -16,6 +16,7 @@ logger = logging.getLogger("QKan.floodTools._animation")
 
 class FloodanimationTask:
     def __init__(self):
+        # all parameters are passed via QKan.config
         self.epsg = QKan.config.epsg
         self.import_dir = QKan.config.flood.import_dir
         self.projectfile = QKan.config.project.file
@@ -23,9 +24,9 @@ class FloodanimationTask:
         self.velo_choice = QKan.config.flood.velo
         self.wlevel_choice = QKan.config.flood.wlevel
         self.gdblayer_choice = QKan.config.flood.gdblayer
-        self.faktor_v = QKan.config.flood.faktor_v
-        self.min_v = QKan.config.flood.min_v
-        self.min_w = QKan.config.flood.min_w
+        self.faktor_v = float(QKan.config.flood.faktor_v)
+        self.min_v = float(QKan.config.flood.min_v)
+        self.min_w = float(QKan.config.flood.min_w)
 
     def run(self) -> bool:
 
@@ -72,7 +73,7 @@ class FloodanimationTask:
             o_save_options.driverName = 'SQLite'
             o_save_options.fileEncoding = 'utf-8'
             o_save_options.onlySelectedFeatures = False
-            o_save_options.layerOptions = ['SPATIALITE=YES']
+            # o_save_options.layerOptions = ['SPATIALITE=YES']
             o_save_options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
             erg = QgsVectorFileWriter.writeAsVectorFormatV3(
                 layer=vlayer,
@@ -105,7 +106,7 @@ class FloodanimationTask:
             o_save_options.driverName = 'SQLite'
             o_save_options.fileEncoding = 'utf-8'
             o_save_options.onlySelectedFeatures = False
-            o_save_options.layerOptions = ['SPATIALITE=YES']
+            # o_save_options.layerOptions = ['SPATIALITE=YES']
             o_save_options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
             erg = QgsVectorFileWriter.writeAsVectorFormatV3(
                 layer=vlayer,

@@ -11,6 +11,7 @@ from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 
 from qkan.datacheck.application import Plausi
 from qkan.database.dbfunc import DBConnection
+from qkan import QKan
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
@@ -28,6 +29,8 @@ class TestPlausi(QgisTest):
     def test_plausi(self) -> None:
         database_qkan = str(BASE_WORK / "modell.sqlite")
         db_qkan = DBConnection(database_qkan, qkan_db_update=True)              # inkl. automatischem DB-Update
+        QKan.config.plausi.themen = ["Netzstruktur","HYSTEM-EXTRAN"]
+        QKan.config.plausi.keepdata = False
 
         test = Plausi(iface())
         test._doplausi(db_qkan)

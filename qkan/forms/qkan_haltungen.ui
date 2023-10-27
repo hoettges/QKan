@@ -178,6 +178,15 @@
      <property name="statusTip">
       <string>von Schachtsohle abweichende Sohlhöhe</string>
      </property>
+     <property name="inputMask">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="maxLength">
+      <number>32767</number>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -618,6 +627,12 @@
      </property>
      <property name="statusTip">
       <string>Bedeutung hängt vom Profiltyp ab</string>
+     </property>
+     <property name="inputMask">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
     <widget class="QLabel" name="label_16">

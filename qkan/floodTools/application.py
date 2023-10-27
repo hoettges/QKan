@@ -51,9 +51,9 @@ class FloodTools(QKanPlugin):
             QKan.config.flood.wlevel = self.animation_dlg.cb_wlevel.isChecked()
             QKan.config.flood.gdblayer = self.animation_dlg.cb_gdb_remove.isChecked()
 
-            QKan.config.flood.faktor_v = self.animation_dlg.tf_faktor_v.text()
-            QKan.config.flood.min_v = self.animation_dlg.tf_min_v.text()
-            QKan.config.flood.min_w = self.animation_dlg.tf_min_w.text()
+            QKan.config.flood.faktor_v = float(self.animation_dlg.tf_faktor_v.text())
+            QKan.config.flood.min_v = float(self.animation_dlg.tf_min_v.text())
+            QKan.config.flood.min_w = float(self.animation_dlg.tf_min_w.text())
 
             if not QKan.config.flood.import_dir:
 
@@ -82,15 +82,17 @@ class FloodTools(QKanPlugin):
                         crs.srsid(),
                         crs.ellipsoidAcronym(),
                     )
-                else:
+                    return False
+                # else:
                     # TODO: This should all be run in a QgsTask to prevent the main
                     #  thread/GUI from hanging. However this seems to either not work
                     #  or crash QGIS currently. (QGIS 3.10.3/0e1f846438)
-                    QKan.config.epsg = epsg
 
-                    QKan.config.save()
+            QKan.config.epsg = epsg
 
-                    self._dofloodAnimation()
+            QKan.config.save()
+
+            self._dofloodAnimation()
 
 
     def _dofloodAnimation(self) -> bool:

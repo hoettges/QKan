@@ -109,7 +109,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         # noinspection PyArgumentList,PyCallByClass
         dirname = QFileDialog.getExistingDirectory (
             self,
-            self.tr("Zu importierende strakat-Datei"),
+            self.tr("Zu importierendes STRAKAT-Verzeichnis"),
             self.default_dir,
         )
         if dirname:

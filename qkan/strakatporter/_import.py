@@ -14,6 +14,7 @@ class ImportTask:
         self,
         db_qkan: DBConnection,
     ):
+        # all parameters (except db_qkan) are passed via QKan.config
         self.db_qkan = db_qkan
         self.allrefs = QKan.config.check_import.allrefs
         self.epsg = QKan.config.epsg
@@ -145,7 +146,7 @@ class ImportTask:
                     rw_gerinne_u, hw_gerinne_u,
                     rw_rohranfang, hw_rohranfang,
                     rw_rohrende, hw_rohrende
-                ) = unpack('dddddddd', b[0:64])
+                ) = (round(el, 3) for el in unpack('dddddddd', b[0:64]))
 
                 (
                     zuflussnummer1, zuflussnummer2,
@@ -171,12 +172,12 @@ class ImportTask:
                 (
                     deckel_oben_v, deckel_oben_g, deckel_unten_v, deckel_unten_g,
                     sohle_oben___v, sohle_oben___g, sohle_unten__v, sohle_unten__g
-                ) = unpack('ffffffff', b[202:234])
+                ) = (round(el, 3) for el in unpack('ffffffff', b[202:234]))
 
                 (
-                    sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4, sohle_zufluss5, sohle_zufluss6,
-                    sohle_zufluss7, sohle_zufluss8
-                ) = unpack('ffffffff', b[434:466])
+                    sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4,
+                    sohle_zufluss5, sohle_zufluss6, sohle_zufluss7, sohle_zufluss8
+                ) = (round(el, 3) for el in unpack('ffffffff', b[434:466]))
 
                 (
                     kanalart, profilart_v, profilart_g, material_v,
@@ -190,6 +191,8 @@ class ImportTask:
                 (  # kann nicht mit dem vorherigen
                     berichtsnummer, laenge, schachtmaterial  # zusammengefasst werden, weil Startadresse
                 ) = unpack('ifh', b[510:520])  # glattes Vielfaches der Länge sein muss
+
+                laenge = round(laenge, 3)
 
                 oberflaeche = unpack('h', b[528:530])[0]
                 oberflaeche_b = b[528:530]
