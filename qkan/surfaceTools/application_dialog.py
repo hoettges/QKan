@@ -48,6 +48,7 @@ class SurfaceToolDialog(_Dialog, SURFACE_CLASS):  # type: ignore
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
         self.setupUi(self)
+        #self.buttonBox.helpRequested.connect(self.click_help)
 
     def prepareDialog(self, database_qkan: str, epsg: int) -> bool:
         """Bereitet das Formular vor"""
@@ -80,6 +81,7 @@ class SurfaceToolDialog(_Dialog, SURFACE_CLASS):  # type: ignore
         return True
 
 
+
 VORONOI_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "voronoiTool.ui")
 )
@@ -94,7 +96,7 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
     Flächen in der Tabelle tezg verschnitten.
     """
 
-    buttonBox: QDialogButtonBox
+    button_box: QDialogButtonBox
     label_1: QLabel
     label_2: QLabel
     label_3: QLabel
@@ -121,6 +123,7 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
         self.cb_selHalActive.stateChanged.connect(self.click_hal_selection)
         self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
+        self.button_box.helpRequested.connect(self.click_help)
 
     def click_lw_hal_entw(self) -> None:
         """Reaktion auf Klick in Listbox"""
@@ -315,3 +318,9 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
                          f'daten: {daten}')
 
         self.count_selection()
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_flaechen.html#erzeugung-von-haltungsflachen"
+        os.startfile(help_file)
