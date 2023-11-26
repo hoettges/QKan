@@ -143,7 +143,7 @@ class SurfaceTask:
                 WITH flrange AS (
                     SELECT Extent(geom) AS geom 
                     FROM flaechen 
-                    WHERE aufteilen{auswahl_fl}
+                    WHERE aufteilen and geom IS NOT NULL{auswahl_fl}
                 )
                 SELECT 
                   MbrMinX(geom) AS xmin,
@@ -177,7 +177,8 @@ class SurfaceTask:
                 "native:geometrybyexpression",
                 {
                     'INPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="haltungen" (geom) '
-                             f'sql=(haltungstyp IS NULL or haltungstyp = \'Haltung\'){auswahl_hal}',
+                             f'sql=(haltungstyp IS NULL or haltungstyp = \'Haltung\') and '
+                             f'geom IS NOT NULL{auswahl_hal}',
                     'OUTPUT_GEOMETRY': 0,
                     'WITH_Z': False,
                     'WITH_M': False,
@@ -272,9 +273,10 @@ class SurfaceTask:
                         INNER JOIN (
                             SELECT ST_Buffer(geom, -0.05) AS geom 
                             FROM flaechen 
-                            WHERE aufteilen{auswahl_fl}
+                            WHERE aufteilen and geom IS NOT NULL{auswahl_fl}
                         ) AS f
                         ON ST_Intersects(t.geom, f.geom)
+                        WHERE t.geom IS NOT NULL
                         GROUP BY t.pk"""
             if not db_qkan.sql(sql, stmt_category="Voronoi_3"):
                 return False
@@ -298,7 +300,8 @@ class SurfaceTask:
                             ST_Intersection(t.geom, v.geom) AS geom
                         FROM tezg AS t
                         INNER JOIN tezgsel AS s  ON t.pk=s.pk
-                        INNER JOIN voronoi AS v ON ST_Intersects(t.geom, v.geom)"""
+                        INNER JOIN voronoi AS v ON ST_Intersects(t.geom, v.geom)=1
+                        WHERE  t.geom IS NOT NULL"""
             if not db_qkan.sql(sql, stmt_category="Voronoi_4"):
                 return False
 

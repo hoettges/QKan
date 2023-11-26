@@ -1,14 +1,18 @@
 import logging
+import os
 from qgis.core import Qgis, QgsMessageLog
-from qgis.utils import iface
-from qkan import QKan
+from qgis.utils import iface, pluginDirectory
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, warnung
 from qkan.tools.application import QKanTools
-def update_dbversion():
+
+from qkan.tools.k_layersadapt import layersadapt
+
+def initQKanProject():
     """Update tables to actual version if necessary"""
     try:
-        logger = logging.getLogger("QKan.openProject")
+        logger = logging.getLogger("QKan.openproject")
         logger.debug("openProjekt started\n")
         database_qkan, _ = get_database_QKan(silent=True)
         db_qkan = DBConnection(dbname=database_qkan)
@@ -25,3 +29,18 @@ def update_dbversion():
             message=msg, level=Qgis.Info,
         )
         iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)
+
+    projectTemplate = os.path.join(pluginDirectory("qkan"), "templates/Projekt.qgs")
+    layersadapt(
+        None,
+        projectTemplate,
+        False,
+        False,
+        False,
+        True,
+        False,
+        False,
+        False,
+        False,
+        enums.SelectedLayers.ALL,
+    )

@@ -33,7 +33,7 @@ der jeweiligen Fläche zur Haltung führen und im Layer "Anbindungen Flächen" (
 Weiterhin können bei der Flächenverarbeitung sogenannte Haltungsflächen (QKan-Tabelle "Teilgebiete") berücksichtigt 
 werden, die entweder anhand der Geometrie und gegebenenfalls unter Berücksichtigung des Geländegefälles 
 konstruiert oder aus Flurstücken erzeugt worden sind. Damit ist es möglich, große Flächen (z. B. 
-grosse Gebäude), die sich über mehrere Flurstücke erstrecken, automatisch aufzuteilen. Außerdem können 
+große Gebäude), die sich über mehrere Flurstücke erstrecken, automatisch aufzuteilen. Außerdem können 
 automatisch unbefestigte Flächen aus den freien Flächen zwischen den befestigten Flächen erzeugt werden. 
 
 Es wird unterschieden zwischen Flächen, die als ganzes zugeordnet werden und großen Flächen, die sich über 
@@ -89,14 +89,8 @@ kopiert werden. Anschließend können diese auf dem Layer "Teilgebiete" eingefü
 :guilabel:`Layeränderungen speichern` gespeichert werden, damit sie im Folgenden mit |Tool_objekte_verschmelzen| 
 :guilabel:`Gewählte Objekte verschmelzen` zusammen gefasst werden können. In der Attribut-Tabelle kann das Teilgebiet in der Spalte 
 "Namen" benannt werden. Soll die Bearbeitung des Projektes in den erstellten Teilgebieten geschehen, müssen nun als nächstes die Elemente 
-des Entwässerungsnetzes den Teilgebieten zugeordnet werden. Dies ist mit der Funktion |Tool_elemente_tezg_zuordnen| 
-:guilabel:`Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen` möglich. Dabei ist es wichtig, dass in dem sich öffnenden Fenster 
-die Option "überlappend" für Haltungen und Flächen ausgewählt wird (siehe Bild unten). Damit wird sichergestellt, dass auch Flächen 
-(z.B. von großen Gebäuden), die nur zum Teil im Teilgebiet liegen, bei der Bearbeitung des Gebietes berücksichtigt werden.
-
-.. image:: ./QKan_Bilder/Fenster_elemente_tezg_zuordnen.png
-
-Abbildung: Formular Elemente einem Teilgebiet zuordnen
+des Entwässerungsnetzes den Teilgebieten zugeordnet werden. Dies ist mit der :ref:`Funktion <linkelementeteilgebietzuordnen>` |Tool_elemente_tezg_zuordnen| 
+:guilabel:`Zuordnung zu Teilgebiet` möglich (Option "überlappend sollte ausgewählt werden).
 
 .. |Tool_layeraenderungen_speichern| image:: ./QKan_Bilder/Tool_layeraenderungen_speichern.png
                              :width: 1.25 em
@@ -210,9 +204,8 @@ Nun können die Änderungen wieder gespeichert, der Bearbeitungsmodus ausgeschal
 Teilen der betroffenen Haltungsflächen
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Nach diesen Vorbereitungen können nun mit Hilfe der Funktion |Tool_voronoiflaechen| :guilabel:`Erzeugung von Voronoiflächen zu Haltungen` 
-die Haltungsflächen aufgeteilt werden. Falls keine aufzuteilenden Flächen ausgewählt wurden, erscheint eine Warnung. 
-Die Funktion würde dann keine Haltungsflächen aufteilen. 
+Nach diesen Vorbereitungen können nun mit Hilfe der :ref:`Funktion <linkerzhaltungsfl>` |Tool_voronoiflaechen| 
+:guilabel:`Erzeugung von Voronoiflächen zu Haltungen` die Haltungsflächen aufgeteilt werden.
 
 .. |Tool_voronoiflaechen| image:: ./QKan_Bilder/Tool_voronoiflaechen.png
                              :width: 1.25 em
@@ -229,11 +222,11 @@ Erzeugung von unbefestigten Flächen
 
 In der Regel enthalten die Datenbestände der abflusswirksamen Flächen nur befestigte Flächen. Für die Verarbeitung in 
 QKan ist es empfehlenswert auch für die unbefestigten Flächenanteile entsprechende Flächenobjekte anzulegen. Hierzu 
-dient die Funktion |Tool_unbef_flaechen| :guilabel:`Erzeuge unbefestigte Flächen`. Voraussetzung ist, dass im Layer 
-"Haltungsflächen" Flächen vorhanden sind, die das Entwässerungsgebiet in Teilflächen unterteilen, die den einzelnen 
-Haltungen zugeordnet sind. Ist dies nicht der Fall, ist :ref:`hier <linkhaltungsflaechen>` das Vorgehen zur Erstellung der Haltungsflächen 
-beschrieben. Diese Haltungsflächen beziehen sich ausschließlich auf den Niederschlagsabfluss, so dass 
-bei der Erstellung nur das Mischwasser- und Regenwassernetz zu berücksichtigen ist. 
+dient die :ref:`Funktion <linkerzeugungunbefflaechen>` |Tool_unbef_flaechen| :guilabel:`Erzeuge unbefestigte Flächen`.
+Voraussetzung ist, dass im Layer "Haltungsflächen" Flächen vorhanden sind, die das Entwässerungsgebiet in Teilflächen unterteilen,
+die den einzelnen Haltungen zugeordnet sind. Ist dies nicht der Fall, ist :ref:`hier <linkhaltungsflaechen>` 
+das Vorgehen zur Erstellung der Haltungsflächen beschrieben. Diese Haltungsflächen beziehen sich ausschließlich auf den Niederschlagsabfluss, 
+so dass bei der Erstellung nur das Mischwasser- und Regenwassernetz zu berücksichtigen ist. 
 
 .. |Tool_unbef_flaechen| image:: ./QKan_Bilder/Tool_unbef_flaechen.png
                              :width: 1.25 em
@@ -268,25 +261,13 @@ Dafür müssen zum einen große Flächen, welche mehr als einer Haltung zugeordn
 gekennzeichnet werden (eine Anleitung ist :ref:`hier <linktransporthaltungen>` zu finden). Außerdem kann es bei größeren Einzugsgebieten 
 hilfreich sein, wenn diese in mehrere :ref:`Teilgebiete <linkteilgebiete>` unterteilt werden. 
 
-Sind die Vorbereitungen abgeschlossen, können nun die Flächen den Haltungen zugeordnet werden. Dies geschieht mit der Funktion 
-|Tool_verknuepfungslinien_erstellen| :guilabel:`Erzeuge Verknüpfungslinien von Flächen zu Haltungen`. Hierbei sollte die Voreinstellung, 
-dass nur ausgewählte Entwässerungsarten berücksichtigt werden, nicht verändert werden. Sind Teilgebiete erstellt worden und es soll in 
-diesen gearbeitet werden, kann dies über die Auswahl im rechten Kasten der Filteroptionen "Allgemein" geschehen (siehe Bild unten). 
-In dem Abschnitt "Optionen zur Erzeugung von Zuordnungen" kann ausgewählt werden, wie Flächen zugeordnet werden sollen - entweder über 
-die nächste Kante einer Fläche zu einer Haltung oder über den Mittelpunkt der Fläche zu der nächstliegenden Haltung. 
-Der Suchradius sollte ausreichend groß gewählt werden, sodass alle Elemente bei der Zuordnung berücksichtigt werden. Dahingegen sollte der 
-Fangradius möglichst klein sein, da sonst die Auswahl einzelner Verbindungslinien erschwert wird. Der Rest der Optionen sollte in der Regel 
-nicht verändert werden. (Ist zu befürchten, dass Flächenobjekte Fehler haben, wie z.B. doppelte Stützstellen, so sollte die Option 
-"Flächenobjekte bereinigen" zusätzlich ausgewählt werden. Das Formular kann mit :guilabel:`OK` geschlossen werden und die Verbindungslinien 
-erscheinen nun auf dem Plan.
-
-.. image:: ./QKan_Bilder/Verbindungslinien_erstellen.png
-Abbildung: Formular Verbindungslinien erstellen
+Sind die Vorbereitungen abgeschlossen, können nun die Flächen den Haltungen zugeordnet werden. Dies geschieht mit der
+:ref:`Funktion <linkverbindunghaltungflaeche>` |Tool_verknuepfungslinien_erstellen| :guilabel:`Verbindungslinien von Flächen zu Haltungen 
+erstellen`. Die Zuordnung sollte anschließend visuell überprüft werden.
 
 .. |Tool_verknuepfungslinien_erstellen| image:: ./QKan_Bilder/Tool_verknuepfungslinien_erstellen.png
                              :width: 1.25 em
 
-Die Zuordnung sollte visuell überprüft werden.
 
 Verbindungslinien bearbeiten
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -300,7 +281,7 @@ Stützstelle mit Linksklick ausgewählt wird. Als nächstes wird die Haltung aus
 sollte. Nach Klick auf die Haltung sollte die geänderte Verbindungslinie auf dem Plan erscheinen. Die Auswahl der Verbindungslinie kann 
 durch einen erneuten Rechtsklick auf die gewählt Linie aufgehoben werden.
 
-.. |Tool_stuetzpunktwerkzeug| image:: ./QKan_Bilder/Tool_stuetzpunktwerkzeug.png
+.. |Tool_stuetzpunktwerkzeug| image:: ./QKan_Bilder/Tool_stuetzpunkt_werkzeug.png
                              :width: 1.25 em
 .. |Tool_topologisches_editieren| image:: ./QKan_Bilder/Tool_topologisches_editieren.png
                              :width: 1.25 em

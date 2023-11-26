@@ -50,6 +50,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Was ist QKan?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
 <ul class="current">
@@ -75,7 +76,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Formulare</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Übersicht</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
 </ul>
 
@@ -126,7 +130,7 @@ der jeweiligen Fläche zur Haltung führen und im Layer „Anbindungen Flächen�
 <p>Weiterhin können bei der Flächenverarbeitung sogenannte Haltungsflächen (QKan-Tabelle „Teilgebiete“) berücksichtigt
 werden, die entweder anhand der Geometrie und gegebenenfalls unter Berücksichtigung des Geländegefälles
 konstruiert oder aus Flurstücken erzeugt worden sind. Damit ist es möglich, große Flächen (z. B.
-grosse Gebäude), die sich über mehrere Flurstücke erstrecken, automatisch aufzuteilen. Außerdem können
+große Gebäude), die sich über mehrere Flurstücke erstrecken, automatisch aufzuteilen. Außerdem können
 automatisch unbefestigte Flächen aus den freien Flächen zwischen den befestigten Flächen erzeugt werden.</p>
 <p>Es wird unterschieden zwischen Flächen, die als ganzes zugeordnet werden und großen Flächen, die sich über
 mehrere Haltungsflächen erstrecken und deshalb aufgeteilt
@@ -164,12 +168,8 @@ kopiert werden. Anschließend können diese auf dem Layer „Teilgebiete“ eing
 <span class="guilabel">Layeränderungen speichern</span> gespeichert werden, damit sie im Folgenden mit <a class="reference internal" href="_images/Tool_objekte_verschmelzen.png"><img alt="Tool_objekte_verschmelzen" src="_images/Tool_objekte_verschmelzen.png" style="width: 1.25em;" /></a>
 <span class="guilabel">Gewählte Objekte verschmelzen</span> zusammen gefasst werden können. In der Attribut-Tabelle kann das Teilgebiet in der Spalte
 „Namen“ benannt werden. Soll die Bearbeitung des Projektes in den erstellten Teilgebieten geschehen, müssen nun als nächstes die Elemente
-des Entwässerungsnetzes den Teilgebieten zugeordnet werden. Dies ist mit der Funktion <a class="reference internal" href="_images/Tool_elemente_tezg_zuordnen.png"><img alt="Tool_elemente_tezg_zuordnen" src="_images/Tool_elemente_tezg_zuordnen.png" style="width: 1.25em;" /></a>
-<span class="guilabel">Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen</span> möglich. Dabei ist es wichtig, dass in dem sich öffnenden Fenster
-die Option „überlappend“ für Haltungen und Flächen ausgewählt wird (siehe Bild unten). Damit wird sichergestellt, dass auch Flächen
-(z.B. von großen Gebäuden), die nur zum Teil im Teilgebiet liegen, bei der Bearbeitung des Gebietes berücksichtigt werden.</p>
-<img alt="_images/Fenster_elemente_tezg_zuordnen.png" src="_images/Fenster_elemente_tezg_zuordnen.png" />
-<p>Abbildung: Formular Elemente einem Teilgebiet zuordnen</p>
+des Entwässerungsnetzes den Teilgebieten zugeordnet werden. Dies ist mit der <a class="reference internal" href="Qkan_Formulare.html#linkelementeteilgebietzuordnen"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_elemente_tezg_zuordnen.png"><img alt="Tool_elemente_tezg_zuordnen" src="_images/Tool_elemente_tezg_zuordnen.png" style="width: 1.25em;" /></a>
+<span class="guilabel">Zuordnung zu Teilgebiet</span> möglich (Option „überlappend sollte ausgewählt werden).</p>
 </section>
 </section>
 <section id="erzeugung-von-haltungsflachen">
@@ -242,9 +242,8 @@ Dies geschieht wie bereits für die Haltungen in folgenden Schritten:</p>
 </section>
 <section id="teilen-der-betroffenen-haltungsflachen">
 <h3>Teilen der betroffenen Haltungsflächen<a class="headerlink" href="#teilen-der-betroffenen-haltungsflachen" title="Permalink to this heading"></a></h3>
-<p>Nach diesen Vorbereitungen können nun mit Hilfe der Funktion <a class="reference internal" href="_images/Tool_voronoiflaechen.png"><img alt="Tool_voronoiflaechen" src="_images/Tool_voronoiflaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeugung von Voronoiflächen zu Haltungen</span>
-die Haltungsflächen aufgeteilt werden. Falls keine aufzuteilenden Flächen ausgewählt wurden, erscheint eine Warnung.
-Die Funktion würde dann keine Haltungsflächen aufteilen.</p>
+<p>Nach diesen Vorbereitungen können nun mit Hilfe der <a class="reference internal" href="Qkan_Formulare.html#linkerzhaltungsfl"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_voronoiflaechen.png"><img alt="Tool_voronoiflaechen" src="_images/Tool_voronoiflaechen.png" style="width: 1.25em;" /></a>
+<span class="guilabel">Erzeugung von Voronoiflächen zu Haltungen</span> die Haltungsflächen aufgeteilt werden.</p>
 <p>Jetzt sind alle Vorbereitungen getroffen, um unbefestigte Flächen zu erzeugen.</p>
 </section>
 </section>
@@ -252,11 +251,11 @@ Die Funktion würde dann keine Haltungsflächen aufteilen.</p>
 <span id="createunbeffl"></span><span id="index-2"></span><h2>Erzeugung von unbefestigten Flächen<a class="headerlink" href="#erzeugung-von-unbefestigten-flachen" title="Permalink to this heading"></a></h2>
 <p>In der Regel enthalten die Datenbestände der abflusswirksamen Flächen nur befestigte Flächen. Für die Verarbeitung in
 QKan ist es empfehlenswert auch für die unbefestigten Flächenanteile entsprechende Flächenobjekte anzulegen. Hierzu
-dient die Funktion <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span>. Voraussetzung ist, dass im Layer
-„Haltungsflächen“ Flächen vorhanden sind, die das Entwässerungsgebiet in Teilflächen unterteilen, die den einzelnen
-Haltungen zugeordnet sind. Ist dies nicht der Fall, ist <a class="reference internal" href="#linkhaltungsflaechen"><span class="std std-ref">hier</span></a> das Vorgehen zur Erstellung der Haltungsflächen
-beschrieben. Diese Haltungsflächen beziehen sich ausschließlich auf den Niederschlagsabfluss, so dass
-bei der Erstellung nur das Mischwasser- und Regenwassernetz zu berücksichtigen ist.</p>
+dient die <a class="reference internal" href="Qkan_Formulare.html#linkerzeugungunbefflaechen"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span>.
+Voraussetzung ist, dass im Layer „Haltungsflächen“ Flächen vorhanden sind, die das Entwässerungsgebiet in Teilflächen unterteilen,
+die den einzelnen Haltungen zugeordnet sind. Ist dies nicht der Fall, ist <a class="reference internal" href="#linkhaltungsflaechen"><span class="std std-ref">hier</span></a>
+das Vorgehen zur Erstellung der Haltungsflächen beschrieben. Diese Haltungsflächen beziehen sich ausschließlich auf den Niederschlagsabfluss,
+so dass bei der Erstellung nur das Mischwasser- und Regenwassernetz zu berücksichtigen ist.</p>
 <p>Die Haltungsflächen enthalten folgende Attribute, die bei der Erzeugung der unbefestigten Flächen übernommen werden,
 und deshalb vorher entsprechend bearbeitet werden sollten (aber nicht müssen):</p>
 <ul class="simple">
@@ -279,27 +278,16 @@ Dafür müssen zum einen große Flächen, welche mehr als einer Haltung zugeordn
 <a class="reference internal" href="#linkflaechenaufteilung"><span class="std std-ref">hier</span></a> zu finden) und zum anderen müssen Haltungen, an welche keine Flächen angeschlossen sind,
 gekennzeichnet werden (eine Anleitung ist <a class="reference internal" href="#linktransporthaltungen"><span class="std std-ref">hier</span></a> zu finden). Außerdem kann es bei größeren Einzugsgebieten
 hilfreich sein, wenn diese in mehrere <a class="reference internal" href="#linkteilgebiete"><span class="std std-ref">Teilgebiete</span></a> unterteilt werden.</p>
-<p>Sind die Vorbereitungen abgeschlossen, können nun die Flächen den Haltungen zugeordnet werden. Dies geschieht mit der Funktion
-<a class="reference internal" href="_images/Tool_verknuepfungslinien_erstellen.png"><img alt="Tool_verknuepfungslinien_erstellen" src="_images/Tool_verknuepfungslinien_erstellen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Flächen zu Haltungen</span>. Hierbei sollte die Voreinstellung,
-dass nur ausgewählte Entwässerungsarten berücksichtigt werden, nicht verändert werden. Sind Teilgebiete erstellt worden und es soll in
-diesen gearbeitet werden, kann dies über die Auswahl im rechten Kasten der Filteroptionen „Allgemein“ geschehen (siehe Bild unten).
-In dem Abschnitt „Optionen zur Erzeugung von Zuordnungen“ kann ausgewählt werden, wie Flächen zugeordnet werden sollen - entweder über
-die nächste Kante einer Fläche zu einer Haltung oder über den Mittelpunkt der Fläche zu der nächstliegenden Haltung.
-Der Suchradius sollte ausreichend groß gewählt werden, sodass alle Elemente bei der Zuordnung berücksichtigt werden. Dahingegen sollte der
-Fangradius möglichst klein sein, da sonst die Auswahl einzelner Verbindungslinien erschwert wird. Der Rest der Optionen sollte in der Regel
-nicht verändert werden. (Ist zu befürchten, dass Flächenobjekte Fehler haben, wie z.B. doppelte Stützstellen, so sollte die Option
-„Flächenobjekte bereinigen“ zusätzlich ausgewählt werden. Das Formular kann mit <span class="guilabel">OK</span> geschlossen werden und die Verbindungslinien
-erscheinen nun auf dem Plan.</p>
-<img alt="_images/Verbindungslinien_erstellen.png" src="_images/Verbindungslinien_erstellen.png" />
-<p>Abbildung: Formular Verbindungslinien erstellen</p>
-<p>Die Zuordnung sollte visuell überprüft werden.</p>
+<p>Sind die Vorbereitungen abgeschlossen, können nun die Flächen den Haltungen zugeordnet werden. Dies geschieht mit der
+<a class="reference internal" href="Qkan_Formulare.html#linkverbindunghaltungflaeche"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_verknuepfungslinien_erstellen.png"><img alt="Tool_verknuepfungslinien_erstellen" src="_images/Tool_verknuepfungslinien_erstellen.png" style="width: 1.25em;" /></a> <span class="guilabel">Verbindungslinien von Flächen zu Haltungen
+erstellen</span>. Die Zuordnung sollte anschließend visuell überprüft werden.</p>
 <section id="verbindungslinien-bearbeiten">
 <h3>Verbindungslinien bearbeiten<a class="headerlink" href="#verbindungslinien-bearbeiten" title="Permalink to this heading"></a></h3>
 <p>Gibt es unerwünschte Zuordnungen von Flächen zu Haltungen können diese leicht manuell gelöscht oder verschoben werden. Ist der Layer auf
-dem die Verbindungslinien liegen im <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> <span class="guilabel">Bearbeitungsmodus</span>, kann das <a class="reference internal" href="_images/Tool_stuetzpunktwerkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="_images/Tool_stuetzpunktwerkzeug.png" style="width: 1.25em;" /></a>
+dem die Verbindungslinien liegen im <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> <span class="guilabel">Bearbeitungsmodus</span>, kann das <a class="reference internal" href="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a>
 <span class="guilabel">Stützpunktwerkzeug</span> ausgewählt werden. Damit die Bearbeitung funktioniert ist es wichtig, dass das
 <a class="reference internal" href="_images/Tool_topologisches_editieren1.png"><img alt="Tool_topologisches_editieren" src="_images/Tool_topologisches_editieren1.png" style="width: 1.25em;" /></a> <span class="guilabel">topoligisches editieren Werkzeug</span> deaktiviert ist. Um eine Stützstelle zu ändern, muss nach
-Aktivierung des <a class="reference internal" href="_images/Tool_stuetzpunktwerkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="_images/Tool_stuetzpunktwerkzeug.png" style="width: 1.25em;" /></a> <span class="guilabel">Stützpunktwerkzeug</span> die zu bearbeitende Verbindungslinien mit Rechtsklick fixiert
+Aktivierung des <a class="reference internal" href="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a> <span class="guilabel">Stützpunktwerkzeug</span> die zu bearbeitende Verbindungslinien mit Rechtsklick fixiert
 werden. So ist es möglich, dass nur die Stützstelle der gewünschten Verbindungslinien gewählt wird, wenn anschließend die entsprechende
 Stützstelle mit Linksklick ausgewählt wird. Als nächstes wird die Haltung ausgewählt, mit welcher die Fläche eigentlich verbunden werden
 sollte. Nach Klick auf die Haltung sollte die geänderte Verbindungslinie auf dem Plan erscheinen. Die Auswahl der Verbindungslinie kann

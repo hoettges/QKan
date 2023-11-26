@@ -42,7 +42,6 @@ from qkan.database.qkan_database import qgs_actual_version, qgs_version
 from qkan.database.qkan_utils import (
     eval_node_types,
     fehlermeldung,
-    get_qkanlayer_attributes,
     list_qkan_layers,
     meldung,
     warnung,
@@ -69,6 +68,7 @@ def load_plausisql(dbQK):
 
 def load_plausiaction(layer):
     """Lädt für den Layer 'Fehlerliste' die Aktion zum Aktivieren und Zoomen auf das fehlerhaft Objekt"""
+    iconPath = os.path.join(pluginDirectory("qkan"), "datacheck/res/jump.png")
     acManager = layer.actions()
 
     code = """from qgis.PyQt import QtWidgets
@@ -90,9 +90,8 @@ def load_plausiaction(layer):
         canvas = qgis.utils.iface.mapCanvas()
         canvas.zoomToFeatureExtent(box)
     """
-
     acActor = QgsAction(QgsAction.GenericPython, "Objekt Aktivieren und Zoom/Pan zum Objekt", code,
-                        'C:/FHAC/hoettges/Kanalprogramme/QKan/qkan/datacheck/jump.png', False, "Zoom/Pan zum Objekt",
+                        iconPath, False, "Zoom/Pan zum Objekt",
                         actionScopes={'Feature'}, notificationMessage='Meldung')
     acManager.addAction(acActor)
 
@@ -132,27 +131,43 @@ def layersadapt(
 
     iface = QKan.instance.iface
 
-    dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
+    if database_QKan:
+        dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
 
-    if not dbQK.connected:
-        fehlermeldung(
-            "Programmfehler in QKan.tools.k_layersadapt.layersadapt()",
-            "Datenbank konnte nicht verbunden werden",
-        )
-        return
+        if not dbQK.connected:
+            fehlermeldung(
+                "Programmfehler in QKan.tools.k_layersadapt.layersadapt()",
+                "Datenbank konnte nicht verbunden werden",
+            )
+            return
 
-    actversion = dbQK.actversion
-    logger.debug("actversion: {}".format(actversion))
+        actversion = dbQK.actversion
+        logger.debug("actversion: {}".format(actversion))
 
-    if not (
-        anpassen_Formulare
-        or anpassen_Projektionssystem
-        or anpassen_Wertebeziehungen_in_Tabellen
-        or aktualisieren_Schachttypen
-        or fehlende_layer_ergaenzen
-    ):
-        del dbQK
-        return
+        if not (
+            anpassen_Formulare
+            or anpassen_Projektionssystem
+            or anpassen_Wertebeziehungen_in_Tabellen
+            or aktualisieren_Schachttypen
+            or fehlende_layer_ergaenzen
+        ):
+            del dbQK
+            return
+    else:
+        if (anpassen_ProjektMakros
+            or anpassen_Datenbankanbindung
+            or anpassen_Wertebeziehungen_in_Tabellen
+            or not anpassen_Formulare
+            or anpassen_Projektionssystem
+            or aktualisieren_Schachttypen
+            or zoom_alles
+            or fehlende_layer_ergaenzen
+            or anpassen_auswahl
+        ):
+            logger.error("Interner Fehler: Aufruf von k_layersadapt ohne Datenbankanbindung darf nur "
+                         "Formularanbindung durchführen")
+            return
+        dbQK = None                                # Bei Korrektur der Formularanbindung keine Datenbankanbindung
 
     # -----------------------------------------------------------------------------------------------------
     # QKan-Projekt
@@ -364,7 +379,7 @@ def layersadapt(
                 if data is not None:
                     epsg = data[0]
                 else:
-                    logger.debug("\nTabelle hat kein KBS: {}\n".format(datasource))
+                    logger.debug("\nTabelle hat kein KBS: {}\n".format(table))
 
                 crs = QgsCoordinateReferenceSystem.fromEpsgId(epsg)
                 if crs.isValid():

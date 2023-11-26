@@ -463,9 +463,19 @@ class ImportTask:
                 b = fo.read(blength)
                 if not b or len(b) < blength:
                     break
-                (x1, x2, x3, x4, x5, x6, x7, x8, x9) = unpack('ddddddddd', b[20:92])
-                (y1, y2, y3, y4, y5, y6, y7, y8, y9) = unpack('ddddddddd', b[100:172])
+                xlis = list(unpack('ddddddddd', b[20:92]))
+                ylis = list(unpack('ddddddddd', b[100:172]))
                 # d1, d2, d3, d4, d5, d6, d7, d8, d9 = unpack('fffffffff', b[220:256])
+
+                # Erste x-Koordinate = 0 auf alle folgenden übertragen, weil in STRAKAT manchmal
+                # in den hinteren Spalten noch Reste von alten Koordinaten stehen
+                # In QKan (s. u.) werden alle Koordinaten mit xi < 0 unterdrückt
+                for i in range(2, 8):
+                    if xlis[i] < 1:
+                        xlis[i+1] = -xlis[i+1]      # für nachträgliche Kontrolle
+
+                (x1, x2, x3, x4, x5, x6, x7, x8, x9) = xlis
+                (y1, y2, y3, y4, y5, y6, y7, y8, y9) = ylis
 
                 rohrbreite = unpack('f', b[220:224])[0]  # nur erste von 9 Rohrbreiten lesen
 
@@ -977,74 +987,87 @@ class ImportTask:
                 SELECT
                     h.pk, 
                     0 AS n, 
-                MakePoint(k.[rw_gerinne_u]+(k.[rw_gerinne_o]-k.[rw_gerinne_u])*h.urstation/
-                    sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
-                          k.[hw_gerinne_u]+(k.[hw_gerinne_o]-k.[hw_gerinne_u])*h.urstation/
-                    sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
-                    :epsg) AS p
+                CASE WHEN abs(h.urstation + 1.0) < 0.0001 THEN
+                    MakePoint(k.[rw_gerinne_o], k.[hw_gerinne_o], :epsg)
+                ELSE
+                    MakePoint(k.[rw_gerinne_u]+(k.[rw_gerinne_o]-k.[rw_gerinne_u])*h.urstation/
+                        sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
+                              k.[hw_gerinne_u]+(k.[hw_gerinne_o]-k.[hw_gerinne_u])*h.urstation/
+                        sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
+                        :epsg)
+                END AS geop
                 FROM t_strakathausanschluesse AS h
                 JOIN t_strakatkanal AS k ON k.nummer = h.anschlusshalnr
+                WHERE abs(h.urstation + 1.0) > 0.0001
                 UNION
-                SELECT pk, 1 AS n, Makepoint(x1, y1, :epsg) AS p
+                SELECT pk, 1 AS n, Makepoint(x1, y1, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x1 > 1
                 UNION 
-                SELECT pk, 2 AS n, Makepoint(x2, y2, :epsg) AS p
+                SELECT pk, 2 AS n, Makepoint(x2, y2, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x2 > 1
                 UNION 
-                SELECT pk, 3 AS n, Makepoint(x3, y3, :epsg) AS p
+                SELECT pk, 3 AS n, Makepoint(x3, y3, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x3 > 1
                 UNION 
-                SELECT pk, 4 AS n, Makepoint(x4, y4, :epsg) AS p
+                SELECT pk, 4 AS n, Makepoint(x4, y4, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x4 > 1
                 UNION 
-                SELECT pk, 5 AS n, Makepoint(x5, y5, :epsg) AS p
+                SELECT pk, 5 AS n, Makepoint(x5, y5, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x5 > 1
                 UNION 
-                SELECT pk, 6 AS n, Makepoint(x6, y6, :epsg) AS p
+                SELECT pk, 6 AS n, Makepoint(x6, y6, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x6 > 1
                 UNION 
-                SELECT pk, 7 AS n, Makepoint(x7, y7, :epsg) AS p
+                SELECT pk, 7 AS n, Makepoint(x7, y7, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x7 > 1
                 UNION 
-                SELECT pk, 8 AS n, Makepoint(x8, y8, :epsg) AS p
+                SELECT pk, 8 AS n, Makepoint(x8, y8, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x8 > 1
                 UNION 
-                SELECT pk, 9 AS n, Makepoint(x9, y9, :epsg) AS p
+                SELECT pk, 9 AS n, Makepoint(x9, y9, :epsg) AS geop
                 FROM t_strakathausanschluesse
                 WHERE x9 > 1
             ),
             lp AS (
-            SELECT pk, p
-            FROM lo
-            ORDER BY n
+                SELECT pk, Makeline(geop) AS geom
+                FROM lo
+                GROUP BY pk
+                ORDER BY n
             )
             INSERT INTO anschlussleitungen (leitnam, schoben, schunten, 
-                hoehe, breite, 
+                hoehe, breite, laenge,
                 simstatus, kommentar, geom)
             SELECT
                 CASE WHEN Trim(ha.anschlusshalname) = ''
-                THEN replace(printf('ha_%d', 1000000 + ha.nummer), 'ha_1', 'ha')
+                THEN
+                    CASE WHEN abs(ha.urstation + 1.0) < 0.0001
+                    THEN replace(printf('sc_%d', 1000000 + ha.nummer), 'sc_1', 'sc')    -- Schachtanschluss
+                    ELSE replace(printf('ha_%d', 1000000 + ha.nummer), 'ha_1', 'ha')    -- Haltungsanschluss
+                    END
                 ELSE Trim(ha.anschlusshalname)
-                END                         AS leitnam,
-                Trim(ha.haschob)            AS schoben,
-                Trim(ha.haschun)            AS schunten,
-                ha.rohrbreite/1000.         AS hoehe,
-                ha.rohrbreite/1000.         AS breite,
-                'vorhanden'                 AS simstatus,
-                'QKan-STRAKAT-Import'       AS kommentar,
-                MakeLine(lp.p)          AS geom
+                END                                 AS leitnam,
+                Trim(ha.haschob)                    AS schoben,
+                Trim(ha.haschun)                    AS schunten,
+                ha.rohrbreite/1000.                 AS hoehe,
+                ha.rohrbreite/1000.                 AS breite,
+                GLength(lp.geom)                    AS laenge,
+                'vorhanden'                         AS simstatus,
+                'QKan-STRAKAT-Import'               AS kommentar,
+                lp.geom                             AS geom
             FROM
-                t_strakathausanschluesse AS ha
-                JOIN lp USING (pk)
-			GROUP BY pk"""
+                lp
+                JOIN t_strakathausanschluesse AS ha USING (pk)
+                JOIN t_strakatkanal AS k ON k.nummer = ha.anschlusshalnr and k.strakatid = ha.strakatid
+            WHERE k.schachtnummer <> 0
+			GROUP BY ha.pk"""
 
         params = {"epsg": self.epsg}
 

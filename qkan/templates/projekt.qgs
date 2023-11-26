@@ -33320,11 +33320,11 @@ def my_form_open(dialog, layer, feature):
       <filterByMap type="bool">false</filterByMap>
     </Legend>
     <Macros>
-      <pythonCode type="QString">from qkan.openproject import update_dbversion
+      <pythonCode type="QString">from qkan.openqkanproject import initQKanProject
 def openProject():
     """Check actual version of database and project file"""
     try:
-        update_dbversion()
+        initQKanProject()
     except ImportError:
         import traceback
         traceback.print_exc()
