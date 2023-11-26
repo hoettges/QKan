@@ -190,6 +190,7 @@ class Wehr(ClassObject):
     schoben: str
     schunten: str
     wehrtyp: str
+    sohle: float = 0.0
     schwellenhoehe: float
     kammerhoehe: float
     laenge: float
@@ -2539,7 +2540,7 @@ class ImportTask:
 
 
             params = {'haltnam': wehr.wnam, 'schoben': wehr.schoben, 'schunten': wehr.schunten,
-                      'sohle': wehr.sohle,
+                      'sohleunten': wehr.sohle,
                       'haltungtyp': 'Wehr',  # dient dazu, das Verbindungselement als Pumpe zu klassifizieren
                       'simstatus': wehr.simstatus, 'kommentar': wehr.kommentar, 'epsg': QKan.config.epsg}
             # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
@@ -2639,7 +2640,7 @@ class ImportTask:
             #     return None
 
             params = {'haltnam': pumpe.pnam, 'schoben': pumpe.schoben, 'schunten': pumpe.schunten,
-                     'sohle': pumpe.sohle,
+                     'sohleunten': pumpe.sohle,
                      'haltungtyp': 'Pumpe',  # dient dazu, das Verbindungselement als Pumpe zu klassifizieren
                      'simstatus': pumpe.simstatus, 'kommentar': pumpe.kommentar, 'epsg': QKan.config.epsg}
             # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
