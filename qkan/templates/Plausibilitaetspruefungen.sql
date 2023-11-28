@@ -17,53 +17,53 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     WHERE within(su.geop, buffer(pointn(ha.geom,-1), 1.0)) <> 1 AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL)',
  'Haltungen', 'haltnam'),
 ('Geoobjekte', 'Haltung ohne graphisches Linienobjekt', 'Fehler', 9,
-    'SELECT haltnam, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL))) AS bemerkung
+    'SELECT haltnam, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL))) AS bemerkung
 FROM haltungen
 WHERE geom IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL) LIMIT 5',
  'Haltungen', 'haltnam'),
 ('Geoobjekte', 'Pumpen ohne graphisches Linienobjekt', 'Fehler', 9,
-    'SELECT haltnam, printf("Datensatz in Layer ""Pumpen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Pumpe''))) AS bemerkung
+    'SELECT haltnam, printf("Datensatz in Layer ""Pumpen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Pumpe''))) AS bemerkung
 FROM haltungen
 WHERE geom IS NULL AND (haltungstyp = ''Pumpe'') LIMIT 5',
  'Pumpen', 'haltnam'),
 ('Geoobjekte', 'Wehr ohne graphisches Linienobjekt', 'Fehler', 9,
-    'SELECT haltnam, printf("Datensatz in Layer ""Wehre"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Wehr''))) AS bemerkung
+    'SELECT haltnam, printf("Datensatz in Layer ""Wehre"" in %d Datensätzen hat kein graphisches Linienobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Wehr''))) AS bemerkung
 FROM haltungen
 WHERE geom IS NULL AND (haltungstyp = ''Wehr'') LIMIT 5',
  'Haltungen', 'haltnam'),
 ('Geoobjekte', 'Schacht ohne graphisches Punktobjekt', 'Fehler', 9,
-    'SELECT schnam, printf("Datensatz in Layer ""Schächte"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Schacht'' OR schachttyp IS NULL))) AS bemerkung
+    'SELECT schnam, printf("Datensatz in Layer ""Schächte"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Schacht'' OR schachttyp IS NULL))) AS bemerkung
 FROM schaechte
 WHERE geop IS NULL AND (schachttyp = ''Schacht'' OR schachttyp IS NULL) LIMIT 5',
  'Schächte', 'schnam'),
 ('Geoobjekte', 'Auslass ohne graphisches Punktobjekt', 'Fehler', 9,
-    'SELECT schnam, printf("Datensatz in Layer ""Auslässe"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Auslass''))) AS bemerkung
+    'SELECT schnam, printf("Datensatz in Layer ""Auslässe"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Auslass''))) AS bemerkung
 FROM schaechte
 WHERE geop IS NULL AND (schachttyp = ''Auslass'') LIMIT 5',
  'Auslässe', 'schnam'),
 ('Geoobjekte', 'Speicher ohne graphisches Punktobjekt', 'Fehler', 9,
-    'SELECT schnam, printf("Datensatz in Layer ""Speicher"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Speicher'' OR schachttyp IS NULL))) AS bemerkung
+    'SELECT schnam, printf("Datensatz in Layer ""Speicher"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Speicher'' OR schachttyp IS NULL))) AS bemerkung
 FROM schaechte
 WHERE geop IS NULL AND (schachttyp = ''Speicher'' OR schachttyp IS NULL) LIMIT 5',
  'Speicher', 'schnam'),
 ('Geoobjekte', 'Kein Flächenobjekt', 'Fehler', 9,
-    'SELECT flnam, printf("Datensatz in Layer ""Flächen"" in %d Datensätzen hat kein graphisches Flächenobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM flaechen WHERE geom IS NULL)) AS bemerkung
+    'SELECT flnam, printf("Datensatz in Layer ""Flächen"" in %d Datensätzen hat kein graphisches Flächenobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM flaechen WHERE geom IS NULL)) AS bemerkung
 FROM flaechen
 WHERE geom IS NULL LIMIT 5',
  'Flächen', 'flnam'),
 ('Geoobjekte', 'Kein Flächenobjekt', 'Fehler', 9,
-    'SELECT flnam, printf("Datensatz in Layer ""Haltungsflächen"" in %d Datensätzen hat kein Flächenobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM tezg WHERE geom IS NULL)) AS bemerkung
+    'SELECT flnam, printf("Datensatz in Layer ""Haltungsflächen"" in %d Datensätzen hat kein Flächenobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM tezg WHERE geom IS NULL)) AS bemerkung
 FROM tezg
 WHERE geom IS NULL LIMIT 5',
  'Haltungsflächen', 'flnam'),
 ('Geoobjekte', 'Flächenanbindung ohne graphisches Linienobjekt', 'Fehler', 9,
-    'SELECT flnam, printf("Datensatz in Layer ""Anbindungen Flächen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM linkfl WHERE geom IS NULL)) AS bemerkung
+    'SELECT flnam, printf("Datensatz in Layer ""Anbindungen Flächen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM linkfl WHERE geom IS NULL)) AS bemerkung
 FROM linkfl
 WHERE geom IS NULL LIMIT 5',
  'Anbindungen Flächen', 'flnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9,
     'SELECT f1.flnam,
-        printf("Abflussparameter ""%s"" wird in Layer ""Flächen"" verwendet, fehlt aber in Referenztabelle ""Abflussparameter HE"" bzw. ""... KP"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", 
+        printf("Abflussparameter ""%s"" wird in Layer ""Flächen"" verwendet, fehlt aber in Referenztabelle ""Abflussparameter HE"" bzw. ""... KP"" in %d Datensätzen (nur max. 5 Datensätze angezeigt)", 
             f1.abflussparameter, (
 			SELECT count(*)
 			FROM flaechen AS f2
@@ -76,7 +76,7 @@ WHERE geom IS NULL LIMIT 5',
  'Abflussparameter', 'flnam'),
 ('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 
     'SELECT flnam,
-        printf("Spalte ""fliesszeitflaeche"" in Layer ""Anbindungen Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM linkfl WHERE fliesszeitflaeche IS NULL)) AS bemerkung
+        printf("Spalte ""fliesszeitflaeche"" in Layer ""Anbindungen Flächen"" in %d Datensätzen leer (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM linkfl WHERE fliesszeitflaeche IS NULL)) AS bemerkung
     FROM linkfl
     WHERE fliesszeitflaeche IS NULL LIMIT 5',
  'Anbindungen Flächen', 'flnam'),
@@ -89,7 +89,7 @@ WHERE geom IS NULL LIMIT 5',
  'Schächte', 'schnam'),
 ('HYSTEM-EXTRAN', 'Neigungsklasse fehlt', 'Fehler', 9,
     'SELECT flnam,
-        printf("Spalte ""neigkl"" in Layer ""Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM flaechen WHERE neigkl IS NULL)) AS bemerkung
+        printf("Spalte ""neigkl"" in Layer ""Flächen"" in %d Datensätzen leer (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM flaechen WHERE neigkl IS NULL)) AS bemerkung
     FROM flaechen
     WHERE neigkl IS NULL LIMIT 5',
  'Flächen', 'flnam'),
@@ -104,12 +104,12 @@ WHERE geom IS NULL LIMIT 5',
  'Haltungen', 'haltnam'),
 ('Netzstruktur', 'Schachtnamen doppelt', 'Fehler', 9,
     'SELECT schnam,
-        printf("Schachtnamen doppelt in Layer ""Schächte"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1))) AS bemerkung
+        printf("Schachtnamen doppelt in Layer ""Schächte"" in %d Datensätzen (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1))) AS bemerkung
     FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1) LIMIT 5', 
  'Schächte', 'schnam'),
 ('Netzstruktur', 'Haltungsnamen doppelt', 'Fehler', 9,
     'SELECT haltnam,
-        printf("Haltungsnamen doppelt in Layer ""Haltungen"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
+        printf("Haltungsnamen doppelt in Layer ""Haltungen"" in %d Datensätzen (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
     FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1) LIMIT 5', 
  'Haltungen', 'haltnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
