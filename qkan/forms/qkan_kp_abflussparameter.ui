@@ -186,6 +186,9 @@
      <property name="accessibleName">
       <string>bodenklasse</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_19">
      <property name="geometry">

@@ -5,21 +5,21 @@ loading intersphinx inventory from https://docs.python.org/objects.inv...
 intersphinx inventory has moved: https://docs.python.org/objects.inv -> https://docs.python.org/3/objects.inv
 building [mo]: targets for 0 po files that are out of date
 writing output... 
-building [html]: targets for 2 source files that are out of date
-updating environment: 0 added, 3 changed, 0 removed
-reading sources... [ 33%] Qkan_Formulare                                       reading sources... [ 66%] Qkan_aufsetzen                                       reading sources... [100%] Qkan_flaechen                                        
+building [html]: targets for 0 source files that are out of date
+updating environment: 0 added, 1 changed, 0 removed
+reading sources... [100%] Qkan_aufsetzen                                       
 looking for now-outdated files... none found
 pickling environment... done
 checking consistency... done
 preparing documents... done
-writing output... [ 25%] Qkan_Formulare                                        writing output... [ 50%] Qkan_aufsetzen                                        writing output... [ 75%] Qkan_flaechen                                         writing output... [100%] index                                                 
+writing output... [ 50%] Qkan_aufsetzen                                        writing output... [100%] index                                                 
 generating indices... genindex done
 writing additional pages... search done
-copying images... [  4%] QKan_Bilder/Formulare/Verbindungslinien_fl_hal.png    copying images... [  8%] QKan_Bilder/Tool_unbef_flaechen.png                   copying images... [ 13%] QKan_Bilder/Formulare/erz_unbef_fl.png                copying images... [ 17%] QKan_Bilder/Formulare/erz_haltungsfl.png              copying images... [ 21%] QKan_Bilder/qkan_layersadapt.png                      copying images... [ 26%] QKan_Bilder/qkan_qgsAdapt.png                         copying images... [ 30%] QKan_Bilder/Tool_elemente_tezg_zuordnen.png           copying images... [ 34%] QKan_Bilder/Formulare/Zuordnung_zu_teilgebiet.png     copying images... [ 39%] QKan_Bilder/QGIS_herunterladen.png                    copying images... [ 43%] QKan_Bilder/QGIS_komponenten.png                      copying images... [ 47%] QKan_Bilder/QKan_Plugin.png                           copying images... [ 52%] QKan_Bilder/qkan_linkfl.png                           copying images... [ 56%] QKan_Bilder/qkan_linkfl_aufteil.png                   copying images... [ 60%] QKan_Bilder/Form_Flaechen_aufteil.png                 copying images... [ 65%] QKan_Bilder/Tool_bearbeitungsmodus.png                copying images... [ 69%] QKan_Bilder/Tool_layeraenderungen_speichern.png       copying images... [ 73%] QKan_Bilder/Tool_objekte_verschmelzen.png             copying images... [ 78%] QKan_Bilder/Flaechen_vorbereiten/liste_gewaehlte_haltungen.pngcopying images... [ 82%] QKan_Bilder/Flaechen_vorbereiten/liste_gewaehlte_aktualisieren.pngcopying images... [ 86%] QKan_Bilder/Tool_auswahlmodus.png                     copying images... [ 91%] QKan_Bilder/Tool_voronoiflaechen.png                  copying images... [ 95%] QKan_Bilder/Tool_verknuepfungslinien_erstellen.png    copying images... [100%] QKan_Bilder/Tool_topologisches_editieren.png          
+copying images... [ 33%] QKan_Bilder/QGIS_herunterladen.png                    copying images... [ 66%] QKan_Bilder/QGIS_komponenten.png                      copying images... [100%] QKan_Bilder/QKan_Plugin.png                           
 copying static files... done
 copying extra files... done
 dumping search index in German (code: de)... done
 dumping object inventory... done
-build succeeded, 7 warnings.
+build succeeded, 3 warnings.
 
 The HTML pages are in build\html.

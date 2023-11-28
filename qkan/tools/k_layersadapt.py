@@ -60,11 +60,15 @@ def load_plausisql(dbQK):
     """Lädt die Standardplausibilitätsprüfungen in die Tabelle 'pruefsql'"""
     templateDir = os.path.join(pluginDirectory("qkan"), "templates")
     filenam = os.path.join(templateDir, 'Plausibilitaetspruefungen.sql')
-    if not dbQK.executefile(filenam):
+    if dbQK.executefile(filenam):
+        logger.debug(f"Plausibilitätsabfragen aus Datei {filenam} eingelesen")
+    else:
         fehlermeldung("Fehler beim Lesen der Plausibilitätsabfragen:",
                       f"Die Datei {filenam} konnten nicht gelesen werden!")
         return False
     dbQK.commit()
+    return True
+
 
 def load_plausiaction(layer):
     """Lädt für den Layer 'Fehlerliste' die Aktion zum Aktivieren und Zoomen auf das fehlerhaft Objekt"""
@@ -81,7 +85,9 @@ def load_plausiaction(layer):
     layername = '[%layername%]'
     clayers = activeproject.mapLayersByName(layername)
     if not clayers:
-        QtWidgets.QMessageBox.information(None, "Fehler im Programmcode der Aktion", f'Layer "{layername}"nicht definiert')
+        QtWidgets.QMessageBox.information(None, "Fehler im Programmcode der Aktion", 
+                                          f'Layer "{layername}"nicht definiert'
+        )
     else:
         clayer = clayers[0]
         clayer.selectByExpression(f"{attr} = '{obj}'")
@@ -94,6 +100,7 @@ def load_plausiaction(layer):
                         iconPath, False, "Zoom/Pan zum Objekt",
                         actionScopes={'Feature'}, notificationMessage='Meldung')
     acManager.addAction(acActor)
+
 
 def layersadapt(
     database_QKan: str,

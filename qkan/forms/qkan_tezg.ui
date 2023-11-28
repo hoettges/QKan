@@ -187,6 +187,9 @@
      <property name="statusTip">
       <string>Abflussparameter gem. HYSTEM-EXTRAN</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_21">
      <property name="geometry">
@@ -485,6 +488,12 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="currentSection">
       <enum>QDateTimeEdit::DaySection</enum>
      </property>
@@ -506,6 +515,9 @@
      </property>
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -605,6 +617,9 @@
      <property name="statusTip">
       <string>Name der Haltung, der die Fläche zugeordnet ist</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="schnam">
      <property name="geometry">
@@ -626,6 +641,9 @@
      </property>
      <property name="statusTip">
       <string>angeschlossener Schacht</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLineEdit" name="regenschreiber">

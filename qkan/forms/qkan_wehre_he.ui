@@ -196,6 +196,9 @@
      <property name="statusTip">
       <string>Name des oberen Schachts</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QComboBox" name="schunten">
      <property name="geometry">
@@ -217,6 +220,9 @@
      </property>
      <property name="statusTip">
       <string>Name des unteren Schachts</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_15">

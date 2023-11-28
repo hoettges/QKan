@@ -16,6 +16,51 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     LEFT JOIN schaechte AS su ON ha.schunten = su.schnam
     WHERE within(su.geop, buffer(pointn(ha.geom,-1), 1.0)) <> 1 AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL)',
  'Haltungen', 'haltnam'),
+('Geoobjekte', 'Haltung ohne graphisches Linienobjekt', 'Fehler', 9,
+    'SELECT haltnam, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL))) AS bemerkung
+FROM haltungen
+WHERE geom IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL) LIMIT 5',
+ 'Haltungen', 'haltnam'),
+('Geoobjekte', 'Pumpen ohne graphisches Linienobjekt', 'Fehler', 9,
+    'SELECT haltnam, printf("Datensatz in Layer ""Pumpen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Pumpe''))) AS bemerkung
+FROM haltungen
+WHERE geom IS NULL AND (haltungstyp = ''Pumpe'') LIMIT 5',
+ 'Pumpen', 'haltnam'),
+('Geoobjekte', 'Wehr ohne graphisches Linienobjekt', 'Fehler', 9,
+    'SELECT haltnam, printf("Datensatz in Layer ""Wehre"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM haltungen WHERE geom IS NULL AND (haltungstyp = ''Wehr''))) AS bemerkung
+FROM haltungen
+WHERE geom IS NULL AND (haltungstyp = ''Wehr'') LIMIT 5',
+ 'Haltungen', 'haltnam'),
+('Geoobjekte', 'Schacht ohne graphisches Punktobjekt', 'Fehler', 9,
+    'SELECT schnam, printf("Datensatz in Layer ""Schächte"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Schacht'' OR schachttyp IS NULL))) AS bemerkung
+FROM schaechte
+WHERE geop IS NULL AND (schachttyp = ''Schacht'' OR schachttyp IS NULL) LIMIT 5',
+ 'Schächte', 'schnam'),
+('Geoobjekte', 'Auslass ohne graphisches Punktobjekt', 'Fehler', 9,
+    'SELECT schnam, printf("Datensatz in Layer ""Auslässe"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Auslass''))) AS bemerkung
+FROM schaechte
+WHERE geop IS NULL AND (schachttyp = ''Auslass'') LIMIT 5',
+ 'Auslässe', 'schnam'),
+('Geoobjekte', 'Speicher ohne graphisches Punktobjekt', 'Fehler', 9,
+    'SELECT schnam, printf("Datensatz in Layer ""Speicher"" in %d Datensätzen hat kein graphisches  Punktobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM schaechte WHERE geop IS NULL AND (schachttyp = ''Speicher'' OR schachttyp IS NULL))) AS bemerkung
+FROM schaechte
+WHERE geop IS NULL AND (schachttyp = ''Speicher'' OR schachttyp IS NULL) LIMIT 5',
+ 'Speicher', 'schnam'),
+('Geoobjekte', 'Kein Flächenobjekt', 'Fehler', 9,
+    'SELECT flnam, printf("Datensatz in Layer ""Flächen"" in %d Datensätzen hat kein graphisches Flächenobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM flaechen WHERE geom IS NULL)) AS bemerkung
+FROM flaechen
+WHERE geom IS NULL LIMIT 5',
+ 'Flächen', 'flnam'),
+('Geoobjekte', 'Kein Flächenobjekt', 'Fehler', 9,
+    'SELECT flnam, printf("Datensatz in Layer ""Haltungsflächen"" in %d Datensätzen hat kein Flächenobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM tezg WHERE geom IS NULL)) AS bemerkung
+FROM tezg
+WHERE geom IS NULL LIMIT 5',
+ 'Haltungsflächen', 'flnam'),
+('Geoobjekte', 'Flächenanbindung ohne graphisches Linienobjekt', 'Fehler', 9,
+    'SELECT flnam, printf("Datensatz in Layer ""Anbindungen Flächen"" in %d Datensätzen hat kein graphisches Linienobjekt (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM linkfl WHERE geom IS NULL)) AS bemerkung
+FROM linkfl
+WHERE geom IS NULL LIMIT 5',
+ 'Anbindungen Flächen', 'flnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9,
     'SELECT f1.flnam,
         printf("Abflussparameter ""%s"" wird in Layer ""Flächen"" verwendet, fehlt aber in Referenztabelle ""Abflussparameter HE"" bzw. ""... KP"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", 
@@ -57,12 +102,12 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     WHERE p.profilnam IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL)
     GROUP BY h.profilnam',
  'Haltungen', 'haltnam'),
-('HYSTEM-EXTRAN', 'Schachtnamen doppelt', 'Fehler', 9,
+('Netzstruktur', 'Schachtnamen doppelt', 'Fehler', 9,
     'SELECT schnam,
         printf("Schachtnamen doppelt in Layer ""Schächte"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1))) AS bemerkung
     FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1) LIMIT 5', 
  'Schächte', 'schnam'),
-('HYSTEM-EXTRAN', 'Haltungsnamen doppelt', 'Fehler', 9,
+('Netzstruktur', 'Haltungsnamen doppelt', 'Fehler', 9,
     'SELECT haltnam,
         printf("Haltungsnamen doppelt in Layer ""Haltungen"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
     FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1) LIMIT 5', 
@@ -172,58 +217,58 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung
     FROM Untersuchdat_haltung
     WHERE LENGTH(kuerzel) IS NOT 3',
- 'Untersuchdat_haltung', 'pk'),
+ 'Untersuchungsdaten Haltung', 'pk'),
 ('Zustandsklassen', 'Haltungsname doppelt', 'Fehler', 9,
     'SELECT COUNT(*) AS "Count", pk , ''Haltungsname doppelt'' AS bemerkung
     FROM haltungen group by haltnam having count(*)>1 ',
- 'haltungen', 'pk'),
+ 'Haltungen', 'pk'),
 ('Zustandsklassen', 'Schachtname doppelt', 'Fehler', 9,
     'SELECT COUNT(*) AS "Count", pk , ''Haltungsname doppelt'' AS bemerkung
     FROM schaechte group by schnam having count(*)>1 ',
- 'schaechte', 'pk'),
+ 'Schächte', 'pk'),
 ('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9,
     'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung
     FROM Untersuchdat_schacht
     WHERE LENGTH(kuerzel) IS NOT 3',
- 'Untersuchdat_schacht', 'pk'),
+ 'Untersuchungsdaten Schacht', 'pk'),
 ('Zustandsklassen', 'Fehlende Angabe der Streckenschadensnummer', 'Fehler', 9,
     'SELECT pk , ''Fehlende Angabe der Streckenschadensnummer'' AS bemerkung
     FROM Untersuchdat_haltung
     WHERE streckenschaden IS NOT "not found" and streckenschaden_lfdnr IS 0',
- 'Untersuchdat_haltung', 'pk'),
+ 'Untersuchungsdaten Haltung', 'pk'),
 ('Zustandsklassen', 'Fehlende Angabe des Streckenschadens', 'Fehler', 9,
     'SELECT pk , ''Fehlende Angabe des Streckenschadens'' AS bemerkung
     FROM Untersuchdat_haltung
     WHERE (streckenschaden IS "not found" or streckenschaden IS NULL) and streckenschaden_lfdnr IS NOT 0',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9,
     'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung
     FROM Untersuchdat_haltung
     WHERE  Untersuchdat_haltung.kuerzel
 							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung DWA")
 							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9,
     'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung
     FROM Untersuchdat_haltung
     WHERE  Untersuchdat_haltung.kuerzel
 							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung ISYBAU")
 							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9,
     'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
     WHERE  Untersuchdat_schacht.kuerzel
 							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht DWA")
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9,
     'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
     WHERE Untersuchdat_schacht.kuerzel
 							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht ISYBAU")
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung
     FROM Untersuchdat_haltung
@@ -232,7 +277,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_haltung.charakt1
 							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung
     FROM Untersuchdat_haltung
@@ -241,7 +286,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_haltung.charakt1
 							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
@@ -250,7 +295,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_schacht.charakt1
 							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
@@ -259,7 +304,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_schacht.charakt1
 							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung
     FROM Untersuchdat_haltung
@@ -268,7 +313,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_haltung.charakt2
 							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung
     FROM Untersuchdat_haltung
@@ -277,7 +322,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_haltung.charakt2
 							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_haltung', 'pk'), 
+ 'Untersuchungsdaten Haltung', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
@@ -286,7 +331,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_schacht.charakt2
 							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
@@ -295,7 +340,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_schacht.charakt2
 							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Die Angabe vom Bereich prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Angabe vom Bereich prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
@@ -304,7 +349,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_schacht.bereich
 							not in (select reflist_zustand.bereich from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")',
- 'Untersuchdat_schacht', 'pk'), 
+ 'Untersuchungsdaten Schacht', 'pk'), 
 ('Zustandsklassen', 'Die Angabe vom Bereich prüfen', 'Fehler', 9,
     'SELECT pk , ''Die Angabe vom Bereich prüfen'' AS bemerkung
     FROM Untersuchdat_schacht
@@ -313,7 +358,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 							AND Untersuchdat_schacht.bereich
 							not in (select reflist_zustand.bereich from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
 							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")',
- 'Untersuchdat_schacht', 'pk')
+ 'Untersuchungsdaten Schacht', 'pk')
     )
 ) AS pn
 LEFT JOIN pruefsql AS ps

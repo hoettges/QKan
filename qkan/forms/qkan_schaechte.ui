@@ -138,6 +138,9 @@
      <property name="statusTip">
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label_13">
      <property name="geometry">
@@ -181,6 +184,9 @@
      </property>
      <property name="statusTip">
       <string>aktueller Status (z.B. vorhanden, in Planung etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QgsDateTimeEdit" name="createdat">
@@ -670,6 +676,9 @@
      </property>
      <property name="statusTip">
       <string>vorh. Entwässerungssystem (z.B. Mischwasser, Regenwasser etc.)</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="label_41">

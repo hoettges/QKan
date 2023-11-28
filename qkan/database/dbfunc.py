@@ -306,7 +306,7 @@ class DBConnection:
         :type stmt_category:    String
 
         :parameters:            parameters used in sql statement
-        :type projectfile:      List or Dict
+        :type parameters:       List or Dict
 
         :many:                  executes sql for every element in parameters -> must be a sequence of lists
         :type many:             Boolean
