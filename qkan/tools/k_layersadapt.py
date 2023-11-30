@@ -92,9 +92,7 @@ def load_plausiaction(layer):
         clayer = clayers[0]
         clayer.selectByExpression(f"{attr} = '{obj}'")
         qgis.utils.iface.setActiveLayer(clayer)
-        box = clayer.boundingBoxOfSelected()
-        canvas = qgis.utils.iface.mapCanvas()
-        canvas.zoomToFeatureExtent(box)
+        qgis.utils.iface.actionZoomToSelected().trigger()
     """
     acActor = QgsAction(QgsAction.GenericPython, "Objekt Aktivieren und Zoom/Pan zum Objekt", code,
                         iconPath, False, "Zoom/Pan zum Objekt",
@@ -338,9 +336,11 @@ def layersadapt(
             if layer.name() == 'Plausibilitätsprüfungen':
                 load_plausisql(dbQK)
                 logger.debug("Plausibilitätsprüfungen mit Datei 'Plausibilitaetspruefungen.sql' ergänzt.")
-            elif layer.name() == 'Fehlerliste':
-                load_plausiaction(layer)
-                logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
+
+            # nachfolgende Zeilen sind nicht notwendig, da in Projektdatei schon enthalten:
+            # elif layer.name() == 'Fehlerliste':
+            #     load_plausiaction(layer)
+            #     logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
 
         if anpassen_ProjektMakros:
             nodes = qgsxml.findall("properties/Macros")

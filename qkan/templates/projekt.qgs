@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveDateTime="2023-10-27T13:30:12" saveUser="Nora" saveUserFull="Nora Blase" version="3.22.7-Białowieża" projectname="QKan Version 3.3.6">
+<qgis saveDateTime="2023-10-27T13:30:12" saveUser="Nora" saveUserFull="Nora Blase" version="3.22.7-Białowieża" projectname="QKan Version 3.3.7">
   <homePath path=""/>
-  <title>QKan Version 3.3.6</title>
+  <title>QKan Version 3.3.7</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -3780,13 +3780,7 @@ def my_form_open(dialog, layer, feature):
       <expressionfields/>
       <attributeactions>
         <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
-        <actionsetting shortTitle="Zoom/Pan zum Objekt" action="from qgis.PyQt import QtWidgets&#xa;from qgis.core import Qgis&#xa;&#xa;obj = '[%objname%]'&#xa;attr = '[%attrname%]'&#xa;&#xa;activeproject = QgsProject().instance()&#xa;layername = '[%layername%]'&#xa;clayers = activeproject.mapLayersByName(layername)&#xa;if not clayers:&#xa;    QtWidgets.QMessageBox.information(None, &quot;Fehler im Programmcode der Aktion&quot;, f'Layer &quot;{layername}&quot;nicht definiert')&#xa;else:&#xa;    clayer = clayers[0]&#xa;    clayer.selectByExpression(f&quot;{attr} = '{obj}'&quot;)&#xa;    qgis.utils.iface.setActiveLayer(clayer)&#xa;    box = clayer.boundingBoxOfSelected()&#xa;    canvas = qgis.utils.iface.mapCanvas()&#xa;    canvas.zoomToFeatureExtent(box)&#xa;" isEnabledOnlyWhenEditable="0" capture="1" icon="C:/FHAC/hoettges/Kanalprogramme/QKan/qkan/datacheck/jump.png" id="{ce7efdcf-811f-4b6b-859e-b64a436a7a74}" name="Zoom/Pan zum Objekt" notificationMessage="" type="1">
-          <actionScope id="Feature"/>
-        </actionsetting>
-        <actionsetting shortTitle="Zoom/Pan zum Objekt" action="from qgis.PyQt import QtWidgets&#xa;    from qgis.core import Qgis&#xa;&#xa;    obj = '[%objname%]'&#xa;    attr = '[%attrname%]'&#xa;&#xa;    activeproject = QgsProject().instance()&#xa;    layername = '[%layername%]'&#xa;    clayers = activeproject.mapLayersByName(layername)&#xa;    if not clayers:&#xa;        QtWidgets.QMessageBox.information(None, &quot;Fehler im Programmcode der Aktion&quot;, f'Layer &quot;{layername}&quot;nicht definiert')&#xa;    else:&#xa;        clayer = clayers[0]&#xa;        clayer.selectByExpression(f&quot;{attr} = '{obj}'&quot;)&#xa;        qgis.utils.iface.setActiveLayer(clayer)&#xa;        box = clayer.boundingBoxOfSelected()&#xa;        canvas = qgis.utils.iface.mapCanvas()&#xa;        canvas.zoomToFeatureExtent(box)&#xa;    " isEnabledOnlyWhenEditable="0" capture="0" icon="C:/FHAC/hoettges/Kanalprogramme/QKan/qkan/datacheck/jump.png" id="{d4291ae8-f6e0-4b91-aa30-8c3f2954515c}" name="Objekt Aktivieren und Zoom/Pan zum Objekt" notificationMessage="Meldung" type="1">
-          <actionScope id="Feature"/>
-        </actionsetting>
-        <actionsetting shortTitle="Zoom/Pan zum Objekt" action="from qgis.PyQt import QtWidgets&#xa;    from qgis.core import Qgis&#xa;&#xa;    obj = '[%objname%]'&#xa;    attr = '[%attrname%]'&#xa;&#xa;    activeproject = QgsProject().instance()&#xa;    layername = '[%layername%]'&#xa;    clayers = activeproject.mapLayersByName(layername)&#xa;    if not clayers:&#xa;        QtWidgets.QMessageBox.information(None, &quot;Fehler im Programmcode der Aktion&quot;, f'Layer &quot;{layername}&quot;nicht definiert')&#xa;    else:&#xa;        clayer = clayers[0]&#xa;        clayer.selectByExpression(f&quot;{attr} = '{obj}'&quot;)&#xa;        qgis.utils.iface.setActiveLayer(clayer)&#xa;        box = clayer.boundingBoxOfSelected()&#xa;        canvas = qgis.utils.iface.mapCanvas()&#xa;        canvas.zoomToFeatureExtent(box)&#xa;    " isEnabledOnlyWhenEditable="0" capture="0" icon="C:/FHAC/hoettges/Kanalprogramme/QKan/qkan/datacheck/jump.png" id="{c9f2a0a8-200b-4d57-a573-fc3856fb2ce6}" name="Objekt Aktivieren und Zoom/Pan zum Objekt" notificationMessage="Meldung" type="1">
+        <actionsetting shortTitle="Zoom/Pan zum Objekt" action="from qgis.PyQt import QtWidgets&#xa;from qgis.core import Qgis&#xa;&#xa;obj = '[%objname%]'&#xa;attr = '[%attrname%]'&#xa;&#xa;activeproject = QgsProject().instance()&#xa;layername = '[%layername%]'&#xa;clayers = activeproject.mapLayersByName(layername)&#xa;if not clayers:&#xa;    QtWidgets.QMessageBox.information(None, &quot;Fehler im Programmcode der Aktion&quot;, f'Layer &quot;{layername}&quot;nicht definiert')&#xa;else:&#xa;    clayer = clayers[0]&#xa;    clayer.selectByExpression(f&quot;{attr} = '{obj}'&quot;)&#xa;    qgis.utils.iface.setActiveLayer(clayer)&#xa;    qgis.utils.iface.actionZoomToSelected().trigger()&#xa;" isEnabledOnlyWhenEditable="0" capture="1" icon="C:/FHAC/hoettges/Kanalprogramme/QKan/qkan/datacheck/jump.png" id="{ce7efdcf-811f-4b6b-859e-b64a436a7a74}" name="Zoom/Pan zum Objekt" notificationMessage="" type="1">
           <actionScope id="Feature"/>
         </actionsetting>
       </attributeactions>
@@ -33485,7 +33479,7 @@ def closeProject():
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan Version 3.3.6</title>
+    <title>QKan Version 3.3.7</title>
     <abstract></abstract>
     <contact>
       <name></name>

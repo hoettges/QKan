@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Übersicht &mdash; QKan 3.3.1 Dokumentation</title>
+  <title>Formulare &mdash; QKan 3.3.1 Dokumentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -58,19 +58,15 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Arbeiten mit Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Formulare</span></p>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Übersicht</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#berechnung-von-oberflachenabflussparametern">Berechnung von Oberflächenabflussparametern</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen">Tabellen zur Auswahl der zu berücksichtigenden Flächen</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">Automatisches Erzeugen von Anbindungen von Einzeleinleitern</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Formulare</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#berechnung-von-oberflachenabflussparametern">Berechnung von Oberflächenabflussparametern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">Automatisches Erzeugen von Anbindungen von Einzeleinleitern</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#verbindungslinien-von-flachen-zu-haltungen-erstellen">Verbindungslinien von Flächen zu Haltungen erstellen</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filteroptionen">Filteroptionen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optionen-zur-erzeugung-von-zuordnungen">Optionen zur Erzeugung von Zuordnungen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#erzeugen-von-unbefestigten-flachen">Erzeugen von unbefestigten Flächen</a></li>
@@ -110,7 +106,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Übersicht</li>
+      <li class="breadcrumb-item active">Formulare</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Qkan_Formulare.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
       </li>
@@ -120,31 +116,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ubersicht">
-<h1>Übersicht<a class="headerlink" href="#ubersicht" title="Permalink to this heading"></a></h1>
+  <section id="formulare">
+<h1>Formulare<a class="headerlink" href="#formulare" title="Permalink to this heading"></a></h1>
 <section id="berechnung-von-oberflachenabflussparametern">
 <span id="index-0"></span><h2>Berechnung von Oberflächenabflussparametern<a class="headerlink" href="#berechnung-von-oberflachenabflussparametern" title="Permalink to this heading"></a></h2>
-<p>Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
-nach HYSTEM-EXTRAN (geplante Alternative: Kanal++) berechnet.</p>
-<section id="tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen">
-<h3>Tabellen zur Auswahl der zu berücksichtigenden Flächen<a class="headerlink" href="#tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen" title="Permalink to this heading"></a></h3>
+<p>Es werden die Oberflächenabflussparameter für befestigte und unbefestigte Flächen
+berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm HYSTEM-EXTRAN gedacht.
+In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden,
+der diese Werte ebenfalls berechnen kann und dessen Anwendung empfohlen wird.</p>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
 auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
-</section>
+<img alt="_images/oberflaechenabflussparameter.png" src="_images/oberflaechenabflussparameter.png" />
 </section>
 <section id="automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">
 <span id="index-1"></span><h2>Automatisches Erzeugen von Anbindungen von Einzeleinleitern<a class="headerlink" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern" title="Permalink to this heading"></a></h2>
 <p>Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird
 eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung
 endet.</p>
-<section id="tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">
-<h3>Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen" title="Permalink to this heading"></a></h3>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
 auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <span class="xref std std-ref">Anbindungen von Einzeleinleitern</span></p>
-</section>
 </section>
 <section id="verbindungslinien-von-flachen-zu-haltungen-erstellen">
 <span id="linkverbindunghaltungflaeche"></span><span id="index-2"></span><h2>Verbindungslinien von Flächen zu Haltungen erstellen<a class="headerlink" href="#verbindungslinien-von-flachen-zu-haltungen-erstellen" title="Permalink to this heading"></a></h2>
@@ -154,12 +147,38 @@ endet.</p>
 <p>Abhängig von dem Flächenattribut „aufteilen“ ist eine Anbindung pro Fläche oder pro Flächenteilstück
 und Haltungsfläche (Tabelle „tezg“) vorgesehen.</p>
 <img alt="_images/Verbindungslinien_fl_hal.png" src="_images/Verbindungslinien_fl_hal.png" />
-<ol class="arabic simple" start="3">
+<section id="filteroptionen">
+<h3>Filteroptionen<a class="headerlink" href="#filteroptionen" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Mit dieser Auswahl kann die Bearbeitung auf Flächen mit den ausgewählten Abflussparametern beschränkt werden</p></li>
+<li><p>Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Hier
+sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden</p></li>
 <li><p>Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen.</p></li>
 </ol>
-<p>Die Zuordnung sollte anschließend immer visuell überprüft werden.</p>
-<section id="id1">
-<h3>Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+</section>
+<section id="optionen-zur-erzeugung-von-zuordnungen">
+<h3>Optionen zur Erzeugung von Zuordnungen<a class="headerlink" href="#optionen-zur-erzeugung-von-zuordnungen" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Abstand zur nächsten Kante:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt</p></li>
+<li><p><strong>Abstand zum Mittelpunkt:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zum Mittelpunkt einer Fläche bestimmt</p></li>
+<li><p><strong>Suchradius:</strong> Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden
+Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden</p></li>
+<li><p><strong>Fangradius</strong> ist der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung</p></li>
+<li><p><strong>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen</strong> ist nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen
+verknüpft werden sollen, die innerhalb der selben Haltungsfläche liegen</p></li>
+<li><p><strong>Autokorrektur von Namen in Flächen und Einleitpunkten</strong> bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen
+und Einleitpunkten automatisch so durch eine fortlaufende Nummer ergänzt werden, dass nur noch eindeutige Bezeichnungen vorkommen.
+Ist diese Option nicht aktiviert, bricht die Erstellung der Zuordnungen bei nicht eindeutigen Bezeichnungen mit einer Fehlermeldung ab</p></li>
+<li><p><strong>Mit Haltungsflächen verschneiden</strong> muss aktiviert werden, wenn Flächen, für die die Option „Aufteilen“ festgelegt wurde, beim Export in
+ein Simulationsprogramm auf die Haltungsflächen verteilt („verschnitten“) werden sollen</p></li>
+<li><p><strong>Flächenobjekte bereinigen</strong> aktiviert eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen
+Dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt</p></li>
+</ul>
+<p>Die Zuordnung kann auch manuell vorgenommen und überarbeitet werden, falls bei der automatischen Erstellung unplausible Verbindungen entstanden sind oder
+sich infolge einer späteren Bearbeitung Änderungen bei den Flächen ergeben haben.</p>
+</section>
+<section id="tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">
+<h3>Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen" title="Permalink to this heading"></a></h3>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf Flächen mit ausgewählten Abflussparametern,
 Haltungen mit ausgewählten Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt
 werden.</p>

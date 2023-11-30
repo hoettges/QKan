@@ -129,19 +129,19 @@ class QKanTools(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-        icon_help_path = ":/plugins/qkan/tools/res/icon_help.png"
-        QKan.instance.add_action(
-            icon_help_path,
-            text=self.tr("Über QKan"),
-            callback=self.run_help,
-            parent=self.iface.mainWindow(),
-        )
-
         icon_file_path = ":/plugins/qkan/tools/res/icon_filepath.png"
         QKan.instance.add_action(
             icon_file_path,
             text=self.tr("Dateipfade suchen"),
             callback=self.run_filepath,
+            parent=self.iface.mainWindow(),
+        )
+
+        icon_help_path = ":/plugins/qkan/tools/res/icon_help.png"
+        QKan.instance.add_action(
+            icon_help_path,
+            text=self.tr("Über QKan"),
+            callback=self.run_help,
             parent=self.iface.mainWindow(),
         )
 

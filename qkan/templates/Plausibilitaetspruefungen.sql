@@ -112,7 +112,7 @@ WHERE geom IS NULL LIMIT 5',
         printf("Haltungsnamen doppelt in Layer ""Haltungen"" in %d Datensätzen (nur max. 5 Datensätze angezeigt)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
     FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1) LIMIT 5', 
  'Haltungen', 'haltnam'),
-('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
+('Kreuzende Haltungen (braucht sehr lang!)', 'Kreuzende Haltungen', 'Warnung', 6, 
     'SELECT
          haltna1 AS haltnam, 
          printf("Theoretischer Abstand zu Haltung %s beträgt d = %.2f", haltna2, COALESCE(abstkreuz, d3)) as bemerkung

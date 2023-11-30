@@ -1,4 +1,4 @@
-Übersicht
+Formulare
 =========
 
 .. index:: Berechnung von Oberflächenabflussparametern (Menü)
@@ -7,20 +7,19 @@
 Berechnung von Oberflächenabflussparametern
 -------------------------------------------
 
-Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
-nach HYSTEM-EXTRAN (geplante Alternative: Kanal++) berechnet. 
-
-
-Tabellen zur Auswahl der zu berücksichtigenden Flächen
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Es werden die Oberflächenabflussparameter für befestigte und unbefestigte Flächen 
+berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm HYSTEM-EXTRAN gedacht. 
+In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden, 
+der diese Werte ebenfalls berechnen kann und dessen Anwendung empfohlen wird. 
 
 Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
 auf Haltungen mit ausgewählten 
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden. 
 
+.. image:: ./QKan_Bilder/Oberflaechenabflussparameter/oberflaechenabflussparameter.png
+
 
 .. index:: Anbindungen Einzeleinleiter (Menü)
-
 
 Automatisches Erzeugen von Anbindungen von Einzeleinleitern
 -----------------------------------------------------------
@@ -28,10 +27,6 @@ Automatisches Erzeugen von Anbindungen von Einzeleinleitern
 Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird 
 eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung 
 endet. 
-
-
-Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
 auf Haltungen mit ausgewählten 
@@ -55,19 +50,35 @@ und Haltungsfläche (Tabelle "tezg") vorgesehen.
 
 .. image:: ./QKan_Bilder/Formulare/Verbindungslinien_fl_hal.png
 
-..
-    1. (?Jörg?)
-    2. Die Voreinstellung, dass das Feld "Nur ausgewählte Bewässerungsarten berücksichtigen" aktiviert ist, sollte i.d.R. nicht geändert werden. (?Jörg?) Eine Ausnahme ist,....
+Filteroptionen
+++++++++++++++
 
-3. Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen.
+1. Mit dieser Auswahl kann die Bearbeitung auf Flächen mit den ausgewählten Abflussparametern beschränkt werden 
+2. Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Hier 
+   sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden 
+3. Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen. 
 
-.. 
-    4. Hier kann ausgewählt werden, wie die Fläche zugeordnet werden soll - entweder über die nächste Kante einer Fläche zu einer Haltung oder über den Mittelpunkt der Fläche zur nächstliegenden Haltung. Auch hier sollte die Voreinstellung beibehalten werden. Die Option "Abstand zum Mittelpunkt" ist für... (Anwendungsfall)
-    5. Der Suchradius gibt an, in welchem Umkreis von den Haltungen (?Jörg?) das Programm nach zu verknüpfenden Flächen sucht. Daher sollte er ausreichend groß gewählt werden, sodass alle Elemente bei der Zuordnung berücksichtigt werden. Ein zu großer Suchradius verlangsamt jedoch den Vorgang (?Jörg?) (? Oder warum sollte er nicht maximal gesetzt werden?). Mit dem Fangradius wird eingestellt, wie genau man eine Verbindungslinie zum uswählen mit der Maus treffen muss (?Richtig?), daher sollte er möglichst klein sein, da sonst die Auswahl einzelner Verbindungslinien erschwert wird.
-    6. Diese Optionen sollten in der Regel nicht aktiviert werden. (?Jörg?)(?Wofür sind sie?)
-    7. Auch diese Optionen sollten im Normalfall nicht geändert werden. Die Option "Mit Haltungsflächen verschneiden" sollte nur deaktiviert werden, wenn ...(?Jörg?)(Wann "mit Haltungsflächen verschneiden" deaktivieren?) Ist zu befürchten, da
-    
-Die Zuordnung sollte anschließend immer visuell überprüft werden.
+Optionen zur Erzeugung von Zuordnungen
+++++++++++++++++++++++++++++++++++++++
+
+- **Abstand zur nächsten Kante:** Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt
+- **Abstand zum Mittelpunkt:** Die nächste Haltung wird anhand des geringsten Abstandes zum Mittelpunkt einer Fläche bestimmt
+- **Suchradius:** Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden
+  Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden
+- **Fangradius** ist der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung
+- **Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen** ist nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen 
+  verknüpft werden sollen, die innerhalb der selben Haltungsfläche liegen
+- **Autokorrektur von Namen in Flächen und Einleitpunkten** bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen 
+  und Einleitpunkten automatisch so durch eine fortlaufende Nummer ergänzt werden, dass nur noch eindeutige Bezeichnungen vorkommen. 
+  Ist diese Option nicht aktiviert, bricht die Erstellung der Zuordnungen bei nicht eindeutigen Bezeichnungen mit einer Fehlermeldung ab
+- **Mit Haltungsflächen verschneiden** muss aktiviert werden, wenn Flächen, für die die Option "Aufteilen" festgelegt wurde, beim Export in 
+  ein Simulationsprogramm auf die Haltungsflächen verteilt ("verschnitten") werden sollen
+- **Flächenobjekte bereinigen** aktiviert eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen 
+  Dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt
+
+
+Die Zuordnung kann auch manuell vorgenommen und überarbeitet werden, falls bei der automatischen Erstellung unplausible Verbindungen entstanden sind oder 
+sich infolge einer späteren Bearbeitung Änderungen bei den Flächen ergeben haben. 
 
 Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

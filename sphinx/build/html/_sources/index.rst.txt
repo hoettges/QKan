@@ -24,7 +24,7 @@
  
 .. toctree::
     :maxdepth: 2
-    :caption: Formulare
+    :caption: Übersicht
     
     Qkan_Formulare
     Qkan_Tabellen    
