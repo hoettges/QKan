@@ -688,7 +688,7 @@ class LaengsTask:
             laenge_l.append(round(laenge, 2))
             entwart_l.append(entwart)
             hoehe_l.append(hoehe)
-            breite_l.append(breite)
+            breite_l.append(int(breite*1000))
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
@@ -976,17 +976,17 @@ class LaengsTask:
         plt.hlines(y_min - 2.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min - 3.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
 
-        plt.annotate("Deckelhöhe [m ü. NHN]", (x_min-30, y_min-0.4), textcoords="offset points", xytext=(-10, 0), ha='center')
-        plt.annotate("Schachtname", (x_min - 40, y_min - 0.9), textcoords="offset points", xytext=(-10, 0),
-                     ha='center')
-        plt.annotate("Sohlehöhe Schacht [m ü. NHN]", (x_min - 30, y_min - 1.4), textcoords="offset points", xytext=(-10, 0),
-                     ha='center')
-        plt.annotate("Sohlhöhe Haltung [m ü. NHN]", (x_min - 30, y_min - 1.9), textcoords="offset points", xytext=(-10, 0),
-                     ha='center')
-        plt.annotate("Länge [m]", (x_min - 30, y_min - 2.5), textcoords="offset points", xytext=(-10, 0),
-                     ha='center')
-        plt.annotate("Nennweite / Material [mm]", (x_min - 30, y_min - 3), textcoords="offset points", xytext=(-10, 0),
-                     ha='center')
+        plt.annotate("Deckelhöhe [m ü. NHN]", (x_min-55, y_min-0.4), textcoords="offset points", xytext=(-10, 0), ha='left')
+        plt.annotate("Schachtname", (x_min - 55, y_min - 0.9), textcoords="offset points", xytext=(-10, 0),
+                     ha='left')
+        plt.annotate("Sohlehöhe Schacht [m ü. NHN]", (x_min - 55, y_min - 1.4), textcoords="offset points", xytext=(-10, 0),
+                     ha='left')
+        plt.annotate("Sohlhöhe Haltung [m ü. NHN]", (x_min - 55, y_min - 1.9), textcoords="offset points", xytext=(-10, 0),
+                     ha='left')
+        plt.annotate("Länge [m]", (x_min - 55, y_min - 2.5), textcoords="offset points", xytext=(-10, 0),
+                     ha='left')
+        plt.annotate("Nennweite [mm] / Material", (x_min - 55, y_min - 3), textcoords="offset points", xytext=(-10, 0),
+                     ha='left')
 
 
         z_sohle_neu = []
@@ -1000,16 +1000,14 @@ class LaengsTask:
 
 
         for i, j, x, y in zip(x_deckel_neu, name_neu, z_deckel_neu, z_sohle_neu):
-            plt.vlines(i, y_min, y_min-3.1, color="grey", linestyles='solid')
+            #plt.vlines(i, y_min, y_min-3.1, color="grey", linestyles='solid')
+            plt.vlines(i, y_min-2.1, y_min -3.1, color="grey", linestyles='solid')
 
-            plt.annotate(x, (i+0.1, y_min - 0.4), bbox=dict(facecolor='white', edgecolor='none'),
-                          ha='center')
+            plt.annotate(x, (i + 0.1, y_min - 0.4), ha='center')
 
-            plt.annotate(j, (i +0.1, y_min - 0.9), bbox=dict(facecolor='white', edgecolor='none'),
-                          ha='center')
+            plt.annotate(j, (i +0.1, y_min - 0.9), ha='center')
 
-            plt.annotate(y, (i +0.1, y_min - 1.4), bbox=dict(facecolor='white', edgecolor='none'),
-                          ha='center')
+            plt.annotate(y, (i +0.1, y_min - 1.4), ha='center')
 
         x = 0
 
@@ -1039,7 +1037,7 @@ class LaengsTask:
             plt.annotate(k, (i , y_min - 2.5), textcoords="offset points",
                          xytext=(-10, 0), ha='center')
 
-            plt.annotate(str(l * 1000), (i, y_min - 3), textcoords="offset points",
+            plt.annotate(str(l)+' / '+m, (i, y_min - 3), textcoords="offset points",
                          xytext=(-10, 0), ha='center')
 
 
