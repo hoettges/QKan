@@ -3,7 +3,7 @@ from qgis.core import QgsProject
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.plugin import QKanPlugin
-from qkan.database.qkan_database import db_version
+from qkan.database.qkan_database import qgs_version
 from qkan.database.qkan_utils import warnung
 
 from PyQt5.QtWidgets import QTableWidgetItem
@@ -56,7 +56,7 @@ class Infos(QKanPlugin):
             #self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
 
             self.info_dlg.show()
-            version = db_version()
+            version = qgs_version()
             self.info_dlg.textBrowser_2.setText(str(version))
             self.info_dlg.textBrowser_3.setText(str(test.anz_haltungen))
             self.info_dlg.textBrowser_4.setText(str(test.anz_schaechte))

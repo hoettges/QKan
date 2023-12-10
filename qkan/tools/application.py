@@ -37,7 +37,7 @@ from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
 from .k_filepath import setfilepath
-from qkan.database.qkan_database import db_version
+from qkan.database.qkan_database import qgs_version
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
@@ -797,7 +797,7 @@ class QKanTools(QKanPlugin):
 
     def run_help(self) -> None:
 
-        version = db_version()
+        version = qgs_version()
 
         self.dlghp.textBrowser_2.setText(str(version))
 

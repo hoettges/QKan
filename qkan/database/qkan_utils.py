@@ -796,6 +796,17 @@ enthalten ist, werden n Nachkommastellen angenommen
         return float(zahl) / 10.0 ** n
 
 
+def ffloat(zahl: float, n: int) -> str:
+    """Formatiert eine Zahl mit n Nachkommastellen und gibt sie als Text zurück
+    :type zahl: float
+    :type n:    int
+    """
+    if zahl:
+        return f'{zahl:.2f}'
+    else:
+        return ''
+
+
 def read_qml(qmlfiles: dict[str, str]):
     """Liest qml-Datei(en) für QKan-Layer"""
 

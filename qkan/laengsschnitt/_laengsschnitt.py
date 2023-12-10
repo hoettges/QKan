@@ -1,34 +1,23 @@
 import logging
 from qgis.utils import iface, spatialite_connect
 from qgis.core import Qgis
-import csv
-from pathlib import Path
 import datetime
 
 import win32com.client
-import pythoncom
-from win32com.client import VARIANT
 import pywintypes
 from PyQt5 import QtCore
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.dates as mdates
 import matplotlib.animation as animation
-from matplotlib.widgets import Slider
-from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
+from qkan.database.qkan_utils import ffloat
 from qkan.database.qkan_utils import get_qkanlayer_attributes
 from .dijkstra import find_route
-import numpy as np
-import random
-
 
 logger = logging.getLogger("QKan.laengs.import")
 
-
 #TODO: mit einpflegen, dass die Geländehöhe von meheren DGM Layern angezeigt wird
-
 
 class LaengsTask:
     def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure,
@@ -66,9 +55,9 @@ class LaengsTask:
         self.geschw = self.geschw_2.value()*10
 
 
-
     def run(self) -> bool:
         self.zeichnen()
+
 
     def stop(self):
         if self.pushButton_4.text() == 'Stop':
@@ -135,12 +124,11 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
-        logger.debug(f'Fehler in slider. liste: {liste}')
-        logger.debug(f'route: {route}')
+        logger.debug(f'LaengsTask.slider() - Ergebnis von find_route(liste):\n{liste=}\n{liste2=}\n{route=}')
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            return 'nicht erstellt'
+        # if route is None:
+        #     iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente ausgewählt (1)', level=Qgis.Critical)
+        #     return 'nicht erstellt'
 
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         x_sohle = []
@@ -317,7 +305,7 @@ class LaengsTask:
                     try:
                         if '.' in zeitpunkt_t:
                             zeitpunkt = datetime.datetime.strptime(
-                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                                zeitpunkt_t[:zeitpunkt_t.index('.')+7], "%Y-%m-%d %H:%M:%S.%f"
                             )
                         else:
                             zeitpunkt = datetime.datetime.strptime(
@@ -325,8 +313,9 @@ class LaengsTask:
                             )
                     except BaseException as err:
                         iface.messageBar().pushMessage("Error",
-                                                       "Konvertierung vom Zeitpunkt fehlgeschlagen",
+                                                       f"Konvertierung vom Zeitpunkt fehlgeschlagen (1)\n{err=}\n{zeitpunkt_t}",
                                                        level=Qgis.Critical)
+                        logger.error(f"Konvertierung vom Zeitpunkt fehlgeschlagen (1)\n{err=}\n{zeitpunkt_t}")
                     if haltungen.get(zeitpunkt) is None:
                         haltungen[zeitpunkt] = {}
                     haltungen[zeitpunkt][haltung] = dict(
@@ -398,7 +387,7 @@ class LaengsTask:
                     try:
                         if '.' in zeitpunkt_t:
                             zeitpunkt = datetime.datetime.strptime(
-                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                                zeitpunkt_t[:zeitpunkt_t.index('.')+7], "%Y-%m-%d %H:%M:%S.%f"
                             )
                         else:
                             zeitpunkt = datetime.datetime.strptime(
@@ -504,6 +493,10 @@ class LaengsTask:
 
         #selektierte elemente anzeigen
         self.selected = layer.selectedFeatures()
+
+        if not self.selected:
+            return 'Kein Objekt gewählt'
+
         for i in self.selected:
             attrs = i["pk"]
             self.features.append(attrs)
@@ -533,12 +526,11 @@ class LaengsTask:
 
 
         route = find_route(self.db_qkan, liste)
-        logger.debug(f'Fehler in zeichnen. liste: {liste}')
-        logger.debug(f'route: {route}')
+        logger.debug(f'LaengsTask.zeichnen() - Ergebnis von find_route(liste):\n{liste=}\n{liste2=}\n{route=}')
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            return 'nicht erstellt'
+        # if route is None:
+        #     iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente ausgewählt (2)', level=Qgis.Critical)
+        #     return 'nicht erstellt'
 
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         if table == 'schaechte':
@@ -1001,23 +993,23 @@ class LaengsTask:
 
         for i, j, x, y in zip(x_deckel_neu, name_neu, z_deckel_neu, z_sohle_neu):
             #plt.vlines(i, y_min, y_min-3.1, color="grey", linestyles='solid')
-            plt.vlines(i, y_min-2.1, y_min -3.1, color="grey", linestyles='solid')
+            plt.vlines(ffloat(i, 2), y_min-2.1, y_min -3.1, color="grey", linestyles='solid')
 
-            plt.annotate(x, (i + 0.1, y_min - 0.4), ha='center')
+            plt.annotate(ffloat(x, 2), (i + 0.1, y_min - 0.4), ha='center')
 
             plt.annotate(j, (i +0.1, y_min - 0.9), ha='center')
 
-            plt.annotate(y, (i +0.1, y_min - 1.4), ha='center')
+            plt.annotate(ffloat(y, 2), (i +0.1, y_min - 1.4), ha='center')
 
         x = 0
 
         for i, j in zip(x_deckel_neu, z_sohle_h):
             # so verschieben, dass die TExte passend stehen
             if x % 2:
-                plt.annotate(j, (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                plt.annotate(ffloat(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
                               ha='center')
             else:
-                plt.annotate(j, (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                plt.annotate(ffloat(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
                               ha='center')
             x += 1
 
@@ -1034,10 +1026,10 @@ class LaengsTask:
 
         # mittig zwischen zwei Schächte schreiben Länge, Nennweite und Material, Gefälle, Stationierung
         for i, k, l, m in zip(x_mitte, laenge, dn, material):
-            plt.annotate(k, (i , y_min - 2.5), textcoords="offset points",
+            plt.annotate(ffloat(k,2), (i , y_min - 2.5), textcoords="offset points",
                          xytext=(-10, 0), ha='center')
 
-            plt.annotate(str(l)+' / '+m, (i, y_min - 3), textcoords="offset points",
+            plt.annotate(f'{ffloat(l, 2)} / {m}', (i, y_min - 3), textcoords="offset points",
                          xytext=(-10, 0), ha='center')
 
 
@@ -1054,6 +1046,7 @@ class LaengsTask:
         #                      wspace=0.2)
 
         self.auswahl[figure.number] = self.selected
+
 
     def show(self):
         """selektierte Elemente anzeigen"""
@@ -1107,12 +1100,11 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
-        logger.debug(f'Fehler in cad. liste: {liste}')
-        logger.debug(f'route: {route}')
+        logger.debug(f'LaengsTask.cad() - Ergebnis von find_route(liste):\n{liste=}\n{liste2=}\n{route=}')
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            return
+        # if route is None:
+        #     iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente ausgewählt (3)', level=Qgis.Critical)
+        #     return
 
         if table == 'schaechte':
             liste = []
@@ -1683,7 +1675,7 @@ class LaengsTask:
                     try:
                         if '.' in zeitpunkt_t:
                             zeitpunkt = datetime.datetime.strptime(
-                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                                zeitpunkt_t[:zeitpunkt_t.index('.')+7], "%Y-%m-%d %H:%M:%S.%f"
                             )
                         else:
                             zeitpunkt = datetime.datetime.strptime(
@@ -1691,8 +1683,9 @@ class LaengsTask:
                             )
                     except BaseException as err:
                         iface.messageBar().pushMessage("Error",
-                                                       "Konvertierung vom Zeitpunkt fehlgeschlagen",
+                                                       f"Konvertierung vom Zeitpunkt fehlgeschlagen (2)\n{err=}\n{zeitpunkt_t}",
                                                        level=Qgis.Critical)
+                        logger.error(f"Konvertierung vom Zeitpunkt fehlgeschlagen (2)\n{err=}\n{zeitpunkt_t}")
                     if schaechte.get(zeitpunkt) is None:
                         schaechte[zeitpunkt] = {}
                     schaechte[zeitpunkt][schacht] = dict(
@@ -1716,7 +1709,7 @@ class LaengsTask:
                     try:
                         if '.' in zeitpunkt_t:
                             zeitpunkt = datetime.datetime.strptime(
-                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                                zeitpunkt_t[:zeitpunkt_t.index('.')+7], "%Y-%m-%d %H:%M:%S.%f"
                             )
                         else:
                             zeitpunkt = datetime.datetime.strptime(
@@ -1724,8 +1717,9 @@ class LaengsTask:
                             )
                     except BaseException as err:
                         iface.messageBar().pushMessage("Error",
-                                                       "Konvertierung vom Zeitpunkt fehlgeschlagen",
+                                                       f"Konvertierung vom Zeitpunkt fehlgeschlagen (3)\n{err=}\n{zeitpunkt_t}",
                                                        level=Qgis.Critical)
+                        logger.error(f"Konvertierung vom Zeitpunkt fehlgeschlagen (3)\n{err=}\n{zeitpunkt_t}")
                     if haltungen.get(zeitpunkt) is None:
                         haltungen[zeitpunkt] = {}
                     haltungen[zeitpunkt][haltung] = dict(
@@ -1841,7 +1835,7 @@ class LaengsTask:
 
             if self.ausgabe == 'Durchfluss':
                 plt.xlabel('Zeit')
-                plt.ylabel('m³/s"')
+                plt.ylabel('m³/s')
                 for s in liste:
                     x_liste = []
                     y_liste = []
@@ -1910,12 +1904,11 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
-        logger.debug(f'Fehler in laengs. liste: {liste}')
-        logger.debug(f'route: {route}')
+        logger.debug(f'LaengsTask.laengs() - Ergebnis von find_route(liste):\n{liste=}\n{liste2=}\n{route=}')
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            return 'nicht erstellt'
+        # if route is None:
+        #     iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente ausgewählt (4)', level=Qgis.Critical)
+        #     return 'nicht erstellt'
 
         if table == 'schaechte':
             liste = []
@@ -2108,7 +2101,7 @@ class LaengsTask:
                     try:
                         if '.' in zeitpunkt_t:
                             zeitpunkt = datetime.datetime.strptime(
-                                 zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                                 zeitpunkt_t[:zeitpunkt_t.index('.')+7], "%Y-%m-%d %H:%M:%S.%f"
                              )
                         else:
                             zeitpunkt = datetime.datetime.strptime(
@@ -2116,8 +2109,9 @@ class LaengsTask:
                              )
                     except BaseException as err:
                         iface.messageBar().pushMessage("Error",
-                                                        "Konvertierung vom Zeitpunkt fehlgeschlagen",
+                                                        f"Konvertierung vom Zeitpunkt fehlgeschlagen (4)\n{err=}\n{zeitpunkt_t}",
                                                         level=Qgis.Critical)
+                        logger.error(f"Konvertierung vom Zeitpunkt fehlgeschlagen (4)\n{err=}\n{zeitpunkt_t}")
                     if haltungen.get(zeitpunkt) is None:
                         haltungen[zeitpunkt] = {}
                     haltungen[zeitpunkt][haltung] = dict(
@@ -2247,7 +2241,7 @@ class LaengsTask:
                     try:
                         if '.' in zeitpunkt_t:
                             zeitpunkt = datetime.datetime.strptime(
-                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                                zeitpunkt_t[:zeitpunkt_t.index('.')+7], "%Y-%m-%d %H:%M:%S.%f"
                             )
                         else:
                             zeitpunkt = datetime.datetime.strptime(
@@ -2255,8 +2249,9 @@ class LaengsTask:
                             )
                     except BaseException as err:
                         iface.messageBar().pushMessage("Error",
-                                                       "Konvertierung vom Zeitpunkt fehlgeschlagen",
+                                                       f"Konvertierung vom Zeitpunkt fehlgeschlagen (5)\n{err=}\n{zeitpunkt_t}",
                                                        level=Qgis.Critical)
+                        logger.error(f"Konvertierung vom Zeitpunkt fehlgeschlagen (5)\n{err=}\n{zeitpunkt_t}")
                     if schaechte.get(zeitpunkt) is None:
                         schaechte[zeitpunkt] = {}
                     schaechte[zeitpunkt][schacht] = dict(
@@ -2362,6 +2357,3 @@ class LaengsTask:
 
         self.pushButton_4.setDefault(True)
         QtCore.QTimer.singleShot(100, self.pushButton_4.setFocus)
-
-
-

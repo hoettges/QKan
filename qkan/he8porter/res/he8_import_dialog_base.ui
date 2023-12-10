@@ -101,7 +101,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Datenquelle: Hystem-Extran-Datenbank (*.idbf):</string>
+     <string>Datenquelle: Hystem-Extran-Datenbank (*.idbm):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
