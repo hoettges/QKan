@@ -117,8 +117,7 @@ class FloodTools(QKanPlugin):
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
 
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_allgemein.html?highlight=strakat"
+        help_file = "https://qkan.eu/Qkan_allgemein.html?highlight=strakat"
         os.startfile(help_file)
 
 

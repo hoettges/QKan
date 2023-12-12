@@ -71,5 +71,5 @@ Details zum Projekt "QKan" sind in mehreren Vorträgen erläutert:
 
 ## Installation
 Eine ausführliche Installationsanleitung finden Sie unter:
-https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/index.html
+https://qkan.eu/index.html
 

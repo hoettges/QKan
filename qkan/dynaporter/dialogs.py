@@ -431,8 +431,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
 
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_allgemein.html?highlight=dyna"
+        help_file = "https://qkan.eu/Qkan_allgemein.html?highlight=dyna"
         os.startfile(help_file)
 
 

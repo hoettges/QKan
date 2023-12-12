@@ -132,6 +132,5 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_Formulare.html#projektlayer-aktualisieren"
+        help_file = "https://qkan.eu/Qkan_Formulare.html#projektlayer-aktualisieren"
         os.startfile(help_file)

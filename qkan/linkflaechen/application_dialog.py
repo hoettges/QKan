@@ -307,8 +307,7 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
                 self.lf_anzahl_haltungen.setText("0")
 
     def click_help_fl(self) -> None:
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen"
+        help_file = "https://qkan.eu/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen"
         os.startfile(help_file)
 
 
@@ -443,8 +442,7 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
                 self.lf_anzahl_einleit.setText("0")
 
     def click_help_sw(self) -> None:
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern"
+        help_file = "https://qkan.eu/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern"
         os.startfile(help_file)
 
 

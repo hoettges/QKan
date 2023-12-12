@@ -68,6 +68,5 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # t
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_Datenaustausch.html#projektdatei-ubertragen"
+        help_file = "https://qkan.eu/Qkan_Datenaustausch.html#projektdatei-ubertragen"
         os.startfile(help_file)

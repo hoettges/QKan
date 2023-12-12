@@ -42,6 +42,5 @@ class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):  # typ
         self.button_box.helpRequested.connect(self.click_help)
 
     def click_help(self) -> None:
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_Formulare.html#datenbank-aktualisieren"
+        help_file = "https://qkan.eu/Qkan_Formulare.html#datenbank-aktualisieren"
         os.startfile(help_file)

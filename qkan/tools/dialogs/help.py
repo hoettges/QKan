@@ -40,8 +40,8 @@ class QgsHelpDialog(QKanDialog, FORM_CLASS_help):  # type: ignore
 
     def open_team(self) -> None:
 
-        webbrowser.open('https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/Qkan_allgemein.html#team')
+        webbrowser.open('https://qkan.eu/Qkan_allgemein.html#team')
 
     def open_doku(self) -> None:
 
-        webbrowser.open('https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/Doku/index.html')
+        webbrowser.open('https://qkan.eu/index.html')

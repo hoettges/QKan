@@ -320,6 +320,5 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_flaechen.html#createunbeffl"
+        help_file = "https://qkan.euqkan.eu/Qkan_flaechen.html#createunbeffl"
         os.startfile(help_file)

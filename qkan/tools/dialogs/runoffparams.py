@@ -150,6 +150,5 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
             self.lf_anzahl_flaechen.setText("0")
 
     def click_help(self) -> None:
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_Formulare.html#berechnung-von-oberflachenabflussparametern"
+        help_file = "https://qkan.eu/Qkan_Formulare.html#berechnung-von-oberflachenabflussparametern"
         os.startfile(help_file)

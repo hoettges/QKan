@@ -321,6 +321,5 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
-                    "QKan/Doku/Qkan_flaechen.html#erzeugung-von-haltungsflachen"
+        help_file = "https://qkan.eu/Qkan_flaechen.html#erzeugung-von-haltungsflachen"
         os.startfile(help_file)

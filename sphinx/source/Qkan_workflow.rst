@@ -11,7 +11,7 @@ des Bochumer Stadtteils Hiltrop.
 
 Vorbereitung
 ^^^^^^^^^^^^
-Die Daten, die in diesem Workflow benutzt werden, stehen in dieser `Excel-Datei <https://fh-aachen.sciebo.de/s/Bvbz2c9cbCYDkaG>`_ zum download bereit. 
+Die Daten, die in diesem Workflow benutzt werden, stehen in dieser `Excel-Datei <https://qkan.eu/_files/kanaldaten.xlsx>`_ zum download bereit. 
 Eine Videoanleitung zur Vorbereitung des Projektes ist |video_vorbereitung| zu finden.
 
 .. |video_vorbereitung| raw:: html
@@ -475,7 +475,7 @@ Zum Definieren des KOSTRA-DWD-Datensatzes können die Daten wie unten abgebildet
 
 Eingabeformular aus dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/softwareprodukte/desktop/hystem-extran/>`_
 
-Diese Daten können aus einem Projekt, welches `hier <https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/kostra_dwd_2010r.zip>`_ zum download zur Verfügung steht, übernommen werden.
+Diese Daten können aus einem Projekt, welches `hier <https://qkan.eu/_files/kostra_dwd_2010r.zip>`_ zum download zur Verfügung steht, übernommen werden.
 Dazu muss das zu bearbeitende Gebiet auf der Karte gesucht werden.
 Im Anschluss können die Daten über |Tool_info| :guilabel:`Info-Tool` mit einem Klick auf die Karte abgerufen werden.
 
@@ -526,7 +526,7 @@ Ergebnis mit dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/software
 An einem Beispielprojekt wird der Workflow beginnend mit dem Datenimport über die Datenaufbereitung bis zum Export in ein 
 Simulationsprogramm demonstriert und erläutert. 
 
-`Excel-Datei mit Vorlagedaten (Anzeige und Download) <https://fh-aachen.sciebo.de/s/Bvbz2c9cbCYDkaG>`_
+`Excel-Datei mit Vorlagedaten (Anzeige und Download) <https://qkan.eu/_files/kanaldaten.xlsx>`_
 
 Zu den Videos:
  - `Daten per Clipboard übernehmen <https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s>`_
