@@ -7,9 +7,9 @@ Formulare
 Berechnung von Oberflächenabflussparametern
 -------------------------------------------
 
-Es werden die Oberflächenabflussparameter für befestigte und unbefestigte Flächen 
-berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm HYSTEM-EXTRAN gedacht. 
-In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden, 
+Mit der Funktion |Tool_oberflaechenabflussparameter| :guilabel:`Oberflächenabflussparameter eintragen` werden die 
+Oberflächenabflussparameter für befestigte und unbefestigte Flächen berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm 
+HYSTEM-EXTRAN gedacht. In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden, 
 der diese Werte ebenfalls berechnen kann und dessen Anwendung empfohlen wird. 
 
 Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
@@ -17,38 +17,25 @@ auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden. 
 
 .. image:: ./QKan_Bilder/Oberflaechenabflussparameter/oberflaechenabflussparameter.png
-
-
-.. index:: Anbindungen Einzeleinleiter (Menü)
-
-Automatisches Erzeugen von Anbindungen von Einzeleinleitern
------------------------------------------------------------
-
-Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird 
-eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung 
-endet. 
-
-Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
-auf Haltungen mit ausgewählten 
-Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden. 
-
-Ausführliche Erläuterung zu diesem Thema: :ref:`Anbindungen von Einzeleinleitern <createlinksw>`
-
-
+.. |Tool_oberflaechenabflussparameter| image:: ./QKan_Bilder/Tool_oberflaechenabflussparameter.png
+                             :width: 1.25 em
+                             
 .. index:: Flächenanbindungen (Menü)
 .. _linkverbindunghaltungflaeche:
 
-Verbindungslinien von Flächen zu Haltungen erstellen
+Verknüpfungslinien von Flächen zu Haltungen erstellen
 ----------------------------------------------------
 
-Für jede Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), wird 
-eine Linie erzeugt, die innerhalb der Fläche beginnt und auf der damit verknüpften Haltung 
-endet. 
+Mit der Funktion |Tool_verknuepfungslinien_erstellen| :guilabel:`Erzeuge Verknüpfungslinien von Flächen zu Haltungen` wird für jede 
+Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie erzeugt, die innerhalb der Fläche beginnt und 
+auf der damit verknüpften Haltung endet. 
 
 Abhängig von dem Flächenattribut "aufteilen" ist eine Anbindung pro Fläche oder pro Flächenteilstück 
 und Haltungsfläche (Tabelle "tezg") vorgesehen. 
 
 .. image:: ./QKan_Bilder/Formulare/Verbindungslinien_fl_hal.png
+.. |Tool_verknuepfungslinien_erstellen| image:: ./QKan_Bilder/Tool_verknuepfungslinien_erstellen.png
+                             :width: 1.25 em
 
 Filteroptionen
 ++++++++++++++
@@ -56,25 +43,26 @@ Filteroptionen
 1. Mit dieser Auswahl kann die Bearbeitung auf Flächen mit den ausgewählten Abflussparametern beschränkt werden 
 2. Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Hier 
    sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden 
-3. Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen. 
+3. Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen 
 
 Optionen zur Erzeugung von Zuordnungen
 ++++++++++++++++++++++++++++++++++++++
 
-- **Abstand zur nächsten Kante:** Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt
+- **Abstand zur nächsten Kante:** Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt - im 
+  Regelfall sollte diese Option gewählt werden
 - **Abstand zum Mittelpunkt:** Die nächste Haltung wird anhand des geringsten Abstandes zum Mittelpunkt einer Fläche bestimmt
-- **Suchradius:** Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden
+- **Suchradius:** Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden.
   Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden
-- **Fangradius** ist der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung
-- **Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen** ist nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen 
+- **Fangradius:** Der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung
+- **Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen:** Nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen 
   verknüpft werden sollen, die innerhalb der selben Haltungsfläche liegen
-- **Autokorrektur von Namen in Flächen und Einleitpunkten** bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen 
+- **Autokorrektur von Namen in Flächen und Einleitpunkten:** Diese Option bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen 
   und Einleitpunkten automatisch so durch eine fortlaufende Nummer ergänzt werden, dass nur noch eindeutige Bezeichnungen vorkommen. 
   Ist diese Option nicht aktiviert, bricht die Erstellung der Zuordnungen bei nicht eindeutigen Bezeichnungen mit einer Fehlermeldung ab
-- **Mit Haltungsflächen verschneiden** muss aktiviert werden, wenn Flächen, für die die Option "Aufteilen" festgelegt wurde, beim Export in 
+- **Mit Haltungsflächen verschneiden:** Diese Option muss aktiviert werden, wenn Flächen, für die die Option "Aufteilen" festgelegt wurde, beim Export in 
   ein Simulationsprogramm auf die Haltungsflächen verteilt ("verschnitten") werden sollen
-- **Flächenobjekte bereinigen** aktiviert eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen 
-  Dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt
+- **Flächenobjekte bereinigen:** Bei Auswahl wird eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen durchgeführt, 
+  dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt
 
 
 Die Zuordnung kann auch manuell vorgenommen und überarbeitet werden, falls bei der automatischen Erstellung unplausible Verbindungen entstanden sind oder 
@@ -87,10 +75,26 @@ Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung auf Fl�
 Haltungen mit ausgewählten Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt 
 werden. 
 
-
-
 Ausführliche Erläuterung zu diesem Thema: :ref:`createlinkfl`
 
+
+.. index:: Anbindungen Einzeleinleiter (Menü)
+
+Verknüpfungslinien von Direkteinleitungen zu Haltungen erstellen
+----------------------------------------------------------------
+
+Die Funktion |Tool_verknuepfung_direkteinleiter| :guilabel:`Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen` erzeugt für 
+jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie, die am Punkte des 
+Einzeleinleiters beginnt und auf der damit verknüpften Haltung endet. 
+
+.. |Tool_verknuepfung_direkteinleiter| image:: ./QKan_Bilder/Tool_verknuepfung_direkteinleiter.png
+                             :width: 1.25 em
+                             
+Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
+auf Haltungen mit ausgewählten 
+Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden. 
+
+Ausführliche Erläuterung zu diesem Thema: :ref:`Anbindungen von Einzeleinleitern <createlinksw>`
 
 .. index:: Unbefestigte Fläche (Menü)
 .. _linkerzeugungunbefflaechen:
@@ -105,10 +109,19 @@ Die Attributdaten werden dabei aus den Haltungsflächen übernommen.
 
 .. image:: ./QKan_Bilder/Formulare/erz_unbef_fl.png
 
-1. Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.
+Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet
+sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle 
+werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.
 
 ..
-    2. (?Jörg?) Erklären, in welcher Situation die beiden Optionen gewählt werden sollten. 
+    Optionen
+    ++++++++
+    (?Jörg?) Erklären, in welcher Situation die beiden Optionen gewählt werden sollten.
+    - **Autokorrektur von Namen und Abflussfaktoren in den TEZG-Flächen:**
+    - **Flächenobjekte bereinigen:**
     
 Ausführliche Erläuterung zu diesem Thema: :ref:`Erzeugen von unbefestigten Flächen <createunbeffl>`
 
@@ -122,15 +135,19 @@ Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <workflunbef
 
 Erzeugung von Haltungsflächen
 -----------------------------
-Mit dieser Funktion können (große) Haltungsflächen aufgeteilt werden, sodass jede Fläche eindeutig einer Haltung zugeordnet werden kann. 
+Mit der Funktion |Tool_voronoiflaechen| :guilabel:`Erzeugung von Voronoiflächen zu Haltungen` können (große) Haltungsflächen aufgeteilt
+werden, sodass jede Fläche eindeutig einer Haltung zugeordnet werden kann. 
 
 .. image:: ./QKan_Bilder/Formulare/erz_haltungsfl.png
-
+.. |Tool_voronoiflaechen| image:: ./QKan_Bilder/Tool_voronoiflaechen.png
+                             :width: 1.25 em
 ..
-    1. In der Regel sollte diese Voreinstellung "Nur ausgewählte Entwässerungsarten berücksichtigen" aktiviert bleiben. (?Jörg?): Wann sollte man sie deaktivieren bzw. sonstige Änderungen hier vornehmen?
+    - **Nur ausgewählte Entwässerungsarten berücksichtigen:** In der Regel sollte diese Voreinstellung "Nur ausgewählte Entwässerungsarten berücksichtigen" aktiviert bleiben. (?Jörg?): Wann sollte man sie deaktivieren bzw. sonstige Änderungen hier vornehmen?
     
-2. Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Option "Nur ausgewählte Teilgebiete berücksichtigen" mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.
-3. Sind keine aufzuteilenden Flächen im Vorfeld :ref:`markiert <linkflaechenaufteilung>` worden, erscheint diese Warnmeldung. Die Funktion kann so nicht ausgeführt werden.
+- **Nur ausgewählte Teilgebiete berücksichtigen:** Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Option "Nur ausgewählte Teilgebiete 
+  berücksichtigen" mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.
+- **Warnung:** Sind keine aufzuteilenden Flächen im Vorfeld :ref:`markiert <linkflaechenaufteilung>` worden, erscheint diese Warnmeldung. Die Funktion 
+  kann so nicht ausgeführt werden.
 
 
 .. index:: Export nach HYSTEM-EXTRAN (Menü)
@@ -151,13 +168,56 @@ Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann der Export auf ausgewä
 
 
 .. index:: Projektlayer aktualisieren (Menü)
-
+.. _linkimporthe:
 
 Import aus HYSTEM-EXTRAN
 ------------------------
 
 Der Import aus HYSTEM-EXTRAN geschieht mit Hilfe einer HE Quelldatenbank (Endung .idbf).
 
+.. image:: ./QKan_Bilder/Formulare/import_aus_he.png
+
+Datenquelle
++++++++++++
+In diesem Bereich wird die mit HE erstellte Quelldatenbank (Endung .idbf) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden, 
+in dem die Daten **in der Datenquelle** gespeichert sind. In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide 
+Projektionssysteme identisch sind.
+
+Datenziel
++++++++++
+Hier wird das Datenziel, die Sqlite-Datenbank und optional die zugehörige Projektdatei, ausgewählt. Ist noch keine Zieldatenbank oder 
+Projektdatei vorhanden, können diese hier auch erstellt werden.
+
+..
+    Projektdatei erzeugen
+    +++++++++++++++++++++
+    (?Jörg?): Wann/Wie kann man hier Änderungen machen?
+    
+Tabellen importieren
+++++++++++++++++++++
+Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. Im unteren Bereich schließt sich die Auswahl 
+der Flächen an, dabei steht "Flächen (RW)" für Regenwasserflächen und "SW-Einleiter" für Schmutzwasser-Einleiter.
+    
+Haltungsflächen importieren, markiert als:
+++++++++++++++++++++++++++++++++++++++++++
+Die Selektion in diesem Block bezieht sich auf die Auswahl der entsprechenden Datensätze in HE (siehe Bild unten).
+Hierbei können bei Bedarf bestimmte Flächentypen, durch löschen des Hakens im QKan-Formular, vom Import ausgeschlossen werden. 
+
+|bild_einzugsfl_he| 
+
+.. |bild_einzugsfl_he| image:: ./QKan_Bilder/Einzugsflaeche_HE.png
+                                    :width: 30 em
+
+Eingabeformular aus dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/softwareprodukte/desktop/hystem-extran/>`_
+    
+Referenztabellen importieren
+++++++++++++++++++++++++++++
+Hier kann festgelegt werden, welche Referenztabellen importiert werden sollen. Wird hier keine Auswahl getroffen, so füllt QKan 
+selbstständig entsprechende Referenztabellen mit Standardwerten. Werden die zur Auswahl stehenden Referenztabellen gewählt, so importiert 
+QKan nur genutzte, das heißt, mit anderen Tabellen verbundene, Werte. Einträge, die Angelegt wurden, aber in diesem Projekt nicht 
+verwendet wurden, werden nur importiert, wenn die Option "Auch nicht verwendete Datensätze importieren" gewählt wird. Diese Option sollte 
+nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen) in HYSTEM-EXTRAN angelegt wurden und davon auszugehen ist, dass 
+diese in der Zukunft benötigt werden.
 
 Tabelle zur Auswahl der zu importierenden Daten
 +++++++++++++++++++++++++++++++++++++++++++++++
@@ -168,10 +228,10 @@ oder Referenztabellen beschränkt werden.
 Ausführliche Erläuterung zu diesem Thema: :ref:`Import aus HYSTEM-EXTRAN <datenaustimporthe>`
 
 
-Projektlayer aktualisieren
---------------------------
+Projektdatei anpassen
+---------------------
 
-Mit diesem Formular können Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellsten Stand gebracht werden. 
+Mit der Funktion |Tool_projekt_aktualisieren| :guilabel:`Projektdatei anpassen` können Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellsten Stand gebracht werden. 
 Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Dazu sollte in dem Formular 
 unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ (4) gewählt werden. Es wird automatisch sichergestellt, 
 dass die Wertbeziehungen (Überschrift „Layer anpassen“) aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen 
@@ -179,36 +239,86 @@ dass die Wertbeziehungen (Überschrift „Layer anpassen“) aktualisiert werden
 
 .. _image_qkan_layersadapt:
 .. image:: ./QKan_Bilder/qkan_layersadapt.png
+.. |Tool_projekt_aktualisieren| image:: ./QKan_Bilder/Tool_projekt_aktualisieren.png
+                             :width: 1.25 em
 
-1. „QKan-Standard verwenden“ sollte aktiviert werden, wenn keine eigenen Standards vorliegen. Sollen Einstellungen aus bereits existierenden Projektdateien übernommen werden, so kann die entsprechende Datei unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche […] rechts daneben ausgewählt werden.
-2. In diesem Bereich kann eine Datenbank ausgewählt werden, an die das Projekt angebunden werden soll. Auch die übrigen Optionen sollten in der Regel aktiviert werden. 
-3. Unter dieser Überschrift kann ausgewählt werden, welche Layer bearbeitet werden sollen. Allgemein ist „alle anpassen“ empfehlenswert.
-4. Ist die vorliegende Datenbank nicht auf dem aktuellen Stand (oder es besteht Unsicherheit darüber), kann hier die Option „auf aktuelle Version anpassen“ aktiviert werden.
-5. Mit der Schaltfläche […] wird der Namen und Standort des angepassten Projekts festgelegt.
+Auswahl der Vorlage
++++++++++++++++++++
+„QKan-Standard verwenden“ sollte aktiviert werden, wenn keine eigenen Standards vorliegen. Sollen Einstellungen aus bereits existierenden 
+Projektdateien übernommen werden, so kann die entsprechende Datei unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche 
+[…] rechts daneben ausgewählt werden.
+
+Layer anpassen
+++++++++++++++
+In diesem Bereich kann eine Datenbank ausgewählt werden, an die das Projekt angebunden werden soll. Auch die übrigen Optionen sollten in 
+der Regel aktiviert werden. 
+
+.. 
+    (?Jörg?): Erläuterung der Funktionen und Beispiel, wann diese nicht aktiviert werden sollten wenn möglich.
+    - **Datenbankanbindung der Layer anpassen:**
+    - **Projektsionssystem an Datenquelle anpassen:**
+    - **Layer an QKan-Vorlage anpassen:**
+    - **Formularanbindungen auf QKan-Standard setzen:**
+    - **Projektmakros auf QKan-Standard setzen:**
+    - **Zoom auf alle Layer:**
+
+QKan-Layer
+++++++++++
+Unter dieser Überschrift kann ausgewählt werden, welche Layer bearbeitet werden sollen. 
+
+.. 
+    (?Jörg?): Beispiel, wann man die andere Option wählen soll
+    - **ausgewählte anpasen:** Diese Option sollte nur gewählt werden wenn, ...(?Jörg?)
+    - **alle anpassen:** In der Regel sollte diese Option gewählt werden
+    - **Fehlende QKan-Geodaten-Layer hinzuladen:** (?Jörg?): Wann wird das benötigt?
+
+.. 
+    Auswertung Knotentypen
+    ++++++++++++++++++++++
+    (?Jörg?): Erklärung, was das ist und wofür dies gebraucht wird (sagt mir gar nichts) und ob es i.d.R. aktiviert od. nicht aktiviert sein soll
+    - **Knotentypen in Tabelle eintragen:**
 
 
 Datenbank aktualisieren
 -----------------------
 
-Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen, wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist. 
+Die Funktion |Tool_db_aktualisieren| :guilabel:`QKan-Datenbank aktualisieren` wird beim Aufruf vieler Plugins immer dann automatisch 
+aufgerufen, wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist. 
 Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert 
 wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll.
 
+.. |Tool_db_aktualisieren| image:: ./QKan_Bilder/Tool_db_aktualisieren.png
+                             :width: 1.25 em
+                             
 .. index:: Datenbank aktualisieren
-
 
 Projektdatei auf andere Datenbank übertragen
 --------------------------------------------
 
 Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi „Firmenstandards“ darstellen. 
-Solch eine Projektdatei kann mit dem Formular folgendermaßen auf ein anderes Projekt übertragen werden:
+Solch eine Projektdatei kann mit der Funktion |Tool_projektdatei_uebertragen| :guilabel:`QKan-Projektdatei übertragen` folgendermaßen auf 
+ein anderes Projekt übertragen werden:
 
 .. _image_qkan_qgsAdapt:
 .. image:: ./QKan_Bilder/qkan_qgsAdapt.png
+.. |Tool_projektdatei_uebertragen| image:: ./QKan_Bilder/Tool_projektdatei_uebertragen.png
+                             :width: 1.25 em
 
-1. Wählen Sie die einzubindende QKan-Datenbank.
-2. Wählen Sie die Projektdatei, die Sie mit dieser Datenbank verknüpfen möchten. Sie können stattdessen auch die QKan-Standardvorlage verwenden.
-3. Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus.
+QKan-Datenbank
+++++++++++++++
+Hier wird die einzubindende QKan-Datenbank gewählt. 
+
+.. 
+    (?Jörg?): Wann sollte darunter die Option aktiviert werden?
+
+Projektdatei als Vorlage
+++++++++++++++++++++++++
+Mit der Schaltfläche :guilabel:`...` kann die Projektdatei gewählt werden, die mit der vorhandenen Datenbank verknüpft werden soll. Ist keine entsprechende 
+Projektdatei vorhanden, kann auch die QKan-Standardvorlage gewählt werden.
+
+Neue Projektdatei
++++++++++++++++++
+Über :guilabel:`...` kann der Pfad der neu zu erstellenden Projektdatei ausgewählt werden.
 
 .. index:: Projektdatei übertragen
 
@@ -222,12 +332,15 @@ Teilgebiet möglich. Dabei wird das Teilgebiet automatisch in die jeweilige Spal
 
 .. image:: ./QKan_Bilder/Formulare/Zuordnung_zu_teilgebiet.png
 
-1. Die Option "überlappend" sollte gewählt werden, wenn sichergestellt werden soll, dass auch Flächen, die nur zum Teil im Teilgebiet liegen (z.B von großen Gebäuden), bei der Bearbeitung des Gebietes berücksichtigt werden.
-2. Hier kann des entsprechende zuvor erstellte (:ref:`Teilgebiet <linkteilgebiete>`) ausgewählt werden. 
+- **Haltungen und Flächen:** In der Regel sollte die Standardeinstellung "innnerhalb" nicht geändert werden. Die Option "überlappend" 
+  sollte gewählt werden, wenn sichergestellt werden soll, dass auch Flächen, die nur zum Teil im Teilgebiet liegen (z.B von großen 
+  Gebäuden), bei der Bearbeitung des Gebietes berücksichtigt werden. In der darunter liegenden Auswahlbox kann das entsprechende - 
+  zuvor erstellte - (:ref:`Teilgebiet <linkteilgebiete>`) ausgewählt werden 
 
 .. 
-    3. (?Jörg?) Sinn und Zweck der Pufferbreite erläutern.
-    4. (?Jörg?) Erklären, in welcher Situation die beiden Optionen gewählt werden sollten. 
+    - **Pufferbreite:** (?Jörg?) Sinn und Zweck der Pufferbreite erläutern.
+    - **Autokorrektur der TEZG-Namen:** (?Jörg?) Erklären, in welcher Situation die beiden Optionen gewählt werden sollten.
+    - **Flächenobjekte bereinigen:**
 
 Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <linkteilgebiete>` zu sehen.
 

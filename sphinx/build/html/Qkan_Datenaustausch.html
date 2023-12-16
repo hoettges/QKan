@@ -66,9 +66,9 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Arbeiten mit Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Formulare</span></p>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Übersicht</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Formulare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
 </ul>
 
@@ -160,48 +160,18 @@ wenn Datensätze mit Geometrien kopiert und in eine Textdatei eingefügt werden.
 <h2>Arbeiten mit Projektdateien<a class="headerlink" href="#arbeiten-mit-projektdateien" title="Permalink to this heading"></a></h2>
 <section id="projektdateien-ubertragen">
 <h3>Projektdateien übertragen<a class="headerlink" href="#projektdateien-ubertragen" title="Permalink to this heading"></a></h3>
-<p>Die Funktion <a class="reference internal" href="_images/Tool_projektdatei_uebertragen.png"><img alt="Tool_projektdatei_uebertragen" src="_images/Tool_projektdatei_uebertragen.png" style="width: 1.25em;" /></a> <span class="guilabel">Projektdatei übertragen</span> dient dazu, eine Vorlage-Projektdatei zu laden,
-um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei können z.B. Beschriftungsstile
-oder Linientypdarstellungen definiert sein. (1) In der Maske wird oben zunächst die aktuelle geladene Projektdatenbank angezeigt,
-welche sich nicht ändern lässt. Durch anklicken der Box darunter, kann die QKan-Datenbank mit dem Laden der neuen Datei
-aktualisiert werden - dies sollte in der Regel jedoch nicht nötig sein, da die Datenbank sich automatisch durch die
-Update-Funktion aktualisiert.</p>
-<p>(2) Ist noch keine Firmenstandard-Datei vorhanden, gibt es die Möglichkeit über das Auswahlfeld <span class="guilabel">Standarad-QKan-Vorlage verwenden</span>
-einen allgemeinen Stil zu laden. Diese Vorlage bietet eine gute Grundlage, um einen eigenen Standard zu entwickeln.
-Liegt bereits eine Firmenstandard-Datei vor, kann diese in dem Auswahlfeld darunter geöffnet werden. (3) Die Projektdatei wird auf
-das aktuelle QKan-Projekt angepasst und anschließend unter dem Namen gespeichert, welcher unter <span class="guilabel">Erzeugte Projektdatei speichern als…</span>
-ausgewählt wird. Dieser Name kann der Name der aktuell geladenen Projektdatei sein, wenn die Vorlage auf diese angewendet
-werden soll. Mit <span class="guilabel">OK</span> wird die Projektdatei geschrieben, jedoch aus programmtechnischen Gründen nicht sofort geladen.</p>
-<img alt="_images/qkan_qgsAdapt.png" id="image-qkan-qgsadapt" src="_images/qkan_qgsAdapt.png" />
+<p>Die <span class="xref std std-ref">Funktion</span> <a class="reference internal" href="_images/Tool_projektdatei_uebertragen.png"><img alt="Tool_projektdatei_uebertragen" src="_images/Tool_projektdatei_uebertragen.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Projektdatei übertragen</span> dient dazu,
+eine Vorlage-Projektdatei zu laden, um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei
+können z.B. Beschriftungsstile oder Linientypdarstellungen definiert sein.</p>
 <p>Die neue Projektdatei kann geladen werden, indem das aktuelle Projekt über <span class="guilabel">Projekt</span> → <span class="guilabel">Zuletzt verwendet</span>
 neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein.</p>
 </section>
 </section>
 <section id="import-aus-hystem-extran">
 <span id="datenaustimporthe"></span><h2>Import aus HYSTEM-EXTRAN<a class="headerlink" href="#import-aus-hystem-extran" title="Permalink to this heading"></a></h2>
-<p>Eine Videoerläuterung des Formulars zum Import aus HYSTEM-EXTRAN ist <a href="https://fh-aachen.sciebo.de/s/cZPuvpgKkeBE56Q" target="_blank">hier</a> zu finden.</p>
-<p>Daten können leicht von einem HYSTEM-EXTRAN Projekt nach QKan übertragen werden mit dem Tool <a class="reference internal" href="_images/Tool_Import_HE.png"><img alt="Tool_Import_HE" src="_images/Tool_Import_HE.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus HYSTEM-EXTRAN</span>.</p>
-<img alt="_images/Formular_Import_HE.png" src="_images/Formular_Import_HE.png" />
-<p>Unter Datenquelle wird die mit HE erstellte Quelldatenbank (Endung .idbf) ausgewählt.
-Darunter muss das Projektionssystem ausgewählt werden, in dem die Daten <strong>in der Datenquelle</strong> gespeichert sind.
-In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide Projektionssysteme identisch sind.
-Als nächstes wird das Datenziel, die Sqlite-Datenbank und optional die zugehörige Projektdatei, ausgewählt.
-Ist noch keine Zieldatenbank oder Projektdatei vorhanden, können diese hier auch erstellt werden.</p>
-<p>Im rechten Bereich der Maske befinden sich die Auswahlfelder zur Selektion der zu importierenden Daten.
-In dem Bereich „Tabellen importieren“, können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden.
-Darunter schließt sich der Bereich zur Auswahl der Flächen an.
-Dabei steht „Flächen (RW)“ für Regenwasserflächen und „SW-Einleiter“ für Schmutzwasser-Einleiter.
-Die Selektion, die im Block „Haltungsflächen importieren, markiert als:“ angeboten wird, bezieht sich auf die Auswahl der entsprechenden Datensätze in HE (siehe Bild unten).
-Hierbei können bei Bedarf bestimmte Flächentypen, durch löschen des Hakens im QKan-Formular, vom Import ausgeschlossen werden.</p>
-<p><a class="reference internal" href="_images/Einzugsflaeche_HE.png"><img alt="bild_einzugsfl_he" src="_images/Einzugsflaeche_HE.png" style="width: 30em;" /></a></p>
-<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
-<p>Im rechten unteren Feld der Maske lässt sich festlegen, welche Referenztabellen importiert werden sollen. Wird hier keine Auswahl getroffen,
-so füllt QKan selbstständig entsprechende Referenztabellen mit Standardwerten. Werden die zur Auswahl stehenden Referenztabellen gewählt,
-so importiert QKan nur genutzte, das heißt, mit anderen Tabellen verbundene, Werte. Einträge, die Angelegt wurden, aber in diesem Projekt
-nicht verwendet wurden, werden nur importiert, wenn die Option „Auch nicht verwendete Datensätze importieren“ gewählt wird. Diese Option
-sollte nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen) in HYSTEM-EXTRAN angelegt wurden und davon auszugehen ist,
-dass diese in der Zukunft benötigt werden.</p>
-<p>Nun kann das Formular mit <span class="guilabel">OK</span> geschlossen werden und der Import wird gestartet.</p>
+<p>Daten können leicht von einem HYSTEM-EXTRAN Projekt nach QKan übertragen werden mit der <a class="reference internal" href="Qkan_Formulare.html#linkimporthe"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_Import_HE.png"><img alt="Tool_Import_HE" src="_images/Tool_Import_HE.png" style="width: 1.25em;" /></a>
+<span class="guilabel">Import aus HYSTEM-EXTRAN</span>.</p>
+<p>Ist das Formular nach den eigenen Wünschen ausgefüllt, kann es mit <span class="guilabel">OK</span> geschlossen werden und der Import wird gestartet.</p>
 </section>
 </section>
 

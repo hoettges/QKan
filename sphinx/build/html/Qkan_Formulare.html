@@ -62,26 +62,44 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Formulare</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#berechnung-von-oberflachenabflussparametern">Berechnung von Oberflächenabflussparametern</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">Automatisches Erzeugen von Anbindungen von Einzeleinleitern</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#verbindungslinien-von-flachen-zu-haltungen-erstellen">Verbindungslinien von Flächen zu Haltungen erstellen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#verknupfungslinien-von-flachen-zu-haltungen-erstellen">Verknüpfungslinien von Flächen zu Haltungen erstellen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#filteroptionen">Filteroptionen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#optionen-zur-erzeugung-von-zuordnungen">Optionen zur Erzeugung von Zuordnungen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#erzeugen-von-unbefestigten-flachen">Erzeugen von unbefestigten Flächen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verknupfungslinien-von-direkteinleitungen-zu-haltungen-erstellen">Verknüpfungslinien von Direkteinleitungen zu Haltungen erstellen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#erzeugen-von-unbefestigten-flachen">Erzeugen von unbefestigten Flächen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg">Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg)</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#erzeugung-von-haltungsflachen">Erzeugung von Haltungsflächen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#export-nach-hystem-extran">Export nach HYSTEM-EXTRAN</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten">Tabelle zur Auswahl der zu exportierenden Daten</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#import-aus-hystem-extran">Import aus HYSTEM-EXTRAN</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#datenquelle">Datenquelle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#datenziel">Datenziel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tabellen-importieren">Tabellen importieren</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haltungsflachen-importieren-markiert-als">Haltungsflächen importieren, markiert als:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#referenztabellen-importieren">Referenztabellen importieren</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-importierenden-daten">Tabelle zur Auswahl der zu importierenden Daten</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#projektlayer-aktualisieren">Projektlayer aktualisieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#projektdatei-anpassen">Projektdatei anpassen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auswahl-der-vorlage">Auswahl der Vorlage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#layer-anpassen">Layer anpassen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qkan-layer">QKan-Layer</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#datenbank-aktualisieren">Datenbank aktualisieren</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#projektdatei-auf-andere-datenbank-ubertragen">Projektdatei auf andere Datenbank übertragen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#projektdatei-auf-andere-datenbank-ubertragen">Projektdatei auf andere Datenbank übertragen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#qkan-datenbank">QKan-Datenbank</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#projektdatei-als-vorlage">Projektdatei als Vorlage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#neue-projektdatei">Neue Projektdatei</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#zuordnung-zu-teilgebiet">Zuordnung zu Teilgebiet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">Allgemeine Funktionselemente in Formularen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#auswahl-in-listen">Auswahl in Listen</a></li>
@@ -120,30 +138,20 @@
 <h1>Formulare<a class="headerlink" href="#formulare" title="Permalink to this heading"></a></h1>
 <section id="berechnung-von-oberflachenabflussparametern">
 <span id="index-0"></span><h2>Berechnung von Oberflächenabflussparametern<a class="headerlink" href="#berechnung-von-oberflachenabflussparametern" title="Permalink to this heading"></a></h2>
-<p>Es werden die Oberflächenabflussparameter für befestigte und unbefestigte Flächen
-berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm HYSTEM-EXTRAN gedacht.
-In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden,
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_oberflaechenabflussparameter1.png"><img alt="Tool_oberflaechenabflussparameter" src="_images/Tool_oberflaechenabflussparameter1.png" style="width: 1.25em;" /></a> <span class="guilabel">Oberflächenabflussparameter eintragen</span> werden die
+Oberflächenabflussparameter für befestigte und unbefestigte Flächen berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm
+HYSTEM-EXTRAN gedacht. In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden,
 der diese Werte ebenfalls berechnen kann und dessen Anwendung empfohlen wird.</p>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
 auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
 <img alt="_images/oberflaechenabflussparameter.png" src="_images/oberflaechenabflussparameter.png" />
 </section>
-<section id="automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">
-<span id="index-1"></span><h2>Automatisches Erzeugen von Anbindungen von Einzeleinleitern<a class="headerlink" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern" title="Permalink to this heading"></a></h2>
-<p>Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird
-eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung
-endet.</p>
-<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
-auf Haltungen mit ausgewählten
-Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
-<p>Ausführliche Erläuterung zu diesem Thema: <span class="xref std std-ref">Anbindungen von Einzeleinleitern</span></p>
-</section>
-<section id="verbindungslinien-von-flachen-zu-haltungen-erstellen">
-<span id="linkverbindunghaltungflaeche"></span><span id="index-2"></span><h2>Verbindungslinien von Flächen zu Haltungen erstellen<a class="headerlink" href="#verbindungslinien-von-flachen-zu-haltungen-erstellen" title="Permalink to this heading"></a></h2>
-<p>Für jede Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), wird
-eine Linie erzeugt, die innerhalb der Fläche beginnt und auf der damit verknüpften Haltung
-endet.</p>
+<section id="verknupfungslinien-von-flachen-zu-haltungen-erstellen">
+<span id="linkverbindunghaltungflaeche"></span><span id="index-1"></span><h2>Verknüpfungslinien von Flächen zu Haltungen erstellen<a class="headerlink" href="#verknupfungslinien-von-flachen-zu-haltungen-erstellen" title="Permalink to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_verknuepfungslinien_erstellen.png"><img alt="Tool_verknuepfungslinien_erstellen" src="_images/Tool_verknuepfungslinien_erstellen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Flächen zu Haltungen</span> wird für jede
+Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie erzeugt, die innerhalb der Fläche beginnt und
+auf der damit verknüpften Haltung endet.</p>
 <p>Abhängig von dem Flächenattribut „aufteilen“ ist eine Anbindung pro Fläche oder pro Flächenteilstück
 und Haltungsfläche (Tabelle „tezg“) vorgesehen.</p>
 <img alt="_images/Verbindungslinien_fl_hal.png" src="_images/Verbindungslinien_fl_hal.png" />
@@ -153,26 +161,27 @@ und Haltungsfläche (Tabelle „tezg“) vorgesehen.</p>
 <li><p>Mit dieser Auswahl kann die Bearbeitung auf Flächen mit den ausgewählten Abflussparametern beschränkt werden</p></li>
 <li><p>Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Hier
 sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden</p></li>
-<li><p>Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen.</p></li>
+<li><p>Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen</p></li>
 </ol>
 </section>
 <section id="optionen-zur-erzeugung-von-zuordnungen">
 <h3>Optionen zur Erzeugung von Zuordnungen<a class="headerlink" href="#optionen-zur-erzeugung-von-zuordnungen" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p><strong>Abstand zur nächsten Kante:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt</p></li>
+<li><p><strong>Abstand zur nächsten Kante:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt - im
+Regelfall sollte diese Option gewählt werden</p></li>
 <li><p><strong>Abstand zum Mittelpunkt:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zum Mittelpunkt einer Fläche bestimmt</p></li>
-<li><p><strong>Suchradius:</strong> Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden
+<li><p><strong>Suchradius:</strong> Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden.
 Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden</p></li>
-<li><p><strong>Fangradius</strong> ist der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung</p></li>
-<li><p><strong>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen</strong> ist nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen
+<li><p><strong>Fangradius:</strong> Der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung</p></li>
+<li><p><strong>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen:</strong> Nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen
 verknüpft werden sollen, die innerhalb der selben Haltungsfläche liegen</p></li>
-<li><p><strong>Autokorrektur von Namen in Flächen und Einleitpunkten</strong> bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen
+<li><p><strong>Autokorrektur von Namen in Flächen und Einleitpunkten:</strong> Diese Option bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen
 und Einleitpunkten automatisch so durch eine fortlaufende Nummer ergänzt werden, dass nur noch eindeutige Bezeichnungen vorkommen.
 Ist diese Option nicht aktiviert, bricht die Erstellung der Zuordnungen bei nicht eindeutigen Bezeichnungen mit einer Fehlermeldung ab</p></li>
-<li><p><strong>Mit Haltungsflächen verschneiden</strong> muss aktiviert werden, wenn Flächen, für die die Option „Aufteilen“ festgelegt wurde, beim Export in
+<li><p><strong>Mit Haltungsflächen verschneiden:</strong> Diese Option muss aktiviert werden, wenn Flächen, für die die Option „Aufteilen“ festgelegt wurde, beim Export in
 ein Simulationsprogramm auf die Haltungsflächen verteilt („verschnitten“) werden sollen</p></li>
-<li><p><strong>Flächenobjekte bereinigen</strong> aktiviert eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen
-Dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt</p></li>
+<li><p><strong>Flächenobjekte bereinigen:</strong> Bei Auswahl wird eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen durchgeführt,
+dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt</p></li>
 </ul>
 <p>Die Zuordnung kann auch manuell vorgenommen und überarbeitet werden, falls bei der automatischen Erstellung unplausible Verbindungen entstanden sind oder
 sich infolge einer späteren Bearbeitung Änderungen bei den Flächen ergeben haben.</p>
@@ -185,26 +194,42 @@ werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createlinkfl"><span class="std std-ref">Grundprinzip</span></a></p>
 </section>
 </section>
+<section id="verknupfungslinien-von-direkteinleitungen-zu-haltungen-erstellen">
+<span id="index-2"></span><h2>Verknüpfungslinien von Direkteinleitungen zu Haltungen erstellen<a class="headerlink" href="#verknupfungslinien-von-direkteinleitungen-zu-haltungen-erstellen" title="Permalink to this heading"></a></h2>
+<p>Die Funktion <a class="reference internal" href="_images/Tool_verknuepfung_direkteinleiter.png"><img alt="Tool_verknuepfung_direkteinleiter" src="_images/Tool_verknuepfung_direkteinleiter.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen</span> erzeugt für
+jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie, die am Punkte des
+Einzeleinleiters beginnt und auf der damit verknüpften Haltung endet.</p>
+<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
+auf Haltungen mit ausgewählten
+Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
+<p>Ausführliche Erläuterung zu diesem Thema: <span class="xref std std-ref">Anbindungen von Einzeleinleitern</span></p>
+</section>
 <section id="erzeugen-von-unbefestigten-flachen">
 <span id="linkerzeugungunbefflaechen"></span><span id="index-3"></span><h2>Erzeugen von unbefestigten Flächen<a class="headerlink" href="#erzeugen-von-unbefestigten-flachen" title="Permalink to this heading"></a></h2>
 <p>Die Funktion <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span> legt für jede Haltungsfläche (Tabelle tezg) aus dem Zwischenraum
 der befestigten Flächen ein Flächenobjekt angelegt. Dieses kann aus mehreren Flächenteilen bestehen.</p>
 <p>Die Attributdaten werden dabei aus den Haltungsflächen übernommen.</p>
 <img alt="_images/erz_unbef_fl.png" src="_images/erz_unbef_fl.png" />
-<ol class="arabic simple">
-<li><p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p></li>
-</ol>
+<section id="auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg">
+<h3>Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg)<a class="headerlink" href="#auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg" title="Permalink to this heading"></a></h3>
+<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet
+sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle
+werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createunbeffl"><span class="std std-ref">Erzeugen von unbefestigten Flächen</span></a></p>
 <p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_workflow.html#workflunbeffl"><span class="std std-ref">hier</span></a> zu sehen.</p>
 </section>
+</section>
 <section id="erzeugung-von-haltungsflachen">
 <span id="linkerzhaltungsfl"></span><h2>Erzeugung von Haltungsflächen<a class="headerlink" href="#erzeugung-von-haltungsflachen" title="Permalink to this heading"></a></h2>
-<p>Mit dieser Funktion können (große) Haltungsflächen aufgeteilt werden, sodass jede Fläche eindeutig einer Haltung zugeordnet werden kann.</p>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_voronoiflaechen.png"><img alt="Tool_voronoiflaechen" src="_images/Tool_voronoiflaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeugung von Voronoiflächen zu Haltungen</span> können (große) Haltungsflächen aufgeteilt
+werden, sodass jede Fläche eindeutig einer Haltung zugeordnet werden kann.</p>
 <img alt="_images/erz_haltungsfl.png" src="_images/erz_haltungsfl.png" />
-<ol class="arabic simple" start="2">
-<li><p>Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Option „Nur ausgewählte Teilgebiete berücksichtigen“ mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.</p></li>
-<li><p>Sind keine aufzuteilenden Flächen im Vorfeld <a class="reference internal" href="Qkan_flaechen.html#linkflaechenaufteilung"><span class="std std-ref">markiert</span></a> worden, erscheint diese Warnmeldung. Die Funktion kann so nicht ausgeführt werden.</p></li>
-</ol>
+<ul class="simple">
+<li><p><strong>Nur ausgewählte Teilgebiete berücksichtigen:</strong> Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Option „Nur ausgewählte Teilgebiete
+berücksichtigen“ mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.</p></li>
+<li><p><strong>Warnung:</strong> Sind keine aufzuteilenden Flächen im Vorfeld <a class="reference internal" href="Qkan_flaechen.html#linkflaechenaufteilung"><span class="std std-ref">markiert</span></a> worden, erscheint diese Warnmeldung. Die Funktion
+kann so nicht ausgeführt werden.</p></li>
+</ul>
 </section>
 <section id="export-nach-hystem-extran">
 <span id="index-4"></span><h2>Export nach HYSTEM-EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Permalink to this heading"></a></h2>
@@ -217,8 +242,41 @@ mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Fl�
 </section>
 </section>
 <section id="import-aus-hystem-extran">
-<span id="index-5"></span><h2>Import aus HYSTEM-EXTRAN<a class="headerlink" href="#import-aus-hystem-extran" title="Permalink to this heading"></a></h2>
+<span id="linkimporthe"></span><span id="index-5"></span><h2>Import aus HYSTEM-EXTRAN<a class="headerlink" href="#import-aus-hystem-extran" title="Permalink to this heading"></a></h2>
 <p>Der Import aus HYSTEM-EXTRAN geschieht mit Hilfe einer HE Quelldatenbank (Endung .idbf).</p>
+<img alt="_images/import_aus_he.png" src="_images/import_aus_he.png" />
+<section id="datenquelle">
+<h3>Datenquelle<a class="headerlink" href="#datenquelle" title="Permalink to this heading"></a></h3>
+<p>In diesem Bereich wird die mit HE erstellte Quelldatenbank (Endung .idbf) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden,
+in dem die Daten <strong>in der Datenquelle</strong> gespeichert sind. In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide
+Projektionssysteme identisch sind.</p>
+</section>
+<section id="datenziel">
+<h3>Datenziel<a class="headerlink" href="#datenziel" title="Permalink to this heading"></a></h3>
+<p>Hier wird das Datenziel, die Sqlite-Datenbank und optional die zugehörige Projektdatei, ausgewählt. Ist noch keine Zieldatenbank oder
+Projektdatei vorhanden, können diese hier auch erstellt werden.</p>
+</section>
+<section id="tabellen-importieren">
+<h3>Tabellen importieren<a class="headerlink" href="#tabellen-importieren" title="Permalink to this heading"></a></h3>
+<p>Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. Im unteren Bereich schließt sich die Auswahl
+der Flächen an, dabei steht „Flächen (RW)“ für Regenwasserflächen und „SW-Einleiter“ für Schmutzwasser-Einleiter.</p>
+</section>
+<section id="haltungsflachen-importieren-markiert-als">
+<h3>Haltungsflächen importieren, markiert als:<a class="headerlink" href="#haltungsflachen-importieren-markiert-als" title="Permalink to this heading"></a></h3>
+<p>Die Selektion in diesem Block bezieht sich auf die Auswahl der entsprechenden Datensätze in HE (siehe Bild unten).
+Hierbei können bei Bedarf bestimmte Flächentypen, durch löschen des Hakens im QKan-Formular, vom Import ausgeschlossen werden.</p>
+<p><a class="reference internal" href="_images/Einzugsflaeche_HE.png"><img alt="bild_einzugsfl_he" src="_images/Einzugsflaeche_HE.png" style="width: 30em;" /></a></p>
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+</section>
+<section id="referenztabellen-importieren">
+<h3>Referenztabellen importieren<a class="headerlink" href="#referenztabellen-importieren" title="Permalink to this heading"></a></h3>
+<p>Hier kann festgelegt werden, welche Referenztabellen importiert werden sollen. Wird hier keine Auswahl getroffen, so füllt QKan
+selbstständig entsprechende Referenztabellen mit Standardwerten. Werden die zur Auswahl stehenden Referenztabellen gewählt, so importiert
+QKan nur genutzte, das heißt, mit anderen Tabellen verbundene, Werte. Einträge, die Angelegt wurden, aber in diesem Projekt nicht
+verwendet wurden, werden nur importiert, wenn die Option „Auch nicht verwendete Datensätze importieren“ gewählt wird. Diese Option sollte
+nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen) in HYSTEM-EXTRAN angelegt wurden und davon auszugehen ist, dass
+diese in der Zukunft benötigt werden.</p>
+</section>
 <section id="tabelle-zur-auswahl-der-zu-importierenden-daten">
 <h3>Tabelle zur Auswahl der zu importierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-importierenden-daten" title="Permalink to this heading"></a></h3>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Import auf bestimmte Datentabellen des Kanalnetzes, bestimmte Flächen
@@ -226,48 +284,68 @@ oder Referenztabellen beschränkt werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_Datenaustausch.html#datenaustimporthe"><span class="std std-ref">Import aus HYSTEM-EXTRAN</span></a></p>
 </section>
 </section>
-<section id="projektlayer-aktualisieren">
-<h2>Projektlayer aktualisieren<a class="headerlink" href="#projektlayer-aktualisieren" title="Permalink to this heading"></a></h2>
-<p>Mit diesem Formular können Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellsten Stand gebracht werden.
+<section id="projektdatei-anpassen">
+<h2>Projektdatei anpassen<a class="headerlink" href="#projektdatei-anpassen" title="Permalink to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_projekt_aktualisieren.png"><img alt="Tool_projekt_aktualisieren" src="_images/Tool_projekt_aktualisieren.png" style="width: 1.25em;" /></a> <span class="guilabel">Projektdatei anpassen</span> können Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellsten Stand gebracht werden.
 Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Dazu sollte in dem Formular
 unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ (4) gewählt werden. Es wird automatisch sichergestellt,
 dass die Wertbeziehungen (Überschrift „Layer anpassen“) aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen
 Überschrift auch die Option „Formularanbindungen auf QKan-Standard setzen“ aktiviert ist.</p>
 <img alt="_images/qkan_layersadapt.png" id="image-qkan-layersadapt" src="_images/qkan_layersadapt.png" />
-<ol class="arabic simple">
-<li><p>„QKan-Standard verwenden“ sollte aktiviert werden, wenn keine eigenen Standards vorliegen. Sollen Einstellungen aus bereits existierenden Projektdateien übernommen werden, so kann die entsprechende Datei unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche […] rechts daneben ausgewählt werden.</p></li>
-<li><p>In diesem Bereich kann eine Datenbank ausgewählt werden, an die das Projekt angebunden werden soll. Auch die übrigen Optionen sollten in der Regel aktiviert werden.</p></li>
-<li><p>Unter dieser Überschrift kann ausgewählt werden, welche Layer bearbeitet werden sollen. Allgemein ist „alle anpassen“ empfehlenswert.</p></li>
-<li><p>Ist die vorliegende Datenbank nicht auf dem aktuellen Stand (oder es besteht Unsicherheit darüber), kann hier die Option „auf aktuelle Version anpassen“ aktiviert werden.</p></li>
-<li><p>Mit der Schaltfläche […] wird der Namen und Standort des angepassten Projekts festgelegt.</p></li>
-</ol>
+<section id="auswahl-der-vorlage">
+<h3>Auswahl der Vorlage<a class="headerlink" href="#auswahl-der-vorlage" title="Permalink to this heading"></a></h3>
+<p>„QKan-Standard verwenden“ sollte aktiviert werden, wenn keine eigenen Standards vorliegen. Sollen Einstellungen aus bereits existierenden
+Projektdateien übernommen werden, so kann die entsprechende Datei unter „Einstellungen aus Projektdatei übernehmen“ mit der Schaltfläche
+[…] rechts daneben ausgewählt werden.</p>
+</section>
+<section id="layer-anpassen">
+<h3>Layer anpassen<a class="headerlink" href="#layer-anpassen" title="Permalink to this heading"></a></h3>
+<p>In diesem Bereich kann eine Datenbank ausgewählt werden, an die das Projekt angebunden werden soll. Auch die übrigen Optionen sollten in
+der Regel aktiviert werden.</p>
+</section>
+<section id="qkan-layer">
+<h3>QKan-Layer<a class="headerlink" href="#qkan-layer" title="Permalink to this heading"></a></h3>
+<p>Unter dieser Überschrift kann ausgewählt werden, welche Layer bearbeitet werden sollen.</p>
+</section>
 </section>
 <section id="datenbank-aktualisieren">
 <h2>Datenbank aktualisieren<a class="headerlink" href="#datenbank-aktualisieren" title="Permalink to this heading"></a></h2>
-<p>Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen, wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist.
+<p>Die Funktion <a class="reference internal" href="_images/Tool_db_aktualisieren.png"><img alt="Tool_db_aktualisieren" src="_images/Tool_db_aktualisieren.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Datenbank aktualisieren</span> wird beim Aufruf vieler Plugins immer dann automatisch
+aufgerufen, wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist.
 Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert
 wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll.</p>
 </section>
 <section id="projektdatei-auf-andere-datenbank-ubertragen">
 <span id="index-6"></span><h2>Projektdatei auf andere Datenbank übertragen<a class="headerlink" href="#projektdatei-auf-andere-datenbank-ubertragen" title="Permalink to this heading"></a></h2>
 <p>Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi „Firmenstandards“ darstellen.
-Solch eine Projektdatei kann mit dem Formular folgendermaßen auf ein anderes Projekt übertragen werden:</p>
+Solch eine Projektdatei kann mit der Funktion <a class="reference internal" href="_images/Tool_projektdatei_uebertragen.png"><img alt="Tool_projektdatei_uebertragen" src="_images/Tool_projektdatei_uebertragen.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Projektdatei übertragen</span> folgendermaßen auf
+ein anderes Projekt übertragen werden:</p>
 <img alt="_images/qkan_qgsAdapt.png" id="image-qkan-qgsadapt" src="_images/qkan_qgsAdapt.png" />
-<ol class="arabic simple">
-<li><p>Wählen Sie die einzubindende QKan-Datenbank.</p></li>
-<li><p>Wählen Sie die Projektdatei, die Sie mit dieser Datenbank verknüpfen möchten. Sie können stattdessen auch die QKan-Standardvorlage verwenden.</p></li>
-<li><p>Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus.</p></li>
-</ol>
+<section id="qkan-datenbank">
+<h3>QKan-Datenbank<a class="headerlink" href="#qkan-datenbank" title="Permalink to this heading"></a></h3>
+<p>Hier wird die einzubindende QKan-Datenbank gewählt.</p>
+</section>
+<section id="projektdatei-als-vorlage">
+<h3>Projektdatei als Vorlage<a class="headerlink" href="#projektdatei-als-vorlage" title="Permalink to this heading"></a></h3>
+<p>Mit der Schaltfläche <span class="guilabel">…</span> kann die Projektdatei gewählt werden, die mit der vorhandenen Datenbank verknüpft werden soll. Ist keine entsprechende
+Projektdatei vorhanden, kann auch die QKan-Standardvorlage gewählt werden.</p>
+</section>
+<section id="neue-projektdatei">
+<h3>Neue Projektdatei<a class="headerlink" href="#neue-projektdatei" title="Permalink to this heading"></a></h3>
+<p>Über <span class="guilabel">…</span> kann der Pfad der neu zu erstellenden Projektdatei ausgewählt werden.</p>
+</section>
 </section>
 <section id="zuordnung-zu-teilgebiet">
 <span id="linkelementeteilgebietzuordnen"></span><span id="index-7"></span><h2>Zuordnung zu Teilgebiet<a class="headerlink" href="#zuordnung-zu-teilgebiet" title="Permalink to this heading"></a></h2>
 <p>Mit der Funktion <a class="reference internal" href="_images/Tool_elemente_tezg_zuordnen.png"><img alt="Tool_elemente_tezg_zuordnen" src="_images/Tool_elemente_tezg_zuordnen.png" style="width: 1.25em;" /></a> <span class="guilabel">Zuordnung zu Teilgebiet</span> ist die automatische Zuordnung von Kanalnetz-Elementen zu einem
 Teilgebiet möglich. Dabei wird das Teilgebiet automatisch in die jeweilige Spalte der Datentabellen eingetragen.</p>
 <img alt="_images/Zuordnung_zu_teilgebiet.png" src="_images/Zuordnung_zu_teilgebiet.png" />
-<ol class="arabic simple">
-<li><p>Die Option „überlappend“ sollte gewählt werden, wenn sichergestellt werden soll, dass auch Flächen, die nur zum Teil im Teilgebiet liegen (z.B von großen Gebäuden), bei der Bearbeitung des Gebietes berücksichtigt werden.</p></li>
-<li><p>Hier kann des entsprechende zuvor erstellte (<a class="reference internal" href="Qkan_flaechen.html#linkteilgebiete"><span class="std std-ref">Teilgebiet</span></a>) ausgewählt werden.</p></li>
-</ol>
+<ul class="simple">
+<li><p><strong>Haltungen und Flächen:</strong> In der Regel sollte die Standardeinstellung „innnerhalb“ nicht geändert werden. Die Option „überlappend“
+sollte gewählt werden, wenn sichergestellt werden soll, dass auch Flächen, die nur zum Teil im Teilgebiet liegen (z.B von großen
+Gebäuden), bei der Bearbeitung des Gebietes berücksichtigt werden. In der darunter liegenden Auswahlbox kann das entsprechende -
+zuvor erstellte - (<a class="reference internal" href="Qkan_flaechen.html#linkteilgebiete"><span class="std std-ref">Teilgebiet</span></a>) ausgewählt werden</p></li>
+</ul>
 <p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_flaechen.html#linkteilgebiete"><span class="std std-ref">hier</span></a> zu sehen.</p>
 </section>
 <section id="allgemeine-funktionselemente-in-formularen">

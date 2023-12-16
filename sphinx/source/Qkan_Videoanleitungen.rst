@@ -6,7 +6,7 @@
 An einem Beispielprojekt wird der Workflow beginnend mit dem Datenimport über die Datenaufbereitung bis zum Export in ein 
 Simulationsprogramm demonstriert und erläutert. 
 
-`Excel-Datei mit Vorlagedaten (Anzeige und Download) <https://qkan.eu/_files/kanaldaten.xlsx>`_
+Excel-Datei mit Vorlagedaten (Anzeige und Download) :download:`kanaldaten.xlsx <_static/kanaldaten.xlsx>`
 
 Zu den Videos:
  - `Daten per Clipboard übernehmen <https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s>`_

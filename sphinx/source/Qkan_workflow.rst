@@ -11,7 +11,7 @@ des Bochumer Stadtteils Hiltrop.
 
 Vorbereitung
 ^^^^^^^^^^^^
-Die Daten, die in diesem Workflow benutzt werden, stehen in dieser `Excel-Datei <https://qkan.eu/_files/kanaldaten.xlsx>`_ zum download bereit. 
+Die Daten, die in diesem Workflow benutzt werden, stehen in dieser Excel-Datei :download:`kanaldaten.xlsx <_static/kanaldaten.xlsx>` zum download bereit. 
 Eine Videoanleitung zur Vorbereitung des Projektes ist |video_vorbereitung| zu finden.
 
 .. |video_vorbereitung| raw:: html
@@ -382,7 +382,7 @@ Dabei kann das sich öffnende Fenster ohne eine Änderung (siehe Bild unten) mit
 In der Attributtabelle ist nun die Spalte :guilabel:`Fließzeit Fläche` mit Werten gefüllt.
 Alle nötigen Vorbereitungen für einen Export nach HYSTEM-EXTRAN sind nun durchgeführt.
 
-.. |Tool_oberflaechenabflussparameter| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_oberflaechenabflussparameter.png
+.. |Tool_oberflaechenabflussparameter| image:: ./QKan_Bilder/Tool_oberflaechenabflussparameter.png
                              :width: 1.25 em
 
 Es können auch nachträglich Verbindungslinien bearbeitet oder hinzugefügt werden.
@@ -397,7 +397,7 @@ danach der gewünschten Haltung und anschließend durch Bestätigung mit einem R
 Im Gegensatz zu anderen Geo-Objekten, öffnet sich bei der Erstellung von Verknüpfungslinien kein Formularfenster.
 Dies ist über die Layereigenschaften so vorgegeben, da es standartmäßig nicht benötigt wird.
 
-.. |Tool_linienobjekt_hinzufuegen| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_linienobjekt_hinzufuegen.png
+.. |Tool_linienobjekt_hinzufuegen| image:: ./QKan_Bilder/Tool_linienobjekt_hinzufuegen.png
                              :width: 1.25 em
 
 .. |Tool_bearbeitungsmodus| image:: ./QKan_Bilder/Tool_bearbeitungsmodus.png
@@ -411,7 +411,7 @@ Nun kann die zu ändernde Verbindungslinie editiert werden, indem der Endpunkt a
 Wichtig hierbei ist, dass der Menüpunkt :guilabel:`Topologisches Editieren` |Tool_topologisches_editieren| deaktiviert ist,
 da sonst alle Haltungen, die an dieser Stelle verknüpft sind mitausgewählt werden.
 
-.. |Tool_stuetzpunkt_werkzeug| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_stuetzpunkt_werkzeug.png
+.. |Tool_stuetzpunkt_werkzeug| image:: ./QKan_Bilder/Tool_stuetzpunkt_werkzeug.png
                              :width: 1.25 em
 .. |Tool_topologisches_editieren| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_topologisches_editieren.png
                              :width: 1.25 em
@@ -475,7 +475,7 @@ Zum Definieren des KOSTRA-DWD-Datensatzes können die Daten wie unten abgebildet
 
 Eingabeformular aus dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/softwareprodukte/desktop/hystem-extran/>`_
 
-Diese Daten können aus einem Projekt, welches `hier <https://qkan.eu/_files/kostra_dwd_2010r.zip>`_ zum download zur Verfügung steht, übernommen werden.
+Diese Daten können aus einem Projekt, welches hier :download:`QGIS-Projekt KOSTRA 2010r <_static/kostra_dwd_2010r.zip>` zum download zur Verfügung steht, übernommen werden.
 Dazu muss das zu bearbeitende Gebiet auf der Karte gesucht werden.
 Im Anschluss können die Daten über |Tool_info| :guilabel:`Info-Tool` mit einem Klick auf die Karte abgerufen werden.
 
@@ -526,7 +526,7 @@ Ergebnis mit dem Programm `HYSTEM-EXTRAN, ITWH GmbH <https://itwh.de/de/software
 An einem Beispielprojekt wird der Workflow beginnend mit dem Datenimport über die Datenaufbereitung bis zum Export in ein 
 Simulationsprogramm demonstriert und erläutert. 
 
-`Excel-Datei mit Vorlagedaten (Anzeige und Download) <https://qkan.eu/_files/kanaldaten.xlsx>`_
+Excel-Datei mit Vorlagedaten (Anzeige und Download) :download:`kanaldaten.xlsx <_static/kanaldaten.xlsx>`
 
 Zu den Videos:
  - `Daten per Clipboard übernehmen <https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s>`_
