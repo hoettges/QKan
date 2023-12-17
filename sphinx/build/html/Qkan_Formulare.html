@@ -68,7 +68,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#verknupfungslinien-von-direkteinleitungen-zu-haltungen-erstellen">Verknüpfungslinien von Direkteinleitungen zu Haltungen erstellen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen">Verknüpfungslinien von Einzeleinleitungen zu Haltungen erstellen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#erzeugen-von-unbefestigten-flachen">Erzeugen von unbefestigten Flächen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg">Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg)</a></li>
 </ul>
@@ -87,6 +87,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-importierenden-daten">Tabelle zur Auswahl der zu importierenden Daten</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#ergebnisse-aus-hystem-extran-8">Ergebnisse aus HYSTEM-EXTRAN 8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-aus-strakat">Import aus STRAKAT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#projektdatei-anpassen">Projektdatei anpassen</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#auswahl-der-vorlage">Auswahl der Vorlage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#layer-anpassen">Layer anpassen</a></li>
@@ -194,11 +196,19 @@ werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createlinkfl"><span class="std std-ref">Grundprinzip</span></a></p>
 </section>
 </section>
-<section id="verknupfungslinien-von-direkteinleitungen-zu-haltungen-erstellen">
-<span id="index-2"></span><h2>Verknüpfungslinien von Direkteinleitungen zu Haltungen erstellen<a class="headerlink" href="#verknupfungslinien-von-direkteinleitungen-zu-haltungen-erstellen" title="Permalink to this heading"></a></h2>
-<p>Die Funktion <a class="reference internal" href="_images/Tool_verknuepfung_direkteinleiter.png"><img alt="Tool_verknuepfung_direkteinleiter" src="_images/Tool_verknuepfung_direkteinleiter.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen</span> erzeugt für
+<section id="verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen">
+<span id="index-2"></span><h2>Verknüpfungslinien von Einzeleinleitungen zu Haltungen erstellen<a class="headerlink" href="#verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen" title="Permalink to this heading"></a></h2>
+<p>Die Funktion <a class="reference internal" href="_images/Tool_verknuepfung_direkteinleiter.png"><img alt="Tool_verknuepfung_direkteinleiter" src="_images/Tool_verknuepfung_direkteinleiter.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen</span> erzeugt für
 jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie, die am Punkte des
 Einzeleinleiters beginnt und auf der damit verknüpften Haltung endet.</p>
+<img alt="_images/Verbindungslinien_einzel_hal.png" src="_images/Verbindungslinien_einzel_hal.png" />
+<ul class="simple">
+<li><p><strong>Tabelle Haltungen:</strong> Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Es
+sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden</p></li>
+<li><p><strong>Allgemein:</strong> Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen</p></li>
+<li><p><strong>Suchradius:</strong> Maximaler Abstand zur Haltung, innnerhalb dessen die Einzeleinleiter berücksichtigt werden. Der Wert sollte ausreichend
+groß gewählt werden. Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden</p></li>
+</ul>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
 auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
@@ -233,8 +243,8 @@ kann so nicht ausgeführt werden.</p></li>
 </section>
 <section id="export-nach-hystem-extran">
 <span id="index-4"></span><h2>Export nach HYSTEM-EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Permalink to this heading"></a></h2>
-<p>Der Export funktioniert für Version 7.8 und 7.9. Die in diesem Formular geforderte HYSTEM-EXTRAN Vorlage-Datenbank benötigt eine Regenreihe
-mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Flächendaten haben).</p>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_export_he1.png"><img alt="Tool_export_he" src="_images/Tool_export_he1.png" style="width: 1.25em;" /></a> <span class="guilabel">Export nach HYSTEM-EXTRAN</span> funktioniert der Export für Version 7.8 und 7.9.</p>
+<img alt="_images/export_he1.png" src="_images/export_he1.png" />
 <p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_workflow.html#workflexporthe"><span class="std std-ref">hier</span></a> zu sehen.</p>
 <section id="tabelle-zur-auswahl-der-zu-exportierenden-daten">
 <h3>Tabelle zur Auswahl der zu exportierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten" title="Permalink to this heading"></a></h3>
@@ -243,7 +253,7 @@ mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Fl�
 </section>
 <section id="import-aus-hystem-extran">
 <span id="linkimporthe"></span><span id="index-5"></span><h2>Import aus HYSTEM-EXTRAN<a class="headerlink" href="#import-aus-hystem-extran" title="Permalink to this heading"></a></h2>
-<p>Der Import aus HYSTEM-EXTRAN geschieht mit Hilfe einer HE Quelldatenbank (Endung .idbf).</p>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_Import_HE.png"><img alt="Tool_Import_HE" src="_images/Tool_Import_HE.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus HYSTEM-EXTRAN</span> geschieht der Import leicht mit Hilfe einer HE Quelldatenbank (Endung .idbf).</p>
 <img alt="_images/import_aus_he.png" src="_images/import_aus_he.png" />
 <section id="datenquelle">
 <h3>Datenquelle<a class="headerlink" href="#datenquelle" title="Permalink to this heading"></a></h3>
@@ -283,6 +293,17 @@ diese in der Zukunft benötigt werden.</p>
 oder Referenztabellen beschränkt werden.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_Datenaustausch.html#datenaustimporthe"><span class="std std-ref">Import aus HYSTEM-EXTRAN</span></a></p>
 </section>
+</section>
+<section id="ergebnisse-aus-hystem-extran-8">
+<h2>Ergebnisse aus HYSTEM-EXTRAN 8<a class="headerlink" href="#ergebnisse-aus-hystem-extran-8" title="Permalink to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_ergebnisse_he.png"><img alt="Tool_ergebnisse_he" src="_images/Tool_ergebnisse_he.png" style="width: 1.25em;" /></a> <span class="guilabel">Ergebnisse aus HYSTEM-EXTRAN 8</span> können leicht die Simulationsergebnisse aus HYSTEM-EXTRAN 8 in ein bestehendes QKan-Projekt geladen werden.</p>
+<img alt="_images/ergebnisse_he.png" src="_images/ergebnisse_he.png" />
+</section>
+<section id="import-aus-strakat">
+<h2>Import aus STRAKAT<a class="headerlink" href="#import-aus-strakat" title="Permalink to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_import_strakat.png"><img alt="Tool_import_strakat" src="_images/Tool_import_strakat.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus STRAKAT</span> ist es nun möglich Daten aus einem STRAKAT-Verzeichnis in ein QKan-Projekt
+zu laden.</p>
+<img alt="_images/import_strakat.png" src="_images/import_strakat.png" />
 </section>
 <section id="projektdatei-anpassen">
 <h2>Projektdatei anpassen<a class="headerlink" href="#projektdatei-anpassen" title="Permalink to this heading"></a></h2>

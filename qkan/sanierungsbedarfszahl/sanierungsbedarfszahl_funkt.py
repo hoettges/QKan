@@ -1,19 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
-from qgis.PyQt import uic
-from qgis.PyQt import QtWidgets
 from qgis.core import *
-from qgis.PyQt import Qt
 from qgis.utils import iface, spatialite_connect
-from qgis.gui import QgsMessageBar
-import xml.etree.ElementTree as ElementTree
-from typing import Dict, Iterator, Tuple, Union
-from lxml import etree
 import sqlite3
 import math
 import pandas as pd
-import numpy as np
 
 
 

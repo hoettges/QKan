@@ -15,8 +15,6 @@ from .application_dialog import InfoDialog
 from . import resources  # isort:skip
 import pandas as pd
 import os
-from qgis.utils import iface
-from qgis.core import Qgis
 
 
 class Infos(QKanPlugin):

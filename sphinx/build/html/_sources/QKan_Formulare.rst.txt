@@ -80,15 +80,22 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`createlinkfl`
 
 .. index:: Anbindungen Einzeleinleiter (Menü)
 
-Verknüpfungslinien von Direkteinleitungen zu Haltungen erstellen
+Verknüpfungslinien von Einzeleinleitungen zu Haltungen erstellen
 ----------------------------------------------------------------
 
-Die Funktion |Tool_verknuepfung_direkteinleiter| :guilabel:`Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen` erzeugt für 
+Die Funktion |Tool_verknuepfung_direkteinleiter| :guilabel:`Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen` erzeugt für 
 jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie, die am Punkte des 
 Einzeleinleiters beginnt und auf der damit verknüpften Haltung endet. 
 
+.. image:: ./QKan_Bilder/Formulare/Verbindungslinien_einzel_hal.png
 .. |Tool_verknuepfung_direkteinleiter| image:: ./QKan_Bilder/Tool_verknuepfung_direkteinleiter.png
                              :width: 1.25 em
+                             
+- **Tabelle Haltungen:** Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Es 
+  sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden
+- **Allgemein:** Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen
+- **Suchradius:** Maximaler Abstand zur Haltung, innnerhalb dessen die Einzeleinleiter berücksichtigt werden. Der Wert sollte ausreichend 
+  groß gewählt werden. Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden
                              
 Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
 auf Haltungen mit ausgewählten 
@@ -155,8 +162,35 @@ werden, sodass jede Fläche eindeutig einer Haltung zugeordnet werden kann.
 Export nach HYSTEM-EXTRAN
 -------------------------
 
-Der Export funktioniert für Version 7.8 und 7.9. Die in diesem Formular geforderte HYSTEM-EXTRAN Vorlage-Datenbank benötigt eine Regenreihe 
-mit einem dazugehörigen Regenschreiber (muss gleichen Namen wie in den QKan-Flächendaten haben). 
+Mit der Funktion |Tool_export_he| :guilabel:`Export nach HYSTEM-EXTRAN` funktioniert der Export für Version 7.8 und 7.9. 
+
+.. image:: ./QKan_Bilder/Formulare/export_he.png
+.. |Tool_export_he| image:: ./QKan_Bilder/Tool_export_he.png
+                             :width: 1.25 em
+
+..
+    (?Jörg?): (Kontrollieren bzw. ergänzen)
+    QKan-Projekt-Datenbank
+    ++++++++++++++++++++++
+    
+    Zieldatenbank
+    +++++++++++++
+    Die in diesem Formular geforderte HYSTEM-EXTRAN Vorlage-Datenbank benötigt eine Regenreihe mit einem dazugehörigen Regenschreiber 
+    (muss gleichen Namen wie in den QKan-Flächendaten haben)
+    
+    Nur ausgewählte Teilgebiete berücksichtigen
+    +++++++++++++++++++++++++++++++++++++++++++
+    
+    Optionen
+    ++++++++
+    
+    Tabellen exportieren
+    ++++++++++++++++++++
+    Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. Im unteren Bereich schließt sich die Auswahl 
+    der Flächen an, dabei steht "Flächen (RW)" für Regenwasserflächen
+    
+    Aktionen beim Export
+    ++++++++++++++++++++
 
 Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <workflexporthe>` zu sehen.
 
@@ -173,9 +207,11 @@ Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann der Export auf ausgewä
 Import aus HYSTEM-EXTRAN
 ------------------------
 
-Der Import aus HYSTEM-EXTRAN geschieht mit Hilfe einer HE Quelldatenbank (Endung .idbf).
+Mit der Funktion |Tool_Import_HE| :guilabel:`Import aus HYSTEM-EXTRAN` geschieht der Import leicht mit Hilfe einer HE Quelldatenbank (Endung .idbf).
 
 .. image:: ./QKan_Bilder/Formulare/import_aus_he.png
+.. |Tool_Import_HE| image:: ./QKan_Bilder/Tool_Import_HE.png
+                             :width: 1.25 em
 
 Datenquelle
 +++++++++++
@@ -227,6 +263,53 @@ oder Referenztabellen beschränkt werden.
 
 Ausführliche Erläuterung zu diesem Thema: :ref:`Import aus HYSTEM-EXTRAN <datenaustimporthe>`
 
+Ergebnisse aus HYSTEM-EXTRAN 8
+------------------------------
+
+Mit der Funktion |Tool_ergebnisse_he| :guilabel:`Ergebnisse aus HYSTEM-EXTRAN 8` können leicht die Simulationsergebnisse aus HYSTEM-EXTRAN 8 in ein bestehendes QKan-Projekt geladen werden.
+
+.. image:: ./QKan_Bilder/Formulare/ergebnisse_he.png
+.. |Tool_ergebnisse_he| image:: ./QKan_Bilder/Tool_ergebnisse_he.png
+                             :width: 1.25 em
+                             
+..
+    (?Jörg?): (Erstmal was allgemeines zur zu ladenden Datei, dann erklärung der Punkte)
+    Datenbank-Verbindungen
+    ++++++++++++++++++++++
+    
+    -**Überstauhäufigkeiten:**
+    -**Überstauvolumina:**
+    -**eigene Stildatei:**
+    -**ohne:**
+    
+Import aus STRAKAT
+------------------
+Mit der Funktion |Tool_import_strakat| :guilabel:`Import aus STRAKAT` ist es nun möglich Daten aus einem STRAKAT-Verzeichnis in ein QKan-Projekt 
+zu laden.
+
+.. image:: ./QKan_Bilder/Formulare/import_strakat.png
+.. |Tool_import_strakat| image:: ./QKan_Bilder/Tool_import_strakat.png
+                             :width: 1.25 em
+                             
+..
+    (?Jörg?): (Bitte Erklärungen ergänzen)
+    Datenquelle
+    +++++++++++
+    
+    Datenziel
+    +++++++++
+    
+    Projektdatei erzeugen
+    +++++++++++++++++++++
+    
+    Kanalnetz
+    +++++++++
+    
+    Schadensdaten
+    +++++++++++++
+    
+    Referenztabellen
+    ++++++++++++++++
 
 Projektdatei anpassen
 ---------------------
