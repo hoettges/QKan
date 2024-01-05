@@ -721,6 +721,7 @@ class ToolsConfig(ClassObject):
 
     apply_qkan_template: bool = True
     logeditor: str = ""
+    panoramoplayer: str = ""
     manningrauheit_bef: float = 0.02
     manningrauheit_dur: float = 0.10
     runoffmodeltype_choice: enums.RunOffModelType = (

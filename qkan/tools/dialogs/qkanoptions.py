@@ -36,6 +36,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
     pb_openLogfile: QPushButton
     pb_openOptionsfile: QPushButton
     pb_selectLogeditor: QPushButton
+    pb_panoramoplayer: QPushButton
 
     qsw_epsg: QgsProjectionSelectionWidget
 
@@ -56,6 +57,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
         self.pb_openLogfile.clicked.connect(self.click_open_log)
         self.pb_openOptionsfile.clicked.connect(self.click_open_settings)
         self.pb_selectLogeditor.clicked.connect(self.select_log_editor)
+        self.pb_panoramoplayer.clicked.connect(self.select_panoramo)
         # self.rb_itwh.toggled.connect(self.dlgro_activatedyna)
         self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
@@ -118,6 +120,21 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
         if os.path.dirname(filename) == "":
             # Textfeld wieder deaktivieren
             self.tf_logeditor.setEnabled(False)
+
+    def select_panoramo(self) -> None:
+        """Panoramo Viewer wählen"""
+
+        self.tf_panoramoplayer.setEnabled(True)
+
+        # noinspection PyArgumentList,PyCallByClass
+        filename, __ = QFileDialog.getOpenFileName(
+            self, "PANORAMO Viewer wählen", "c:/", "*.exe"
+        )
+        QKan.config.tools.logeditor = filename
+        self.tf_panoramoplayer.setText(filename)
+        if os.path.dirname(filename) == "":
+            # Textfeld wieder deaktivieren
+            self.tf_panoramoplayer.setEnabled(False)
 
     def changed_tf_fangradius(self) -> None:
         """Gibt eine Warnung, falls Fangradius zu groß"""

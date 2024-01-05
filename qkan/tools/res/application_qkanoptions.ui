@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>550</height>
+    <width>483</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,7 +28,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>501</y>
+     <y>600</y>
      <width>441</width>
      <height>31</height>
     </rect>
@@ -550,7 +550,7 @@ Haltungen pro Strang:</string>
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsProjectionSelectionWidget" name="qsw_epsg">
+   <widget class="QgsProjectionSelectionWidget" name="qsw_epsg" native="true">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -684,6 +684,94 @@ Haltungen pro Strang:</string>
     </property>
     <property name="text">
      <string>Optionen-Datei öffnen</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_7">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>490</y>
+     <width>441</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>PANORAMO Viewer auswählen:</string>
+   </property>
+   <widget class="QLineEdit" name="tf_panoramoplayer">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>361</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional: Pfad zum Editor, mit dem die Log-Datei geöffnet werden soll. Wenn dieses Feld leer ist, wird der Standardeditor gewählt. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>EPSG-Nummer des Projektionssystems der Quelldaten</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>311</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Speicherort des Panoramo Viewers auswählen:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_panoramoplayer">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>50</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem aus QGIS-Liste auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Projektionssystem aus QGIS-Liste auswählen</string>
+    </property>
+    <property name="text">
+     <string>...</string>
     </property>
    </widget>
   </widget>
