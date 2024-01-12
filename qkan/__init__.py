@@ -133,6 +133,7 @@ class QKan:
         # from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
         from .zustandsklassen import zustandsklassen
+        from .subkans import subkans
         from .sanierungsbedarfszahl import sanierungsbedarfszahl
         from .laengsschnitt import Laengsschnitt
         from .floodTools import FloodTools
@@ -153,6 +154,7 @@ class QKan:
             # GanglinienHE8(iface),
             Plausi(iface),
             zustandsklassen(iface),
+            subkans(iface),
             sanierungsbedarfszahl(iface),
             Laengsschnitt(iface),
             FloodTools(iface),
@@ -220,7 +222,7 @@ class QKan:
 
             allgemein.addAction(self.actions[alis['Allgemeine Optionen']])
             allgemein.addAction(self.actions[alis['QKan-Projekt aktualisieren']])
-            allgemein.addAction(self.actions[alis['Projektdatei auf bestehende QKan-Datenbank übertragen']])
+            allgemein.addAction(self.actions[alis['QKan-Projektdatei übertragen']])
             verwaltung.addAction(self.actions[alis['QKan-Datenbank aktualisieren']])
             verwaltung.addAction(self.actions[alis['Neue QKan-Datenbank erstellen']])
             verwaltung.addAction(self.actions[alis['Dateipfade suchen']])
@@ -253,6 +255,7 @@ class QKan:
             # laengs.addAction(self.actions[alis['Ganglinien-Tool für HE8']])
             zustand.addAction(self.actions[alis['Zustandsklassen ermitteln']])
             zustand.addAction(self.actions[alis['Sanierungsbedarfszahl ermitteln']])
+            zustand.addAction(self.actions[alis['Substanzklassen ermitteln']])
             flood2D.addAction(self.actions[alis['Überflutungsanimation']])
             info.addAction(self.actions[alis['Über QKan']])
             info.addAction(self.actions[alis['Infos zum QKan Projekt']])

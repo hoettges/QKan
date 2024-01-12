@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/subkans" >
+        <file>res/icon_subkans.png</file>
+    </qresource>
+</RCC>

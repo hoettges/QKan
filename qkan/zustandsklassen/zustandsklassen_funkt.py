@@ -5355,7 +5355,7 @@ class Zustandsklassen_funkt:
 
 
         sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        curs1.execute(sql)
+        curs.execute(sql)
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_dichtheit INTEGER ;""")
         except:
@@ -8643,7 +8643,7 @@ class Zustandsklassen_funkt:
 
 
         sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        curs1.execute(sql)
+        curs.execute(sql)
         #db.commit()
 
         try:
@@ -14237,7 +14237,7 @@ class Zustandsklassen_funkt:
         QgsProject.instance().addMapLayer(vlayer)
 
         sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        curs1.execute(sql)
+        curs.execute(sql)
 
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Entwaesserungssystem TEXT ;""")
