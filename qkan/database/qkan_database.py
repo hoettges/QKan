@@ -1091,8 +1091,8 @@ def createdbtables(
 
     sql = """CREATE TABLE druckdicht (
                 pk INTEGER PRIMARY KEY, 
-                kuerzel INTEGER, 
                 bezeichnung TEXT, 
+                kuerzel INTEGER, 
                 bemerkung TEXT)"""
 
     try:

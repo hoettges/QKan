@@ -380,69 +380,47 @@ class ImportTask:
             return False
 
     def _init_mappers(self) -> None:
-        def consume(target: Dict[str, str]) -> None:
+        def consume(sql: str, subject: str, target: Dict[str, str]) -> None:
+            if not self.db_qkan.sql(sql, subject):
+                raise Exception(f"Failed to init {subject} mapper")
             for row in self.db_qkan.fetchall():
                 target[row[0]] = row[1]
 
-        if not self.db_qkan.sql(
-            "SELECT isybau, bezeichnung FROM entwaesserungsarten",
-            "xml_import entwaesserungsarten",
-        ):
-            raise Exception("Failed to init ENTWART mapper")
-        consume(self.mapper_entwart)
+        sql = "SELECT isybau, bezeichnung FROM entwaesserungsarten"
+        subject = "xml_import entwaesserungsarten"
+        consume(sql, subject, self.mapper_entwart)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM pumpentypen", "xml_import pumpentypen"
-        ):
-            raise Exception("Failed to init PUMP mapper")
-        consume(self.mapper_pump)
+        sql = "SELECT he_nr, bezeichnung FROM pumpentypen"
+        subject = "xml_import pumpentypen"
+        consume(sql, subject, self.mapper_pump)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, profilnam FROM profile", "xml_import profile"
-        ):
-            raise Exception("Failed to init PROFILE mapper")
-        consume(self.mapper_profile)
+        sql = "SELECT he_nr, profilnam FROM profile"
+        subject = "xml_import profile"
+        consume(sql, subject, self.mapper_profile)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM auslasstypen", "xml_import auslasstypen"
-        ):
-            raise Exception("Failed to init OUTLET mapper")
-        consume(self.mapper_outlet)
+        sql = "SELECT he_nr, bezeichnung FROM auslasstypen"
+        subject = "xml_import auslasstypen"
+        consume(sql, subject, self.mapper_outlet)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM simulationsstatus",
-            "xml_import simulationsstatus",
-        ):
-            raise Exception("Failed to init SIMSTATUS mapper")
-        consume(self.mapper_simstatus)
+        sql = "SELECT he_nr, bezeichnung FROM simulationsstatus"
+        subject = "xml_import simulationsstatus"
+        consume(sql, subject, self.mapper_simstatus)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM untersuchrichtung",
-            "xml_import untersuchrichtung",
-        ):
-            raise Exception("Failed to init untersuchrichtung mapper")
-        consume(self.mapper_untersuchrichtung)
+        sql = "SELECT kuerzel, bezeichnung FROM untersuchrichtung"
+        subject = "xml_import untersuchrichtung"
+        consume(sql, subject, self.mapper_untersuchrichtung)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM wetter",
-            "xml_import wetter",
-        ):
-            raise Exception("Failed to init wetter mapper")
-        consume(self.mapper_wetter)
+        sql = "SELECT kuerzel, bezeichnung FROM wetter"
+        subject = "xml_import wetter"
+        consume(sql, subject, self.mapper_wetter)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM bewertungsart",
-            "xml_import bewertungsart",
-        ):
-            raise Exception("Failed to init bewertungsart mapper")
-        consume(self.mapper_bewertungsart)
+        sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
+        subject = "xml_import bewertungsart"
+        consume(sql, subject, self.mapper_bewertungsart)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM druckdicht",
-            "xml_import druckdicht",
-        ):
-            raise Exception("Failed to init druckdicht mapper")
-        consume(self.mapper_druckdicht)
+        sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
+        subject = "xml_import druckdicht"
+        consume(sql, subject, self.mapper_druckdicht)
 
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:

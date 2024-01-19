@@ -6,7 +6,6 @@ import os
 import tempfile
 from pathlib import Path
 from typing import Callable, List, Optional, cast
-from qgis.core import Qgis, QgsMessageLog
 import qgis
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
 from qgis.PyQt.QtGui import QIcon
@@ -133,23 +132,11 @@ class QKan:
         # from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
         from .zustandsklassen import zustandsklassen
+        from .sanierungsbedarfszahl import sanierungsbedarfszahl
         from .laengsschnitt import Laengsschnitt
         from .floodTools import FloodTools
         from .tools import QKanTools
-
-        # workaraound due to error after "import pandas"
-        if qgis.utils.Qgis.QGIS_VERSION[:4] not in ('3.32', '3.34'):
-            from .info import Infos
-            from .sanierungsbedarfszahl import sanierungsbedarfszahl
-        else:
-            QgsMessageLog.logMessage(
-                "Die QKan-Funktionen 'Infos' und 'Sanierungsbedarfzahl' können unter QGIS 3.32 und 3.34 "
-                "wegen eines Fehlers nicht ausgeführt werden."
-                "\nBitte verwenden Sie eine ältere QGIS-Version",
-                "QKan",
-                level=Qgis.Warning,
-                notifyUser=True)
-            self.iface.openMessageLog()
+        from .info import Infos
 
         self.plugins: List = [
             CreateUnbefFl(iface),
@@ -165,13 +152,12 @@ class QKan:
             # GanglinienHE8(iface),
             Plausi(iface),
             zustandsklassen(iface),
+            sanierungsbedarfszahl(iface),
             Laengsschnitt(iface),
             FloodTools(iface),
             QKanTools(iface),
+            Infos(iface),
         ]
-        if qgis.utils.Qgis.QGIS_VERSION[:4] not in ('3.32', '3.34'):
-            self.plugins.append(sanierungsbedarfszahl(iface))
-            self.plugins.append(Infos(iface))
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()
 
@@ -264,13 +250,11 @@ class QKan:
             strakat.addAction(self.actions[alis['Import aus STRAKAT']])
             # laengs.addAction(self.actions[alis['Längsschnitt-Tool für HE8']])
             # laengs.addAction(self.actions[alis['Ganglinien-Tool für HE8']])
-            if qgis.utils.Qgis.QGIS_VERSION[:4] not in ('3.32', '3.34'):
-                zustand.addAction(self.actions[alis['Zustandsklassen ermitteln']])
-                zustand.addAction(self.actions[alis['Sanierungsbedarfszahl ermitteln']])
+            zustand.addAction(self.actions[alis['Zustandsklassen ermitteln']])
+            zustand.addAction(self.actions[alis['Sanierungsbedarfszahl ermitteln']])
             flood2D.addAction(self.actions[alis['Überflutungsanimation']])
-            if qgis.utils.Qgis.QGIS_VERSION[:4] not in ('3.32', '3.34'):
-                info.addAction(self.actions[alis['Über QKan']])
-                info.addAction(self.actions[alis['Infos zum QKan Projekt']])
+            info.addAction(self.actions[alis['Über QKan']])
+            info.addAction(self.actions[alis['Infos zum QKan Projekt']])
 
     def unload(self) -> None:
         from qgis.utils import unloadPlugin

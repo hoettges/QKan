@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="de" >
+<html class="writer-html5" lang="de" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Arbeiten mit Flächen &mdash; QKan 3.3.1 Dokumentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/translations.js"></script>
+        <script src="_static/jquery.js?v=3d1d8b85"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4a9fcc6a"></script>
+        <script src="_static/doctools.js?v=a6d80eb4"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=57cff002"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
@@ -77,9 +79,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Formulare</span></p>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Übersicht</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">Formulare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
 </ul>
 
@@ -108,9 +110,9 @@
            <div itemprop="articleBody">
              
   <section id="arbeiten-mit-flachen">
-<h1>Arbeiten mit Flächen<a class="headerlink" href="#arbeiten-mit-flachen" title="Permalink to this heading"></a></h1>
+<h1>Arbeiten mit Flächen<a class="headerlink" href="#arbeiten-mit-flachen" title="Link to this heading"></a></h1>
 <section id="verarbeitung-von-befestigten-und-unbefestigten-flachen">
-<h2>Verarbeitung von befestigten und unbefestigten Flächen<a class="headerlink" href="#verarbeitung-von-befestigten-und-unbefestigten-flachen" title="Permalink to this heading"></a></h2>
+<h2>Verarbeitung von befestigten und unbefestigten Flächen<a class="headerlink" href="#verarbeitung-von-befestigten-und-unbefestigten-flachen" title="Link to this heading"></a></h2>
 <p>Abflusswirksame Flächen, z. B. Dachflächen, Parkplätze, Straßen, werden in QKan in der Tabelle „flaechen“ verwaltet.
 Diese werden mit Hilfe des Attributs „abflussparameter“ klassifiziert, und in der entsprechenden Tabelle
 „abflussparameter“ sind die für die hydraulische
@@ -119,7 +121,7 @@ das für durchlässige Flächen die Versickerungsparameter enthält. Unbefestigt
 gekennzeichnet, dass entweder keine Bodenklasse oder aber eine Bodenklasse zugeordnet ist, deren Durchlässigkeit 0 ist.</p>
 </section>
 <section id="grundprinzip">
-<span id="createlinkfl"></span><h2>Grundprinzip<a class="headerlink" href="#grundprinzip" title="Permalink to this heading"></a></h2>
+<span id="createlinkfl"></span><h2>Grundprinzip<a class="headerlink" href="#grundprinzip" title="Link to this heading"></a></h2>
 <p>Die Zuordnung der abflusswirksamen Flächen zu den Haltungen des Kanalnetzes stellt bei der Vorbereitung
 einer hydrodynamischen Simulation einen aufwändigen Arbeitsschritt dar. Deshalb enthält QKan Funktionen
 zur automatischen Verknüpfung und zur Plausibilitäskontrolle.</p>
@@ -154,13 +156,13 @@ Flächen, Haltungsflächen oder Kanalnetzdaten vornehmen kann, um dann erneut di
 exportieren.</p>
 </section>
 <section id="teilgebiete">
-<span id="linkteilgebiete"></span><span id="index-0"></span><h2>Teilgebiete<a class="headerlink" href="#teilgebiete" title="Permalink to this heading"></a></h2>
+<span id="linkteilgebiete"></span><span id="index-0"></span><h2>Teilgebiete<a class="headerlink" href="#teilgebiete" title="Link to this heading"></a></h2>
 <p>Bei größeren Entwässerungsnetzen ist es hilfreich, die Bearbeitung nacheinander für mehrere Teilgebiete vorzunehmen.
 In QKan dient dazu ein entsprechender Layer „Teilgebiete“ (QKan-Tabelle „teilgebiete“). Alle für die Flächenaufteilung
 verwendeten Layer enthalten ein entsprechendes Attribut, mit dem die automatische Erzeugung der Verbindungslinien
 eines oder mehrere ausgewählte Teilgebiete beschränkt werden kann.</p>
 <section id="erstellung-eines-teilgebietes">
-<h3>Erstellung eines Teilgebietes<a class="headerlink" href="#erstellung-eines-teilgebietes" title="Permalink to this heading"></a></h3>
+<h3>Erstellung eines Teilgebietes<a class="headerlink" href="#erstellung-eines-teilgebietes" title="Link to this heading"></a></h3>
 <p>Ein Teilgebiet kann leicht aus <a class="reference internal" href="#linkhaltungsflaechen"><span class="std std-ref">Haltungsflächen</span></a> erzeugt werden. Dazu müssen alle Haltungsflächen auf dem
 gleichnamigen Layer ausgewählt werden, welche ein Teilgebiet ergeben sollen und über <span class="guilabel">Bearbeiten</span> → <span class="guilabel">Objekte kopieren</span>
 kopiert werden. Anschließend können diese auf dem Layer „Teilgebiete“ eingefügt werden, wenn dieser sich im <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a>
@@ -173,7 +175,7 @@ des Entwässerungsnetzes den Teilgebieten zugeordnet werden. Dies ist mit der <a
 </section>
 </section>
 <section id="erzeugung-von-haltungsflachen">
-<span id="linkhaltungsflaechen"></span><span id="index-1"></span><h2>Erzeugung von Haltungsflächen<a class="headerlink" href="#erzeugung-von-haltungsflachen" title="Permalink to this heading"></a></h2>
+<span id="linkhaltungsflaechen"></span><span id="index-1"></span><h2>Erzeugung von Haltungsflächen<a class="headerlink" href="#erzeugung-von-haltungsflachen" title="Link to this heading"></a></h2>
 <p>Haltungsflächen haben mit den neueren Simulationsprogrammen einen Paradigmenwechsel erfahren. Früher galt die
 Anforderung, dass je eine Haltungsfläche zu einer Haltung zugeordnet war.
 Heute werden die Haltungsflächen nur noch für zwei Aufgaben benötigt:</p>
@@ -194,7 +196,7 @@ Die nachfolgend erläuterten Schritte dienen der Datenvorbereitung.</p>
 </ol>
 </div></blockquote>
 <section id="markierung-von-transporthaltungen">
-<span id="linktransporthaltungen"></span><h3>Markierung von Transporthaltungen<a class="headerlink" href="#markierung-von-transporthaltungen" title="Permalink to this heading"></a></h3>
+<span id="linktransporthaltungen"></span><h3>Markierung von Transporthaltungen<a class="headerlink" href="#markierung-von-transporthaltungen" title="Link to this heading"></a></h3>
 <p>Die Markierung erfolgt hier indirekt über die Zuordnung einer entsprechenden Entwässerungsart: In der
 entsprechenden Referenztabelle, die in der Layerkontrolle in der Gruppe „Referenztabellen“ zu finden ist,
 sind eigene Datensätze für Transporthaltungen enthalten, die in der Spalte „ohne RW-Zufluss“ den Wert 1 haben sollen
@@ -219,7 +221,7 @@ gewählt werden. In das Formelfenster wird der kopierte Zellinhalt <strong>mit A
 <p>Nun können die Änderungen gespeichert, der Bearbeitungsmodus ausgeschalten und die Auswahl aufgehoben werden.</p>
 </section>
 <section id="markierung-groszer-aufzuteilender-flachen">
-<span id="linkflaechenaufteilung"></span><h3>Markierung großer aufzuteilender Flächen<a class="headerlink" href="#markierung-groszer-aufzuteilender-flachen" title="Permalink to this heading"></a></h3>
+<span id="linkflaechenaufteilung"></span><h3>Markierung großer aufzuteilender Flächen<a class="headerlink" href="#markierung-groszer-aufzuteilender-flachen" title="Link to this heading"></a></h3>
 <p>Die Flächen, die markiert werden sollten, sind in der Regel alle Straßenflächen, große unbefestigte Flächen
 und besonders große Gebäude. Wenn der Layer „Flächen“ in der gleichnamigen Gruppe aktiviert wurde, können
 die betroffenen Flächen mit der <a class="reference internal" href="_images/Tool_auswahlmodus.png"><img alt="Tool_auswahlfunktion" src="_images/Tool_auswahlmodus.png" style="width: 1.25em;" /></a> Auswahlfunktion selektiert werden. Auch hier gilt:
@@ -241,14 +243,14 @@ Dies geschieht wie bereits für die Haltungen in folgenden Schritten:</p>
 <p>Nun können die Änderungen wieder gespeichert, der Bearbeitungsmodus ausgeschalten und die Auswahl aufgehoben werden.</p>
 </section>
 <section id="teilen-der-betroffenen-haltungsflachen">
-<h3>Teilen der betroffenen Haltungsflächen<a class="headerlink" href="#teilen-der-betroffenen-haltungsflachen" title="Permalink to this heading"></a></h3>
+<h3>Teilen der betroffenen Haltungsflächen<a class="headerlink" href="#teilen-der-betroffenen-haltungsflachen" title="Link to this heading"></a></h3>
 <p>Nach diesen Vorbereitungen können nun mit Hilfe der <a class="reference internal" href="Qkan_Formulare.html#linkerzhaltungsfl"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_voronoiflaechen.png"><img alt="Tool_voronoiflaechen" src="_images/Tool_voronoiflaechen.png" style="width: 1.25em;" /></a>
 <span class="guilabel">Erzeugung von Voronoiflächen zu Haltungen</span> die Haltungsflächen aufgeteilt werden.</p>
 <p>Jetzt sind alle Vorbereitungen getroffen, um unbefestigte Flächen zu erzeugen.</p>
 </section>
 </section>
 <section id="erzeugung-von-unbefestigten-flachen">
-<span id="createunbeffl"></span><span id="index-2"></span><h2>Erzeugung von unbefestigten Flächen<a class="headerlink" href="#erzeugung-von-unbefestigten-flachen" title="Permalink to this heading"></a></h2>
+<span id="createunbeffl"></span><span id="index-2"></span><h2>Erzeugung von unbefestigten Flächen<a class="headerlink" href="#erzeugung-von-unbefestigten-flachen" title="Link to this heading"></a></h2>
 <p>In der Regel enthalten die Datenbestände der abflusswirksamen Flächen nur befestigte Flächen. Für die Verarbeitung in
 QKan ist es empfehlenswert auch für die unbefestigten Flächenanteile entsprechende Flächenobjekte anzulegen. Hierzu
 dient die <a class="reference internal" href="Qkan_Formulare.html#linkerzeugungunbefflaechen"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span>.
@@ -270,7 +272,7 @@ um einen besseren Überblick über den Bearbeitungsfortgang zu behalten. Außerd
 Anzahl an Objekten bei einigen Funktionen die Laufzeit. Näheres hierzu siehe <a class="reference internal" href="#linkteilgebiete"><span class="std std-ref">Teilgebiete</span></a></p>
 </section>
 <section id="flachen-mit-haltungen-verknupfen">
-<h2>Flächen mit Haltungen verknüpfen<a class="headerlink" href="#flachen-mit-haltungen-verknupfen" title="Permalink to this heading"></a></h2>
+<h2>Flächen mit Haltungen verknüpfen<a class="headerlink" href="#flachen-mit-haltungen-verknupfen" title="Link to this heading"></a></h2>
 <p>Ein Video zur Verknüpfung von Flächen mit Haltungen ist <a href="https://fh-aachen.sciebo.de/s/SCQxuaInPgGsAFK" target="_blank">hier</a> zu finden.</p>
 <p>Die Verbindung von Flächen mit Haltungen geschieht über Linien, welche in dem Layer „Anbindungen Flächen“ unter „Flächen“ abgelegt sind.
 Diese Verbindungslinien können automatisch erzeugt werden, wenn vorher entsprechende Bearbeitungsschritte durchgeführt werden.
@@ -282,12 +284,12 @@ hilfreich sein, wenn diese in mehrere <a class="reference internal" href="#linkt
 <a class="reference internal" href="Qkan_Formulare.html#linkverbindunghaltungflaeche"><span class="std std-ref">Funktion</span></a> <a class="reference internal" href="_images/Tool_verknuepfungslinien_erstellen.png"><img alt="Tool_verknuepfungslinien_erstellen" src="_images/Tool_verknuepfungslinien_erstellen.png" style="width: 1.25em;" /></a> <span class="guilabel">Verbindungslinien von Flächen zu Haltungen
 erstellen</span>. Die Zuordnung sollte anschließend visuell überprüft werden.</p>
 <section id="verbindungslinien-bearbeiten">
-<h3>Verbindungslinien bearbeiten<a class="headerlink" href="#verbindungslinien-bearbeiten" title="Permalink to this heading"></a></h3>
+<h3>Verbindungslinien bearbeiten<a class="headerlink" href="#verbindungslinien-bearbeiten" title="Link to this heading"></a></h3>
 <p>Gibt es unerwünschte Zuordnungen von Flächen zu Haltungen können diese leicht manuell gelöscht oder verschoben werden. Ist der Layer auf
-dem die Verbindungslinien liegen im <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> <span class="guilabel">Bearbeitungsmodus</span>, kann das <a class="reference internal" href="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a>
+dem die Verbindungslinien liegen im <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> <span class="guilabel">Bearbeitungsmodus</span>, kann das <a class="reference internal" href="_images/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="_images/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a>
 <span class="guilabel">Stützpunktwerkzeug</span> ausgewählt werden. Damit die Bearbeitung funktioniert ist es wichtig, dass das
-<a class="reference internal" href="_images/Tool_topologisches_editieren1.png"><img alt="Tool_topologisches_editieren" src="_images/Tool_topologisches_editieren1.png" style="width: 1.25em;" /></a> <span class="guilabel">topoligisches editieren Werkzeug</span> deaktiviert ist. Um eine Stützstelle zu ändern, muss nach
-Aktivierung des <a class="reference internal" href="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="QKan_Bilder/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a> <span class="guilabel">Stützpunktwerkzeug</span> die zu bearbeitende Verbindungslinien mit Rechtsklick fixiert
+<a class="reference internal" href="_images/Tool_topologisches_editieren.png"><img alt="Tool_topologisches_editieren" src="_images/Tool_topologisches_editieren.png" style="width: 1.25em;" /></a> <span class="guilabel">topoligisches editieren Werkzeug</span> deaktiviert ist. Um eine Stützstelle zu ändern, muss nach
+Aktivierung des <a class="reference internal" href="_images/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunktwerkzeug" src="_images/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a> <span class="guilabel">Stützpunktwerkzeug</span> die zu bearbeitende Verbindungslinien mit Rechtsklick fixiert
 werden. So ist es möglich, dass nur die Stützstelle der gewünschten Verbindungslinien gewählt wird, wenn anschließend die entsprechende
 Stützstelle mit Linksklick ausgewählt wird. Als nächstes wird die Haltung ausgewählt, mit welcher die Fläche eigentlich verbunden werden
 sollte. Nach Klick auf die Haltung sollte die geänderte Verbindungslinie auf dem Plan erscheinen. Die Auswahl der Verbindungslinie kann

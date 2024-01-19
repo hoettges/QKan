@@ -835,6 +835,7 @@ class DBConnection:
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
+            wkt_geom = parameters.get("geom")
             sql = """
                     INSERT INTO tezg
                       (flnam, regenschreiber, schnam, befgrad, neigung, 
@@ -844,17 +845,18 @@ class DBConnection:
                     :flnam, :regenschreiber, :schnam, :befgrad, :neigung, 
                         coalesce(:createdat, CURRENT_TIMESTAMP), :haltnam, :neigkl, :schwerpunktlaufzeit, :teilgebiet, 
                         :abflussparameter, :kommentar,
-                    GeomFromText(:geom, :epsg)
-                    );"""
+                    GeomFromWkb(x'{wkt_geom}', :epsg)
+                );""".format(wkt_geom=wkt_geom)
 
         elif tabnam == "flaechen":
             parlis = ['flnam', 'haltnam', 'schnam', 'neigkl', 'neigung',
                       'teilgebiet', 'regenschreiber', 'abflussparameter',
                       'aufteilen', 'kommentar', 'createdat',
-                      'geom']
+                      'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
+            wkt_geom = parameters.get("geom")
             sql = """
                     INSERT INTO flaechen
                       (flnam, haltnam, schnam, neigkl, neigung, 
@@ -864,12 +866,13 @@ class DBConnection:
                     VALUES (
                     :flnam, :haltnam, :schnam, :neigkl, :neigung, 
                     :teilgebiet, :regenschreiber, :abflussparameter, 
-                    :aufteilen, :kommentar, :createdat,
-                    GeomFromText(:geom, :epsg)
-                    );"""
+                    :aufteilen, :kommentar, 
+                    coalesce(:createdat, CURRENT_TIMESTAMP),
+                    GeomFromWkb(x'{wkt_geom}', :epsg)
+                );""".format(wkt_geom=wkt_geom)
 
         elif tabnam == "teilgebiete":
-            parlis = ["tgnam", "kommentar", "createdat", "geom"]
+            parlis = ["tgnam", "kommentar", "createdat", "geom", "epsg"]
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None

@@ -444,7 +444,7 @@ class ToolsConfig(ClassObject):
                 'profilnam': ['profil*', ],
                 'ks': ['ks*', 'rauh*'],
                 'strasse': ['stras*', 'stra\xdf*', 'straß*'],
-                'entwart': ['entw*art', 'entw*typ*', 'kanalart*'],
+                'entwart': ['entw*art', 'entw*typ*', 'entw*ver*', 'kanalart*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geom': ['wkt_geom', 'geo*'],
@@ -713,7 +713,12 @@ class ToolsConfig(ClassObject):
                 'ZS': ['zs'],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geop': ['wkt_geom', 'geop'],
-            }
+            },
+            'entwart': {
+                'Mischwasser': ['M*'],
+                'Schmutzwasser': ['S*'],
+                'Regenwasser': ['R*']
+            },
         }
 
         def __str__(self) -> str:
@@ -783,7 +788,6 @@ class Config(ClassObject):
     strakat: STRAKATConfig = STRAKATConfig()
     flood: FLOODConfig = FLOODConfig()
     mu: MUConfig = MUConfig()
-    swmm: SWMMConfig = SWMMConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()
     project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()

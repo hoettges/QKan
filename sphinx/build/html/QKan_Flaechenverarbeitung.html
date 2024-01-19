@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flächenverarbeitung &mdash; QKan 3.3.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=3d1d8b85"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4a9fcc6a"></script>
+        <script src="_static/doctools.js?v=a6d80eb4"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=57cff002"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="QKan-Tabellen" href="Qkan_Tabellen.html" />
+    <link rel="prev" title="STRAKAT" href="QKan_STRAKAT.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QKan
+          </a>
+              <div class="version">
+                3.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Was ist QKan?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Datenaustausch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Arbeiten mit Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Beispielprojekt</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Qkan_Formulare.html">Formulare</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="QKan_Formulare_Allgemein.html">Allgemein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Verwaltung.html">Verwaltung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Hystem_Extran.html">Hystem-Extran</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_DYNA.html">DYNA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Mike.html">Mike+</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_SWMM.html">SWMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_STRAKAT.html">STRAKAT</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Flächenverarbeitung</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#erzeugen-von-unbefestigten-flachen">Erzeugen von unbefestigten Flächen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg">Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#erzeugung-von-haltungsflachen">Erzeugung von Haltungsflächen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#entferne-uberlappungen">Entferne Überlappungen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zuordnung-zu-teilgebiet">Zuordnung zu Teilgebiet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teilgebietszuordnung-als-gruppe-verwalten">Teilgebietszuordnung als Gruppe verwalten</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen">Verknüpfungslinien von Einzeleinleitungen zu Haltungen erstellen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verknupfungslinien-von-flachen-zu-haltungen-erstellen">Verknüpfungslinien von Flächen zu Haltungen erstellen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filteroptionen">Filteroptionen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optionen-zur-erzeugung-von-zuordnungen">Optionen zur Erzeugung von Zuordnungen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#berechnung-von-oberflachenabflussparametern">Berechnung von Oberflächenabflussparametern</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verknupfungen-bereinigen">Verknüpfungen bereinigen</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_Formulare.html#allgemeine-funktionselemente-in-formularen">Allgemeine Funktionselemente in Formularen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="Qkan_Formulare.html">Formulare</a></li>
+      <li class="breadcrumb-item active">Flächenverarbeitung</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/QKan_Flaechenverarbeitung.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flachenverarbeitung">
+<h1>Flächenverarbeitung<a class="headerlink" href="#flachenverarbeitung" title="Link to this heading"></a></h1>
+<section id="erzeugen-von-unbefestigten-flachen">
+<span id="linkerzeugungunbefflaechen"></span><span id="index-0"></span><h2>Erzeugen von unbefestigten Flächen<a class="headerlink" href="#erzeugen-von-unbefestigten-flachen" title="Link to this heading"></a></h2>
+<p>Die Funktion <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span> legt für jede Haltungsfläche (Tabelle tezg) aus dem Zwischenraum
+der befestigten Flächen ein Flächenobjekt angelegt. Dieses kann aus mehreren Flächenteilen bestehen.</p>
+<p>Die Attributdaten werden dabei aus den Haltungsflächen übernommen.</p>
+<img alt="_images/erz_unbef_fl.png" src="_images/erz_unbef_fl.png" />
+<section id="auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg">
+<h3>Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg)<a class="headerlink" href="#auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen-tezg" title="Link to this heading"></a></h3>
+<p>Mit Hilfe der <a class="reference internal" href="Qkan_Formulare.html#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet
+sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle
+werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p>
+<p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createunbeffl"><span class="std std-ref">Erzeugen von unbefestigten Flächen</span></a></p>
+<p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_workflow.html#workflunbeffl"><span class="std std-ref">hier</span></a> zu sehen.</p>
+<blockquote>
+<div></div></blockquote>
+</section>
+</section>
+<section id="erzeugung-von-haltungsflachen">
+<span id="linkerzhaltungsfl"></span><h2>Erzeugung von Haltungsflächen<a class="headerlink" href="#erzeugung-von-haltungsflachen" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_voronoiflaechen.png"><img alt="Tool_voronoiflaechen" src="_images/Tool_voronoiflaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeugung von Voronoiflächen zu Haltungen</span> können (große) Haltungsflächen aufgeteilt
+werden, sodass jede Fläche eindeutig einer Haltung zugeordnet werden kann.</p>
+<img alt="_images/erz_haltungsfl.png" src="_images/erz_haltungsfl.png" />
+<ul class="simple">
+<li><p><strong>Nur ausgewählte Teilgebiete berücksichtigen:</strong> Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Option „Nur ausgewählte Teilgebiete
+berücksichtigen“ mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.</p></li>
+<li><p><strong>Warnung:</strong> Sind keine aufzuteilenden Flächen im Vorfeld <a class="reference internal" href="Qkan_flaechen.html#linkflaechenaufteilung"><span class="std std-ref">markiert</span></a> worden, erscheint diese Warnmeldung. Die Funktion
+kann so nicht ausgeführt werden.</p></li>
+</ul>
+</section>
+<section id="entferne-uberlappungen">
+<h2>Entferne Überlappungen<a class="headerlink" href="#entferne-uberlappungen" title="Link to this heading"></a></h2>
+<img alt="_images/flaechenbereinigung.png" src="_images/flaechenbereinigung.png" />
+</section>
+<section id="zuordnung-zu-teilgebiet">
+<span id="linkelementeteilgebietzuordnen"></span><h2>Zuordnung zu Teilgebiet<a class="headerlink" href="#zuordnung-zu-teilgebiet" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_elemente_tezg_zuordnen.png"><img alt="Tool_elemente_tezg_zuordnen" src="_images/Tool_elemente_tezg_zuordnen.png" style="width: 1.25em;" /></a> <span class="guilabel">Zuordnung zu Teilgebiet</span> ist die automatische Zuordnung aller Elemente eines
+Entwässerungsnetzes zu einem Teilgebiet möglich. Dabei wird das Teilgebiet automatisch in die jeweilige Spalte der Datentabellen eingetragen.</p>
+<img alt="_images/Zuordnung_zu_teilgebiet.png" src="_images/Zuordnung_zu_teilgebiet.png" />
+<ul class="simple">
+<li><p><strong>Haltungen und Flächen:</strong> In der Regel sollte die Standardeinstellung „innnerhalb“ nicht geändert werden. Die Option „überlappend“
+sollte gewählt werden, wenn sichergestellt werden soll, dass auch Flächen, die nur zum Teil im Teilgebiet liegen (z.B von großen
+Gebäuden), bei der Bearbeitung des Gebietes berücksichtigt werden. In der darunter liegenden Auswahlbox kann das entsprechende -
+zuvor erstellte - (<a class="reference internal" href="Qkan_flaechen.html#linkteilgebiete"><span class="std std-ref">Teilgebiet</span></a>) ausgewählt werden</p></li>
+</ul>
+<p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="Qkan_flaechen.html#linkteilgebiete"><span class="std std-ref">hier</span></a> zu sehen.</p>
+</section>
+<section id="teilgebietszuordnung-als-gruppe-verwalten">
+<h2>Teilgebietszuordnung als Gruppe verwalten<a class="headerlink" href="#teilgebietszuordnung-als-gruppe-verwalten" title="Link to this heading"></a></h2>
+<img alt="_images/tgz_verwalten.png" src="_images/tgz_verwalten.png" />
+</section>
+<section id="verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen">
+<span id="index-1"></span><h2>Verknüpfungslinien von Einzeleinleitungen zu Haltungen erstellen<a class="headerlink" href="#verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen" title="Link to this heading"></a></h2>
+<p>Die Funktion <a class="reference internal" href="_images/Tool_verknuepfung_direkteinleiter.png"><img alt="Tool_verknuepfung_direkteinleiter" src="_images/Tool_verknuepfung_direkteinleiter.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen</span> erzeugt für
+jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie, die am Punkte des
+Einzeleinleiters beginnt und auf der damit verknüpften Haltung endet.</p>
+<img alt="_images/Verbindungslinien_einzel_hal.png" src="_images/Verbindungslinien_einzel_hal.png" />
+<ul class="simple">
+<li><p><strong>Tabelle Haltungen:</strong> Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Es
+sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden</p></li>
+<li><p><strong>Allgemein:</strong> Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen</p></li>
+<li><p><strong>Suchradius:</strong> Maximaler Abstand zur Haltung, innnerhalb dessen die Einzeleinleiter berücksichtigt werden. Der Wert sollte ausreichend
+groß gewählt werden. Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden</p></li>
+</ul>
+<p>Mit Hilfe der <a class="reference internal" href="Qkan_Formulare.html#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
+auf Haltungen mit ausgewählten
+Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
+<p>Ausführliche Erläuterung zu diesem Thema: <span class="xref std std-ref">Anbindungen von Einzeleinleitern</span></p>
+</section>
+<section id="verknupfungslinien-von-flachen-zu-haltungen-erstellen">
+<span id="linkverbindunghaltungflaeche"></span><span id="index-2"></span><h2>Verknüpfungslinien von Flächen zu Haltungen erstellen<a class="headerlink" href="#verknupfungslinien-von-flachen-zu-haltungen-erstellen" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_verknuepfungslinien_erstellen.png"><img alt="Tool_verknuepfungslinien_erstellen" src="_images/Tool_verknuepfungslinien_erstellen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge Verknüpfungslinien von Flächen zu Haltungen</span> wird für jede
+Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie erzeugt, die innerhalb der Fläche beginnt und
+auf der damit verknüpften Haltung endet.</p>
+<p>Abhängig von dem Flächenattribut „aufteilen“ ist eine Anbindung pro Fläche oder pro Flächenteilstück
+und Haltungsfläche (Tabelle „tezg“) vorgesehen.</p>
+<img alt="_images/Verbindungslinien_fl_hal.png" src="_images/Verbindungslinien_fl_hal.png" />
+<section id="filteroptionen">
+<h3>Filteroptionen<a class="headerlink" href="#filteroptionen" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Mit dieser Auswahl kann die Bearbeitung auf Flächen mit den ausgewählten Abflussparametern beschränkt werden</p></li>
+<li><p>Hier können die zu berücksichtigenden Haltungen anhand der Entwässerungsarten ausgewählt werden. Hier
+sollten Schmutzwasser und andere Abwasserarten, die kein Regenwasser enthalten, ausgeschlossen werden</p></li>
+<li><p>Sind Teilgebiete erstellt worden und es soll in diesen gearbeitet werden, kann dies über die Auswahl in diesem Kasten geschehen</p></li>
+</ol>
+</section>
+<section id="optionen-zur-erzeugung-von-zuordnungen">
+<h3>Optionen zur Erzeugung von Zuordnungen<a class="headerlink" href="#optionen-zur-erzeugung-von-zuordnungen" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Abstand zur nächsten Kante:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zur nächsten Kante einer Fläche bestimmt - im
+Regelfall sollte diese Option gewählt werden</p></li>
+<li><p><strong>Abstand zum Mittelpunkt:</strong> Die nächste Haltung wird anhand des geringsten Abstandes zum Mittelpunkt einer Fläche bestimmt</p></li>
+<li><p><strong>Suchradius:</strong> Maximaler Abstand zur Haltung, innnerhalb dessen die Flächen berücksichtigt werden. Der Wert sollte ausreichend groß gewählt werden.
+Ein zu großer Suchradius verlangsamt jedoch den Suchvorgang unnötig, weshalb Werte bis 100 m empfohlen werden</p></li>
+<li><p><strong>Fangradius:</strong> Der maximal zulässige Abstand zwischen dem Ende der Verbindungslinie und der zu verknüpfenden Haltung</p></li>
+<li><p><strong>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen:</strong> Nur in besonderen Fällen zu empfehlen, in denen die Haltungen nur mit den Flächen
+verknüpft werden sollen, die innerhalb der selben Haltungsfläche liegen</p></li>
+<li><p><strong>Autokorrektur von Namen in Flächen und Einleitpunkten:</strong> Diese Option bewirkt, dass vor Erstellung der Zuordnungen zunächst nicht eindeutige Bezeichnungen von Flächen
+und Einleitpunkten automatisch so durch eine fortlaufende Nummer ergänzt werden, dass nur noch eindeutige Bezeichnungen vorkommen.
+Ist diese Option nicht aktiviert, bricht die Erstellung der Zuordnungen bei nicht eindeutigen Bezeichnungen mit einer Fehlermeldung ab</p></li>
+<li><p><strong>Mit Haltungsflächen verschneiden:</strong> Diese Option muss aktiviert werden, wenn Flächen, für die die Option „Aufteilen“ festgelegt wurde, beim Export in
+ein Simulationsprogramm auf die Haltungsflächen verteilt („verschnitten“) werden sollen</p></li>
+<li><p><strong>Flächenobjekte bereinigen:</strong> Bei Auswahl wird eine automatische Sanierung aller fehlerhaften Flächenobjekte vor der Erstellung der Zuordnungen durchgeführt,
+dabei werden typische Fehler wie z. B. doppelte Stützstellen und Schleifen beseitigt</p></li>
+</ul>
+<p>Die Zuordnung kann auch manuell vorgenommen und überarbeitet werden, falls bei der automatischen Erstellung unplausible Verbindungen entstanden sind oder
+sich infolge einer späteren Bearbeitung Änderungen bei den Flächen ergeben haben.</p>
+</section>
+<section id="tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">
+<h3>Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen" title="Link to this heading"></a></h3>
+<p>Mit Hilfe der <a class="reference internal" href="Qkan_Formulare.html#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf Flächen mit ausgewählten Abflussparametern,
+Haltungen mit ausgewählten Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt
+werden.</p>
+<p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createlinkfl"><span class="std std-ref">Grundprinzip</span></a></p>
+</section>
+</section>
+<section id="berechnung-von-oberflachenabflussparametern">
+<span id="index-3"></span><h2>Berechnung von Oberflächenabflussparametern<a class="headerlink" href="#berechnung-von-oberflachenabflussparametern" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_oberflaechenabflussparameter.png"><img alt="Tool_oberflaechenabflussparameter" src="_images/Tool_oberflaechenabflussparameter.png" style="width: 1.25em;" /></a> <span class="guilabel">Oberflächenabflussparameter eintragen</span> werden die
+Oberflächenabflussparameter für befestigte und unbefestigte Flächen berechnet. Diese Funktion ist vorrangig für das Simulationsprogramm
+HYSTEM-EXTRAN gedacht. In HYSTEM-EXTRAN ist ein Assistent zur Berechnung der Oberflächenabflussparameter vorhanden,
+der diese Werte ebenfalls berechnen kann und dessen Anwendung empfohlen wird.</p>
+<p>Mit Hilfe der <a class="reference internal" href="Qkan_Formulare.html#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
+auf Haltungen mit ausgewählten
+Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
+<img alt="_images/oberflaechenabflussparameter.png" src="_images/oberflaechenabflussparameter.png" />
+</section>
+<section id="verknupfungen-bereinigen">
+<h2>Verknüpfungen bereinigen<a class="headerlink" href="#verknupfungen-bereinigen" title="Link to this heading"></a></h2>
+<img alt="_images/verknuepfungen_ber.png" src="_images/verknuepfungen_ber.png" />
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="QKan_STRAKAT.html" class="btn btn-neutral float-left" title="STRAKAT" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="Qkan_Tabellen.html" class="btn btn-neutral float-right" title="QKan-Tabellen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
+  </div>
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

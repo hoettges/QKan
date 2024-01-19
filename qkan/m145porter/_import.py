@@ -49,7 +49,6 @@ class Schacht_untersucht(ClassObject):
     xsch: float = 0.0
     ysch: float = 0.0
 
-
 class Untersuchdat_schacht(ClassObject):
     untersuchsch: str = ""
     id: int = 0
@@ -72,7 +71,6 @@ class Untersuchdat_schacht(ClassObject):
     ZD: int = 63
     ZB: int = 63
     ZS: int = 63
-
 
 class Haltung(ClassObject):
     haltnam: str
@@ -97,7 +95,6 @@ class Haltung(ClassObject):
     xschun: float = 0.0
     yschun: float = 0.0
 
-
 class Haltung_untersucht(ClassObject):
     haltnam: str
     schoben: str = ""
@@ -121,7 +118,6 @@ class Haltung_untersucht(ClassObject):
     max_ZD: int = 63
     max_ZB: int = 63
     max_ZS: int = 63
-
 
 class Untersuchdat_haltung(ClassObject):
     untersuchhal: str = ""
@@ -190,7 +186,6 @@ class Wehr(ClassObject):
     kommentar: str = ""
     xsch: float = 0.0
     ysch: float = 0.0
-
 
 class Pumpe(ClassObject):
     pnam: str
@@ -266,70 +261,6 @@ def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
     return default
 
 
-# def _consume_smp_block(
-#     _block: ElementTree.Element,
-# ) -> Tuple[str, int, float, float, float]:
-#      name = _block.findtext("d:Objektbezeichnung", "not found", self.NS)
-#      knoten_typ = 0
-#
-#      for _schacht in _block.findall("d:Knoten", self.NS):
-#          knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
-#
-#      smp = _block.find(
-#          "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='SMP']",
-#          self.NS,
-#      )
-#
-#      if not smp:
-#          fehlermeldung(
-#              "Fehler beim XML-Import: Schächte",
-#              f'Keine Geometrie "SMP" für Schacht {name}',
-#          )
-#          xsch, ysch, sohlhoehe = (0.0,) * 3
-#      else:
-#          xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
-#          ysch = _strip_float(smp.findtext("d:Hochwert", 0.0, self.NS))
-#          sohlhoehe = _strip_float(smp.findtext("d:Punkthoehe", 0.0, self.NS))
-#      return name, knoten_typ, xsch, ysch, sohlhoehe
-
-# def geo_smp(_schacht: Schacht) -> Tuple[str, str]:
-#     """
-#     Returns geom, geom SQL expressions
-#     """
-#     db_type = QKan.config.database.type
-#     if db_type == enums.QKanDBChoice.SPATIALITE:
-#         geop = f"MakePoint({_schacht.xsch}, {_schacht.ysch}, {QKan.config.epsg})"
-#         geom = (
-#             "CastToMultiPolygon(MakePolygon("
-#             f"MakeCircle({_schacht.xsch}, {_schacht.ysch}, {_schacht.durchm / 1000}, {QKan.config.epsg})"
-#             "))"
-#         )
-#     elif db_type == enums.QKanDBChoice.POSTGIS:
-#         geop = f"ST_SetSRID(ST_MakePoint({_schacht.xsch},{_schacht.ysch}),{QKan.config.epsg})"
-#         geom = ""  # TODO: GEOM is missing
-#     else:
-#         raise Exception("Unimplemented database type: {}".format(db_type))
-#
-#     return geop, geom
-#
-#
-# def geo_hydro() -> str:
-#     db_type = QKan.config.database.type
-#     if db_type == enums.QKanDBChoice.SPATIALITE:
-#         geom = (
-#             f"MakeLine(MakePoint(SCHOB.xsch, SCHOB.ysch, {QKan.config.epsg}), "
-#             f"MakePoint(SCHUN.xsch, SCHUN.ysch, {QKan.config.epsg}))"
-#         )
-#     elif db_type == enums.QKanDBChoice.POSTGIS:
-#         geom = (
-#             f"ST_MakeLine(ST_SetSRID(ST_MakePoint(SCHOB.xsch, SCHOB.ysch, {QKan.config.epsg}),"
-#             f"ST_SetSRID(ST_MakePoint(SCHUN.xsch, SCHUN.ysch, {QKan.config.epsg}))"
-#         )
-#     else:
-#         raise Exception("Unimplemented database type: {}".format(db_type))
-#     return geom
-#
-
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
     def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, data_choice: str, ordner_bild: str, ordner_video: str):
@@ -354,7 +285,7 @@ class ImportTask:
         self.mapper_entwart: Dict[str, str] = {}
         self.mapper_pump: Dict[str, str] = {}
         self.mapper_profile: Dict[str, str] = {}
-        self.mapper_outlet: Dict[str, str] = {}
+        # self.mapper_outlet: Dict[str, str] = {}
         self.mapper_simstatus: Dict[str, str] = {}
         self.mapper_untersuchrichtung: Dict[str, str] = {}
         self.mapper_wetter: Dict[str, str] = {}
@@ -366,14 +297,11 @@ class ImportTask:
         self.xml = ElementTree.ElementTree()
         self.xml.parse(xml_file)
 
-        # Get Namespace
-        #tree = etree.parse(xml_file)
-        #x = tree.xpath('namespace-uri(.)')
-        #self.NS = {"d": x}
-
     def run(self) -> bool:
+        self._reftables()
         self._init_mappers()
-        if getattr(QKan.config.xml, "import_stamm", True):
+#        if getattr(QKan.config.xml, "import_stamm", True):
+        if QKan.config.xml.import_stamm:
             self._schaechte()
             self._auslaesse()
             #self._speicher()
@@ -381,10 +309,12 @@ class ImportTask:
             self._haltunggeom()
             #self._wehre()
             self._pumpen()
-        if getattr(QKan.config.xml, "import_haus", True):
+        # if getattr(QKan.config.xml, "import_haus", True):
+        if QKan.config.xml.import_haus:
             self._anschlussleitungen()
             self._anschlussleitunggeom()
-        if getattr(QKan.config.xml, "import_zustand", True):
+        # if getattr(QKan.config.xml, "import_zustand", True):
+        if QKan.config.xml.import_zustand:
             self._schaechte_untersucht()
             self._untersuchdat_schaechte()
             self._haltungen_untersucht()
@@ -392,77 +322,203 @@ class ImportTask:
 
         return True
 
+    def _reftables(self) -> bool:
+        """Referenztabellen mit Datensätzen für DWA-Import füllen"""
+
+        # Hinweis: 'None' bewirkt beim Import eine Zuordnung unabhängig vom Wert
+        daten = [
+            ('Regenwasser', 'R', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
+            ('Schmutzwasser', 'S', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
+            ('Mischwasser', 'M', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
+            ('RW Druckleitung', 'RD', 'Transporthaltung ohne Anschlüsse', 1, 2, None, 'DR', 1, 1),
+            ('SW Druckleitung', 'SD', 'Transporthaltung ohne Anschlüsse', 2, 1, None, 'DS', 1, 1),
+            ('MW Druckleitung', 'MD', 'Transporthaltung ohne Anschlüsse', 0, 0, None, 'DW', 1, 1),
+            ('RW nicht angeschlossen', 'RT', 'Transporthaltung ohne Anschlüsse', 1, 2, None, None, 1, 0),
+            ('MW nicht angeschlossen', 'MT', 'Transporthaltung ohne Anschlüsse', 0, 0, None, None, 1, 0),
+            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, 'Ge', None, 0, None),
+            ('Grund-/Schichtenwasser', 'GS', 'Grund-/Schichtenwasser', None, None, 'Gr', None, 0, None),
+            ('Sonstige', 'SO', 'Sonstige', None, None, 'So', None, 0, None),
+            ('Entlastungshaltung', 'E', 'Entlastungshaltung', None, None, 'E', None, 0, None),
+            ('Drainagewasser', 'DW', 'Drainagewasser', None, None, 'D', None, 0, None),
+            ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, 0, None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
+        sql = """INSERT INTO entwaesserungsarten (
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):
+            return False
+
+        daten = [
+            ('Haltung', None),
+            ('Drossel', 'HYSTEM-EXTRAN 8'),
+            ('H-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Q-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Schieber', 'HYSTEM-EXTRAN 8'),
+            ('GrundSeitenauslass', 'HYSTEM-EXTRAN 8'),
+            ('Pumpe', None),
+            ('Wehr', None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO haltungstypen (bezeichnung, bemerkung)
+                    SELECT ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM haltungstypen)"""
+
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste haltungstypen", daten, many=True):
+            return False
+
+        daten = [
+            ('Kreis', 1, 1, None),
+            ('Rechteck', 2, 3, None),
+            ('Ei (B:H = 2:3)', 3, 5, None),
+            ('Maul (B:H = 2:1,66)', 4, 4, None),
+            ('Halbschale (offen) (B:H = 2:1)', 5, None, None),
+            ('Kreis gestreckt (B:H=2:2.5)', 6, None, None),
+            ('Kreis überhöht (B:H=2:3)', 7, None, None),
+            ('Ei überhöht (B:H=2:3.5)', 8, None, None),
+            ('Ei breit (B:H=2:2.5)', 9, None, None),
+            ('Ei gedrückt (B:H=2:2)', 10, None, None),
+            ('Drachen (B:H=2:2)', 11, None, None),
+            ('Maul (DIN) (B:H=2:1.5)', 12, None, None),
+            ('Maul überhöht (B:H=2:2)', 13, None, None),
+            ('Maul gedrückt (B:H=2:1.25)', 14, None, None),
+            ('Maul gestreckt (B:H=2:1.75)', 15, None, None),
+            ('Maul gestaucht (B:H=2:1)', 16, None, None),
+            ('Haube (B:H=2:2.5)', 17, None, None),
+            ('Parabel (B:H=2:2)', 18, None, None),
+            ('Rechteck mit geneigter Sohle (B:H=2:1)', 19, None, None),
+            ('Rechteck mit geneigter Sohle (B:H=1:1)', 20, None, None),
+            ('Rechteck mit geneigter Sohle (B:H=1:2)', 21, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.2B)', 22, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.2B)', 23, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.2B)', 24, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.4B)', 25, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.4B)', 26, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.4B)', 27, None, None),
+            ('Druckrohrleitung', 50, None, None),
+            ('Sonderprofil', 68, 2, None),
+            ('Gerinne', 69, None, None),
+            ('Trapez (offen)', 900, None, None),
+            ('Doppeltrapez (offen)', 901, None, None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key)
+                    SELECT ?, ?, ?, ?
+                    WHERE ? NOT IN (SELECT profilnam FROM profile)"""
+
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste profile", daten, many=True):
+            return False
+
+        daten = [
+             ('Offline', 1),
+             ('Online Schaltstufen', 2),
+             ('Online Kennlinie', 3),
+             ('Online Wasserstandsdifferenz', 4),
+             ('Ideal', 5),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO pumpentypen (bezeichnung, he_nr)
+                    SELECT ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM pumpentypen)"""
+
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste pumpentypen", daten, many=True):
+            return False
+
+        self.db_qkan.commit()
+        return True
+
     def _init_mappers(self) -> None:
-        def consume(target: Dict[str, str]) -> None:
+        def consume(sql: str, subject: str, target: Dict[str, str]) -> None:
+            if not self.db_qkan.sql(sql, subject):
+                raise Exception(f"Failed to init {subject} mapper")
             for row in self.db_qkan.fetchall():
                 target[row[0]] = row[1]
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM entwaesserungsarten",
-            "xml_import entwaesserungsarten",
-        ):
-            raise Exception("Failed to init ENTWART mapper")
-        consume(self.mapper_entwart)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM pumpentypen", "xml_import pumpentypen"
-        ):
-            raise Exception("Failed to init PUMP mapper")
-        consume(self.mapper_pump)
+        # Entwässerungsarten
+        blocks = self.xml.findall("RT/RT001[.='104']/..")
+        pattern = QKan.config.tools.Clipboard.qkan_patterns.get('entwart')
+        if pattern and blocks:
+            for block in blocks:
+                nr = block.findtext("RT002", None)
+                bez = block.findtext("RT004", None)
+                # Falls einer der beiden Einträge fehlt:
+                if nr is None or bez is None:
+                    continue
+                qkan_bez = None
+                for x in pattern.keys():
+                    for patt in pattern[x]:
+                        if fnmatch(bez, patt):
+                            qkan_bez = x
+                            break
+                    if qkan_bez:
+                        break
+                self.mapper_entwart[nr] = qkan_bez
+        else:
+            self.mapper_entwart = {
+                'M': 'Mischwasser',
+                'S': 'Schmutzwasser',
+                'R': 'Regenwasser',
+                'U': 'Sonstige',
+                'E': 'Entlastungshaltung',
+                'D': 'Drainagewasser',
+                '1': 'Mischwasser',
+                '2': 'Schmutzwasser',
+                '3': 'Regenwasser',
+                '4': 'Rinnen/Gräben',
+                '5': 'Grund-/Schichtenwasser',
+                '99': 'Sonstige'
+            }
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, profilnam FROM profile", "xml_import profile"
-        ):
-            raise Exception("Failed to init PROFILE mapper")
-        consume(self.mapper_profile)
+        sql = "SELECT he_nr, bezeichnung FROM pumpentypen"
+        subject = "xml_import pumpentypen"
+        consume(sql, subject, self.mapper_pump)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM auslasstypen", "xml_import auslasstypen"
-        ):
-            raise Exception("Failed to init OUTLET mapper")
-        consume(self.mapper_outlet)
+        sql = "SELECT he_nr, profilnam FROM profile"
+        subject = "xml_import profile"
+        consume(sql, subject, self.mapper_profile)
 
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM simulationsstatus",
-            "xml_import simulationsstatus",
-        ):
-            raise Exception("Failed to init SIMSTATUS mapper")
-        consume(self.mapper_simstatus)
+        # Profilarten nicht über Referenztabelle
+        self.mapper_profile = {
+            'DN': 'Kreis',                          # DWA-M 145/150, April 2010
+            'EI': 'Ei (B:H = 2:3)',                 # DWA-M 145/150, April 2010
+            'MA': 'Maul (B:H = 2:1,66)',            # DWA-M 145/150, April 2010
+            'RE': 'Rechteck',                       # DWA-M 145/150, April 2010
+        }
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM untersuchrichtung",
-            "xml_import untersuchrichtung",
-        ):
-            raise Exception("Failed to init untersuchrichtung mapper")
-        consume(self.mapper_untersuchrichtung)
+        # sql = "SELECT he_nr, bezeichnung FROM auslasstypen"
+        # subject = "xml_import auslasstypen"
+        # consume(sql, subject, self.mapper_outlet)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM wetter",
-            "xml_import wetter",
-        ):
-            raise Exception("Failed to init wetter mapper")
-        consume(self.mapper_wetter)
+        sql = "SELECT he_nr, bezeichnung FROM simulationsstatus"
+        subject = "xml_import simulationsstatus"
+        consume(sql, subject, self.mapper_simstatus)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM bewertungsart",
-            "xml_import bewertungsart",
-        ):
-            raise Exception("Failed to init bewertungsart mapper")
-        consume(self.mapper_bewertungsart)
+        sql = "SELECT kuerzel, bezeichnung FROM untersuchrichtung"
+        subject = "xml_import untersuchrichtung"
+        consume(sql, subject, self.mapper_untersuchrichtung)
 
-        if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM druckdicht",
-            "xml_import druckdicht",
-        ):
-            raise Exception("Failed to init druckdicht mapper")
-        consume(self.mapper_druckdicht)
+        sql = "SELECT kuerzel, bezeichnung FROM wetter"
+        subject = "xml_import wetter"
+        consume(sql, subject, self.mapper_wetter)
+
+        sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
+        subject = "xml_import bewertungsart"
+        consume(sql, subject, self.mapper_bewertungsart)
+
+        sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
+        subject = "xml_import druckdicht"
+        consume(sql, subject, self.mapper_druckdicht)
 
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall(
-                "KG"                                           # old: KG[KG305='S']
-            )
+            blocks = self.xml.findall("KG")                                           # old: KG[KG305='S']
 
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
 
@@ -470,38 +526,31 @@ class ImportTask:
                 #name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
 
                 name = block.findtext("KG001", "not found")
-                knoten_typ = 0
 
                 knoten_typ = block.findtext("KG305", "-1")
-                if knoten_typ not in ("0", "S", "-1"):
+                if knoten_typ not in ("0", "S", "-1", ""):
                     continue
 
-                smp = block.find("GO[GO002='G']/GP")
+                smp = block.find("GO[GO002='B']/GP")
+                if smp is None:
+                    smp = block.find("GO[GO002='G']/GP")
 
-                if not smp:
-                    fehlermeldung(
-                        "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP[G=002=\'G\']" für Schacht {name}',
-                    )
-                    xsch, ysch, sohlhoehe = (0.0,) * 3
-                else:
-                    xsch = _strip_float(smp.findtext("GP003", 0.0))
-                    if xsch == 0.0:
-                        xsch = _strip_float(smp.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    ysch = _strip_float(smp.findtext("GP004", 0.0))
-                    if ysch == 0.0:
-                        ysch = _strip_float(smp.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+                wert = smp.findtext("GP003")
+                if wert is None:
+                    wert = smp.findtext("GP005")
+                xsch = _strip_float(wert)
+
+                wert = smp.findtext("GP004")
+                if wert is None:
+                    wert = smp.findtext("GP006")
+                ysch = _strip_float(wert)
+
+                sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 smpD = block.find("GO[GO002='D']/GP")
 
-                if smpD == None:
+                if smpD is None:
                     deckelhoehe = 0.0
-
                 else:
                     deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
 
@@ -516,7 +565,7 @@ class ImportTask:
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
                     knotentyp=knoten_typ,
-                    simstatus=block.findtext("KG407", "not found"),
+                    simstatus=_strip_int(block.findtext("KG407", "not found")),
                     kommentar=block.findtext("KG999", "-"),
                     druckdicht=block.findtext("KG315", 0)
                 )
@@ -524,29 +573,14 @@ class ImportTask:
 
         for schacht in _iter():
             # Entwässerungsarten
-            bez = 'NULL'
             if schacht.entwart in self.mapper_entwart:
                 entwart = self.mapper_entwart[schacht.entwart]
             else:
-                entwaesserung = {'Mischwasser': ['Mi*'],
-                                 'Regenwasser': ['Re*'],
-                                 'Schmutzwasser': ['Sc*']}
-                for x in entwaesserung.keys():
-                    for patt in entwaesserung[x]:
-                        if fnmatch(schacht.entwart, patt):
-                            key = [i for i, x in entwaesserung.items() if str(patt) in x][0]
-                            bez = key
-
-                sql = """
-                               INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
-                               VALUES ('{e}', '{f}')
-                               """.format(
-                    e=schacht.entwart, f=bez
-                )
-                self.mapper_entwart[schacht.entwart] = schacht.entwart
                 entwart = schacht.entwart
-
-                if not self.db_qkan.sql(sql, "xml_import Schächte [1]"):
+                sql = "INSERT INTO entwaesserungsarten (bezeichnung, kuerzel, bemerkung)" \
+                      "VALUES (?, ?, ?)"
+                params = (entwart, entwart, 'unbekannt')
+                if not self.db_qkan.sql(sql, "nicht zugeordnete Entwässerungsarten", params):
                     return None
 
             if schacht.druckdicht in self.mapper_druckdicht:
@@ -609,7 +643,7 @@ class ImportTask:
 
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe, 'knotentyp': schacht.knotentyp,
-                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart, 'strasse': schacht.strasse,
+                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart, 'strasse': schacht.strasse,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': 'Schacht', 'epsg': QKan.config.epsg}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
@@ -628,36 +662,31 @@ class ImportTask:
     def _schaechte_untersucht(self) -> None:
         def _iter() -> Iterator[Schacht_untersucht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall(
-                "KG/KI/.."
-            )
+            blocks = self.xml.findall("KG/KI/..")
 
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
 
             for block in blocks:
                 name = block.findtext("KG001", "not found")
                 strasse = block.findtext("KG102", "not found"),
-                smp = block.find(
-                    "GO/GP"
-                )
 
-                if not smp:
+                smp = block.find("GO/GP")
+                if smp is None:
                     fehlermeldung(
-                        "Fehler beim XML-Import: Schächte",
+                        "Fehler beim XML-Import: Schächte untersucht",
                         f'Keine Geometrie "SMP" für Schacht {name}',
                     )
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
-                    xsch = _strip_float(smp.findtext("GP003", 0.0))
-                    if xsch == 0.0:
-                        xsch = _strip_float(smp.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    ysch = _strip_float(smp.findtext("GP004", 0.0))
-                    if ysch == 0.0:
-                        ysch = _strip_float(smp.findtext("GP006", 0.0))
-                    else:
-                        pass
+                    wert = smp.findtext("GP003")
+                    if wert is None:
+                        wert = smp.findtext("GP005")
+                    xsch = _strip_float(wert)
+
+                    wert = smp.findtext("GP004")
+                    if wert is None:
+                        wert = smp.findtext("GP006")
+                    ysch = _strip_float(wert)
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 yield Schacht_untersucht(
@@ -841,7 +870,7 @@ class ImportTask:
 
                     #id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
                     inspektionslaenge = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
-                    videozaehler = _strip_int(_untersuchdat_schacht.findtext("KZ008", 0))
+                    videozaehler = _untersuchdat_schacht.findtext("KZ008")
                     #timecode = _strip_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
                     kuerzel = _untersuchdat_schacht.findtext("KZ002", "not found")
                     charakt1 = _untersuchdat_schacht.findtext("KZ014", "not found")
@@ -947,9 +976,7 @@ class ImportTask:
     def _auslaesse(self) -> None:
         def _iter() -> Iterator[Schacht]:
             # .//Auslaufbauwerk/../../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall(
-                "KG[KG305='A']"
-            )
+            blocks = self.xml.findall("KG[KG305='A']")
 
             logger.debug(f"Anzahl Ausläufe: {len(blocks)}")
 
@@ -963,7 +990,7 @@ class ImportTask:
 
                 smp = block.find("GO[GO002='G']/GP")
 
-                if not smp:
+                if smp is None:
                     fehlermeldung(
                         "Fehler beim XML-Import: Schächte",
                         f'Keine Geometrie "SMP[G=002=\'G\']" für Schacht {name}',
@@ -1001,7 +1028,7 @@ class ImportTask:
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
                     knotentyp=knoten_typ,
-                    simstatus=block.findtext("KG407", "not found"),
+                    simstatus=_strip_int(block.findtext("KG407", "not found")),
                     kommentar=block.findtext("KG999", "-")
                 )
 
@@ -1167,9 +1194,7 @@ class ImportTask:
 
     def _haltungen(self) -> None:
         def _iter() -> Iterator[Haltung]:
-            blocks = self.xml.findall(
-                "HG"
-            )
+            blocks = self.xml.findall("HG")
 
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
@@ -1190,8 +1215,8 @@ class ImportTask:
                     #continue
                 else:
 
-                    name = block.findtext("HG001", "not found")
-                    if name == "not found":
+                    name = block.findtext("HG001")
+                    if name is None:
                         name = block.findtext("HG002", "not found")
 
                     schoben = block.findtext("HG003", "not found")
@@ -1200,7 +1225,6 @@ class ImportTask:
                     laenge = _strip_float(block.findtext("HG310", 0.0))
 
                     material = block.findtext("HG304", "not found")
-
 
                     profilnam = block.findtext("HG305", "not found")
                     hoehe = (
@@ -1232,29 +1256,31 @@ class ImportTask:
                         #     )
 
                     if block.findall("GO[GO002='H']") is not None:
-                        for _gp in block.findall("GO[GO002='H']/GP[1]"):
+                        _gp = block.find("GO[GO002='H']/GP[1]")
 
-                            xschob = _strip_float(_gp.findtext("GP003", 0.0))
-                            if xschob == 0.0:
-                                xschob = _strip_float(_gp.findtext("GP005", 0.0))
-                            yschob = _strip_float(_gp.findtext("GP004", 0.0))
-                            if yschob == 0.0:
-                                yschob = _strip_float(_gp.findtext("GP006", 0.0))
-                            sohleoben = _strip_float(
-                                _gp.findtext("GP007", 0.0)
-                            )
+                        wert = _gp.findtext("GP003")
+                        if wert is None:
+                            wert = _gp.findtext("GP005")
+                        xschob = _strip_float(wert)
 
-                        for _gp in block.findall("GO[GO002='H']/GP[last()]"):
+                        wert = _gp.findtext("GP004")
+                        if wert is None:
+                            wert = _gp.findtext("GP006")
+                        yschob = _strip_float(wert)
+                        sohleoben = _strip_float(_gp.findtext("GP007", 0.0))
 
-                            xschun = _strip_float(_gp.findtext("GP003", 0.0))
-                            if xschun == 0.0:
-                                xschun = _strip_float(_gp.findtext("GP005", 0.0))
-                            yschun = _strip_float(_gp.findtext("GP004", 0.0))
-                            if yschun == 0.0:
-                                yschun = _strip_float(_gp.findtext("GP006", 0.0))
-                            sohleunten = _strip_float(
-                                _gp.findtext("GP007", 0.0)
-                            )
+                        _gp = block.find("GO[GO002='H']/GP[last()]")
+
+                        wert = _gp.findtext("GP003")
+                        if wert is None:
+                            wert = _gp.findtext("GP005")
+                        xschun = _strip_float(wert)
+
+                        wert = _gp.findtext("GP004")
+                        if wert is None:
+                            wert = _gp.findtext("GP006")
+                        yschun = _strip_float(wert)
+                        sohleunten = _strip_float(_gp.findtext("GP007", 0.0))
 
 
                 yield Haltung(
@@ -1271,7 +1297,7 @@ class ImportTask:
                     entwart=block.findtext("HG302", "not found"),
                     strasse=block.findtext("HG102", "not found"),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus= block.findtext("HG407", 0),
+                    simstatus=_strip_int(block.findtext("HG407", 0)),
                     kommentar=block.findtext("HG999", "-"),
                     xschob=xschob,
                     yschob=yschob,
@@ -1353,10 +1379,10 @@ class ImportTask:
                             bez = key
 
                 sql = """
-                                                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
-                                                VALUES ('{e}', '{f}')
-                                                """.format(
-                    e=haltung.entwart, f=bez
+                               INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
+                               VALUES ('{e}', '{f}')
+                               """.format(
+                    e=bez, f=haltung.entwart
                 )
 
                 self.mapper_entwart[haltung.entwart] = haltung.entwart
@@ -1511,9 +1537,7 @@ class ImportTask:
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
-            blocks = self.xml.findall(
-                "HG"
-            )
+            blocks = self.xml.findall("HG")
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
 
@@ -1527,16 +1551,15 @@ class ImportTask:
                 deckeloben,
                 deckelunten,
             ) = (0.0,) * 7
+
             for block in blocks:
                 name = block.findtext("HG001", "not found")
                 baujahr = _strip_int(block.findtext("HG303", 0))
-
 
                 schoben = block.findtext("HG003", "not found")
                 schunten = block.findtext("HG004", "not found")
 
                 laenge = _strip_float(block.findtext("HG314", 0.0))
-
 
                 hoehe = (
                     _strip_float(block.findtext("HG307", 0.0))
@@ -1547,39 +1570,29 @@ class ImportTask:
                     / 1000
                 )
 
-                for _haltung in block.findall(
-                        "GO/GP[1]"
-                ):
-                    xschob = _strip_float(_haltung.findtext("GP003", 0.0))
-                    if xschob == 0.0:
-                        xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    yschob = _strip_float(_haltung.findtext("GP004", 0.0))
-                    if yschob == 0.0:
-                        yschob = _strip_float(_haltung.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    deckeloben = _strip_float(
-                        _haltung.findtext("GP007", 0.0)
-                    )
+                _gp = block.find("GO/GP[1]")
+                wert = _gp.findtext("GP003")
+                if wert is None:
+                    wert = _gp.findtext("GP005")
+                xschob = _strip_float(wert)
 
-                for _haltung in block.findall(
-                        "GO/GP[2]"
-                ):
-                    xschun = _strip_float(_haltung.findtext("GP003", 0.0))
-                    if xschun == 0.0:
-                        xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    yschun = _strip_float(_haltung.findtext("GP004", 0.0))
-                    if yschun == 0.0:
-                        yschun = _strip_float(_haltung.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    deckelunten = _strip_float(
-                        _haltung.findtext("GP007", 0.0)
-                    )
+                wert = _gp.findtext("GP004")
+                if wert is None:
+                    wert = _gp.findtext("GP006")
+                yschob = _strip_float(wert)
+                deckeloben = _strip_float(_gp.findtext("GP007", 0.0))
+
+                _gp = block.find("GO/GP[2]")
+                wert = _gp.findtext("GP003")
+                if wert is None:
+                    wert = _gp.findtext("GP005")
+                xschun = _strip_float(wert)
+
+                wert = _gp.findtext("GP004")
+                if wert is None:
+                    wert = _gp.findtext("GP006")
+                yschun = _strip_float(wert)
+                deckelunten = _strip_float(_gp.findtext("GP007", 0.0))
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1841,7 +1854,7 @@ class ImportTask:
                 for _untersuchdat in block.findall("HI/HZ"):
 
                     #id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
-                    videozaehler = _untersuchdat.findtext("HZ008", "0")
+                    videozaehler = _untersuchdat.findtext("HZ008")
                     station = _strip_float(_untersuchdat.findtext("HZ001", 0.0))
                     #timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
                     kuerzel = _untersuchdat.findtext("HZ002", "not found")
@@ -2052,29 +2065,31 @@ class ImportTask:
 
                 if block.findall("GO[GO002='L']") is not None:
 
-                    for _gp in block.findall("GO[GO002='L']/GP[1]"):
+                    _gp = block.find("GO[GO002='L']/GP[1]")
 
-                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xschob == 0.0:
-                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
-                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
-                        if yschob == 0.0:
-                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
-                        sohleoben = _strip_float(
-                            _gp.findtext("GP007", 0.0)
-                        )
+                    wert = _gp.findtext("GP003")
+                    if wert is None:
+                        wert = _gp.findtext("GP005")
+                    xschob = _strip_float(wert)
 
-                    for _gp in block.findall("GO[GO002='L']/GP[last()]"):
+                    wert = _gp.findtext("GP004")
+                    if wert is None:
+                        wert = _gp.findtext("GP006")
+                    yschob = _strip_float(wert)
+                    sohleoben = _strip_float(_gp.findtext("GP007", 0.0))
 
-                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xschun == 0.0:
-                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
-                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
-                        if yschun == 0.0:
-                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
-                        sohleunten = _strip_float(
-                            _gp.findtext("GP007", 0.0)
-                        )
+                    _gp = block.find("GO[GO002='L']/GP[last()]")
+
+                    wert = _gp.findtext("GP003")
+                    if wert is None:
+                        wert = _gp.findtext("GP005")
+                    xschun = _strip_float(wert)
+
+                    wert = _gp.findtext("GP004")
+                    if wert is None:
+                        wert = _gp.findtext("GP006")
+                    yschun = _strip_float(wert)
+                    sohleunten = _strip_float(_gp.findtext("GP007", 0.0))
 
                 yield Anschlussleitung(
                     leitnam=name,
@@ -2091,7 +2106,7 @@ class ImportTask:
                     profilnam=profilnam,
                     entwart=block.findtext("HG302", "not found"),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=block.findtext("HG407", 0),
+                    simstatus=_strip_int(block.findtext("HG407", 0)),
                     kommentar=block.findtext("HG999", "-"),
                     xschob=xschob,
                     yschob=yschob,
@@ -2377,9 +2392,10 @@ class ImportTask:
 
         def _iter2() -> Iterator[Pumpe]:
             # Hydraulik
-            blocks = self.xml.findall(
-                "KG[KG306='ZPW']"
-            )
+            blocks = self.xml.findall("KG[KG306='ZPW']") + \
+                     self.xml.findall("KG[KG306='RSPW']") + \
+                     self.xml.findall("KG[KG306='5']") + \
+                     self.xml.findall("KG[KG306='9']")
             logger.debug(f"Anzahl Pumpen: {len(blocks)}")
 
             pnam=""
@@ -2405,27 +2421,24 @@ class ImportTask:
 
                 knoten_typ = block.findtext("KG305", -1)
 
-                smp = block.find(
-                    "GO/GP"
-                )
+                smp = block.find("GO/GP")
 
-                if not smp:
+                if smp is None:
                     fehlermeldung(
-                        "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP" für Schacht {pnam}',
+                        "Fehler beim XML-Import: Pumpen",
+                        f'Keine Geometrie "SMP" für Pumpe {pnam}',
                     )
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
-                    xsch = _strip_float(smp.findtext("GP003", 0.0))
-                    if xsch == 0.0:
-                        xsch = _strip_float(smp.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    ysch = _strip_float(smp.findtext("GP004", 0.0))
-                    if ysch == 0.0:
-                        ysch = _strip_float(smp.findtext("GP006", 0.0))
-                    else:
-                        pass
+                    wert = smp.findtext("GP003")
+                    if wert is None:
+                        wert = smp.findtext("GP005", 0.0)
+                    xsch = _strip_float(wert)
+
+                    wert = smp.findtext("GP004")
+                    if wert is None:
+                        wert = smp.findtext("GP006", 0.0)
+                    ysch = _strip_float(wert)
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 yield Pumpe(

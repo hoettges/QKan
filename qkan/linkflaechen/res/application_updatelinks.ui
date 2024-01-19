@@ -248,7 +248,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Einzeleinleitern-Verknüpfungen bereinigen</string>
+     <string>Einzeleinleiter-Verknüpfungen bereinigen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_deleteGeomNone">

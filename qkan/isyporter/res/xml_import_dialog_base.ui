@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Import aus DWA-XML</string>
+   <string>Import aus ISYBAU-XML</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -126,7 +126,7 @@
            </font>
           </property>
           <property name="text">
-           <string>DWA-XML-Datei (*.xml):</string>
+           <string>ISYBAU-XML-Datei (*.xml):</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -236,6 +236,12 @@
             <width>421</width>
             <height>22</height>
            </rect>
+          </property>
+          <property name="currentText">
+           <string>ISYBAU Daten</string>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
           </property>
           <item>
            <property name="text">

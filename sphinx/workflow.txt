@@ -1,0 +1,15 @@
+Änderungen von Riki mit Total Commander synchronisieren:
+c:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\source <-> "c:\FHAC\hoettges\HiWis\Kimmich, Friederike\QKan_Doku\Sphinx\source\"
+
+Übersetzen: Tastaturkürzel "Alt"+s oder Ausführen von "C:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\erzeuge doku.bat"
+
+html auf github-Ordner übertragen:
+
+Synchronisieren: 
+C:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\build\html <-> C:\FHAC\hoettges\Kanalprogramme\QKan\doku\qkaneu.github.io
+
+Synchronisation mit GITHUB, wobei alle Verzeichnisse unter "git" ignoriert werden müssen sowei die beiden nachfolgenden Dateien CNAME und _config.yml ignoriert werden müssen.
+Diese müssen im Verzeichnis stehen:
+CNAME: qkan.eu
+_config.yml: theme: jekyll-theme-minimal
+

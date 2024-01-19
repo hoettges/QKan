@@ -204,7 +204,7 @@ class ExportTask:
             strasse = SubElement(abw, "Lage")
             SubElementText(strasse, "Strassenname", attr[10])
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp", attr[12])  # TODO: Is None sometimes
+            SubElementText(knoten, "KnotenTyp", attr[11])  # TODO: Is None sometimes
             _create_children(
                 SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
             )
