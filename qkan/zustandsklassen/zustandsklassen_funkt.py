@@ -152,7 +152,7 @@ class Zustandsklassen_funkt:
                     haltungen.hoehe,
                     haltungen.createdat
                 FROM untersuchdat_haltung_bewertung, haltungen
-                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ?
             """
             data = (date, )
 
@@ -187,7 +187,7 @@ class Zustandsklassen_funkt:
                         anschlussleitungen.hoehe,
                         anschlussleitungen.createdat
                     FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
                 """
             data = (date,)
 
@@ -1301,7 +1301,7 @@ class Zustandsklassen_funkt:
                 Untersuchdat_schacht_bewertung.foto_dateiname,
                 Untersuchdat_schacht_bewertung.createdat
             FROM Untersuchdat_schacht_bewertung
-            WHERE substr(Untersuchdat_schacht_bewertung.createdat, 0, 17) = ? 
+            WHERE Untersuchdat_schacht_bewertung.createdat like ? 
         """
         data = (date,)
 
@@ -2399,7 +2399,7 @@ class Zustandsklassen_funkt:
                             haltungen.hoehe,
                             haltungen.createdat
                         FROM untersuchdat_haltung_bewertung, haltungen
-                        WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                        WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
                     """
             data = (date,)
 
@@ -2436,7 +2436,7 @@ class Zustandsklassen_funkt:
                             anschlussleitungen.hoehe,
                             anschlussleitungen.createdat
                         FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                        WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                        WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
                     """
             data = (date, )
 
@@ -2597,7 +2597,7 @@ class Zustandsklassen_funkt:
                         Untersuchdat_schacht_bewertung.bw_bs,
                         Untersuchdat_schacht_bewertung.createdat
                     FROM Untersuchdat_schacht_bewertung  
-                    WHERE substr(Untersuchdat_schacht_bewertung.createdat , 0, 17) = ? 
+                    WHERE Untersuchdat_schacht_bewertung.createdat like ? 
                 """
         data = (date,)
         curs.execute(sql, data)
@@ -2731,7 +2731,7 @@ class Zustandsklassen_funkt:
 
 
     def bewertung_dwa_haltung(self):
-        date = self.date
+        date = self.date+'%'
         db_x = self.db
         crs = self.crs
         leitung = self.leitung
@@ -2852,7 +2852,7 @@ class Zustandsklassen_funkt:
                     haltungen.hoehe,
                     haltungen.createdat
                 FROM untersuchdat_haltung_bewertung, haltungen
-                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat , 0, 17) = ? 
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
             """
             data = (date, )
 
@@ -2889,7 +2889,7 @@ class Zustandsklassen_funkt:
                     anschlussleitungen.hoehe,
                     anschlussleitungen.createdat
                 FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat , 0, 17) = ? 
+                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat , 0, 15 like ? 
             """
             data = (date, )
 
@@ -3051,7 +3051,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] == "":
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] in ["", "not found"]:
                 if attr[13] >= 8:
                     z = '0'
                 elif 8 > attr[13] >= 5:
@@ -5236,12 +5236,50 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
+            #if für alle übrigen sachen Haltungsanfang ende usw.
+            if attr[10] in ["BCD", "BDD", "BCE", "BDC", "BCA", "BCB", "BCC", "BDA", "BDF", "BDG", "BDB", "AEC", "AED"]:
+                z = '-'
+                sql = f"""
+                               UPDATE untersuchdat_haltung_bewertung
+                               SET Zustandsklasse_D = ?
+                               WHERE untersuchdat_haltung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE untersuchdat_haltung_bewertung
+                               SET Zustandsklasse_B = ?
+                               WHERE untersuchdat_haltung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE untersuchdat_haltung_bewertung
+                               SET Zustandsklasse_S = ?
+                               WHERE untersuchdat_haltung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
             try:
                 db.commit()
             except:
                 pass
 
-            z = '-'
+            z = 'Bitte pruefen!'
             sql = f"""
                 UPDATE untersuchdat_haltung_bewertung
                 SET Zustandsklasse_D = ?
@@ -5317,7 +5355,7 @@ class Zustandsklassen_funkt:
 
 
         sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        curs1.execute(sql)
+        curs.execute(sql)
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_dichtheit INTEGER ;""")
         except:
@@ -5492,7 +5530,7 @@ class Zustandsklassen_funkt:
 
 
     def bewertung_dwa_schacht(self):
-        date = self.date
+        date = self.date+'%'
         db = self.db
         crs = self.crs
         db_x = db
@@ -5585,7 +5623,7 @@ class Zustandsklassen_funkt:
                 Untersuchdat_schacht_bewertung.bw_bs,
                 Untersuchdat_schacht_bewertung.createdat
             FROM Untersuchdat_schacht_bewertung  
-            WHERE substr(Untersuchdat_schacht_bewertung.createdat, 0, 17) = ?  
+            WHERE Untersuchdat_schacht_bewertung.createdat like ?  
         """
         data = (date,)
         curs.execute(sql, data)
@@ -6505,7 +6543,7 @@ class Zustandsklassen_funkt:
                     data = (z, attr[0])
                     try:
                         curs.execute(sql, data)
-                        #db.commit()
+                        # db.commit()
                         continue
                     except:
                         pass
@@ -6660,7 +6698,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-            if attr[5] == "DAG" and attr[6] == "" and attr[7] == "":
+            if attr[5] == "DAG" and attr[6] in ["", "not found"] and attr[7] in ["", "not found"]:
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
                     if attr[8] >= 400:
                         z = '0'
@@ -6701,7 +6739,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[5] == "DAH":
-                if (attr[6] == "B" or attr[6] == "C" or attr[6] == "D") and attr[7] == "":
+                if (attr[6] == "B" or attr[6] == "C" or attr[6] == "D") and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
                         z = '3'
                         sql = f"""
@@ -6730,7 +6768,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-                if attr[6] == "E" and attr[7] == "":
+                if attr[6] == "E" and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "I"):
                         z = 'Einzelfallbetrachtung'
                         sql = f"""
@@ -6745,7 +6783,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-                if attr[6] == "Z" and attr[7] == "":
+                if attr[6] == "Z" and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "I" or
                             attr[13] == "J"):
                         z = 'Einzelfallbetrachtung'
@@ -8485,12 +8523,50 @@ class Zustandsklassen_funkt:
                     except:
                         pass
 
+            # if für alle übrigen sachen Haltungsanfang ende usw.
+            if attr[5] in ["CED", "DCA", "DCB", "DCG", "DCK", "DCO", "DDA", "DDB", "DDC", "DDD", "DDF", "DDG"]:
+                z = '-'
+                sql = f"""
+                               UPDATE Untersuchdat_schacht_bewertung
+                               SET Zustandsklasse_D = ?
+                               WHERE Untersuchdat_schacht_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE Untersuchdat_schacht_bewertung
+                               SET Zustandsklasse_B = ?
+                               WHERE Untersuchdat_schacht_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE Untersuchdat_schacht_bewertung
+                               SET Zustandsklasse_S = ?
+                               WHERE Untersuchdat_schacht_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
             try:
                 db.commit()
             except:
                 pass
 
-            z = '-'
+            z = 'Bitte prüfen!'
             sql = f"""
                 UPDATE Untersuchdat_schacht_bewertung
                 SET Zustandsklasse_D = ?
@@ -8567,7 +8643,7 @@ class Zustandsklassen_funkt:
 
 
         sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        curs1.execute(sql)
+        curs.execute(sql)
         #db.commit()
 
         try:
@@ -8745,7 +8821,7 @@ class Zustandsklassen_funkt:
 
 
     def bewertung_isy_haltung(self):
-        date = self.date
+        date = self.date+'%'
         db = self.db
         db_x = db
         data = db
@@ -8864,7 +8940,7 @@ class Zustandsklassen_funkt:
                     haltungen.hoehe,
                     haltungen.createdat
                 FROM untersuchdat_haltung_bewertung, Haltungen
-                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ?
             """
             data = (date, )
             curs.execute(sql, data)
@@ -8900,7 +8976,7 @@ class Zustandsklassen_funkt:
                     anschlussleitungen.hoehe,
                     anschlussleitungen.createdat
                 FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
             """
             data = (date, )
             curs.execute(sql, data)
@@ -10954,13 +11030,50 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
+            # if für alle übrigen sachen Haltungsanfang ende usw.
+            if attr[10] in ["BCD", "BDD", "BCE", "BDC", "BCA", "BCB", "BCC", "BDA", "BDF", "BDG", "BDB", "AEC", "AED"]:
+                z = '-'
+                sql = f"""
+                                   UPDATE untersuchdat_haltung_bewertung
+                                   SET Zustandsklasse_D = ?
+                                   WHERE untersuchdat_haltung_bewertung.pk = ?;
+                                   """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                   UPDATE untersuchdat_haltung_bewertung
+                                   SET Zustandsklasse_B = ?
+                                   WHERE untersuchdat_haltung_bewertung.pk = ?;
+                                   """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                   UPDATE untersuchdat_haltung_bewertung
+                                   SET Zustandsklasse_S = ?
+                                   WHERE untersuchdat_haltung_bewertung.pk = ?;
+                                   """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
             try:
-                curs.execute(sql, data)
                 db.commit()
             except:
                 pass
 
-            z = '-'
+            z = 'Bitte pruefen!'
             sql = f"""
                     UPDATE untersuchdat_haltung_bewertung
                     SET Schadensklasse_D = ?
@@ -11184,7 +11297,7 @@ class Zustandsklassen_funkt:
         QgsProject.instance().addMapLayer(vlayer)
 
     def bewertung_isy_schacht(self):
-        date = self.date
+        date = self.date+'%'
         db = self.db
         db_x = db
         crs = self.crs
@@ -11276,7 +11389,7 @@ class Zustandsklassen_funkt:
                 Untersuchdat_schacht_bewertung.bw_bs,
                 Untersuchdat_schacht_bewertung.createdat
             FROM Untersuchdat_schacht_bewertung
-            WHERE substr(Untersuchdat_schacht_bewertung.createdat, 0, 17) = ? 
+            WHERE Untersuchdat_schacht_bewertung.createdat like ? 
         """
         data = (date,)
 
@@ -12193,7 +12306,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     continue
-            if attr[5] == "DAG" and attr[6] == "" and attr[7] == "":
+            if attr[5] == "DAG" and attr[6] in ["", "not found"] and attr[7] in ["", "not found"]:
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
                     if attr[8] >= 400:
                         z = '5'
@@ -12234,7 +12347,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[5] == "DAH":
-                if (attr[6] == "B" or attr[6] == "C" or attr[6] == "D") and attr[7] == "":
+                if (attr[6] == "B" or attr[6] == "C" or attr[6] == "D") and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
                         z = '2'
                         sql = f"""
@@ -12263,7 +12376,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-                if attr[6] == "Z" and attr[7] == "":
+                if attr[6] == "Z" and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
                         z = '2'
@@ -12309,7 +12422,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-                if attr[6] == "Z" and attr[7] == "":
+                if attr[6] == "Z" and attr[7] in ["", "not found"]:
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
                         z = '1'
                         sql = f"""
@@ -13158,6 +13271,7 @@ class Zustandsklassen_funkt:
                         continue
                     except:
                         pass
+                continue
             if attr[5] == "DAO":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
                     z = '3'
@@ -13418,6 +13532,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
+                    continue
             if attr[5] == "DBB":
                 if (attr[6] == "A" or attr[6] == "B" or attr[6] == "C" or attr[6] == "Z") and (
                         attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
@@ -13918,13 +14033,52 @@ class Zustandsklassen_funkt:
                         continue
                     except:
                         pass
+
+            # if für alle übrigen sachen Haltungsanfang ende usw.
+            if attr[5] in ["CED", "DCA", "DCB", "DCG", "DCK", "DCO", "DDA", "DDB", "DDC", "DDD", "DDF",
+                            "DDG"]:
+                z = '-'
+                sql = f"""
+                               UPDATE untersuchdat_haltung_bewertung
+                               SET Zustandsklasse_D = ?
+                               WHERE untersuchdat_haltung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE untersuchdat_haltung_bewertung
+                               SET Zustandsklasse_B = ?
+                               WHERE untersuchdat_haltung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE untersuchdat_haltung_bewertung
+                               SET Zustandsklasse_S = ?
+                               WHERE untersuchdat_haltung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
             try:
-                curs.execute(sql, data)
                 db.commit()
             except:
                 pass
 
-            z = '-'
+            z = 'Bitte prüfen!'
             sql = f"""
                 UPDATE Untersuchdat_schacht_bewertung
                 SET Schadensklasse_D = ?
@@ -14083,7 +14237,7 @@ class Zustandsklassen_funkt:
         QgsProject.instance().addMapLayer(vlayer)
 
         sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        curs1.execute(sql)
+        curs.execute(sql)
 
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Entwaesserungssystem TEXT ;""")
@@ -14143,7 +14297,7 @@ class Zustandsklassen_funkt:
 
     def einzelfallbetrachtung_haltung(self):
 
-        date = self.date
+        date = self.date+'%'
         db = self.db
         db_x = db
         data = db
@@ -14200,7 +14354,7 @@ class Zustandsklassen_funkt:
                         OR
                         untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
                         OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? """
+                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
             data = (date,)
             curs.execute(sql, data)
 
@@ -14244,7 +14398,7 @@ class Zustandsklassen_funkt:
                         OR
                         untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
                         OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? """
+                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
             data = (date,)
             curs.execute(sql, data)
 
@@ -14254,13 +14408,13 @@ class Zustandsklassen_funkt:
             if (attr[21] == "biegessteif" and attr[10] == "BAA" and (attr[11] == "A")) or (
                     attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "B"):
                 if attr[13] < 6:
-                    z = '3'
+                    z = '3_isy'
                 elif 6 <= attr[13] < 15:
-                    z = '4'
+                    z = '4_isy'
                 elif attr[13] >= 15:
-                    z = '5'
+                    z = '5_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14273,17 +14427,17 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 40 <= attr[13] < 50:
-                    z = '4'
+                    z = '4_isy'
                 elif 25 <= attr[13] < 40:
-                    z = '3'
+                    z = '3_isy'
                 elif 10 <= attr[13] < 25:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14299,17 +14453,17 @@ class Zustandsklassen_funkt:
             if (attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "A") or (
                     attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "B"):
                 if attr[13] >= 15:
-                    z = '5'
+                    z = '5_isy'
                 elif 10 <= attr[13] < 15:
-                    z = '4'
+                    z = '4_isy'
                 elif 6 <= attr[13] < 10:
-                    z = '3'
+                    z = '3_isy'
                 elif 2 <= attr[13] < 6:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 2:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14323,17 +14477,17 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 40 <= attr[13] < 50:
-                    z = '4'
+                    z = '4_isy'
                 elif 25 <= attr[13] < 40:
-                    z = '3'
+                    z = '3_isy'
                 elif 10 <= attr[13] < 25:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14352,7 +14506,7 @@ class Zustandsklassen_funkt:
                 if attr[11] == "A" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14379,7 +14533,7 @@ class Zustandsklassen_funkt:
                 if (attr[11] == "B") and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14394,15 +14548,15 @@ class Zustandsklassen_funkt:
                 if (attr[11] == "B" or attr[11] == "C") and (
                         attr[12] == "A" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
                     if attr[13] >= 10:
-                        z = '5'
+                        z = '5_isy'
                     elif 10 > attr[13] >= 5:
-                        z = '4'
+                        z = '4_isy'
                     elif 5 > attr[13] >= 2:
-                        z = '3'
+                        z = '3_isy'
                     elif 2 > attr[13] >= 0.5:
-                        z = '2'
+                        z = '2_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14415,7 +14569,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14431,7 +14585,7 @@ class Zustandsklassen_funkt:
                 if (attr[11] == "C") and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14447,7 +14601,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[10] == "BAC":
                 if attr[11] == "A":
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14460,7 +14614,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[11] == "A" or attr[11] == "B"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14472,7 +14626,7 @@ class Zustandsklassen_funkt:
                         db.commit()
                     except:
                         pass
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14486,7 +14640,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "C":
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14523,7 +14677,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[10] == "BAD":
                 if attr[11] == "A":
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14546,7 +14700,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14560,7 +14714,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "B" and (attr[12] == "A" or attr[12] == "B"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14585,7 +14739,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "C":
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14621,7 +14775,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "D":
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14659,11 +14813,11 @@ class Zustandsklassen_funkt:
 
             if attr[10] == "BAE":
                 if attr[13] >= 100:
-                    z = '3'
+                    z = '3_isy'
                 elif attr[13] < 100:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14676,13 +14830,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 100:
-                    z = '3'
+                    z = '3_isy'
                 elif 100 > attr[13] >= 10:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14700,7 +14854,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14725,7 +14879,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "B" and (attr[12] == "A" or attr[12] == "E" or attr[12] == "Z"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14737,7 +14891,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14754,7 +14908,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14766,7 +14920,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14783,7 +14937,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14795,7 +14949,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14812,7 +14966,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14824,7 +14978,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14841,7 +14995,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14853,7 +15007,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14870,7 +15024,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14882,7 +15036,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14899,7 +15053,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14911,7 +15065,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14928,7 +15082,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -14940,7 +15094,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14952,7 +15106,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14968,7 +15122,7 @@ class Zustandsklassen_funkt:
                 if attr[11] == "J" and (
                         attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[
                     12] == "Z"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -14980,7 +15134,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -14997,7 +15151,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -15014,7 +15168,7 @@ class Zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
                     12] == "E" or
                         attr[12] == "Z"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15051,17 +15205,17 @@ class Zustandsklassen_funkt:
                         pass
             if attr[10] == "BAG":
                 if attr[13] >= 75:
-                    z = '5'
+                    z = '5_isy'
                 elif 75 > attr[13] >= 60:
-                    z = '4'
+                    z = '4_isy'
                 elif 60 > attr[13] >= 40:
-                    z = '3'
+                    z = '3_isy'
                 elif 40 > attr[13] >= 15:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 15:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                     UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -15076,7 +15230,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAH":
                 if (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15090,7 +15244,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "Z":
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15105,7 +15259,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[10] == "BAI":
                 if attr[11] == "A" and attr[12] == "A":
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15117,7 +15271,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -15131,7 +15285,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[11] == "A" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15143,7 +15297,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -15158,17 +15312,17 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "Z":
                     if attr[13] >= 50:
-                        z = '5'
+                        z = '5_isy'
                     elif 50 > attr[13] >= 35:
-                        z = '4'
+                        z = '4_isy'
                     elif 35 > attr[13] >= 20:
-                        z = '3'
+                        z = '3_isy'
                     elif 20 > attr[13] >= 5:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 5:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -15184,17 +15338,17 @@ class Zustandsklassen_funkt:
             if attr[10] == "BAJ" and attr[11] == "A":
                 if attr[25] <= 0.4:
                     if attr[13] >= 70:
-                        z = '5'
+                        z = '5_isy'
                     elif 70 > attr[13] >= 50:
-                        z = '4'
+                        z = '4_isy'
                     elif 50 > attr[13] >= 30:
-                        z = '3'
+                        z = '3_isy'
                     elif 30 > attr[13] >= 20:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 20:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15208,17 +15362,17 @@ class Zustandsklassen_funkt:
                         pass
                 if 0.4 < attr[25] <= 0.8:
                     if attr[13] >= 80:
-                        z = '5'
+                        z = '5_isy'
                     elif 80 > attr[13] >= 60:
-                        z = '4'
+                        z = '4_isy'
                     elif 60 > attr[13] >= 40:
-                        z = '3'
+                        z = '3_isy'
                     elif 40 > attr[13] >= 20:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 20:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15232,17 +15386,17 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[25] > 0.8:
                     if attr[13] >= 90:
-                        z = '5'
+                        z = '5_isy'
                     elif 90 > attr[13] >= 65:
-                        z = '4'
+                        z = '4_isy'
                     elif 65 > attr[13] >= 40:
-                        z = '3'
+                        z = '3_isy'
                     elif 40 > attr[13] >= 20:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 20:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15254,7 +15408,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -15269,17 +15423,17 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAJ" and attr[11] == "B":
                 if attr[13] >= 30:
-                    z = '5'
+                    z = '5_isy'
                 elif 30 > attr[13] >= 20:
-                    z = '4'
+                    z = '4_isy'
                 elif 20 > attr[13] >= 15:
-                    z = '3'
+                    z = '3_isy'
                 elif 15 > attr[13] >= 10:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15291,7 +15445,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15304,11 +15458,11 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] < 10:
-                    z = '1'
+                    z = '1_isy'
                 elif attr[13] >= 10:
-                    z = '2'
+                    z = '2_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15324,17 +15478,17 @@ class Zustandsklassen_funkt:
             if attr[10] == "BAJ" and attr[11] == "C":
                 if attr[25] <= 0.2:
                     if attr[13] >= 12:
-                        z = '5'
+                        z = '5_isy'
                     elif 12 > attr[13] >= 9:
-                        z = '4'
+                        z = '4_isy'
                     elif 9 > attr[13] >= 7:
-                        z = '3'
+                        z = '3_isy'
                     elif 7 > attr[13] >= 5:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 5:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15348,17 +15502,17 @@ class Zustandsklassen_funkt:
                         pass
                 if 0.2 < attr[25] <= 0.5:
                     if attr[13] >= 6:
-                        z = '5'
+                        z = '5_isy'
                     elif 6 > attr[13] >= 4:
-                        z = '4'
+                        z = '4_isy'
                     elif 4 > attr[13] >= 3:
-                        z = '3'
+                        z = '3_isy'
                     elif 3 > attr[13] >= 2:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 2:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15372,17 +15526,17 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[25] > 0.5:
                     if attr[13] >= 6:
-                        z = '5'
+                        z = '5_isy'
                     elif 6 > attr[13] >= 4:
-                        z = '4'
+                        z = '4_isy'
                     elif 4 > attr[13] >= 3:
-                        z = '3'
+                        z = '3_isy'
                     elif 3 > attr[13] >= 1:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 1:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                   UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
@@ -15394,7 +15548,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15409,17 +15563,17 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAK" and attr[11] == "A":
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 50 > attr[13] >= 35:
-                    z = '4'
+                    z = '4_isy'
                 elif 35 > attr[13] >= 20:
-                    z = '3'
+                    z = '3_isy'
                 elif 20 > attr[13] >= 5:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 5:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15433,7 +15587,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "B":
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15447,7 +15601,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "C":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15473,7 +15627,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAK" and attr[11] == "D":
                 if (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_B = ?
@@ -15486,7 +15640,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if attr[12] == "C":
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
@@ -15501,7 +15655,7 @@ class Zustandsklassen_funkt:
                         pass
                 continue
             if attr[10] == "BAK" and attr[11] == "E":
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15514,17 +15668,17 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 50 > attr[13] >= 35:
-                    z = '4'
+                    z = '4_isy'
                 elif 35 > attr[13] >= 20:
-                    z = '3'
+                    z = '3_isy'
                 elif 20 > attr[13] >= 5:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 5:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15538,7 +15692,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "F":
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15552,7 +15706,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "G":
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15566,7 +15720,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "H":
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15580,7 +15734,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "I":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15594,7 +15748,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "J":
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15608,7 +15762,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "K":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15622,7 +15776,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "L":
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15647,7 +15801,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "M":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15661,7 +15815,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "N":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15675,7 +15829,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAK" and attr[11] == "Z":
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15713,7 +15867,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAL" and (attr[11] == "A" or attr[11] == "B") and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15728,7 +15882,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAL" and (attr[11] == "C" or attr[11] == "D") and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15744,17 +15898,17 @@ class Zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "E" and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 50 > attr[13] >= 35:
-                    z = '4'
+                    z = '4_isy'
                 elif 35 > attr[13] >= 20:
-                    z = '3'
+                    z = '3_isy'
                 elif 20 > attr[13] >= 5:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 5:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15769,7 +15923,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAL" and attr[11] == "F" and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15784,7 +15938,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAL" and (attr[11] == "G") and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15799,7 +15953,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BAL" and attr[11] == "Z" and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15824,7 +15978,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15837,7 +15991,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "C"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15851,7 +16005,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAM" and attr[11] == "B":
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15865,7 +16019,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAN":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15890,7 +16044,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAO":
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15915,7 +16069,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAP":
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15927,7 +16081,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '5'
+                z = '5_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -15941,7 +16095,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBA" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -15954,15 +16108,15 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 30:
-                    z = '5'
+                    z = '5_isy'
                 elif 30 > attr[13] >= 20:
-                    z = '4'
+                    z = '4_isy'
                 elif 20 > attr[13] >= 10:
-                    z = '3'
+                    z = '3_isy'
                 elif attr[13] < 10:
-                    z = '2'
+                    z = '2_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -15977,15 +16131,15 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BBB" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
                 if attr[13] >= 30:
-                    z = '5'
+                    z = '5_isy'
                 elif 30 > attr[13] >= 20:
-                    z = '4'
+                    z = '4_isy'
                 elif 20 > attr[13] >= 10:
-                    z = '3'
+                    z = '3_isy'
                 elif attr[13] < 10:
-                    z = '2'
+                    z = '2_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16000,17 +16154,17 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BBC" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 50 > attr[13] >= 40:
-                    z = '4'
+                    z = '4_isy'
                 elif 40 > attr[13] >= 25:
-                    z = '3'
+                    z = '3_isy'
                 elif 25 > attr[13] >= 10:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16025,7 +16179,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BBD" and (
                     attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "Z"):
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -16037,7 +16191,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '5'
+                z = '5_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16050,15 +16204,15 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 30:
-                    z = '5'
+                    z = '5_isy'
                 elif 30 > attr[13] >= 20:
-                    z = '4'
+                    z = '4_isy'
                 elif 20 > attr[13] >= 10:
-                    z = '3'
+                    z = '3_isy'
                 elif attr[13] < 10:
-                    z = '2'
+                    z = '2_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16072,7 +16226,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBE" and (attr[11] == "D" or attr[11] == "G"):
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -16090,17 +16244,17 @@ class Zustandsklassen_funkt:
                     attr[
                         11] == "F" or attr[11] == "G" or attr[11] == "H" or attr[11] == "Z"):
                 if attr[13] >= 50:
-                    z = '5'
+                    z = '5_isy'
                 elif 50 > attr[13] >= 35:
-                    z = '4'
+                    z = '4_isy'
                 elif 35 > attr[13] >= 20:
-                    z = '3'
+                    z = '3_isy'
                 elif 20 > attr[13] >= 5:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[13] < 5:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16114,7 +16268,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBF" and (attr[11] == "A" or attr[11] == "B"):
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -16126,7 +16280,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16138,7 +16292,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '1'
+                z = '1_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16152,7 +16306,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBF" and (attr[11] == "C"):
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16165,7 +16319,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBF" and (attr[11] == "D"):
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16178,7 +16332,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBF" and (attr[11] == "C" or attr[11] == "D"):
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -16190,7 +16344,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16204,7 +16358,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BBG":
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -16216,7 +16370,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16231,7 +16385,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[10] == "BBH" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "Z") and (
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "Z"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16245,7 +16399,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BDB" and attr[11] == "A":
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_D = ?
@@ -16272,7 +16426,7 @@ class Zustandsklassen_funkt:
             if attr[10] == "BDE" and (
                     attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
                     attr[12] == "A":
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16288,7 +16442,7 @@ class Zustandsklassen_funkt:
             if attr[10] == "BDE" and (
                     attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
                     attr[12] == "B":
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                                 UPDATE untersuchdat_haltung_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16303,7 +16457,6 @@ class Zustandsklassen_funkt:
                     pass
 
             try:
-                curs.execute(sql, data)
                 db.commit()
             except:
                 pass
@@ -16317,7 +16470,7 @@ class Zustandsklassen_funkt:
             data = (z, attr[0])
             try:
                 curs.execute(sql, data)
-                # db.commit()
+                db.commit()
             except:
                 pass
             sql = f"""
@@ -16328,7 +16481,7 @@ class Zustandsklassen_funkt:
             data = (z, attr[0])
             try:
                 curs.execute(sql, data)
-                # db.commit()
+                db.commit()
             except:
                 pass
             sql = f"""
@@ -16339,55 +16492,56 @@ class Zustandsklassen_funkt:
             data = (z, attr[0])
             try:
                 curs.execute(sql, data)
-                # db.commit()
+                db.commit()
             except:
                 pass
-            z = '-'
-            sql = f"""
-                                UPDATE untersuchdat_haltung_bewertung
-                                SET Zustandsklasse_D = ?
-                                WHERE Zustandsklasse_D is Null
-                                """
-            data = (z,)
-            try:
-                curs.execute(sql, data)
-                # db.commit()
-            except:
-                pass
-            sql = f"""
-                                UPDATE untersuchdat_haltung_bewertung
-                                SET Zustandsklasse_B = ?
-                                WHERE Zustandsklasse_B is Null
-                                """
-            data = (z,)
-            try:
-                curs.execute(sql, data)
-                # db.commit()
-            except:
-                pass
-            sql = f"""
-                                UPDATE untersuchdat_haltung_bewertung
-                                SET Zustandsklasse_S = ?
-                                WHERE Zustandsklasse_S is Null
-                                """
-            data = (z,)
-            try:
-                curs.execute(sql, data)
-                # db.commit()
-            except:
-                pass
+        z = '5'
+        sql = f"""
+                            UPDATE untersuchdat_haltung_bewertung
+                            SET Zustandsklasse_D = ?
+                            WHERE Zustandsklasse_D is Null
+                            """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+        sql = f"""
+                            UPDATE untersuchdat_haltung_bewertung
+                            SET Zustandsklasse_B = ?
+                            WHERE Zustandsklasse_B is Null
+                            """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+        sql = f"""
+                            UPDATE untersuchdat_haltung_bewertung
+                            SET Zustandsklasse_S = ?
+                            WHERE Zustandsklasse_S is Null
+                            """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
 
         for i in liste_pk:
             # die nummerierung muss für dwa umgekehrt werden 5 wird zu 0, 4 wird zu 1, 3 wird zu 2, 2 wird zu 3, 1 wird zu 4, 0 wird zu 5 !
             data = (i,)
             sql = """UPDATE untersuchdat_haltung_bewertung
                        SET Zustandsklasse_S = (Case 
-                       WHEN Zustandsklasse_S = 5  THEN 0
-                       WHEN Zustandsklasse_S = 4  THEN 1
-                       WHEN Zustandsklasse_S = 3  THEN 2
-                       WHEN Zustandsklasse_S = 2  THEN 3
-                       WHEN Zustandsklasse_S = 1  THEN 4
-                       WHEN Zustandsklasse_S = 0  THEN 5
+                       WHEN Zustandsklasse_S = '5_isy'  THEN 0
+                       WHEN Zustandsklasse_S = '4_isy'  THEN 1
+                       WHEN Zustandsklasse_S = '3_isy'  THEN 2
+                       WHEN Zustandsklasse_S = '2_isy'  THEN 3
+                       WHEN Zustandsklasse_S = '1_isy'  THEN 4
+                       WHEN Zustandsklasse_S = '0_isy'  THEN 5
+                       ELSE Zustandsklasse_S
                        END)
                        WHERE untersuchdat_haltung_bewertung.pk = ? ;"""
             try:
@@ -16397,12 +16551,13 @@ class Zustandsklassen_funkt:
                 pass
             sql = """UPDATE untersuchdat_haltung_bewertung
                                    SET Zustandsklasse_B = (Case 
-                                   WHEN Zustandsklasse_B = 5  THEN 0
-                                   WHEN Zustandsklasse_B = 4  THEN 1
-                                   WHEN Zustandsklasse_B = 3  THEN 2
-                                   WHEN Zustandsklasse_B = 2  THEN 3
-                                   WHEN Zustandsklasse_B = 1  THEN 4
-                                   WHEN Zustandsklasse_B = 0  THEN 5
+                                   WHEN Zustandsklasse_B = '5_isy'  THEN 0
+                                   WHEN Zustandsklasse_B = '4_isy'  THEN 1
+                                   WHEN Zustandsklasse_B = '3_isy'  THEN 2
+                                   WHEN Zustandsklasse_B = '2_isy'  THEN 3
+                                   WHEN Zustandsklasse_B = '1_isy'  THEN 4
+                                   WHEN Zustandsklasse_B = '0_isy'  THEN 5
+                                   ELSE Zustandsklasse_B
                                    END)
                                    WHERE untersuchdat_haltung_bewertung.pk = ? ;"""
             try:
@@ -16412,12 +16567,13 @@ class Zustandsklassen_funkt:
                 pass
             sql = """UPDATE untersuchdat_haltung_bewertung
                                                SET Zustandsklasse_D = (Case 
-                                               WHEN Zustandsklasse_D = 5  THEN 0
-                                               WHEN Zustandsklasse_D = 4  THEN 1
-                                               WHEN Zustandsklasse_D = 3  THEN 2
-                                               WHEN Zustandsklasse_D = 2  THEN 3
-                                               WHEN Zustandsklasse_D = 1  THEN 4
-                                               WHEN Zustandsklasse_D = 0  THEN 5
+                                               WHEN Zustandsklasse_D = '5_isy'  THEN 0
+                                               WHEN Zustandsklasse_D = '4_isy'  THEN 1
+                                               WHEN Zustandsklasse_D = '3_isy'  THEN 2
+                                               WHEN Zustandsklasse_D = '2_isy'  THEN 3
+                                               WHEN Zustandsklasse_D = '1_isy'  THEN 4
+                                               WHEN Zustandsklasse_D = '0_isy'  THEN 5
+                                               ELSE Zustandsklasse_D
                                                END)
                                                WHERE untersuchdat_haltung_bewertung.pk = ? ;"""
             try:
@@ -16480,7 +16636,7 @@ class Zustandsklassen_funkt:
         QgsProject.instance().addMapLayer(vlayer)
 
     def einzelfallbetrachtung_schacht(self):
-        date = self.date
+        date = self.date+'%'
         db = self.db
         db_x = db
         crs = self.crs
@@ -16526,7 +16682,7 @@ class Zustandsklassen_funkt:
                                 OR
                                 Untersuchdat_schacht_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
                                 OR
-                                Untersuchdat_schacht_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND substr(Untersuchdat_schacht_bewertung.createdat, 0, 17) = ? """
+                                Untersuchdat_schacht_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND Untersuchdat_schacht_bewertung.createdat like ? """
         data = (date,)
         curs.execute(sql, data)
 
@@ -16538,17 +16694,17 @@ class Zustandsklassen_funkt:
                     attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F") and attr[
                 15] == "biegeweich":
                 if attr[8] >= 40:
-                    z = '5'
+                    z = '5_isy'
                 elif 40 > attr[8] >= 30:
-                    z = '4'
+                    z = '4_isy'
                 elif 30 > attr[8] >= 20:
-                    z = '3'
+                    z = '3_isy'
                 elif 20 > attr[8] >= 10:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[8] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                               UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16560,7 +16716,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                               UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16577,17 +16733,17 @@ class Zustandsklassen_funkt:
                     attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F") and attr[
                 15] == "biegesteif":
                 if attr[8] >= 40:
-                    z = '5'
+                    z = '5_isy'
                 elif 40 > attr[8] >= 30:
-                    z = '4'
+                    z = '4_isy'
                 elif 30 > attr[8] >= 20:
-                    z = '3'
+                    z = '3_isy'
                 elif 20 > attr[8] >= 10:
-                    z = '2'
+                    z = '2_isy'
                 elif attr[8] < 10:
-                    z = '1'
+                    z = '1_isy'
                 else:
-                    z = '0'
+                    z = '0_isy'
                 sql = f"""
                               UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_B = ?
@@ -16599,7 +16755,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '3'
+                z = '3_isy'
                 sql = f"""
                               UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_S = ?
@@ -16616,7 +16772,7 @@ class Zustandsklassen_funkt:
                 if (attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                         attr[13] == "I" or attr[13] == "J"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16630,7 +16786,7 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[7] == "A" or attr[7] == "B") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16645,7 +16801,7 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16662,7 +16818,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAB" and (attr[6] == "B"):
                 if (attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16676,7 +16832,7 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16691,7 +16847,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAB" and (attr[6] == "C"):
                 if (attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16705,7 +16861,7 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16720,17 +16876,17 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAB" and (attr[6] == "B" or attr[6] == "C"):
                 if (attr[7] == "A") and (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
                     if attr[13] >= 8:
-                        z = '5'
+                        z = '5_isy'
                     elif 8 > attr[13] >= 5:
-                        z = '4'
+                        z = '4_isy'
                     elif 5 > attr[13] >= 3:
-                        z = '3'
+                        z = '3_isy'
                     elif 3 > attr[13] >= 1:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[13] < 1:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16744,7 +16900,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[7] == "B") and (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16759,7 +16915,7 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[7] == "C" or attr[7] == "D" or attr[7] == "E") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16774,7 +16930,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[5] == "DAC" and attr[6] == "A":
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -16787,7 +16943,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16800,7 +16956,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16814,7 +16970,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16829,7 +16985,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[5] == "DAC" and attr[6] == "B":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16842,7 +16998,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16856,7 +17012,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16872,7 +17028,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DAC" and attr[6] == "C":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16885,7 +17041,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16899,7 +17055,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16926,7 +17082,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DAD" and attr[6] == "A":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16939,7 +17095,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -16952,7 +17108,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -16964,7 +17120,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -16978,7 +17134,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "H" or attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -16994,7 +17150,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DAD" and attr[6] == "B" and attr[7] == "A":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17007,7 +17163,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17020,7 +17176,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17034,7 +17190,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "H" or attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -17050,7 +17206,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DAD" and attr[6] == "B" and attr[7] == "B":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17063,7 +17219,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17076,7 +17232,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "H" or attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -17091,7 +17247,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[5] == "DAD" and attr[6] == "C":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17104,7 +17260,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17117,7 +17273,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17131,7 +17287,7 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "F" or attr[13] == "H" or attr[13] == "I" or attr[
                     13] == "J"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -17147,11 +17303,11 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAE":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
                     if attr[8] >= 100:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[8] < 100:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17165,11 +17321,11 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
                     if attr[8] >= 100:
-                        z = '3'
+                        z = '3_isy'
                     elif attr[8] < 100:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -17184,13 +17340,13 @@ class Zustandsklassen_funkt:
                         pass
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
                     if attr[8] > 100:
-                        z = '3'
+                        z = '3_isy'
                     elif 100 >= attr[8] > 10:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[8] <= 10:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17209,7 +17365,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17224,7 +17380,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[6] == "B" and (attr[7] == "A" or attr[7] == "E" or attr[7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17241,7 +17397,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17258,7 +17414,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17275,7 +17431,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17292,7 +17448,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17309,7 +17465,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17326,7 +17482,7 @@ class Zustandsklassen_funkt:
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (
                         attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -17342,7 +17498,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "I" and (
                         attr[7] == "A" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[7] == "Z"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '4'
+                        z = '4_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17355,7 +17511,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '5'
+                        z = '5_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17369,7 +17525,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17386,7 +17542,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "K" and (
                         attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D" or attr[7] == "E" or attr[
                     7] == "Z") and (attr[13] == "I" or attr[13] == "J"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17404,7 +17560,7 @@ class Zustandsklassen_funkt:
                     7] == "Z"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17417,7 +17573,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17431,20 +17587,20 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     continue
-            if attr[5] == "DAG" and attr[6] == "" and attr[7] == "":
+            if attr[5] == "DAG" and attr[6] in ["", "not found"] and attr[7] in ["", "not found"]:
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
                     if attr[8] >= 400:
-                        z = '5'
+                        z = '5_isy'
                     elif 400 > attr[8] >= 300:
-                        z = '4'
+                        z = '4_isy'
                     elif 300 > attr[8] >= 200:
-                        z = '3'
+                        z = '3_isy'
                     elif 200 > attr[8] >= 100:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[8] < 100:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17458,7 +17614,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17472,9 +17628,9 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[5] == "DAH":
-                if (attr[6] == "B" or attr[6] == "C" or attr[6] == "D") and attr[7] == "":
+                if (attr[6] == "B" or attr[6] == "C" or attr[6] == "D") and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17488,7 +17644,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17501,10 +17657,10 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-                if attr[6] == "Z" and attr[7] == "":
+                if attr[6] == "Z" and attr[7] in ["", "not found"]:
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17520,7 +17676,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAI":
                 if attr[6] == "A" and (attr[7] == "A" or attr[7] == "B" or attr[7] == "C"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17534,7 +17690,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17547,9 +17703,9 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
-                if attr[6] == "Z" and attr[7] == "":
+                if attr[6] == "Z" and attr[7] in ["", "not found"]:
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17564,7 +17720,7 @@ class Zustandsklassen_funkt:
                             pass
             if attr[5] == "DAJ" and (attr[6] == "A" or attr[6] == "B" or attr[6] == "C"):
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17577,7 +17733,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '1'
+                    z = '1_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17595,17 +17751,17 @@ class Zustandsklassen_funkt:
                 if attr[6] == "A" and (
                         attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
                     if attr[8] >= 40:
-                        z = '5'
+                        z = '5_isy'
                     elif 40 > attr[8] >= 30:
-                        z = '4'
+                        z = '4_isy'
                     elif 30 > attr[8] >= 20:
-                        z = '3'
+                        z = '3_isy'
                     elif 20 > attr[8] >= 10:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[8] < 10:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17620,17 +17776,17 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[6] == "A" and (attr[13] == "I" or attr[13] == "J"):
                     if attr[8] >= 0:
-                        z = '5'
+                        z = '5_isy'
                     elif 50 > attr[8] >= 35:
-                        z = '4'
+                        z = '4_isy'
                     elif 35 > attr[8] >= 20:
-                        z = '3'
+                        z = '3_isy'
                     elif 20 > attr[8] >= 5:
-                        z = '2'
+                        z = '2_isy'
                     elif attr[8] < 5:
-                        z = '1'
+                        z = '1_isy'
                     else:
-                        z = '0'
+                        z = '0_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17646,7 +17802,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "B":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17661,7 +17817,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "C":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17675,7 +17831,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17701,7 +17857,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "D" and (attr[7] == "A" or attr[7] == "B" or attr[7] == "C" or attr[7] == "D"):
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17717,7 +17873,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "D" and (attr[7] == "C"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17733,7 +17889,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "E":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17747,17 +17903,17 @@ class Zustandsklassen_funkt:
                             pass
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
                         if attr[8] >= 40:
-                            z = '5'
+                            z = '5_isy'
                         elif 40 > attr[8] >= 30:
-                            z = '4'
+                            z = '4_isy'
                         elif 30 > attr[8] >= 20:
-                            z = '3'
+                            z = '3_isy'
                         elif 20 > attr[8] >= 10:
-                            z = '2'
+                            z = '2_isy'
                         elif attr[8] < 10:
-                            z = '1'
+                            z = '1_isy'
                         else:
-                            z = '0'
+                            z = '0_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17772,17 +17928,17 @@ class Zustandsklassen_funkt:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
                         if attr[8] >= 50:
-                            z = '5'
+                            z = '5_isy'
                         elif 50 > attr[8] >= 35:
-                            z = '4'
+                            z = '4_isy'
                         elif 35 > attr[8] >= 20:
-                            z = '3'
+                            z = '3_isy'
                         elif 20 > attr[8] >= 5:
-                            z = '2'
+                            z = '2_isy'
                         elif attr[8] < 5:
-                            z = '1'
+                            z = '1_isy'
                         else:
-                            z = '0'
+                            z = '0_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17798,7 +17954,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "F":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17814,7 +17970,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "G":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17829,7 +17985,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "H":
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -17845,7 +18001,7 @@ class Zustandsklassen_funkt:
                     continue
                 if attr[6] == "I":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17859,7 +18015,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17875,7 +18031,7 @@ class Zustandsklassen_funkt:
                     continue
                 if attr[6] == "J":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17889,7 +18045,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17904,7 +18060,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "K":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17918,7 +18074,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17933,7 +18089,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "L":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17946,7 +18102,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17960,7 +18116,7 @@ class Zustandsklassen_funkt:
                             pass
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -17975,7 +18131,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "M":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -17989,7 +18145,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18005,7 +18161,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "N":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18020,7 +18176,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "Z":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18058,7 +18214,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAL":
                 if attr[6] == "A":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_D = ?
@@ -18072,7 +18228,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '4'
+                        z = '4_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_D = ?
@@ -18088,7 +18244,7 @@ class Zustandsklassen_funkt:
                 if attr[6] == "B":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H" or
                             attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_D = ?
@@ -18103,7 +18259,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "C":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18117,7 +18273,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18132,7 +18288,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "D":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18146,7 +18302,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18163,17 +18319,17 @@ class Zustandsklassen_funkt:
                     if (attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                             attr[13] == "F" or attr[13] == "G" or attr[13] == "H"):
                         if attr[8] >= 40:
-                            z = '5'
+                            z = '5_isy'
                         elif 40 > attr[8] >= 30:
-                            z = '4'
+                            z = '4_isy'
                         elif 30 > attr[8] >= 20:
-                            z = '3'
+                            z = '3_isy'
                         elif 20 > attr[8] >= 10:
-                            z = '2'
+                            z = '2_isy'
                         elif attr[8] < 10:
-                            z = '1'
+                            z = '1_isy'
                         else:
-                            z = '0'
+                            z = '0_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18188,17 +18344,17 @@ class Zustandsklassen_funkt:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
                         if attr[8] >= 50:
-                            z = '5'
+                            z = '5_isy'
                         elif 50 > attr[8] >= 35:
-                            z = '4'
+                            z = '4_isy'
                         elif 35 > attr[8] >= 20:
-                            z = '3'
+                            z = '3_isy'
                         elif 20 > attr[8] >= 5:
-                            z = '2'
+                            z = '2_isy'
                         elif attr[8] < 5:
-                            z = '1'
+                            z = '1_isy'
                         else:
-                            z = '0'
+                            z = '0_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18213,7 +18369,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "F":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18227,7 +18383,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '4'
+                        z = '4_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18242,7 +18398,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "G":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18256,7 +18412,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18270,7 +18426,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                 if attr[6] == "Z":
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18297,7 +18453,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DAM":
                 if (attr[6] == "A" or attr[6] == "B" or attr[6] == "C"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_D = ?
@@ -18310,7 +18466,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_D = ?
@@ -18325,7 +18481,7 @@ class Zustandsklassen_funkt:
                             pass
                 if (attr[6] == "A" or attr[13] == "C"):
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_S = ?
@@ -18340,7 +18496,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "B":
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                         UPDATE Untersuchdat_schacht_bewertung
                                             SET Zustandsklasse_S = ?
@@ -18356,7 +18512,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DAN":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18369,7 +18525,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18383,7 +18539,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -18398,7 +18554,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[5] == "DAO":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18411,7 +18567,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18425,7 +18581,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -18441,7 +18597,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DAP":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18454,7 +18610,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18468,7 +18624,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_S = ?
@@ -18486,7 +18642,7 @@ class Zustandsklassen_funkt:
                 if (attr[6] == "A" or attr[6] == "C" or attr[6] == "D" or attr[6] == "F" or attr[6] == "G" or attr[
                     6] == "H" or attr[6] == "I" or attr[6] == "J" or attr[6] == "K") and (
                         attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18500,7 +18656,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "B") and (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18514,7 +18670,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "E") and (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18528,7 +18684,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "Z") and (attr[13] == "C" or attr[13] == "D" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18543,7 +18699,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[5] == "DAR":
                 if (attr[6] == "A" or attr[6] == "C" or attr[6] == "F") and (attr[13] == "A"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18557,7 +18713,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "B" or attr[6] == "E") and (attr[13] == "A"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18571,7 +18727,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "D") and (attr[13] == "A"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18585,7 +18741,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "G" or attr[6] == "H") and (attr[13] == "A"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18599,7 +18755,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "Z") and (attr[13] == "A"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18615,7 +18771,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DBA":
                 if (attr[6] == "A" or attr[6] == "B" or attr[6] == "C"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18628,7 +18784,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_D = ?
@@ -18643,7 +18799,7 @@ class Zustandsklassen_funkt:
                     if (attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                             attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[
                                 13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                         SET Zustandsklasse_B = ?
@@ -18660,7 +18816,7 @@ class Zustandsklassen_funkt:
                 if (attr[6] == "A" or attr[6] == "B" or attr[6] == "C" or attr[6] == "Z") and (
                         attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                         attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[13] == "J"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18677,15 +18833,15 @@ class Zustandsklassen_funkt:
                 if (attr[6] == "C" or attr[6] == "Z"):
                     if attr[13] == "J":
                         if attr[8] >= 300:
-                            z = '4'
+                            z = '4_isy'
                         elif 300 > attr[8] >= 100:
-                            z = '3'
+                            z = '3_isy'
                         elif 100 > attr[8] >= 50:
-                            z = '2'
+                            z = '2_isy'
                         elif attr[8] < 50:
-                            z = '1'
+                            z = '1_isy'
                         else:
-                            z = '0'
+                            z = '0_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18699,7 +18855,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if attr[13] == "H":
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18714,7 +18870,7 @@ class Zustandsklassen_funkt:
                             pass
             if attr[5] == "DBD":
                 if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18727,7 +18883,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18741,7 +18897,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -18754,7 +18910,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18770,7 +18926,7 @@ class Zustandsklassen_funkt:
                 continue
             if attr[5] == "DBE":
                 if (attr[6] == "A" or attr[6] == "B" or attr[6] == "C") and (attr[13] == "I" or attr[13] == "J"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18788,7 +18944,7 @@ class Zustandsklassen_funkt:
                     if (attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                             attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[
                                 13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18803,7 +18959,7 @@ class Zustandsklassen_funkt:
                             pass
                 if (attr[6] == "D" or attr[6] == "G"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18817,7 +18973,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18833,7 +18989,7 @@ class Zustandsklassen_funkt:
             if attr[5] == "DBF":
                 if (attr[6] == "A" or attr[6] == "B") and (attr[7] == "A" or attr[7] == "B" or attr[7] == "C"):
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18846,7 +19002,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18859,7 +19015,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -18874,7 +19030,7 @@ class Zustandsklassen_funkt:
                     if (attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                             attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[
                                 13] == "J"):
-                        z = '1'
+                        z = '1_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18889,7 +19045,7 @@ class Zustandsklassen_funkt:
                             pass
                 if attr[6] == "C" and (attr[7] == "A" or attr[7] == "B" or attr[7] == "C"):
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -18902,7 +19058,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18915,7 +19071,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '4'
+                        z = '4_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18930,7 +19086,7 @@ class Zustandsklassen_funkt:
                     if (attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                             attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[
                                 13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18944,7 +19100,7 @@ class Zustandsklassen_funkt:
                             pass
                 if (attr[6] == "D") and (attr[7] == "A" or attr[7] == "B" or attr[7] == "C"):
                     if (attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
-                        z = '4'
+                        z = '4_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_S = ?
@@ -18957,7 +19113,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F" or attr[13] == "H"):
-                        z = '3'
+                        z = '3_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18970,7 +19126,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
                     if (attr[13] == "I" or attr[13] == "J"):
-                        z = '4'
+                        z = '4_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_D = ?
@@ -18985,7 +19141,7 @@ class Zustandsklassen_funkt:
                     if (attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                             attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[
                                 13] == "J"):
-                        z = '2'
+                        z = '2_isy'
                         sql = f"""
                                     UPDATE Untersuchdat_schacht_bewertung
                                     SET Zustandsklasse_B = ?
@@ -18998,7 +19154,7 @@ class Zustandsklassen_funkt:
                         except:
                             pass
             if attr[5] == "DBG" and (attr[13] == "I" or attr[13] == "J"):
-                z = '4'
+                z = '4_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_D = ?
@@ -19010,7 +19166,7 @@ class Zustandsklassen_funkt:
                     # db.commit()
                 except:
                     pass
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_S = ?
@@ -19024,7 +19180,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[5] == "DCH" and (attr[6] == "A") and (attr[13] == "H"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_B = ?
@@ -19038,7 +19194,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[5] == "DCI" and (attr[6] == "A") and (attr[13] == "I"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_B = ?
@@ -19053,7 +19209,7 @@ class Zustandsklassen_funkt:
                     pass
             if attr[5] == "DCJ":
                 if (attr[6] == "B" or attr[6] == "F") and (attr[13] == "F"):
-                    z = '5'
+                    z = '5_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_B = ?
@@ -19067,7 +19223,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
                 if (attr[6] == "C" or attr[6] == "D" or attr[6] == "G" or attr[6] == "H") and (attr[13] == "F"):
-                    z = '2'
+                    z = '2_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_B = ?
@@ -19082,7 +19238,7 @@ class Zustandsklassen_funkt:
                         pass
             if attr[5] == "DCL" and (attr[6] == "A" or attr[6] == "B" or attr[6] == "C") and attr[7] == "A" and (
                     attr[13] == "F"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_B = ?
@@ -19096,7 +19252,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[5] == "DCM" and (attr[6] == "B" or attr[6] == "C") and (attr[13] == "A"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_B = ?
@@ -19110,7 +19266,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[5] == "DCN" and (attr[6] == "B") and (attr[13] == "J"):
-                z = '2'
+                z = '2_isy'
                 sql = f"""
                             UPDATE Untersuchdat_schacht_bewertung
                             SET Zustandsklasse_B = ?
@@ -19127,7 +19283,7 @@ class Zustandsklassen_funkt:
                 if attr[7] == "A" and (
                         attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                         attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[13] == "J"):
-                    z = '4'
+                    z = '4_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_B = ?
@@ -19143,7 +19299,7 @@ class Zustandsklassen_funkt:
                 if attr[7] == "B" and (
                         attr[13] == "A" or attr[13] == "B" or attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or
                         attr[13] == "F" or attr[13] == "G" or attr[13] == "H" or attr[13] == "I" or attr[13] == "J"):
-                    z = '3'
+                    z = '3_isy'
                     sql = f"""
                                 UPDATE Untersuchdat_schacht_bewertung
                                 SET Zustandsklasse_B = ?
@@ -19157,7 +19313,6 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             try:
-                curs.execute(sql, data)
                 db.commit()
             except:
                 pass
@@ -19171,7 +19326,7 @@ class Zustandsklassen_funkt:
             data = (z, attr[0])
             try:
                 curs.execute(sql, data)
-                # db.commit()
+                #db.commit()
             except:
                 pass
             sql = f"""
@@ -19182,7 +19337,7 @@ class Zustandsklassen_funkt:
             data = (z, attr[0])
             try:
                 curs.execute(sql, data)
-                # db.commit()
+                #db.commit()
             except:
                 pass
             sql = f"""
@@ -19193,55 +19348,56 @@ class Zustandsklassen_funkt:
             data = (z, attr[0])
             try:
                 curs.execute(sql, data)
-                # db.commit()
+                db.commit()
             except:
                 pass
-            z = '-'
-            sql = f"""
-                            UPDATE Untersuchdat_schacht_bewertung
-                            SET Zustandsklasse_D = ?
-                            WHERE Zustandsklasse_D is Null
-                            """
-            data = (z,)
-            try:
-                curs.execute(sql, data)
-                # db.commit()
-            except:
-                pass
-            sql = f"""
-                            UPDATE Untersuchdat_schacht_bewertung
-                            SET Zustandsklasse_B = ?
-                            WHERE Zustandsklasse_B is Null
-                            """
-            data = (z,)
-            try:
-                curs.execute(sql, data)
-                # db.commit()
-            except:
-                pass
-            sql = f"""
-                            UPDATE Untersuchdat_schacht_bewertung
-                            SET Zustandsklasse_S = ?
-                            WHERE Zustandsklasse_S is Null
-                            """
-            data = (z,)
-            try:
-                curs.execute(sql, data)
-                # db.commit()
-            except:
-                pass
+        z = '5'
+        sql = f"""
+                        UPDATE Untersuchdat_schacht_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE Zustandsklasse_D is Null
+                        """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            #db.commit()
+        except:
+            pass
+        sql = f"""
+                        UPDATE Untersuchdat_schacht_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE Zustandsklasse_B is Null
+                        """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            #db.commit()
+        except:
+            pass
+        sql = f"""
+                        UPDATE Untersuchdat_schacht_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE Zustandsklasse_S is Null
+                        """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
 
         for i in liste_pk:
             # die nummerierung muss für dwa umgekehrt werden 5 wird zu 0, 4 wird zu 1, 3 wird zu 2, 2 wird zu 3, 1 wird zu 4, 0 wird zu 5 !
             data = (i,)
             sql = """UPDATE Untersuchdat_schacht_bewertung
                        SET Zustandsklasse_S = (Case 
-                       WHEN Zustandsklasse_S = 5  THEN 0
-                       WHEN Zustandsklasse_S = 4  THEN 1
-                       WHEN Zustandsklasse_S = 3  THEN 2
-                       WHEN Zustandsklasse_S = 2  THEN 3
-                       WHEN Zustandsklasse_S = 1  THEN 4
-                       WHEN Zustandsklasse_S = 0  THEN 5
+                       WHEN Zustandsklasse_S = '5_isy'  THEN 0
+                       WHEN Zustandsklasse_S = '4_isy'  THEN 1
+                       WHEN Zustandsklasse_S = '3_isy'  THEN 2
+                       WHEN Zustandsklasse_S = '2_isy'  THEN 3
+                       WHEN Zustandsklasse_S = '1_isy'  THEN 4
+                       WHEN Zustandsklasse_S = '0_isy'  THEN 5
+                       ELSE Zustandsklasse_S
                        END)
                        WHERE Untersuchdat_schacht_bewertung.pk = ? ;"""
             try:
@@ -19251,12 +19407,13 @@ class Zustandsklassen_funkt:
                 pass
             sql = """UPDATE Untersuchdat_schacht_bewertung
                                    SET Zustandsklasse_B = (Case 
-                                   WHEN Zustandsklasse_B = 5  THEN 0
-                                   WHEN Zustandsklasse_B = 4  THEN 1
-                                   WHEN Zustandsklasse_B = 3  THEN 2
-                                   WHEN Zustandsklasse_B = 2  THEN 3
-                                   WHEN Zustandsklasse_B = 1  THEN 4
-                                   WHEN Zustandsklasse_B = 0  THEN 5
+                                   WHEN Zustandsklasse_B = '5_isy'  THEN 0
+                                   WHEN Zustandsklasse_B = '4_isy'  THEN 1
+                                   WHEN Zustandsklasse_B = '3_isy'  THEN 2
+                                   WHEN Zustandsklasse_B = '2_isy'  THEN 3
+                                   WHEN Zustandsklasse_B = '1_isy'  THEN 4
+                                   WHEN Zustandsklasse_B = '0_isy'  THEN 5
+                                   ELSE Zustandsklasse_B
                                    END)
                                    WHERE Untersuchdat_schacht_bewertung.pk = ? ;"""
             try:
@@ -19266,12 +19423,13 @@ class Zustandsklassen_funkt:
                 pass
             sql = """UPDATE Untersuchdat_schacht_bewertung
                                                SET Zustandsklasse_D = (Case 
-                                               WHEN Zustandsklasse_D = 5  THEN 0
-                                               WHEN Zustandsklasse_D = 4  THEN 1
-                                               WHEN Zustandsklasse_D = 3  THEN 2
-                                               WHEN Zustandsklasse_D = 2  THEN 3
-                                               WHEN Zustandsklasse_D = 1  THEN 4
-                                               WHEN Zustandsklasse_D = 0  THEN 5
+                                               WHEN Zustandsklasse_D = '5_isy'  THEN 0
+                                               WHEN Zustandsklasse_D = '4_isy'  THEN 1
+                                               WHEN Zustandsklasse_D = '3_isy'  THEN 2
+                                               WHEN Zustandsklasse_D = '2_isy'  THEN 3
+                                               WHEN Zustandsklasse_D = '1_isy'  THEN 4
+                                               WHEN Zustandsklasse_D = '0_isy'  THEN 5
+                                               ELSE Zustandsklasse_D
                                                END)
                                                WHERE Untersuchdat_schacht_bewertung.pk = ? ;"""
             try:

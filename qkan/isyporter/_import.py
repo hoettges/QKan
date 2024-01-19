@@ -98,6 +98,9 @@ class Haltung(ClassObject):
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
+    aussendurchmesser: int = 0
+    profilauskleidung: str = ""
+    innenmaterial: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
     xschun: float = 0.0
@@ -307,10 +310,10 @@ class ImportTask:
             _block: ElementTree.Element,
     ) -> Tuple[str, int, float, float, float]:
         name = _block.findtext("d:Objektbezeichnung", "not found", self.NS)
-        knoten_typ = 0
+        schacht_typ = 0
 
         for _schacht in _block.findall("d:Knoten", self.NS):
-            knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+            schacht_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
 
 
         smp = _block.find(
@@ -331,7 +334,7 @@ class ImportTask:
             xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
             ysch = _strip_float(smp.findtext("d:Hochwert", 0.0, self.NS))
             sohlhoehe = _strip_float(smp.findtext("d:Punkthoehe", 0.0, self.NS))
-        return name, knoten_typ, xsch, ysch, sohlhoehe
+        return name, schacht_typ, xsch, ysch, sohlhoehe
 
     def run(self) -> bool:
         self._reftables()
@@ -433,12 +436,13 @@ class ImportTask:
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
 
             for block in blocks:
-                name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+                name, schacht_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
                 schachttyp = 'Schacht'
 
-                if knoten_typ == 1:
+                if schacht_typ == 1:
                     schachttyp = 'Anschlussschacht'
 
+                knoten_typ = 'Normalschacht'
 
                 yield Schacht(
                     schnam=name,
@@ -581,7 +585,7 @@ class ImportTask:
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
                       'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart,
                       'strasse': schacht.strasse, 'knotentyp': schacht.knotentyp,
-                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': 'Schacht', 'epsg': QKan.config.epsg}
+                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
@@ -1169,6 +1173,9 @@ class ImportTask:
                     sohleunten = _strip_float(block.findtext("d:Kante/d:SohlhoeheAblauf", 0.0, self.NS))
                     laenge = _strip_float(block.findtext("d:Kante/d:Laenge", 0.0, self.NS))
                     material = block.findtext("d:Kante/d:Material", "not found", self.NS)
+                    aussendurchmesser = block.findtext("d:Kante/d:Profil/d:Aussendurchmesser", "0", self.NS)
+                    profilauskleidung = block.findtext("d:Kante/d:Haltung/d:Auskleidung", "not found", self.NS)
+                    innenmaterial = block.findtext("d:Kante/d:Haltung/d:MaterialAuskleidung", "not found", self.NS)
                     profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", "not found", self.NS)
                     hoehe = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.
                     breite = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS)) / 1000.
@@ -1234,6 +1241,9 @@ class ImportTask:
                         ks=1.5,  # in Hydraulikdaten enthalten.
                         simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                         kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                        aussendurchmesser=aussendurchmesser,
+                        profilauskleidung=profilauskleidung,
+                        innenmaterial=innenmaterial,
                         xschob=xschob,
                         yschob=yschob,
                         xschun=xschun,
@@ -1372,7 +1382,8 @@ class ImportTask:
                       'hoehe': haltung.hoehe,
                       'breite': haltung.breite, 'laenge': haltung.laenge,
                       'sohleoben': haltung.sohleoben, 'sohleunten': haltung.sohleunten,
-                      'material': haltung.material, 'profilnam': haltung.profilnam, 'entwart': entwart,
+                      'material': haltung.material, 'aussendurchmesser': haltung.aussendurchmesser, 'profilauskleidung': haltung.profilauskleidung,
+                      'innenmaterial': haltung.innenmaterial, 'profilnam': haltung.profilnam, 'entwart': entwart,
                       'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 

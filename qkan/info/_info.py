@@ -182,7 +182,7 @@ class Info:
             if not self.db_qkan.sql(sql):
                 return
             attr = self.db_qkan.fetchall()
-            if attr[0] != None and attr != []:
+            if attr[0][0] != None and attr != []:
                 self.laenge_haltungen_mw = round(attr[0][0], 2)
 
             sql = """
@@ -496,7 +496,7 @@ class Info:
                 except:
                     pass
                 attr = self.curs.fetchall()
-                if attr[0] != None and attr != []:
+                if attr != []:
                     rw = 0
                     sw = 0
                     mw = 0
@@ -527,21 +527,22 @@ class Info:
                     except:
                         pass
                     attr = self.curs.fetchall()
-                    if attr[0] != None and attr != []:
-                        rw = 0
-                        sw = 0
-                        mw = 0
-                        for i in attr:
-                            if i[1] == 'Regenwasser':
-                                rw += 1
-                            if i[1] == 'Schmutzwasser':
-                                sw += 1
-                            if i[1] == 'Mischwasser':
-                                mw += 1
+                    if attr != []:
+                        if attr[0] != None:
+                            rw = 0
+                            sw = 0
+                            mw = 0
+                            for i in attr:
+                                if i[1] == 'Regenwasser':
+                                    rw += 1
+                                if i[1] == 'Schmutzwasser':
+                                    sw += 1
+                                if i[1] == 'Mischwasser':
+                                    mw += 1
 
-                            self.anz_schaechte_1_rw = rw
-                            self.anz_schaechte_1_sw = sw
-                            self.anz_schaechte_1_mw = mw
+                                self.anz_schaechte_1_rw = rw
+                                self.anz_schaechte_1_sw = sw
+                                self.anz_schaechte_1_mw = mw
 
                     # anzahl schaechte 2
                     sql = """
@@ -558,21 +559,22 @@ class Info:
                     except:
                         pass
                     attr = self.curs.fetchall()
-                    if attr[0] != None and attr != []:
-                        rw = 0
-                        sw = 0
-                        mw = 0
-                        for i in attr:
-                            if i[1] == 'Regenwasser':
-                                rw += 1
-                            if i[1] == 'Schmutzwasser':
-                                sw += 1
-                            if i[1] == 'Mischwasser':
-                                mw += 1
+                    if attr != []:
+                        if attr[0] != None:
+                            rw = 0
+                            sw = 0
+                            mw = 0
+                            for i in attr:
+                                if i[1] == 'Regenwasser':
+                                    rw += 1
+                                if i[1] == 'Schmutzwasser':
+                                    sw += 1
+                                if i[1] == 'Mischwasser':
+                                    mw += 1
 
-                            self.anz_schaechte_2_rw = rw
-                            self.anz_schaechte_2_sw = sw
-                            self.anz_schaechte_2_mw = mw
+                                self.anz_schaechte_2_rw = rw
+                                self.anz_schaechte_2_sw = sw
+                                self.anz_schaechte_2_mw = mw
 
                     # anzahl schaechte 3
                     sql = """
@@ -589,21 +591,22 @@ class Info:
                     except:
                         pass
                     attr = self.curs.fetchall()
-                    if attr[0] != None and attr != []:
-                        rw = 0
-                        sw = 0
-                        mw = 0
-                        for i in attr:
-                            if i[1] == 'Regenwasser':
-                                rw += 1
-                            if i[1] == 'Schmutzwasser':
-                                sw += 1
-                            if i[1] == 'Mischwasser':
-                                mw += 1
+                    if attr != []:
+                        if attr[0] != None:
+                            rw = 0
+                            sw = 0
+                            mw = 0
+                            for i in attr:
+                                if i[1] == 'Regenwasser':
+                                    rw += 1
+                                if i[1] == 'Schmutzwasser':
+                                    sw += 1
+                                if i[1] == 'Mischwasser':
+                                    mw += 1
 
-                            self.anz_schaechte_3_rw = rw
-                            self.anz_schaechte_3_sw = sw
-                            self.anz_schaechte_3_mw = mw
+                                self.anz_schaechte_3_rw = rw
+                                self.anz_schaechte_3_sw = sw
+                                self.anz_schaechte_3_mw = mw
 
                     # anzahl schaechte 4
                     sql = """
@@ -620,21 +623,22 @@ class Info:
                     except:
                         pass
                     attr = self.curs.fetchall()
-                    if attr[0] != None and attr != []:
-                        rw = 0
-                        sw = 0
-                        mw = 0
-                        for i in attr:
-                            if i[1] == 'Regenwasser':
-                                rw += 1
-                            if i[1] == 'Schmutzwasser':
-                                sw += 1
-                            if i[1] == 'Mischwasser':
-                                mw += 1
+                    if attr != []:
+                        if attr[0] != None:
+                            rw = 0
+                            sw = 0
+                            mw = 0
+                            for i in attr:
+                                if i[1] == 'Regenwasser':
+                                    rw += 1
+                                if i[1] == 'Schmutzwasser':
+                                    sw += 1
+                                if i[1] == 'Mischwasser':
+                                    mw += 1
 
-                            self.anz_schaechte_4_rw = rw
-                            self.anz_schaechte_4_sw = sw
-                            self.anz_schaechte_4_mw = mw
+                                self.anz_schaechte_4_rw = rw
+                                self.anz_schaechte_4_sw = sw
+                                self.anz_schaechte_4_mw = mw
 
                     # anzahl schaechte 5
                     sql = """
@@ -651,21 +655,22 @@ class Info:
                     except:
                         pass
                     attr = self.curs.fetchall()
-                    if attr[0] != None and attr != []:
-                        rw = 0
-                        sw = 0
-                        mw = 0
-                        for i in attr:
-                            if i[1] == 'Regenwasser':
-                                rw += 1
-                            if i[1] == 'Schmutzwasser':
-                                sw += 1
-                            if i[1] == 'Mischwasser':
-                                mw += 1
+                    if attr != []:
+                        if attr[0] != None:
+                            rw = 0
+                            sw = 0
+                            mw = 0
+                            for i in attr:
+                                if i[1] == 'Regenwasser':
+                                    rw += 1
+                                if i[1] == 'Schmutzwasser':
+                                    sw += 1
+                                if i[1] == 'Mischwasser':
+                                    mw += 1
 
-                            self.anz_schaechte_5_rw = rw
-                            self.anz_schaechte_5_sw = sw
-                            self.anz_schaechte_5_mw = mw
+                                self.anz_schaechte_5_rw = rw
+                                self.anz_schaechte_5_sw = sw
+                                self.anz_schaechte_5_mw = mw
 
 
     def run(self, date) -> None:

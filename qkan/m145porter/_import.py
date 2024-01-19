@@ -90,6 +90,9 @@ class Haltung(ClassObject):
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
+    aussendurchmesser: int = 0
+    profilauskleidung: str = ""
+    innenmaterial: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
     xschun: float = 0.0
@@ -526,10 +529,11 @@ class ImportTask:
                 #name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
 
                 name = block.findtext("KG001", "not found")
+                knoten_typ = 'Normalschacht'
 
-                knoten_typ = block.findtext("KG305", "-1")
-                if knoten_typ not in ("0", "S", "-1", ""):
-                    continue
+                schacht_typ = block.findtext("KG305", "-1")
+                if schacht_typ not in ("0", "S", "-1", ""):
+                    schacht_typ = 'Anschlussschacht'
 
                 smp = block.find("GO[GO002='B']/GP")
                 if smp is None:
@@ -565,7 +569,8 @@ class ImportTask:
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
                     knotentyp=knoten_typ,
-                    simstatus=_strip_int(block.findtext("KG407", "not found")),
+                    schachttyp=schachttyp,
+                    simstatus=_strip_int(block.findtext("KG407", "0")),
                     kommentar=block.findtext("KG999", "-"),
                     druckdicht=block.findtext("KG315", 0)
                 )
@@ -643,8 +648,8 @@ class ImportTask:
 
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe, 'knotentyp': schacht.knotentyp,
-                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart, 'strasse': schacht.strasse,
-                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': 'Schacht', 'epsg': QKan.config.epsg}
+                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart, 'strasse': schacht.strasse,
+                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
@@ -1226,6 +1231,10 @@ class ImportTask:
 
                     material = block.findtext("HG304", "not found")
 
+                    profilauskleidung = block.findtext("HG008", "not found")
+                    innenmaterial = block.findtext("HG009", "not found")
+
+
                     profilnam = block.findtext("HG305", "not found")
                     hoehe = (
                         _strip_float(block.findtext("HG307", 0.0))
@@ -1299,6 +1308,8 @@ class ImportTask:
                     ks=1.5,  # in Hydraulikdaten enthalten.
                     simstatus=_strip_int(block.findtext("HG407", 0)),
                     kommentar=block.findtext("HG999", "-"),
+                    profilauskleidung=profilauskleidung,
+                    innenmaterial=innenmaterial,
                     xschob=xschob,
                     yschob=yschob,
                     xschun=xschun,
@@ -1393,7 +1404,8 @@ class ImportTask:
 
 
             params = {'haltnam': haltung.haltnam, 'schoben': haltung.schoben, 'schunten': haltung.schunten, 'hoehe': haltung.hoehe,
-                      'breite': haltung.breite, 'laenge': haltung.laenge, 'material': haltung.material, 'sohleoben': haltung.sohleoben,
+                      'breite': haltung.breite, 'laenge': haltung.laenge, 'material': haltung.material, 'profilauskleidung': haltung.profilauskleidung,
+                      'innenmaterial': haltung.innenmaterial, 'sohleoben': haltung.sohleoben,
                       'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 

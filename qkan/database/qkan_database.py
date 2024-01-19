@@ -22,7 +22,7 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.3.6"  # Version der QKan-Datenbank
+__dbVersion__ = "3.3.7"  # Version der QKan-Datenbank
 __qgsVersion__ = "3.3.7"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
@@ -158,6 +158,7 @@ def createdbtables(
             hoehe REAL,                                     -- Profilhoehe (m)
             breite REAL,                                    -- Profilbreite (m)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
+            aussendurchmesser REAL,
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
@@ -165,6 +166,8 @@ def createdbtables(
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
             material TEXT,
+            profilauskleidung TEXT,
+            innenmaterial TEXT,
             ks REAL DEFAULT 1.5,                            -- abs. Rauheit (Prandtl-Colebrook)
             haltungstyp TEXT DEFAULT 'Haltung',             -- join haltungstypen.bezeichnung
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
@@ -262,19 +265,19 @@ def createdbtables(
                 INSERT INTO haltungen_untersucht
                   (haltnam, schoben, schunten,
                    hoehe, breite, laenge,
-                   kommentar, createdat, baujahr,  
+                   kommentar, createdat, baujahr,
                    geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
-                SELECT 
-                  new.haltnam, new.schoben, new.schunten, 
-                  CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
+                SELECT
+                  new.haltnam, new.schoben, new.schunten,
+                  CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END,
                   CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
-                  new.laenge, new.kommentar, 
+                  new.laenge, new.kommentar,
                   coalesce(new.createdat, CURRENT_TIMESTAMP), new.baujahr,
                   MakeLine(
                     coalesce(
                       MakePoint(new.xschob, new.yschob, {epsg}),
                       schob.geop
-                    ), 
+                    ),
                     coalesce(
                       MakePoint(new.xschun, new.yschun, {epsg}),
                       schun.geop
@@ -285,6 +288,37 @@ def createdbtables(
                   schaechte AS schun
                 WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
               END;"""
+
+    # sql = f"""CREATE TRIGGER IF NOT EXISTS haltungen_untersucht_insert_clipboard
+    #                 INSTEAD OF INSERT ON haltungen_untersucht_data FOR EACH ROW
+    #               BEGIN
+    #                 INSERT INTO haltungen_untersucht
+    #                   (haltnam, schoben, schunten,
+    #                    hoehe, breite, laenge,
+    #                    kommentar, createdat, baujahr,
+    #                    geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
+    #                 SELECT
+    #                   new.haltnam, new.schoben, new.schunten,
+    #                   CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END,
+    #                   CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
+    #                   new.laenge, new.kommentar,
+    #                   coalesce(new.createdat, CURRENT_TIMESTAMP), new.baujahr,
+    #                   coalesce(le.geom, MakeLine(
+    #                     coalesce(
+    #                       MakePoint(new.xschob, new.yschob, {epsg}),
+    #                       schob.geop
+    #                     ),
+    #                     coalesce(
+    #                       MakePoint(new.xschun, new.yschun, {epsg}),
+    #                       schun.geop
+    #                     )
+    #                   )), new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, coalesce(new.max_ZD, 63), coalesce(new.max_ZB, 63), coalesce(new.max_ZS, 63)
+    #                 FROM
+    #                   schaechte AS schob,
+    #                   schaechte AS schun,
+    #                   anschlussleitungen AS le
+    #                 WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND le.leitnam = new.haltnam;
+    #               END;"""
     try:
         cursl.execute(sql)
     except BaseException as err:
@@ -456,7 +490,7 @@ def createdbtables(
                         schaechte AS schob,
                         schaechte AS schun,
                         haltungen AS haltung
-                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND haltung.haltnam = new.untersuchhal 
+                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND haltung.haltnam = new.untersuchhal AND schob.schachttyp = 'Schacht' AND schun.schachttyp = 'Schacht'
                         UNION
                         SELECT
                         new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
@@ -733,6 +767,7 @@ def createdbtables(
         return False
 
     consl.commit()
+
 
     # Schaechte_untersucht ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
@@ -1781,6 +1816,7 @@ def createdbtables(
 
     daten = [("Auslass",),
              ("Schacht",),
+             ("Anschlussschacht",),
              ("Speicher",)]
 
     try:
