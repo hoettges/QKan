@@ -40,8 +40,10 @@ class Subkans_funkt:
         if check_cb['cb3']:
             self.bewertung_subkans()
 
+
         if check_cb['cb4']:
             self.schadens_ueberlagerung()
+            self.schadens_laenge()
 
         if check_cb['cb5']:
             self.subkans()
@@ -232,7 +234,7 @@ class Subkans_funkt:
         db1 = spatialite_connect(data)
         curs1 = db1.cursor()
 
-        # nach Isybau
+        # nach SubKans
 
         data = db
         db = spatialite_connect(data)
@@ -5579,114 +5581,67 @@ class Subkans_funkt:
                 except:
                     pass
                 try:
-                    curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensausprägung TEXT ;""")
+                    curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensauspraegung TEXT ;""")
                 except:
                     pass
 
-                #TODO: Schadenslänge ergänzen?
 
 
-                if (attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "A") or (
-                        attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "B"):
-                    if attr[13] >= 7:
-                        z = '0'
-                    elif 4 <= attr[13] < 7:
-                        z = '1'
-                    elif 3 <= attr[13] < 4:
-                        z = '2'
-                    elif 1 <= attr[13] < 3:
-                        z = '3'
-                    elif attr[13] < 1:
-                        z = '4'
-                    else:
-                        z = '5'
-                    sql = f"""
-                             UPDATE untersuchdat_haltung_bewertung
-                               SET Zustandsklasse_S = ?
-                               WHERE untersuchdat_haltung_bewertung.pk = ?;
-                               """
-                    data = (z, attr[0])
-                    try:
-                        curs.execute(sql, data)
-                        db.commit()
-                    except:
-                        pass
-                    if attr[13] >= 50:
-                        z = '0'
-                    elif 40 <= attr[13] < 50:
-                        z = '1'
-                    elif 25 <= attr[13] < 40:
-                        z = '2'
-                    elif 10 <= attr[13] < 25:
-                        z = '3'
-                    elif attr[13] < 10:
-                        z = '4'
-                    else:
-                        z = '5'
-                    sql = f"""
-                             UPDATE untersuchdat_haltung_bewertung
-                               SET Zustandsklasse_B = ?
-                               WHERE untersuchdat_haltung_bewertung.pk = ? 
-                               """
-                    data = (z, attr[0])
-                    try:
-                        curs.execute(sql, data)
-                        db.commit()
-                        continue
-                    except:
-                        pass
-                if (attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "A") or (
-                        attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "B"):
-                    if attr[13] >= 15:
-                        z = '0'
-                    elif 10 <= attr[13] < 15:
-                        z = '1'
-                    elif 6 <= attr[13] < 10:
-                        z = '2'
-                    elif 2 <= attr[13] < 6:
-                        z = '3'
-                    elif attr[13] < 2:
-                        z = '4'
-                    else:
-                        z = '5'
-                    sql = f"""
-                             UPDATE untersuchdat_haltung_bewertung
-                               SET Zustandsklasse_S = ?
-                               WHERE untersuchdat_haltung_bewertung.pk = ? 
-                               """
-                    data = (z, attr[0])
-                    try:
-                        curs.execute(sql, data)
-                        db.commit()
-                    except:
-                        pass
-                    if attr[13] >= 50:
-                        z = '0'
-                    elif 40 <= attr[13] < 50:
-                        z = '1'
-                    elif 25 <= attr[13] < 40:
-                        z = '2'
-                    elif 10 <= attr[13] < 25:
-                        z = '3'
-                    elif attr[13] < 10:
-                        z = '4'
-                    else:
-                        z = '5'
-                    sql = f"""
-                             UPDATE untersuchdat_haltung_bewertung
-                               SET Zustandsklasse_B = ?
-                               WHERE untersuchdat_haltung_bewertung.pk = ? 
-                               """
-                    data = (z, attr[0])
-                    try:
-                        curs.execute(sql, data)
-                        db.commit()
-                        continue
-                    except:
-                        pass
+                if (attr[10] == "BAA" and attr[11] == "A") or ( attr[10] == "BAA" and attr[11] == "B"):
+                    if attr[15] in ["", "None", "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                 UPDATE substanz_haltung_bewertung
+                                   SET Schadensart = ?
+                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
 
-                sql = ""
-                data = ()
+                        z = 'DdS'
+                        sql = f"""
+                                 UPDATE substanz_haltung_bewertung
+                                   SET Schadensauspraegung = ?
+                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                 UPDATE substanz_haltung_bewertung
+                                   SET Schadensart = ?
+                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                         UPDATE substanz_haltung_bewertung
+                                                           SET Schadensauspraegung = ?
+                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
 
                 # Tab A.3
                 if attr[10] == "BAB" and attr[11] == "A" and (
@@ -5859,8 +5814,113 @@ class Subkans_funkt:
 
 
     def schadens_ueberlagerung(self):
-        #Schadensüberlagerung
+        #Schadensüberlagerung, Schäden an der gleichen Position entfernen, der schwere schaden wird behalten
+
+        date = self.date + '%'
+        db_x = self.db
+        crs = self.crs
+        haltung = self.haltung
+
+        data = db_x
+
+        db1 = spatialite_connect(data)
+        curs1 = db1.cursor()
+
+        logger.debug(f'Start_Bewertung_Haltungen.liste: {datetime.now()}')
+        # nach DWA
+
+        sql = """CREATE TABLE IF NOT EXISTS substanz_haltung_bewertung AS 
+                        SELECT pk, 
+                        untersuchhal, 
+                        untersuchrichtung,
+                        schoben,
+                        schunten,
+                        id,
+                        videozaehler,
+                        inspektionslaenge,
+                        station,
+                        timecode,
+                        kuerzel,
+                        charakt1,
+                        charakt2,
+                        quantnr1,
+                        quantnr2,
+                        streckenschaden,
+                        pos_von,
+                        pos_bis,
+                        foto_dateiname,
+                        film_dateiname,
+                        bw_bs,
+                        cratedat,
+
+                        FROM untersuchdat_haltung_bewertung"""
+        curs1.execute(sql)
+
+        db = spatialite_connect(db_x)
+        curs = db.cursor()
+
+        if haltung == True:
+            sql = """
+                           SELECT
+                               substanz_haltung_bewertung.pk,
+                               substanz_haltung_bewertung.untersuchhal,
+                               substanz_haltung_bewertung.untersuchrichtung,
+                               substanz_haltung_bewertung.schoben,
+                               substanz_haltung_bewertung.schunten,
+                               substanz_haltung_bewertung.id,
+                               substanz_haltung_bewertung.videozaehler,
+                               substanz_haltung_bewertung.inspektionslaenge,
+                               substanz_haltung_bewertung.station,
+                               substanz_haltung_bewertung.timecode,
+                               substanz_haltung_bewertung.kuerzel,
+                               substanz_haltung_bewertung.charakt1,
+                               substanz_haltung_bewertung.charakt2,
+                               substanz_haltung_bewertung.quantnr1,
+                               substanz_haltung_bewertung.quantnr2,
+                               substanz_haltung_bewertung.streckenschaden,
+                               substanz_haltung_bewertung.pos_von,
+                               substanz_haltung_bewertung.pos_bis,
+                               substanz_haltung_bewertung.foto_dateiname,
+                               substanz_haltung_bewertung.film_dateiname,
+                               substanz_haltung_bewertung.richtung,
+                               substanz_haltung_bewertung.bw_bs,
+                               substanz_haltung_bewertung.createdat,
+                               haltungen.haltnam,
+                               haltungen.material,
+                               haltungen.hoehe,
+                               haltungen.createdat
+                           FROM substanz_haltung_bewertung, haltungen
+                           WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                       """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+            liste = []
+
+            for attr in curs.fetchall():
+                a = []
+                a.append(attr[0])
+                a.append(attr[1])
+                a.append(attr[8])
+                a.append(attr[15])
+
+                liste.append(a)
+
+
+
+    def schadens_laenge(self):
+        # TODO: Berechnung Schadenslänge ergänzen
         pass
+        # if x = "PktS":
+        #     sl = 0.3
+        #
+        # if x = "UmfS":
+        #     sl = DN
+        #
+        # if x = "StrS":
+        #     sl = strecke zwischen Schadensanfang und Ende
+
 
     def subkans(self):
         #Berechnung der Substanzklassen

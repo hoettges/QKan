@@ -23,7 +23,8 @@ class Schacht(ClassObject):
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
-    knotentyp: int = 0
+    knotentyp: str = ""
+    schachttyp: str = ""
     simstatus: int = 0
     kommentar: str = ""
 
@@ -33,7 +34,7 @@ class Schacht_untersucht(ClassObject):
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
-    knotentyp: int = 0
+    knotentyp: str = ""
     simstatus: int = 0
     kommentar: str = ""
     baujahr: int = 0
@@ -52,6 +53,7 @@ class Schacht_untersucht(ClassObject):
 class Untersuchdat_schacht(ClassObject):
     untersuchsch: str = ""
     id: int = 0
+    #TODO: videozaehler = Uhrzeit hh:mm
     videozaehler: int = 0
     timecode: int = 0
     kuerzel: str = ""
@@ -531,6 +533,7 @@ class ImportTask:
                 name = block.findtext("KG001", "not found")
                 knoten_typ = 'Normalschacht'
 
+                schachttyp = 'Schacht'
                 schacht_typ = block.findtext("KG305", "-1")
                 if schacht_typ not in ("0", "S", "-1", ""):
                     schacht_typ = 'Anschlussschacht'
@@ -565,14 +568,14 @@ class ImportTask:
                     ysch=ysch,
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=deckelhoehe,
-                    durchm=_strip_int(block.findtext("KG309", 0)),
+                    durchm=_strip_float(block.findtext("KG309", 0.0)),
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
                     simstatus=_strip_int(block.findtext("KG407", "0")),
                     kommentar=block.findtext("KG999", "-"),
-                    druckdicht=block.findtext("KG315", 0)
+                    druckdicht=_strip_int(block.findtext("KG315", 0))
                 )
 
 
@@ -1029,7 +1032,7 @@ class ImportTask:
                     ysch=ysch,
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=deckelhoehe,
-                    durchm=_strip_int(block.findtext("KG309", 0)),
+                    durchm=_strip_float(block.findtext("KG309", 0.0)),
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
                     knotentyp=knoten_typ,
