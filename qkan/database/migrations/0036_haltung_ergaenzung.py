@@ -28,7 +28,6 @@ def run(dbcon: DBConnection) -> bool:
             "strasse TEXT                                    -- für ISYBAU benötigt",
             "profilnam TEXT DEFAULT 'Kreisquerschnitt'       -- join profile.profilnam",
             "entwart TEXT DEFAULT 'Regenwasser'              -- join entwaesserungsarten.bezeichnung",
-            "strasse TEXT",
             "material TEXT",
             "profilauskleidung TEXT",
             "innenmaterial TEXT",

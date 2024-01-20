@@ -162,9 +162,9 @@ def createdbtables(
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
+            strasse TEXT,                                   -- für ISYBAU benötigt
             profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
-            strasse TEXT,
             material TEXT,
             profilauskleidung TEXT,
             innenmaterial TEXT,
