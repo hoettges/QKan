@@ -2,12 +2,10 @@
 import os
 
 from qgis.core import *
-from qgis.utils import iface, spatialite_connect
+from qgis.utils import iface, spatialite_connect, pluginDirectory
 import sqlite3
 import math
 import pandas as pd
-
-
 
 class sanierungsbedarfszahl_funkt:
     def __init__(self, check_cb, db, date, speicher, atlas_path, massstab, format, excel_format, excel_speicher, epsg, db_format):
@@ -23,6 +21,8 @@ class sanierungsbedarfszahl_funkt:
         self.excel_speicher = excel_speicher
         self.crs = epsg
         self.db_format = db_format
+        self.formsDir = os.path.join(pluginDirectory("qkan"), "forms")
+        self.qmlDir = os.path.join(pluginDirectory("qkan"), "templates/qml")
 
         self.haltung = False
         self.leitung = False
@@ -749,9 +749,12 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/untersuchdat_haltung_bewertung_dwa.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/untersuchdat_haltung_bewertung_dwa.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'untersuchdat_haltung_bewertung_dwa.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
         uri = QgsDataSourceUri()
@@ -768,8 +771,12 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_dwa.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/haltungen_untersucht_bewertung_dwa.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'haltungen_untersucht_bewertung_dwa.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
     def sanierungszahl_dwa_schacht(self):
@@ -1100,8 +1107,12 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/untersuchdat_schacht_bewertung_dwa.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/untersuchdat_schacht_bewertung_dwa.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'untersuchdat_schacht_bewertung_dwa.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
         uri = QgsDataSourceUri()
@@ -1119,8 +1130,12 @@ class sanierungsbedarfszahl_funkt:
             pass
 
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/schaechte_untersucht_bewertung_dwa.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/schaechte_untersucht_bewertung_dwa.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'schaechte_untersucht_bewertung_dwa.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
     def systemzahl_isy_haltung(self):
@@ -1521,8 +1536,12 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/untersuchdat_haltung_bewertung_isy.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/untersuchdat_haltung_bewertung_isy.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'untersuchdat_haltung_bewertung_isy.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
         uri = QgsDataSourceUri()
@@ -1540,8 +1559,12 @@ class sanierungsbedarfszahl_funkt:
             pass
 
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_isy.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/haltungen_untersucht_bewertung_isy.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'haltungen_untersucht_bewertung_isy.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
 
@@ -1870,8 +1893,12 @@ class sanierungsbedarfszahl_funkt:
             pass
 
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/untersuchdat_schacht_bewertung_isy.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/untersuchdat_schacht_bewertung_isy.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'untersuchdat_schacht_bewertung_isy.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
         uri = QgsDataSourceUri()
@@ -1888,8 +1915,12 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-        x = os.path.dirname(os.path.abspath(__file__))
-        vlayer.loadNamedStyle(x + '/schaechte_untersucht_bewertung_isy.qml')
+        qmlpath = os.path.join(self.qmlDir, 'res/schaechte_untersucht_bewertung_isy.qml')
+        vlayer.loadNamedStyle(qmlpath)
+        # Adapt path to forms directory
+        editFormConfig = vlayer.editFormConfig()
+        editFormConfig.setUiForm(os.path.join(self.formsDir, 'schaechte_untersucht_bewertung_isy.ui'))
+        vlayer.setEditFormConfig(editFormConfig)
         QgsProject.instance().addMapLayer(vlayer)
 
     def atlas(self):

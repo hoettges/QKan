@@ -171,6 +171,8 @@ def createdbtables(
             ks REAL DEFAULT 1.5,                            -- abs. Rauheit (Prandtl-Colebrook)
             haltungstyp TEXT DEFAULT 'Haltung',             -- join haltungstypen.bezeichnung
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
+            transport INTEGER DEFAULT 0,                    -- Transporthaltung?
+            druckdicht INTEGER DEFAULT 0,                   -- Druckleitung?
             xschob REAL,
             yschob REAL,
             xschun REAL,
@@ -963,10 +965,11 @@ def createdbtables(
             bemerkung TEXT, 
             he_nr INTEGER,                      -- HYSTEM-EXTRAN
             kp_nr INTEGER,                      -- DYNA / Kanal++
-            m145 TEXT,                          -- DWA M145
             isybau TEXT,                        -- BFR Abwasser
-            transport INTEGER,                  -- Transporthaltung?
-            druckdicht INTEGER                  -- Druckleitung?
+            m150 TEXT,                          -- DWA M150
+            m145 TEXT,                          -- DWA M145
+            transport INTEGER,                  -- Transporthaltung? - deprecated
+            druckdicht INTEGER                  -- Druckleitung? - deprecated
             )"""
 
     try:

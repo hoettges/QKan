@@ -259,7 +259,7 @@ def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
         try:
             return int(value)
         except ValueError:
-            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("isyporter._import.py._strip_int_2: %s" % sys.exc_info()[1])
             return default
 
     return default
@@ -376,7 +376,7 @@ class ImportTask:
 
         daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
         sql = """INSERT INTO entwaesserungsarten (
-                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m150, isybau, transport, druckdicht)
                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
                     WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
         if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):

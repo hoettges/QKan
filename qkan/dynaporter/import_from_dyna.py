@@ -715,7 +715,7 @@ def _reftables(db_qkan: DBConnection) -> bool:
 
     daten = [el + (el[0],) for el in daten]  # trick: repeat last argument for ? after WHERE in SQL
     sql = """INSERT INTO entwaesserungsarten (
-                bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m150, isybau, transport, druckdicht)
                 SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
                 WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
     if not db_qkan.sql(sql, "dyna_import Referenzliste entwaesserungsarten", daten, many=True):

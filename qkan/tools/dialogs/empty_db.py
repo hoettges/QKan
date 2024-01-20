@@ -69,7 +69,7 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
         ]
 
         sql = """INSERT INTO entwaesserungsarten (
-                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m150, isybau, transport, druckdicht)
                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?"""
         if not self.db_qkan.sql(sql, "he8_import Referenzlisten", daten, many=True):
             return False

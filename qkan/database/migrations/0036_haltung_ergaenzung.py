@@ -34,6 +34,8 @@ def run(dbcon: DBConnection) -> bool:
             "ks REAL DEFAULT 1.5                             -- abs. Rauheit (Prandtl-Colebrook)",
             "haltungstyp TEXT DEFAULT 'Haltung'              -- join haltungstypen.bezeichnung",
             "simstatus TEXT DEFAULT 'vorhanden'              -- join simulationsstatus.bezeichnung",
+            "transport INTEGER DEFAULT 0                     -- Transporthaltung?",
+            "druckdicht INTEGER DEFAULT 0                    -- Druckleitung?",
             "xschob REAL",
             "yschob REAL",
             "xschun REAL",
@@ -51,4 +53,25 @@ def run(dbcon: DBConnection) -> bool:
     if not load_plausisql(dbcon):
         logger.error("Fehler in migration 0036_haltung_ergaenzung")
         return False
+
+    if not dbcon.alter_table(
+        "entwaesserungsarten", [
+            "bezeichnung TEXT                    -- eindeutige QKan-Bezeichnung",
+            "kuerzel TEXT                        -- nur für Beschriftung",
+            "bemerkung TEXT",
+            "he_nr INTEGER                       -- HYSTEM-EXTRAN",
+            "kp_nr INTEGER                       -- DYNA / Kanal++",
+            "isybau TEXT                         -- BFR Abwasser",
+            "m150 TEXT                           -- DWA M150",
+            "m145 TEXT                           -- DWA M145",
+            "transport INTEGER                   -- Transporthaltung? - deprecated",
+            "druckdicht INTEGER                  -- Druckleitung? - deprecated",
+            ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von m145/m150 "
+            "zu Tabelle 'entwart' fehlgeschlagen"
+        )
+
     return True

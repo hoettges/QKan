@@ -291,7 +291,7 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLineEdit" name="m145">
+    <widget class="QLineEdit" name="m150">
      <property name="enabled">
       <bool>true</bool>
      </property>

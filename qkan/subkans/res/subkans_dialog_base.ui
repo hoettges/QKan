@@ -10,6 +10,12 @@
     <height>376</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>611</width>
+    <height>376</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>SubKans</string>
   </property>
@@ -67,6 +73,12 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QLabel" name="label_6">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <family>Tahoma</family>
@@ -83,7 +95,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QgsProjectionSelectionWidget" name="epsg" native="true"/>
+          <widget class="QgsProjectionSelectionWidget" name="epsg">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

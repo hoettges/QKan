@@ -77,7 +77,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="m145">
+    <field configurationFlags="None" name="m150">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -126,9 +126,10 @@
     <alias field="he_nr" index="4" name="NR (HYSTEM-EXTRAN)"/>
     <alias field="kp_nr" index="5" name="NR (Kanal++)"/>
     <alias field="m145" index="6" name="Nr (DWA-M 145)"/>
-    <alias field="isybau" index="7" name="Nr (ISYBAU)"/>
-    <alias field="transport" index="8" name="Transport"/>
-    <alias field="druckdicht" index="9" name=""/>
+    <alias field="m150" index="7" name="Nr (DWA-M 150)"/>
+    <alias field="isybau" index="8" name="Nr (ISYBAU)"/>
+    <alias field="transport" index="9" name="Transport"/>
+    <alias field="druckdicht" index="10" name=""/>
   </aliases>
   <defaults>
     <default field="pk" applyOnUpdate="0" expression=""/>
@@ -138,6 +139,7 @@
     <default field="he_nr" applyOnUpdate="0" expression=""/>
     <default field="kp_nr" applyOnUpdate="0" expression=""/>
     <default field="m145" applyOnUpdate="0" expression=""/>
+    <default field="m150" applyOnUpdate="0" expression=""/>
     <default field="isybau" applyOnUpdate="0" expression=""/>
     <default field="transport" applyOnUpdate="0" expression=""/>
     <default field="druckdicht" applyOnUpdate="0" expression=""/>
@@ -150,6 +152,7 @@
     <constraint exp_strength="0" field="he_nr" notnull_strength="0" unique_strength="0" constraints="0"/>
     <constraint exp_strength="0" field="kp_nr" notnull_strength="0" unique_strength="0" constraints="0"/>
     <constraint exp_strength="0" field="m145" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="m150" notnull_strength="0" unique_strength="0" constraints="0"/>
     <constraint exp_strength="0" field="isybau" notnull_strength="0" unique_strength="0" constraints="0"/>
     <constraint exp_strength="0" field="transport" notnull_strength="0" unique_strength="0" constraints="0"/>
     <constraint exp_strength="0" field="druckdicht" notnull_strength="0" unique_strength="0" constraints="0"/>
@@ -162,6 +165,7 @@
     <constraint field="he_nr" desc="" exp=""/>
     <constraint field="kp_nr" desc="" exp=""/>
     <constraint field="m145" desc="" exp=""/>
+    <constraint field="m150" desc="" exp=""/>
     <constraint field="isybau" desc="" exp=""/>
     <constraint field="transport" desc="" exp=""/>
     <constraint field="druckdicht" desc="" exp=""/>
@@ -179,6 +183,7 @@
       <column width="-1" type="field" hidden="0" name="he_nr"/>
       <column width="-1" type="field" hidden="0" name="kp_nr"/>
       <column width="-1" type="field" hidden="0" name="m145"/>
+      <column width="-1" type="field" hidden="0" name="m150"/>
       <column width="-1" type="field" hidden="0" name="isybau"/>
       <column width="-1" type="field" hidden="0" name="transport"/>
       <column width="-1" type="field" hidden="0" name="druckdicht"/>
@@ -222,6 +227,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="kp_nr"/>
     <field editable="1" name="kuerzel"/>
     <field editable="1" name="m145"/>
+    <field editable="1" name="m150"/>
     <field editable="1" name="pk"/>
     <field editable="1" name="transport"/>
   </editable>
@@ -234,6 +240,7 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="kp_nr"/>
     <field labelOnTop="0" name="kuerzel"/>
     <field labelOnTop="0" name="m145"/>
+    <field labelOnTop="0" name="m150"/>
     <field labelOnTop="0" name="pk"/>
     <field labelOnTop="0" name="transport"/>
   </labelOnTop>
@@ -246,6 +253,7 @@ def my_form_open(dialog, layer, feature):
     <field reuseLastValue="0" name="kp_nr"/>
     <field reuseLastValue="0" name="kuerzel"/>
     <field reuseLastValue="0" name="m145"/>
+    <field reuseLastValue="0" name="m150"/>
     <field reuseLastValue="0" name="pk"/>
     <field reuseLastValue="0" name="transport"/>
   </reuseLastValue>

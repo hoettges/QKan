@@ -835,7 +835,7 @@ class DBConnection:
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
-            wkt_geom = parameters.get("geom")
+            # wkt_geom = parameters.get("geom")
             sql = """
                     INSERT INTO tezg
                       (flnam, regenschreiber, schnam, befgrad, neigung, 
@@ -845,8 +845,8 @@ class DBConnection:
                     :flnam, :regenschreiber, :schnam, :befgrad, :neigung, 
                         coalesce(:createdat, CURRENT_TIMESTAMP), :haltnam, :neigkl, :schwerpunktlaufzeit, :teilgebiet, 
                         :abflussparameter, :kommentar,
-                    GeomFromWkb(x'{wkt_geom}', :epsg)
-                );""".format(wkt_geom=wkt_geom)
+                    GeomFromText(:geom, :epsg)
+                );"""
 
         elif tabnam == "flaechen":
             parlis = ['flnam', 'haltnam', 'schnam', 'neigkl', 'neigung',
@@ -856,7 +856,7 @@ class DBConnection:
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
-            wkt_geom = parameters.get("geom")
+            # wkt_geom = parameters.get("geom")
             sql = """
                     INSERT INTO flaechen
                       (flnam, haltnam, schnam, neigkl, neigung, 
@@ -868,23 +868,23 @@ class DBConnection:
                     :teilgebiet, :regenschreiber, :abflussparameter, 
                     :aufteilen, :kommentar, 
                     coalesce(:createdat, CURRENT_TIMESTAMP),
-                    GeomFromWkb(x'{wkt_geom}', :epsg)
-                );""".format(wkt_geom=wkt_geom)
+                    GeomFromText(:geom, :epsg)
+                );"""
 
         elif tabnam == "teilgebiete":
             parlis = ["tgnam", "kommentar", "createdat", "geom", "epsg"]
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
-            wkt_geom = parameters.get("geom")
+            # wkt_geom = parameters.get("geom")
             sql = """
                 INSERT INTO teilgebiete
                   (tgnam, kommentar, createdat, geom)
                 VALUES (
                     :tgnam, :kommentar, 
                     coalesce(:createdat, CURRENT_TIMESTAMP),
-                    GeomFromWkb(x'{wkt_geom}', :epsg)
-                );""".format(wkt_geom=wkt_geom)
+                    GeomFromText(:geom, :epsg)
+                );"""
 
         else:
             warnung(

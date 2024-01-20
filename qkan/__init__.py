@@ -128,7 +128,7 @@ class QKan:
         from .linkflaechen import LinkFl
         from .surfaceTools import SurfaceTools
         from .isyporter import IsyPorter
-        from .m145porter import M145Porter
+        from .m150porter import M150Porter
         # from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
         from .zustandsklassen import zustandsklassen
@@ -149,7 +149,7 @@ class QKan:
             LinkFl(iface),
             SurfaceTools(iface),
             IsyPorter(iface),
-            M145Porter(iface),
+            M150Porter(iface),
             # GanglinienHE8(iface),
             Plausi(iface),
             zustandsklassen(iface),

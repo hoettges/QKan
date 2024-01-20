@@ -293,7 +293,7 @@ class ImportTask:
             abnam = '$Default_Unbef'
 
             params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
-                       'befgrad': befgrad, 'neigung': int(neigung), 'abflussparameter': abnam, 'epsg':QKan.config.epsg }
+                       'befgrad': befgrad, 'neigung': neigung, 'abflussparameter': abnam, 'epsg':QKan.config.epsg }
 
             logger.debug(f'mswmmporter.import - insertdata:\ntabnam: tezg\n'
                           f'params: {params}')

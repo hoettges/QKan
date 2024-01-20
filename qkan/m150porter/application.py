@@ -17,7 +17,7 @@ from .application_dialog import ExportDialog, ImportDialog
 from . import resources  # isort:skip
 
 
-class M145Porter(QKanPlugin):
+class M150Porter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
@@ -26,7 +26,7 @@ class M145Porter(QKanPlugin):
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
-        icon_import = ":/plugins/qkan/m145porter/res/icon_import.png"
+        icon_import = ":/plugins/qkan/m150porter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
             text=self.tr("Import aus DWA-XML"),

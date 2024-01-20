@@ -248,7 +248,7 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         try:
             return int(value)
         except ValueError:
-            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
             return default
 
     return default
@@ -261,7 +261,7 @@ def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
         try:
             return int(value)
         except Exception:
-            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
 
     return default
 
@@ -350,7 +350,7 @@ class ImportTask:
 
         daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
         sql = """INSERT INTO entwaesserungsarten (
-                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m150, isybau, transport, druckdicht)
                     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
                     WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
         if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):
@@ -654,7 +654,7 @@ class ImportTask:
                       'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart, 'strasse': schacht.strasse,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -780,7 +780,7 @@ class ImportTask:
             params = {'schnam': schacht_untersucht.schnam, 'xsch': schacht_untersucht.xsch, 'ysch': schacht_untersucht.ysch,
                       'durchm': schacht_untersucht.durchm, 'kommentar': schacht_untersucht.kommentar, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte_untersucht\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte_untersucht\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -969,7 +969,7 @@ class ImportTask:
                       'foto_dateiname': untersuchdat_schacht.foto_dateiname, 'ordner': untersuchdat_schacht.ordner,
                       'ZD': untersuchdat_schacht.ZD, 'ZB': untersuchdat_schacht.ZB, 'ZS': untersuchdat_schacht.ZS, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -1086,7 +1086,7 @@ class ImportTask:
                       'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -1412,7 +1412,7 @@ class ImportTask:
                       'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: haltungen\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -1740,7 +1740,7 @@ class ImportTask:
                       'yschob': haltung_untersucht.yschob, 'xschub': haltung_untersucht.xschun,
                       'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -2017,7 +2017,7 @@ class ImportTask:
                       'richtung': untersuchdat_haltung.richtung, 'ZD': untersuchdat_haltung.ZD,
                       'ZB': untersuchdat_haltung.ZB, 'ZS': untersuchdat_haltung.ZS, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: untersuchdat_haltung\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_haltung\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -2207,7 +2207,7 @@ class ImportTask:
                       'xschun': anschlussleitung.xschun, 'yschob': anschlussleitung.yschob,
                       'yschun': anschlussleitung.yschun, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: anschlussleitungen\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: anschlussleitungen\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -2502,7 +2502,7 @@ class ImportTask:
             # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
             #     return None
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: haltungen\n'
+            logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
