@@ -238,10 +238,10 @@
            </rect>
           </property>
           <property name="currentText">
-           <string>ISYBAU Daten</string>
+           <string>DWA M-150 Daten</string>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <item>
            <property name="text">
