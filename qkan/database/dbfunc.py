@@ -1007,7 +1007,8 @@ class DBConnection:
         """Changes attribute columns in QKan tables except geom columns.
 
         :tabnam:                Name der Tabelle
-        :attributes_new:        bestehende und neue Attribute, Syntax wie in Create-Befehl, ohne Primärschlüssel.
+        :attributes_new:        bestehende und neue Attribute, Syntax wie in Create-Befehl, ohne Primärschlüssel
+                                und Geometrieobjekte.
                                 Alle übrigen Attribute aus der alten Tabelle, die nicht entfernt werden sollen,
                                 werden zufällig sortiert dahinter angeordnet übernommen.
         :attributes_del:        zu entfernende Attribute
@@ -1018,12 +1019,12 @@ class DBConnection:
 
         example:
         alter_table('flaechen',
-            [   'flnam TEXT                       -- eindeutiger Flächenname',
+            [   'flnam TEXT',
                 'haltnam TEXT',
-                'entfernen1 REAL              -- nur so...',
-                'entfernen2 TEXT              /* nur so...*/',
-                "simstatus TEXT DEFAULT 'vorhanden'",
-                'teilgebiet TEXT',
+                'neu1 REAL                              -- Kommentar Schreibweise 1 ',
+                'neu2 TEXT                              /* Kommentar Schreibweise 2 */',
+                "simstatus TEXT DEFAULT 'vorhanden'     -- Kommentar Schreibweise 1 ",
+                'teilgebiet TEXT                        /* Kommentar Schreibweise 2 */',
                 "createdat TEXT DEFAULT CURRENT_TIMESTAMP"]
             ['entfernen1', 'entfernen2'])
         """

@@ -6,7 +6,9 @@ Formulare
     
     QKan_Formulare_Allgemein
     QKan_Verwaltung
+    QKan_Daten
     QKan_Hystem_Extran
+    QKan_XML
     QKan_DYNA
     QKan_Mike
     QKan_SWMM

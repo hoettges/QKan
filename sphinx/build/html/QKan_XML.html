@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DYNA &mdash; QKan 3.3.1 Dokumentation</title>
+  <title>XML &mdash; QKan 3.3.1 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
 
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
-    <link rel="next" title="Mike+" href="QKan_Mike.html" />
-    <link rel="prev" title="XML" href="QKan_XML.html" /> 
+    <link rel="next" title="DYNA" href="QKan_DYNA.html" />
+    <link rel="prev" title="Hystem-Extran" href="QKan_Hystem_Extran.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -67,17 +67,18 @@
 <li class="toctree-l2"><a class="reference internal" href="QKan_Verwaltung.html">Verwaltung</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Hystem_Extran.html">Hystem-Extran</a></li>
-<li class="toctree-l2"><a class="reference internal" href="QKan_XML.html">XML</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">DYNA</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#import-aus-dyna-datei">Import aus DYNA-Datei</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">XML</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-aus-dwa-xml">Import aus DWA-XML</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#datenquelle">Datenquelle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#datenbank-verbindung">Datenbank-Verbindung</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#projektdatei-erzeugen">Projektdatei erzeugen</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#export-in-dyna-datei">Export in DYNA-Datei</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-aus-isybau-xml">Import aus ISYBAU-XML</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export-nach-isybau-xml">Export nach ISYBAU-XML</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_DYNA.html">DYNA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Mike.html">Mike+</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_SWMM.html">SWMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_STRAKAT.html">STRAKAT</a></li>
@@ -103,9 +104,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="Qkan_Formulare.html">Formulare</a></li>
-      <li class="breadcrumb-item active">DYNA</li>
+      <li class="breadcrumb-item active">XML</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/QKan_DYNA.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+            <a href="_sources/QKan_XML.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
       </li>
   </ul>
   <hr/>
@@ -113,12 +114,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="dyna">
-<h1>DYNA<a class="headerlink" href="#dyna" title="Link to this heading"></a></h1>
-<section id="import-aus-dyna-datei">
-<h2>Import aus DYNA-Datei<a class="headerlink" href="#import-aus-dyna-datei" title="Link to this heading"></a></h2>
-<p>Mit der Funktion <a class="reference internal" href="_images/Tool_import_dyna.png"><img alt="Tool_import_dyna" src="_images/Tool_import_dyna.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus DYNA-Datei</span> können leicht Daten aus einer DYNA-Datei in ein QKan-Projekt geladen werden.</p>
-<img alt="_images/import_dyna.png" src="_images/import_dyna.png" />
+  <section id="xml">
+<h1>XML<a class="headerlink" href="#xml" title="Link to this heading"></a></h1>
+<section id="import-aus-dwa-xml">
+<h2>Import aus DWA-XML<a class="headerlink" href="#import-aus-dwa-xml" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_import_dwa.png"><img alt="Tool_import_dwa" src="_images/Tool_import_dwa.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus DWA-XML</span> können DWA-XML-Dateien in ein QKan-Projekt importiert werden.</p>
+<img alt="_images/import_dwa.png" src="_images/import_dwa.png" />
 <section id="datenquelle">
 <h3>Datenquelle<a class="headerlink" href="#datenquelle" title="Link to this heading"></a></h3>
 <p>In diesem Bereich wird die mit Kanal++ erstellte Quelldatenbank (Endung .ein) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden,
@@ -136,10 +137,14 @@ Existiert noch keine Projektdatei, kann diese hier erstellt werden. Dabei ist es
 QKan-Datenbank zu speichern.</p>
 </section>
 </section>
-<section id="export-in-dyna-datei">
-<h2>Export in DYNA-Datei<a class="headerlink" href="#export-in-dyna-datei" title="Link to this heading"></a></h2>
-<p>Mit der Funktion <a class="reference internal" href="_images/Tool_export_dyna.png"><img alt="Tool_export_dyna" src="_images/Tool_export_dyna.png" style="width: 1.25em;" /></a> <span class="guilabel">Export in DYNA-Datei</span> ist ein schneller Export der QKan-Daten in eine DYNA-Datei möglich.</p>
-<img alt="_images/export_dyna.png" src="_images/export_dyna.png" />
+<section id="import-aus-isybau-xml">
+<h2>Import aus ISYBAU-XML<a class="headerlink" href="#import-aus-isybau-xml" title="Link to this heading"></a></h2>
+</section>
+<section id="export-nach-isybau-xml">
+<h2>Export nach ISYBAU-XML<a class="headerlink" href="#export-nach-isybau-xml" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_export_isybau.png"><img alt="Tool_export_isybau" src="_images/Tool_export_isybau.png" style="width: 1.25em;" /></a> <span class="guilabel">Export nach ISYBAU-XML</span> kann aus der QKan-Datenbank (<a href="#id1"><span class="problematic" id="id2">*</span></a>.sqlite) eine ISYBAU-XML-Datei
+erzeugt werden.</p>
+<img alt="_images/export_isybau.png" src="_images/export_isybau.png" />
 </section>
 </section>
 
@@ -147,8 +152,8 @@ QKan-Datenbank zu speichern.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="QKan_XML.html" class="btn btn-neutral float-left" title="XML" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
-        <a href="QKan_Mike.html" class="btn btn-neutral float-right" title="Mike+" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="QKan_Hystem_Extran.html" class="btn btn-neutral float-left" title="Hystem-Extran" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="QKan_DYNA.html" class="btn btn-neutral float-right" title="DYNA" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,5 +1,5 @@
 Änderungen von Riki mit Total Commander synchronisieren:
-c:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\source <-> "c:\FHAC\hoettges\HiWis\Kimmich, Friederike\QKan_Doku\Sphinx\source\"
+c:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\source <-> c:\FHAC\hoettges\HiWis\Kimmich, Friederike\QKan_Doku\Sphinx\source\
 
 Übersetzen: Tastaturkürzel "Alt"+s oder Ausführen von "C:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\erzeuge doku.bat"
 

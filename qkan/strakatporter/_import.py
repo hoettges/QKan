@@ -5,8 +5,38 @@ from qgis.PyQt.QtWidgets import QProgressBar
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
+from qkan.config import ClassObject
 
 logger = logging.getLogger("QKan.strakat.import")
+
+class Bericht(ClassObject):
+    datum: str = ""
+    untersucher: str = ""
+    ag_kontrolle: str = ""
+    fahrzeug: str = ""
+    inspekteur: str = ""
+    wetter: str = ""
+    atv149: float = 0.0
+    fortsetzung: int = 0
+    station_gegen: float = 0.0
+    station_untersucher: float = 0.0
+    atv_kuerzel: str = ""
+    atv_langtext: str = ""
+    sandatum: str = ""
+    geloescht: int = 0
+    schadensklasse: int = 0
+    untersuchungsrichtung: int = 0
+    videoband: str = ""
+    videozaehler: int = 0
+    vonuhr: int = 0
+    bisuhr: int = 0
+    atv143: float = 0.0
+    skdichtheit: int = 0
+    skstandsicherheit: int = 0
+    skbetriebssicherheit: int = 0
+    strakatid: str = ""
+    hausanschlid: str = ""
+    berichtid: str = ""
 
 
 class ImportTask:
@@ -39,14 +69,14 @@ class ImportTask:
 
         result = all(
             [
-                self._strakat_kanaltabelle(),
-                self._strakat_reftables(),
-                self._strakat_hausanschl(),
-                # self._strakat_berichte(),
-                self._reftables(),
-                self._schaechte(),
-                self._haltungen(),
-                self._anschlussleitungen(),
+                self._strakat_kanaltabelle(), self.progress_bar.setValue(20),
+                self._strakat_reftables(), self.progress_bar.setValue(30),
+                self._strakat_hausanschl(), self.progress_bar.setValue(40),
+                self._strakat_berichte(), self.progress_bar.setValue(50),
+                self._reftables(), self.progress_bar.setValue(60),
+                self._schaechte(), self.progress_bar.setValue(70),
+                self._haltungen(), self.progress_bar.setValue(80),
+                self._anschlussleitungen(), self.progress_bar.setValue(90),
                 # self._schachtschaeden(),
                 # self._haltungsschaeden(),
             ]
@@ -558,12 +588,223 @@ class ImportTask:
     def _strakat_berichte(self) -> bool:
         """Import der Schadensdaten aus der STRAKAT-Datei 'ENBericht.rwtopen', ACCESS-Tabelle 'SCHADENSTABELLE'
         """
+        def _iter() -> Iterator[Bericht]:
+            # Erstellung Tabelle t_strakatberichte
+            sql = "PRAGMA table_list('t_strakatberichte')"
+            if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_strakatberichte', vorhanden ist"):
+                return False                                        # Abbruch weil Anfrage fehlgeschlagen
+            if not self.db_qkan.fetchone():
+                sql = """ 
+                CREATE TABLE IF NOT EXISTS t_strakatberichte (
+                    pk INTEGER PRIMARY KEY,
+                    datum TEXT,
+                    untersucher TEXT,
+                    ag_kontrolle TEXT,
+                    fahrzeug TEXT,
+                    inspekteur TEXT,
+                    wetter TEXT,
+                    atv149 REAL,
+                    fortsetzung INTEGER,
+                    station_gegen REAL,
+                    station_untersucher REAL,
+                    atv_kuerzel TEXT,
+                    atv_langtext TEXT,
+                    sandatum TEXT,
+                    geloescht INTEGER,
+                    schadensklasse INTEGER,
+                    untersuchungsrichtung INTEGER,
+                    videoband TEXT,
+                    videozaehler INTEGER,
+                    vonuhr INTEGER,
+                    bisuhr INTEGER,
+                    atv143 REAL,
+                    skdichtheit INTEGER,
+                    skstandsicherheit INTEGER,
+                    skbetriebssicherheit INTEGER,
+                    strakatid TEXT,
+                    hausanschlid TEXT,
+                    berichtid TEXT,
+                )"""
+
+                if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatberichte"'):
+                    return False
+
+            # Datei kanal.rwtopen einlesen und in Tabelle schreiben
+            blength = 1024                      # Blocklänge in der STRAKAT-Datei
+            with open(os.path.join(self.strakatdir, 'ENBericht.rwtopen'), 'rb') as fo:
+                _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
+                for n in range(1, 5000000):
+                    b = fr.read(1024)
+                    if not b:
+                        break
+                    if n == 0 or n < num - 3:
+                        continue
+
+                    datum = b[0:10].decode('ansi')
+                    untersucher = b[11:b[11:31].find(b'\x00') + 11].decode('ansi').strip()
+                    ag_kontrolle = b[31:b[31:46].find(b'\x00') + 31].decode('ansi').strip()
+                    fahrzeug = b[46:b[46:57].find(b'\x00') + 46].decode('ansi').strip()
+                    inspekteur = b[58:b[58:74].find(b'\x00') + 58].decode('ansi').strip()
+                    wetter = b[73:b[73:88].find(b'\x00') + 73].decode('ansi').strip()
+
+                    atv149 = unpack('f', b[90:94])[0]
+
+                    fortsetzung = unpack('I', b[103:107])[0]
+                    station_gegen = unpack('d', b[107:115])[0]
+                    station_untersucher = unpack('d', b[115:123])[0]
+
+                    atv_kuerzel = b[123:b[123:134].find(b'\x00') + 123].decode('ansi').strip()
+                    atv_langtext = b[134:b[134:295].find(b'\x00') + 134].decode('ansi').strip()
+                    sandatum = b[284:294].decode('ansi')
+                    geloescht = unpack('b', b[296:297])[0]
+                    schadensklasse = unpack('B', b[295:296])[0]
+                    untersuchungsrichtung = unpack('B', b[297:298])[0]
+                    videoband = b[301:b[301:320].find(b'\x00') + 301].decode('ansi').strip()
+                    videozaehler = unpack('I', b[320:324])[0]
+
+                    vonuhr = unpack('B', b[366:367])[0]
+                    bisuhr = unpack('B', b[367:368])[0]
+                    atv143 = unpack('f', b[430:434])[0]
+
+                    skdichtheit = unpack('B', b[714:715])[0]
+                    skstandsicherheit = unpack('B', b[715:716])[0]
+                    skbetriebssicherheit = unpack('B', b[716:717])[0]
+
+                    (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
+                     ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[643:659])]
+                    strakatid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
+                    (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
+                     ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[659:675])]
+                    hausanschlid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
+                    (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
+                     ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[675:691])]
+                    berichtid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
+
+                    yield Bericht(
+                        datum=datum,
+                        untersucher=untersucher,
+                        ag_kontrolle=ag_kontrolle,
+                        fahrzeug=fahrzeug,
+                        inspekteur=inspekteur,
+                        wetter=wetter,
+                        atv149=atv149,
+                        fortsetzung=fortsetzung,
+                        station_gegen=station_gegen,
+                        station_untersucher=station_untersucher,
+                        atv_kuerzel=atv_kuerzel,
+                        atv_langtext=atv_langtext,
+                        sandatum=sandatum,
+                        geloescht=geloescht,
+                        schadensklasse=schadensklasse,
+                        untersuchungsrichtung=untersuchungsrichtung,
+                        videoband=videoband,
+                        videozaehler=videozaehler,
+                        vonuhr=vonuhr,
+                        bisuhr=bisuhr,
+                        atv143=atv143,
+                        skdichtheit=skdichtheit,
+                        skstandsicherheit=skstandsicherheit,
+                        skbetriebssicherheit=skbetriebssicherheit,
+                        strakatid=strakatid,
+                        hausanschlid=hausanschlid,
+                        berichtid=berichtid,
+                    )
+
+        params = ()                           # STRAKAT data stored in tuple of dicts for better performance
+                                            # with sql-statement executemany
+        for _bericht in _iter():
+            data = {
+                'datum': _bericht.datum,
+                'untersucher': _bericht.untersucher,
+                'ag_kontrolle': _bericht.ag_kontrolle,
+                'fahrzeug': _bericht.fahrzeug,
+                'inspekteur': _bericht.inspekteur,
+                'wetter': _bericht.wetter,
+                'atv149': _bericht.atv149,
+                'fortsetzung': _bericht.fortsetzung,
+                'station_gegen': _bericht.station_gegen,
+                'station_untersucher': _bericht.station_untersucher,
+                'atv_kuerzel': _bericht.atv_kuerzel,
+                'atv_langtext': _bericht.atv_langtext,
+                'sandatum': _bericht.sandatum,
+                'geloescht': _bericht.geloescht,
+                'schadensklasse': _bericht.schadensklasse,
+                'untersuchungsrichtung': _bericht.untersuchungsrichtung,
+                'videoband': _bericht.videoband,
+                'videozaehler': _bericht.videozaehler,
+                'vonuhr': _bericht.vonuhr,
+                'bisuhr': _bericht.bisuhr,
+                'atv143': _bericht.atv143,
+                'skdichtheit': _bericht.skdichtheit,
+                'skstandsicherheit': _bericht.skstandsicherheit,
+                'skbetriebssicherheit': _bericht.skbetriebssicherheit,
+                'strakatid': _bericht.strakatid,
+                'hausanschlid': _bericht.hausanschlid,
+                'berichtid': _bericht.berichtid,
+            }
+            params += (data,)
 
         sql = """
+            INSERT INTO t_strakatberichte (
+                datum, 
+                untersucher, 
+                ag_kontrolle, 
+                fahrzeug, 
+                inspekteur, 
+                wetter, 
+                atv149, 
+                fortsetzung, 
+                station_gegen, 
+                station_untersucher, 
+                atv_kuerzel, 
+                atv_langtext, 
+                sandatum, 
+                geloescht, 
+                schadensklasse, 
+                untersuchungsrichtung, 
+                videoband, 
+                videozaehler, 
+                vonuhr, 
+                bisuhr, 
+                atv143, 
+                skdichtheit, 
+                skstandsicherheit, 
+                skbetriebssicherheit, 
+                strakatid, 
+                hausanschlid, 
+                berichtid
+            ) VALUES (
+                :datum, 
+                :untersucher, 
+                :ag_kontrolle, 
+                :fahrzeug, 
+                :inspekteur, 
+                :wetter, 
+                :atv149, 
+                :fortsetzung, 
+                :station_gegen, 
+                :station_untersucher, 
+                :atv_kuerzel, 
+                :atv_langtext, 
+                :sandatum, 
+                :geloescht, 
+                :schadensklasse, 
+                :untersuchungsrichtung, 
+                :videoband, 
+                :videozaehler, 
+                :vonuhr, 
+                :bisuhr, 
+                :atv143, 
+                :skdichtheit, 
+                :skstandsicherheit, 
+                :skbetriebssicherheit, 
+                :strakatid, 
+                :hausanschlid, 
+                :berichtid
+            )
         """
 
-        params = {}
-        if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
+        if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Bericht", parameters=params, many=True):
             return False
 
         self.db_qkan.commit()

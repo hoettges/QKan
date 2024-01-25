@@ -65,11 +65,18 @@
 <li class="toctree-l1 current"><a class="reference internal" href="Qkan_Formulare.html">Formulare</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="QKan_Formulare_Allgemein.html">Allgemein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Verwaltung.html">Verwaltung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Hystem_Extran.html">Hystem-Extran</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_XML.html">XML</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_DYNA.html">DYNA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Mike.html">Mike+</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">SWMM</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#import-aus-swmm-datei">Import aus SWMM-Datei</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-aus-swmm-datei">Import aus SWMM-Datei</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#datenquelle">Datenquelle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datenbank-verbindung">Datenbank-Verbindung</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#projektdatei-erzeugen">Projektdatei erzeugen</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#export-in-swmm-datei">Export in SWMM-Datei</a></li>
 </ul>
 </li>
@@ -112,6 +119,22 @@
 <h2>Import aus SWMM-Datei<a class="headerlink" href="#import-aus-swmm-datei" title="Link to this heading"></a></h2>
 <p>Mit der Funktion <a class="reference internal" href="_images/Tool_import_swmm.png"><img alt="Tool_import_swmm" src="_images/Tool_import_swmm.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus SWMM-Datei</span> können Daten aus einer SWMM-Datei in ein QKan-Projekt geladen werden.</p>
 <img alt="_images/import_swmm.png" src="_images/import_swmm.png" />
+<section id="datenquelle">
+<h3>Datenquelle<a class="headerlink" href="#datenquelle" title="Link to this heading"></a></h3>
+<p>In diesem Bereich wird die mit SWMM erstellte Quelldatenbank (Endung .inp) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden,
+in dem die Daten <strong>in der Datenquelle</strong> gespeichert sind. In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide
+Projektionssysteme identisch sind.</p>
+</section>
+<section id="datenbank-verbindung">
+<h3>Datenbank-Verbindung<a class="headerlink" href="#datenbank-verbindung" title="Link to this heading"></a></h3>
+<p>Hier wird das Datenziel - die Sqlite-Datenbank - ausgewählt. Ist noch keine Zieldatenbank vorhanden, kann diese hier erstellt werden.</p>
+</section>
+<section id="projektdatei-erzeugen">
+<h3>Projektdatei erzeugen<a class="headerlink" href="#projektdatei-erzeugen" title="Link to this heading"></a></h3>
+<p>Werden die Daten in ein bereits existierendes Projekt geladen, dann ist hier bereits der Pfad der verwendeten Projektdatei angegeben.
+Existiert noch keine Projektdatei, kann diese hier erstellt werden. Dabei ist es empfehlenswert, diese im selben Verzeichnis mit der
+QKan-Datenbank zu speichern.</p>
+</section>
 </section>
 <section id="export-in-swmm-datei">
 <h2>Export in SWMM-Datei<a class="headerlink" href="#export-in-swmm-datei" title="Link to this heading"></a></h2>

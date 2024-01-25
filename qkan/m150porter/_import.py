@@ -239,7 +239,6 @@ def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
 
      return default
 
-
 def _strip_int(value: Union[str, int], default: int = 0) -> int:
     if isinstance(value, int):
         return value
@@ -444,7 +443,6 @@ class ImportTask:
             for row in self.db_qkan.fetchall():
                 target[row[0]] = row[1]
 
-
         # Entwässerungsarten
         blocks = self.xml.findall("RT/RT001[.='104']/..")
         pattern = QKan.config.tools.Clipboard.qkan_patterns.get('entwart')
@@ -534,25 +532,30 @@ class ImportTask:
                 knoten_typ = 'Normalschacht'
 
                 schachttyp = 'Schacht'
-                schacht_typ = block.findtext("KG305", "-1")
-                if schacht_typ not in ("0", "S", "-1", ""):
-                    schacht_typ = 'Anschlussschacht'
+                schacht_typ = block.findtext("KG305")
+                if schacht_typ = "A":
+                    continue                                        # Anschlussschacht
 
                 smp = block.find("GO[GO002='B']/GP")
                 if smp is None:
                     smp = block.find("GO[GO002='G']/GP")
 
-                wert = smp.findtext("GP003")
-                if wert is None:
-                    wert = smp.findtext("GP005")
-                xsch = _strip_float(wert)
+                if smp is not None:
+                    wert = smp.findtext("GP003")
+                    if wert is None:
+                        wert = smp.findtext("GP005")
+                    xsch = _strip_float(wert)
 
-                wert = smp.findtext("GP004")
-                if wert is None:
-                    wert = smp.findtext("GP006")
-                ysch = _strip_float(wert)
+                    wert = smp.findtext("GP004")
+                    if wert is None:
+                        wert = smp.findtext("GP006")
+                    ysch = _strip_float(wert)
 
-                sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+                    sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+                else:
+                    xsch = None
+                    ysch = None
+                    sohlhoehe = 0.0
 
                 smpD = block.find("GO[GO002='D']/GP")
 
@@ -997,11 +1000,13 @@ class ImportTask:
                 knoten_typ = block.findtext("KG305", -1)
 
                 smp = block.find("GO[GO002='G']/GP")
+                if smp is None:
+                    smp = block.find("GO[GO002='B']/GP")
 
                 if smp is None:
                     fehlermeldung(
                         "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP[G=002=\'G\']" für Schacht {name}',
+                        f'Keine Geometrie "SMP[GO002=\'G\']" oder "SMP[GO002=\'B\']" für Auslass {name}',
                     )
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:

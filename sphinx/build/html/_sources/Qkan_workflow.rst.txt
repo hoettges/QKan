@@ -498,7 +498,7 @@ Dies würde daher zu einer Fehlermeldung beim QKan Export führen.)
 
 Export nach HYSTEM-EXTRAN 8
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Jetzt kann das Formular "Export to HE" mit |Tool_export| :guilabel:`Export nach HE` geöffnet werden.
+Jetzt kann das Formular mit |Tool_export| :guilabel:`Export nach HYSTEM-EXTRAN` geöffnet werden.
 In dem Formular wird die soeben erstellte Vorlage-Datenbank und ein Datenziel, welches definiert werden muss, ausgewählt.
 Die übrigen Auswahlfelder sollten wie unten dargestellt übernommen werden.
 Dann kann der Export mit :guilabel:`OK` gestartet werden.

@@ -9,12 +9,21 @@ Mit der Funktion |Tool_import_dyna| :guilabel:`Import aus DYNA-Datei` können le
 .. |Tool_import_dyna| image:: ./QKan_Bilder/Tool_import_dyna.png
                              :width: 1.25 em
 
-..
-    (?Jörg?): (Bitte Erklärungen ergänzen)
-    -**Datenquelle:**
-    -**Datenbank-Verbindung:**
-    -**Projektdatei erzeugen:**
-  
+Datenquelle
++++++++++++
+In diesem Bereich wird die mit Kanal++ erstellte Quelldatenbank (Endung .ein) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden, 
+in dem die Daten **in der Datenquelle** gespeichert sind. In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide 
+Projektionssysteme identisch sind.
+
+Datenbank-Verbindung
+++++++++++++++++++++
+Hier wird das Datenziel - die Sqlite-Datenbank - ausgewählt. Ist noch keine Zieldatenbank vorhanden, kann diese hier erstellt werden.
+
+Projektdatei erzeugen
++++++++++++++++++++++
+Werden die Daten in ein bereits existierendes Projekt geladen, dann ist hier bereits der Pfad der verwendeten Projektdatei angegeben.
+Existiert noch keine Projektdatei, kann diese hier erstellt werden. Dabei ist es empfehlenswert, diese im selben Verzeichnis mit der
+QKan-Datenbank zu speichern. 
   
 Export in DYNA-Datei
 --------------------
@@ -28,10 +37,15 @@ Mit der Funktion |Tool_export_dyna| :guilabel:`Export in DYNA-Datei` ist ein sch
                              :width: 1.25 em
 ..
     (?Jörg?): (Bitte Erklärungen ergänzen)
-    -**QKan-Projekt-Datenbank:**
-    -**Ziel: DYNA-Datei:**
-    -**Nur ausgewählte Teilgebiete berücksichtigen:** Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung 
-    der Schaltfläche mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.
+    QKan-Projekt-Datenbank
+    ++++++++++++++++++++++
+    Ziel: DYNA-Datei
+    ++++++++++++++++
+    
+    Nur ausgewählte Teilgebiete berücksichtigen
+    +++++++++++++++++++++++++++++++++++++++++++
+    Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Schaltfläche mit anschließender Auswahl des
+    entsprechenden Teilgebiets, geschehen.
     
     Allgemeine Optionen
     +++++++++++++++++++

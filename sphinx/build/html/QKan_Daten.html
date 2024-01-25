@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DYNA &mdash; QKan 3.3.1 Dokumentation</title>
+  <title>Daten &mdash; QKan 3.3.1 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
 
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
-    <link rel="next" title="Mike+" href="QKan_Mike.html" />
-    <link rel="prev" title="XML" href="QKan_XML.html" /> 
+    <link rel="next" title="Hystem-Extran" href="QKan_Hystem_Extran.html" />
+    <link rel="prev" title="Verwaltung" href="QKan_Verwaltung.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -65,19 +65,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="Qkan_Formulare.html">Formulare</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="QKan_Formulare_Allgemein.html">Allgemein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Verwaltung.html">Verwaltung</a></li>
-<li class="toctree-l2"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Daten</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plausibilitatsprufung">Plausibilitätsprüfung</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Hystem_Extran.html">Hystem-Extran</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_XML.html">XML</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">DYNA</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#import-aus-dyna-datei">Import aus DYNA-Datei</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#datenquelle">Datenquelle</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#datenbank-verbindung">Datenbank-Verbindung</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#projektdatei-erzeugen">Projektdatei erzeugen</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#export-in-dyna-datei">Export in DYNA-Datei</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_DYNA.html">DYNA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_Mike.html">Mike+</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_SWMM.html">SWMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QKan_STRAKAT.html">STRAKAT</a></li>
@@ -103,9 +97,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="Qkan_Formulare.html">Formulare</a></li>
-      <li class="breadcrumb-item active">DYNA</li>
+      <li class="breadcrumb-item active">Daten</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/QKan_DYNA.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+            <a href="_sources/QKan_Daten.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
       </li>
   </ul>
   <hr/>
@@ -113,33 +107,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="dyna">
-<h1>DYNA<a class="headerlink" href="#dyna" title="Link to this heading"></a></h1>
-<section id="import-aus-dyna-datei">
-<h2>Import aus DYNA-Datei<a class="headerlink" href="#import-aus-dyna-datei" title="Link to this heading"></a></h2>
-<p>Mit der Funktion <a class="reference internal" href="_images/Tool_import_dyna.png"><img alt="Tool_import_dyna" src="_images/Tool_import_dyna.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus DYNA-Datei</span> können leicht Daten aus einer DYNA-Datei in ein QKan-Projekt geladen werden.</p>
-<img alt="_images/import_dyna.png" src="_images/import_dyna.png" />
-<section id="datenquelle">
-<h3>Datenquelle<a class="headerlink" href="#datenquelle" title="Link to this heading"></a></h3>
-<p>In diesem Bereich wird die mit Kanal++ erstellte Quelldatenbank (Endung .ein) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden,
-in dem die Daten <strong>in der Datenquelle</strong> gespeichert sind. In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide
-Projektionssysteme identisch sind.</p>
-</section>
-<section id="datenbank-verbindung">
-<h3>Datenbank-Verbindung<a class="headerlink" href="#datenbank-verbindung" title="Link to this heading"></a></h3>
-<p>Hier wird das Datenziel - die Sqlite-Datenbank - ausgewählt. Ist noch keine Zieldatenbank vorhanden, kann diese hier erstellt werden.</p>
-</section>
-<section id="projektdatei-erzeugen">
-<h3>Projektdatei erzeugen<a class="headerlink" href="#projektdatei-erzeugen" title="Link to this heading"></a></h3>
-<p>Werden die Daten in ein bereits existierendes Projekt geladen, dann ist hier bereits der Pfad der verwendeten Projektdatei angegeben.
-Existiert noch keine Projektdatei, kann diese hier erstellt werden. Dabei ist es empfehlenswert, diese im selben Verzeichnis mit der
-QKan-Datenbank zu speichern.</p>
-</section>
-</section>
-<section id="export-in-dyna-datei">
-<h2>Export in DYNA-Datei<a class="headerlink" href="#export-in-dyna-datei" title="Link to this heading"></a></h2>
-<p>Mit der Funktion <a class="reference internal" href="_images/Tool_export_dyna.png"><img alt="Tool_export_dyna" src="_images/Tool_export_dyna.png" style="width: 1.25em;" /></a> <span class="guilabel">Export in DYNA-Datei</span> ist ein schneller Export der QKan-Daten in eine DYNA-Datei möglich.</p>
-<img alt="_images/export_dyna.png" src="_images/export_dyna.png" />
+  <section id="daten">
+<h1>Daten<a class="headerlink" href="#daten" title="Link to this heading"></a></h1>
+<section id="plausibilitatsprufung">
+<h2>Plausibilitätsprüfung<a class="headerlink" href="#plausibilitatsprufung" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_plausibilitaet.png"><img alt="Tool_plausibilitaet" src="_images/Tool_plausibilitaet.png" style="width: 1.25em;" /></a> <span class="guilabel">Plausibilitätsprüfung</span> können die verschiedenen Plausibilitätsprüfungen, welche unter der
+gleichnamigen Tabelle zu finden sind, bequem ausgeführt werden. Die zur Auswahl stehenden Themen entsprechen dabei den Gruppen aus der Tabelle
+„Plausibilitätsprüfungen. In dieser Tabelle sind die einzelnen Plausibilitätsprüfungen, mit Beschreibung sowie der genauen SQL-Abfrage,
+zu finden. Die SQL-Abfrage kann auch hier bearbeitet werden. Dies ist nur zu empfehlen, wenn ein umfangreicheres SQL-Verständnis vorliegt.</p>
+<img alt="_images/plausibilitaet.png" src="_images/plausibilitaet.png" />
+<img alt="_images/tabelle_plausi.png" src="_images/tabelle_plausi.png" />
+<p>Zur Durchführung können eine oder mehrere Themen ausgewählt werden und gleichzeitig durchgeführt werden. Durch die Option „Ergebnisse zu
+bestehenden hinzufügen“ wird die vorhandene Fehlerliste nicht überschrieben, sondern ergänzt. Nach Durchführung der Plausibilitätsprüfung
+öffnet sich die Tabelle „Fehlerliste“ automatisch. Hier werden die gefundenen Fehler aufgeführt. Bei einigen Abfragen ist die Anzeige
+auf max. 5 Einträge gleichartiger Fehlertypen begrenzt. In diesem Fall wird dies auch in dem Warntext erwähnt, sowie die genaue Anzahl
+des jeweiligen Fehlertypens.</p>
 </section>
 </section>
 
@@ -147,8 +129,8 @@ QKan-Datenbank zu speichern.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="QKan_XML.html" class="btn btn-neutral float-left" title="XML" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
-        <a href="QKan_Mike.html" class="btn btn-neutral float-right" title="Mike+" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="QKan_Verwaltung.html" class="btn btn-neutral float-left" title="Verwaltung" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="QKan_Hystem_Extran.html" class="btn btn-neutral float-right" title="Hystem-Extran" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

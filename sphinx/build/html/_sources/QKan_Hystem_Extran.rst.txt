@@ -20,13 +20,12 @@ Projektionssysteme identisch sind.
 
 Datenziel
 +++++++++
-Hier wird das Datenziel, die Sqlite-Datenbank und optional die zugehörige Projektdatei, ausgewählt. Ist noch keine Zieldatenbank oder 
-Projektdatei vorhanden, können diese hier auch erstellt werden.
+Hier wird das Datenziel - die Sqlite-Datenbank - ausgewählt. Ist noch keine Zieldatenbank vorhanden, kann diese hier erstellt werden.
 
-..
-    Projektdatei erzeugen
-    +++++++++++++++++++++
-    (?Jörg?): Wann/Wie kann man hier Änderungen machen?
+Projektdatei erzeugen
++++++++++++++++++++++
+Werden die Daten in ein bereits existierendes Projekt geladen, dann ist hier bereits der Pfad der verwendeten Projektdatei angegeben. Existiert noch
+keine Projektdatei, kann diese hier nun erstellt werden. Dabei ist es empfehlenswert, diese im selben Verzeichnis mit der Datenbank zu speichern.
     
 Tabellen importieren
 ++++++++++++++++++++
@@ -68,30 +67,64 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`Import aus HYSTEM-EXTRAN <date
 Export nach HYSTEM-EXTRAN
 -------------------------
 
-Mit der Funktion |Tool_export_he| :guilabel:`Export nach HYSTEM-EXTRAN` funktioniert der Export für Version 7.8 und 7.9. 
+Mit der Funktion |Tool_export_he| :guilabel:`Export nach HYSTEM-EXTRAN` können Kanaldaten aus QKan nach HYSTEM-EXTRAN exportiert werden.
+Dazu muss jedoch zuerst in HYSTEM-EXTRAN eine Vorlagedatenbank angelegt werden, da QKan über keine Dateivorlagen für eine HYSTEM-EXTRAN 
+Datenbank verfügt. In dieser Vorlagedatenbank sollten auch die Sonderbauwerke (z.B. Drosseln oder Pumpen) angelegt werden, da diese in
+QKan nur mit Informationen, welche zur Herstellung des Netz-Zusammenhangs notwendig sind, gespeichert werden. Die Sonderbauwerke sollten
+in HYSTEM-EXTRAN mit den jeweiligen (richtig benannten!) Anschluss-Schächten (Schacht oben & Schacht unten) angelegt werden. (Diese Schächte
+werden mit dem Import der QKan Daten angelegt, müssen also zu diese Zeitpunkt noch nicht existieren. Die Fehlermeldung darf also ignoriert
+werden.) Sind diese vorbereitenden Schritte ausgeführt, kann das Formular |Tool_export_he| geöffnet werden und wie unten beschrieben ausgefüllt
+werden.
+
 
 .. image:: ./QKan_Bilder/Formulare/export_he.png
 .. |Tool_export_he| image:: ./QKan_Bilder/Tool_export_he.png
                              :width: 1.25 em
 
-..
-    (?Jörg?): (Kontrollieren bzw. ergänzen)
-    -**QKan-Projekt-Datenbank:**
-    -**Zieldatenbank:** Die in diesem Formular geforderte HYSTEM-EXTRAN Vorlage-Datenbank benötigt eine Regenreihe mit einem dazugehörigen Regenschreiber 
-    (muss gleichen Namen wie in den QKan-Flächendaten haben)
-    -**Nur ausgewählte Teilgebiete berücksichtigen:** Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung 
-    der Schaltfläche mit anschließender Auswahl des entsprechenden Teilgebiets, geschehen.
+QKan-Projekt-Datenbank
+++++++++++++++++++++++
+Hier wird die gerade geöffnete QKan-Projektdatenbank angezeigt, welche hier nicht editiert werden kann. 
     
-    Optionen
-    ++++++++
+Zieldatenbank
++++++++++++++
+- **Datenziel:** Hier wird der Name und Ablageort der mit diesem Formular erstellten Datenbank für den Import nach HYSTEM-EXTRAN gewählt.
+- **Vorlage:** Hier muss die vorher mit HYSTEM-EXTRAN erstellte Vorlagedatenbank (siehe oben) ausgewählt werden.
     
-    Tabellen exportieren
-    ++++++++++++++++++++
-    Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. Im unteren Bereich schließt sich die Auswahl 
-    der Flächen an, dabei steht "Flächen (RW)" für Regenwasserflächen
+Nur ausgewählte Teilgebiete berücksichtigen
++++++++++++++++++++++++++++++++++++++++++++
+Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Schaltfläche mit anschließender Auswahl des
+entsprechenden Teilgebiets, geschehen.
     
-    Aktionen beim Export
-    ++++++++++++++++++++
+Optionen
+++++++++
+- **Mit Haltungsflächen verschneiden:** Sind keine Haltungsflächen in zu exportierenden Datensatz vorhanden, **muss** diese Option
+  deaktiviert sein. Wurden vorher :ref:`Haltungsflächen <linkhaltungsflaechen>` erstellt, kann diese Option gewählt werden, damit (große)
+  Flächen aufgeteilt und die Teilstücke den entsprechenden Haltungen zugeordnet werden.
+    
+Tabellen exportieren
+++++++++++++++++++++
+Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. In der Regel sollten hier die Optionen "Schächte",
+" Haltungen" und "Auslässe" selektiert werden, da die Sonderbauwerke bereits vorher in HYSTEM-EXTRAN angelegt wurden. Im unteren Bereich 
+schließt sich die Auswahl der Flächen an.
+
+- **Flächen (RW):** Regenwasserflächen - Der Flächenexport steht im Zusammenhang mit der Verschneidung der Flächen und muss daher auch 
+  aktiviert sein, wenn die Option "Mit Haltungsflächen verschneiden" gewählt wurde.
+- **Haltungsflächen mit Befestigungsgraden:** Diese Option bezieht sich auf ältere Versionen von HYSTEM-EXTRAN, wobei die 
+  Befestigungsgrade direkt in die Datensätze der Haltungsflächen geschrieben werden, um so von HYSTEM-EXTRAN weiterverarbeitet werden zu
+  können.
+- **SW-Einleiter:** Derzeit noch nicht implementiert.
+- **Außengebiete:** Derzeit noch nicht implementiert.
+- **Haltungsflächen:** HYSTEM-EXTRAN kann Haltungsflächen anzeigen, diese sind jedoch für eine Berechnung nicht unbedingt notwendig.
+- **Einzugsgebiete:** Derzeit noch nicht implementiert.
+- **Abflussparameter:** Sollte exportiert werden, wenn entsprechender Datensatz nicht schon in HYSTEM-EXTRAN vorliegt.
+- **Bodenklassen:** Sollte exportiert werden, wenn entsprechender Datensatz nicht schon in HYSTEM-EXTRAN vorliegt.
+- **Rohrprofile:** Derzeit noch nicht implementiert.
+    
+Aktionen beim Export
+++++++++++++++++++++
+In der Regel sollte die Option "hinzufügen" ausgewählt werden. Die Option "ändern" sollte gewählt werden, wenn bereit ein Export ausgeführt
+wurde und in QKan Änderungen vorgenommen wurden und diese in die existierenden Daten eingespielt werden sollen. Dabei werden alle 
+existierenden Datensätze in der Zieldatenbank überschrieben, jedoch keine neuen hinzugefügt.
 
 Die Nutzung dieses Formulars in einem Anwendungsfall ist :ref:`hier <workflexporthe>` zu sehen.
 
