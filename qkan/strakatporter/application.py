@@ -65,6 +65,8 @@ class StrakatPorter(QKanPlugin):
             QKan.config.check_import.rohrprofile = (self.import_dlg.cb_rohrprofile.isChecked())
             QKan.config.check_import.bodenklassen = (self.import_dlg.cb_bodenklassen.isChecked())
 
+            QKan.config.check_import.testmodus = (self.import_dlg.cb_testmodus.isChecked())
+
             QKan.config.check_import.allrefs = (self.import_dlg.cb_allrefs.isChecked())
 
             if not QKan.config.strakat.import_dir:

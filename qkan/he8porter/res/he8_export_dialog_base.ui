@@ -188,7 +188,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Datenziel: Hystem-Extran-Datenbank (*.idbf):</string>
+     <string>Datenziel: Hystem-Extran-Datenbank (*.idbm):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -293,7 +293,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Vorlage: Hystem-Extran-Datenbank (*.idbf):</string>
+     <string>Vorlage: Hystem-Extran-Datenbank (*.idbm):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

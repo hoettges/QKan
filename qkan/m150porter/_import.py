@@ -302,27 +302,43 @@ class ImportTask:
         self.xml.parse(xml_file)
 
     def run(self) -> bool:
-        self._reftables()
+
+        iface = QKan.instance.iface
+
+        # Create progress bar
+        self.progress_bar = QProgressBar(iface.messageBar())
+        self.progress_bar.setRange(0, 100)
+
+        status_message = iface.messageBar().createMessage(
+            "", "Import aus STRAKAT läuft. Bitte warten..."
+        )
+        status_message.layout().addWidget(self.progress_bar)
+        iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+
+        self._reftables()                                   ;self.progress_bar.setValue(5)
         self._init_mappers()
 #        if getattr(QKan.config.xml, "import_stamm", True):
         if QKan.config.xml.import_stamm:
-            self._schaechte()
-            self._auslaesse()
+            self._schaechte()                               ;self.progress_bar.setValue(10)
+            self._auslaesse()                               ;self.progress_bar.setValue(20)
             #self._speicher()
-            self._haltungen()
-            self._haltunggeom()
+            self._haltungen()                               ;self.progress_bar.setValue(30)
+            self._haltunggeom()                             ;self.progress_bar.setValue(35)
             #self._wehre()
-            self._pumpen()
+            self._pumpen()                                  ;self.progress_bar.setValue(40)
         # if getattr(QKan.config.xml, "import_haus", True):
         if QKan.config.xml.import_haus:
-            self._anschlussleitungen()
-            self._anschlussleitunggeom()
+            self._anschlussleitungen()                      ;self.progress_bar.setValue(50)
+            self._anschlussleitunggeom()                    ;self.progress_bar.setValue(55)
         # if getattr(QKan.config.xml, "import_zustand", True):
         if QKan.config.xml.import_zustand:
-            self._schaechte_untersucht()
-            self._untersuchdat_schaechte()
-            self._haltungen_untersucht()
-            self._untersuchdat_haltung()
+            self._schaechte_untersucht()                    ;self.progress_bar.setValue(65)
+            self._untersuchdat_schaechte()                  ;self.progress_bar.setValue(75)
+            self._haltungen_untersucht()                    ;self.progress_bar.setValue(85)
+            self._untersuchdat_haltung()                    ;self.progress_bar.setValue(95)
+
+        self.progress_bar.setValue(100)
+        status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
 
         return True
 
@@ -533,7 +549,7 @@ class ImportTask:
 
                 schachttyp = 'Schacht'
                 schacht_typ = block.findtext("KG305")
-                if schacht_typ = "A":
+                if schacht_typ == "A":
                     continue                                        # Anschlussschacht
 
                 smp = block.find("GO[GO002='B']/GP")
@@ -1557,7 +1573,7 @@ class ImportTask:
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
-            blocks = self.xml.findall("HG")
+            blocks = self.xml.findall("HG/HI/..")
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
 
@@ -1656,9 +1672,7 @@ class ImportTask:
         #         )
 
         def _iter3() -> Iterator[Haltung_untersucht]:
-            blocks = self.xml.findall(
-                "HG/HI/.."
-            )
+            blocks = self.xml.findall("HG/HI/..")
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
             untersuchtag = ""

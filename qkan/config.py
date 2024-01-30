@@ -200,6 +200,7 @@ class CheckImport(ClassObject):
     hausanschluesse: bool = True
     schachtschaeden: bool = True
     haltungsschaeden: bool = True
+    testmodus: bool = False
 
     # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
     tezg_ef: bool = True

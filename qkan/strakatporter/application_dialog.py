@@ -70,6 +70,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     cb_rohrprofile: QCheckBox
     cb_bodenklassen: QCheckBox
 
+    cb_testmodus: QCheckBox
+
     cb_allrefs: QCheckBox
 
     def __init__(
@@ -102,6 +104,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_abflussparameter.setChecked(QKan.config.check_import.abflussparameter)
         self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
         self.cb_bodenklassen.setChecked(QKan.config.check_import.bodenklassen)
+
+        self.cb_testmodus.setChecked(QKan.config.check_import.testmodus)
 
         self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
 

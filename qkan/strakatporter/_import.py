@@ -1,8 +1,11 @@
 import logging, os
 from struct import unpack
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsProcessingFeedback
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.PyQt.QtCore import Qt
+from typing import Dict, Iterator, Tuple, Union
 
+import qkan.config
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.config import ClassObject
@@ -67,16 +70,19 @@ class ImportTask:
         status_message.layout().addWidget(self.progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
+        def progress_changed(progress):
+            self.progress_bar.setValue(progress)
+
         result = all(
             [
-                self._strakat_kanaltabelle(), self.progress_bar.setValue(20),
-                self._strakat_reftables(), self.progress_bar.setValue(30),
-                self._strakat_hausanschl(), self.progress_bar.setValue(40),
-                self._strakat_berichte(), self.progress_bar.setValue(50),
-                self._reftables(), self.progress_bar.setValue(60),
-                self._schaechte(), self.progress_bar.setValue(70),
-                self._haltungen(), self.progress_bar.setValue(80),
-                self._anschlussleitungen(), self.progress_bar.setValue(90),
+                self._strakat_reftables(), self.progress_bar.setValue(30), logger.debug("_strakat_reftables"),
+                self._reftables(), self.progress_bar.setValue(60), logger.debug("_reftables"),
+                self._strakat_kanaltabelle(), self.progress_bar.setValue(20), logger.debug("strakat_kanaltabelle"),
+                self._schaechte(), self.progress_bar.setValue(70), logger.debug("_schaechte"),
+                self._haltungen(), self.progress_bar.setValue(80), logger.debug("_haltungen"),
+                self._strakat_hausanschl(), self.progress_bar.setValue(40), logger.debug("_strakat_hausanschl"),
+                self._anschlussleitungen(), self.progress_bar.setValue(90), logger.debug("_anschlussleitungen"),
+                self._strakat_berichte(), self.progress_bar.setValue(50), logger.debug("_strakat_berichte"),
                 # self._schachtschaeden(),
                 # self._haltungsschaeden(),
             ]
@@ -84,6 +90,8 @@ class ImportTask:
 
         self.progress_bar.setValue(100)
         status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
+
+        iface.messageBar().clearWidgets()
 
         return result
 
@@ -166,8 +174,8 @@ class ImportTask:
         blength = 1024                      # Blocklänge in der STRAKAT-Datei
         with open(os.path.join(self.strakatdir, 'kanal.rwtopen'), 'rb') as fo:
             _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
-            for n in range(1, 1000000):
-                """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
+            maxloop = 1000000           # Begrenzung zur Sicherheit. Falls erreicht: Meldung
+            for n in range(1, maxloop):
                 b = fo.read(blength)
                 if not b:
                     break
@@ -314,8 +322,8 @@ class ImportTask:
                     logger.error('Fehler beim Lesen der Datei "kanal.rwtopen"')
                     return False
             else:
-                logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nicht '
-                             'ordnungsgemäß abgeschlossen!"')
+                logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nach '
+                         '1000000 Datensätze abgebrochen!"')
                 return False
 
         self.db_qkan.commit()
@@ -623,7 +631,7 @@ class ImportTask:
                     skbetriebssicherheit INTEGER,
                     strakatid TEXT,
                     hausanschlid TEXT,
-                    berichtid TEXT,
+                    berichtid TEXT
                 )"""
 
                 if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatberichte"'):
@@ -632,12 +640,19 @@ class ImportTask:
             # Datei kanal.rwtopen einlesen und in Tabelle schreiben
             blength = 1024                      # Blocklänge in der STRAKAT-Datei
             with open(os.path.join(self.strakatdir, 'ENBericht.rwtopen'), 'rb') as fo:
+
                 _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
-                for n in range(1, 5000000):
-                    b = fr.read(1024)
+
+                if QKan.config.check_import.testmodus:
+                    maxloop = 1000  # Testmodus für Anwender
+                else:
+                    maxloop = 5000000  # Begrenzung zur Sicherheit. Falls erreicht: Meldung
+
+                for n in range(1, maxloop):
+                    b = fo.read(1024)
                     if not b:
                         break
-                    if n == 0 or n < num - 3:
+                    if n == 0:
                         continue
 
                     datum = b[0:10].decode('ansi')
@@ -709,9 +724,18 @@ class ImportTask:
                         hausanschlid=hausanschlid,
                         berichtid=berichtid,
                     )
+                else:
+                    if QKan.config.check_import.testmodus:
+                        logger.debug("Testmodus: Import Berichte nach 1000. Datensatz abgebrochen")
+                    else:
+                        logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nicht '
+                                 'ordnungsgemäß abgeschlossen!"')
+                    return False
 
         params = ()                           # STRAKAT data stored in tuple of dicts for better performance
                                             # with sql-statement executemany
+        logger.debug("{__name__}: Berichte werden gelesen und in data gespeichert ...")
+
         for _bericht in _iter():
             data = {
                 'datum': _bericht.datum,
@@ -743,6 +767,8 @@ class ImportTask:
                 'berichtid': _bericht.berichtid,
             }
             params += (data,)
+
+        logger.debug("{__name__}: Berichte werden in temporäre STRAKAT-Tabellen geschrieben ...")
 
         sql = """
             INSERT INTO t_strakatberichte (
@@ -808,6 +834,8 @@ class ImportTask:
             return False
 
         self.db_qkan.commit()
+
+        logger.debug("{__name__}: Berichte werden in QKan-Tabellen geschrieben ...")
 
         return True
 

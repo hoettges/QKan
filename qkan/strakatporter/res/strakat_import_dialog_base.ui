@@ -568,9 +568,9 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>200</y>
+     <y>220</y>
      <width>231</width>
-     <height>151</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -642,7 +642,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>110</y>
+      <y>90</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -693,19 +693,6 @@ Datensätze importieren</string>
      <string>Rohrprofile</string>
     </property>
    </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>90</y>
-      <width>211</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
   </widget>
   <widget class="QGroupBox" name="gb_action_2">
    <property name="geometry">
@@ -713,7 +700,7 @@ Datensätze importieren</string>
      <x>440</x>
      <y>120</y>
      <width>231</width>
-     <height>71</height>
+     <height>91</height>
     </rect>
    </property>
    <property name="font">
@@ -800,6 +787,40 @@ Datensätze importieren</string>
     </property>
     <property name="text">
      <string>Schachtschäden</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_testmodus">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>201</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>true</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schadensdaten zu Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Schadensdaten zu Haltungen importieren</string>
+    </property>
+    <property name="whatsThis">
+     <string>Schadensdaten zu Haltungen importieren</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Schadensdaten zu Haltungen importieren</string>
+    </property>
+    <property name="text">
+     <string>Testmodus: Nur erste 1000</string>
     </property>
    </widget>
   </widget>
