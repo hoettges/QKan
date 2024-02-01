@@ -26,7 +26,7 @@ class Schacht(ClassObject):
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
-    knotentyp: int = 0
+    knotentyp: str = ""
     schachttyp: str = ""
     material: str = ""
     simstatus: int = 0
@@ -38,7 +38,7 @@ class Schacht_untersucht(ClassObject):
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
-    knotentyp: int = 0
+    knotentyp: str = ""
     simstatus: int = 0
     kommentar: str = ""
     baujahr: int = 0
@@ -309,7 +309,7 @@ class ImportTask:
     def _consume_smp_block(self,
             _block: ElementTree.Element,
     ) -> Tuple[str, int, float, float, float]:
-        name = _block.findtext("d:Objektbezeichnung", "not found", self.NS)
+        name = _block.findtext("d:Objektbezeichnung", None, self.NS)
         schacht_typ = 0
 
         for _schacht in _block.findall("d:Knoten", self.NS):
@@ -458,12 +458,12 @@ class ImportTask:
                         )
                     ),
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
-                    entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
-                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
+                    entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
+                    strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
-                    material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", "not found", self.NS),
+                    material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -477,10 +477,10 @@ class ImportTask:
 
             druckdicht = 0
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 for _schacht in block.findall("d:Schacht", self.NS):
-                    druckdicht = _strip_int(_schacht.findtext("d:DruckdichterDeckel", "0", self.NS))
+                    druckdicht = _strip_int(_schacht.findtext("d:DruckdichterDeckel", 0, self.NS))
 
 
                 yield Schacht(
@@ -515,6 +515,7 @@ class ImportTask:
 
                 if not self.db_qkan.sql(sql, "xml_import Schächte [1]"):
                     return None
+
 
             if schacht.druckdicht in self.mapper_druckdicht:
                 druckdicht = self.mapper_druckdicht[schacht.druckdicht]
@@ -583,7 +584,7 @@ class ImportTask:
 
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
-                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart,
+                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart,
                       'strasse': schacht.strasse, 'knotentyp': schacht.knotentyp,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
@@ -651,15 +652,15 @@ class ImportTask:
             datenart = self.datenart
 
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
                 baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
-                strasse = block.findtext("d:Lage/d:Strassenname", "not found", self.NS)
+                strasse = block.findtext("d:Lage/d:Strassenname", None, self.NS)
 
                 for _schacht in block.findall("d:OptischeInspektion", self.NS):
 
-                    untersuchtag = _schacht.findtext("d:Inspektionsdatum", "not found", self.NS)
+                    untersuchtag = _schacht.findtext("d:Inspektionsdatum", None, self.NS)
 
-                    untersucher = _schacht.findtext("d:NameUntersucher", "not found", self.NS)
+                    untersucher = _schacht.findtext("d:NameUntersucher", None, self.NS)
 
                     wetter = _strip_int(_schacht.findtext("d:Wetter", "0", self.NS))
 
@@ -667,7 +668,7 @@ class ImportTask:
 
                         bewertungsart = _strip_int(_schachtz.findtext("d:Bewertungsverfahren", "0", self.NS))
 
-                        bewertungstag = _schachtz.findtext("d:Bewertungsdatum", "not found", self.NS)
+                        bewertungstag = _schachtz.findtext("d:Bewertungsdatum", None, self.NS)
 
                 yield Schacht_untersucht(
                     schnam=name,
@@ -728,7 +729,7 @@ class ImportTask:
                 """.format(
                     e=schacht_untersucht.wetter
                 )
-                self.mapper_untersuchrichtung[schacht_untersucht.wetter] = schacht_untersucht.wetter
+                self.mapper_wetter[schacht_untersucht.wetter] = schacht_untersucht.wetter
                 wetter = schacht_untersucht.wetter
 
                 if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [2]"):
@@ -743,7 +744,7 @@ class ImportTask:
                            """.format(
                     e=schacht_untersucht.bewertungsart
                 )
-                self.mapper_untersuchrichtung[schacht_untersucht.bewertungsart] = schacht_untersucht.bewertungsart
+                self.mapper_bewertungsart[schacht_untersucht.bewertungsart] = schacht_untersucht.bewertungsart
                 bewertungsart = schacht_untersucht.bewertungsart
 
                 if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [3]"):
@@ -794,7 +795,7 @@ class ImportTask:
 
             for block in blocks:
 
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
                 inspektionslaenge = _strip_float(block.findtext(
                     "d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand[d:InspektionsKode='DDB'][d:Streckenschaden='B']/d:VertikaleLage",
                     "0.0", self.NS))
@@ -804,18 +805,18 @@ class ImportTask:
                     id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
                     videozaehler = _strip_int(_untersuchdat_schacht.findtext("d:Videozaehler", "0", self.NS))
                     timecode = _strip_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
-                    kuerzel = _untersuchdat_schacht.findtext("d:InspektionsKode", "not found", self.NS)
-                    charakt1 = _untersuchdat_schacht.findtext("d:Charakterisierung1", "not found", self.NS)
-                    charakt2 = _untersuchdat_schacht.findtext("d:Charakterisierung2", "not found", self.NS)
+                    kuerzel = _untersuchdat_schacht.findtext("d:InspektionsKode", None, self.NS)
+                    charakt1 = _untersuchdat_schacht.findtext("d:Charakterisierung1", None, self.NS)
+                    charakt2 = _untersuchdat_schacht.findtext("d:Charakterisierung2", None, self.NS)
                     quantnr1 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
                     quantnr2 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
-                    streckenschaden = _untersuchdat_schacht.findtext("d:Streckenschaden", "not found", self.NS)
+                    streckenschaden = _untersuchdat_schacht.findtext("d:Streckenschaden", None, self.NS)
                     streckenschaden_lfdnr = _strip_int(_untersuchdat_schacht.findtext("d:StreckenschadenLfdNr", "0", self.NS))
                     pos_von = _strip_int(_untersuchdat_schacht.findtext("d:PositionVon", "0", self.NS))
                     pos_bis = _strip_int(_untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS))
                     vertikale_lage = _strip_float(_untersuchdat_schacht.findtext("d:VertikaleLage", "0.0", self.NS))
-                    bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", "not found", self.NS)
-                    foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", "not found", self.NS)
+                    bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", None, self.NS)
+                    foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", None, self.NS)
 
                     ZD = _strip_int_2(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
                     ZS = _strip_int_2(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
@@ -947,7 +948,7 @@ class ImportTask:
                     ),
                     durchm=0.5,
                     entwart="",
-                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
+                    strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -1034,12 +1035,19 @@ class ImportTask:
 
             logger.debug(f"Anzahl Becken: {len(blocks)}")
 
-            knoten_typ = 0
+            knoten_typ = 'Schacht'
+            knoten = 0
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 for _schacht in block.findall("d:Knoten", self.NS):
-                    knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+                    knoten = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+                    if knoten == 0:
+                        knoten_typ = 'Schacht'
+                    if knoten == 1:
+                        knoten_typ = 'Anschlusspunkt'
+                    if knoten == 2:
+                        knoten_typ = 'Bauwerk'
 
                 smp = block.find(
                     "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
@@ -1074,7 +1082,7 @@ class ImportTask:
                     ),
                     durchm=0.5,
                     entwart="",
-                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
+                    strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -1166,22 +1174,22 @@ class ImportTask:
                 found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
                 if found_leitung == '':
 
-                    name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
-                    schoben = block.findtext("d:Kante/d:KnotenZulauf", "not found", self.NS)
-                    schunten = block.findtext("d:Kante/d:KnotenAblauf", "not found", self.NS)
+                    name = block.findtext("d:Objektbezeichnung", None, self.NS)
+                    schoben = block.findtext("d:Kante/d:KnotenZulauf", None, self.NS)
+                    schunten = block.findtext("d:Kante/d:KnotenAblauf", None, self.NS)
                     sohleoben = _strip_float(block.findtext("d:Kante/d:SohlhoeheZulauf", 0.0, self.NS))
                     sohleunten = _strip_float(block.findtext("d:Kante/d:SohlhoeheAblauf", 0.0, self.NS))
                     laenge = _strip_float(block.findtext("d:Kante/d:Laenge", 0.0, self.NS))
-                    material = block.findtext("d:Kante/d:Material", "not found", self.NS)
+                    material = block.findtext("d:Kante/d:Material", None, self.NS)
                     aussendurchmesser = block.findtext("d:Kante/d:Profil/d:Aussendurchmesser", "0", self.NS)
-                    profilauskleidung = block.findtext("d:Kante/d:Haltung/d:Auskleidung", "not found", self.NS)
-                    innenmaterial = block.findtext("d:Kante/d:Haltung/d:MaterialAuskleidung", "not found", self.NS)
-                    profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", "not found", self.NS)
+                    profilauskleidung = block.findtext("d:Kante/d:Haltung/d:Auskleidung", None, self.NS)
+                    innenmaterial = block.findtext("d:Kante/d:Haltung/d:MaterialAuskleidung", None, self.NS)
+                    profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", None, self.NS)
                     hoehe = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.
                     breite = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS)) / 1000.
 
 
-                    found_kanten = block.findtext("d:Geometrie/d:Geometriedaten/d:Kanten", "not found", self.NS)
+                    found_kanten = block.findtext("d:Geometrie/d:Geometriedaten/d:Kanten", None, self.NS)
                     if found_kanten:
                         xschob = _strip_float(block.findtext(
                             "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start/d:Rechtswert",
@@ -1236,8 +1244,8 @@ class ImportTask:
                         deckeloben=deckeloben,
                         deckelunten=deckelunten,
                         profilnam=profilnam,
-                        entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
-                        strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
+                        entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
+                        strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                         ks=1.5,  # in Hydraulikdaten enthalten.
                         simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                         kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -1263,7 +1271,7 @@ class ImportTask:
             ks = 1.5
             laenge = 0.0
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
                 # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
@@ -1431,7 +1439,7 @@ class ImportTask:
             found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
             if found_leitung == '':
 
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)
                 if found_kanten:
@@ -1559,13 +1567,13 @@ class ImportTask:
                 deckelunten,
             ) = (0.0,) * 7
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
                 baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
 
                 # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
                 for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
-                    schoben = _haltung.findtext("d:KnotenZulauf", "not found", self.NS)
-                    schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
+                    schoben = _haltung.findtext("d:KnotenZulauf", None, self.NS)
+                    schunten = _haltung.findtext("d:KnotenAblauf", None, self.NS)
 
                     laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
 
@@ -1658,7 +1666,7 @@ class ImportTask:
 
             laenge = 0.0
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
                 # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
@@ -1690,14 +1698,14 @@ class ImportTask:
             datenart = self.datenart
 
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
-                strasse = block.findtext("d:Lage/d:Strassenname", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
+                strasse = block.findtext("d:Lage/d:Strassenname", None, self.NS)
 
                 for _haltung in block.findall("d:OptischeInspektion", self.NS):
 
-                    untersuchtag = _haltung.findtext("d:Inspektionsdatum", "not found", self.NS)
+                    untersuchtag = _haltung.findtext("d:Inspektionsdatum", None, self.NS)
 
-                    untersucher = _haltung.findtext("d:NameUntersucher", "not found", self.NS)
+                    untersucher = _haltung.findtext("d:NameUntersucher", None, self.NS)
 
                     wetter = _strip_int(_haltung.findtext("d:Wetter", "0", self.NS))
 
@@ -1705,7 +1713,7 @@ class ImportTask:
 
                         bewertungsart = _strip_int(_haltungz.findtext("d:Bewertungsverfahren", "0", self.NS))
 
-                        bewertungstag = _haltungz.findtext("d:Bewertungsdatum", "not found", self.NS)
+                        bewertungstag = _haltungz.findtext("d:Bewertungsdatum", None, self.NS)
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1796,7 +1804,7 @@ class ImportTask:
                 """.format(
                     e=haltung_untersucht.wetter
                 )
-                self.mapper_untersuchrichtung[haltung_untersucht.wetter] = haltung_untersucht.wetter
+                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
                 wetter = haltung_untersucht.wetter
 
                 if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
@@ -1811,7 +1819,7 @@ class ImportTask:
                            """.format(
                     e=haltung_untersucht.bewertungsart
                 )
-                self.mapper_untersuchrichtung[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
+                self.mapper_bewertungsart[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
                 bewertungsart = haltung_untersucht.bewertungsart
 
                 if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
@@ -1865,18 +1873,18 @@ class ImportTask:
 
             for block in blocks:
 
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 for _untersuchdat_haltung in block.findall("d:OptischeInspektion/d:Rohrleitung", self.NS):
 
-                    untersuchrichtung = _untersuchdat_haltung.findtext("d:Inspektionsrichtung", "not found", self.NS)
+                    untersuchrichtung = _untersuchdat_haltung.findtext("d:Inspektionsrichtung", None, self.NS)
                     inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionslaenge", "0.0", self.NS))
                     if inspektionslaenge == 0.0:
                         inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionsdaten/d:RZustand[d:InspektionsKode='BCE'][d:Charakterisierung1='XP']/d:Station", "0.0", self.NS))
 
 
-                    schoben = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenZulauf", "not found", self.NS)
-                    schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", "not found", self.NS)
+                    schoben = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenZulauf", None, self.NS)
+                    schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", None, self.NS)
 
 
                     for _untersuchdat in _untersuchdat_haltung.findall("d:Inspektionsdaten/d:RZustand", self.NS):
@@ -1885,16 +1893,16 @@ class ImportTask:
                         videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", 0, self.NS))
                         station = _strip_float(_untersuchdat.findtext("d:Station", 0.0, self.NS))
                         timecode = _strip_int(_untersuchdat.findtext("d:Timecode", 0, self.NS))
-                        kuerzel = _untersuchdat.findtext("d:InspektionsKode", "not found", self.NS)
-                        charakt1 = _untersuchdat.findtext("d:Charakterisierung1", "not found", self.NS)
-                        charakt2 = _untersuchdat.findtext("d:Charakterisierung2", "not found", self.NS)
+                        kuerzel = _untersuchdat.findtext("d:InspektionsKode", None, self.NS)
+                        charakt1 = _untersuchdat.findtext("d:Charakterisierung1", None, self.NS)
+                        charakt2 = _untersuchdat.findtext("d:Charakterisierung2", None, self.NS)
                         quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", 0.0, self.NS))
                         quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", 0.0, self.NS))
-                        streckenschaden = _untersuchdat.findtext("d:Streckenschaden", "not found", self.NS)
+                        streckenschaden = _untersuchdat.findtext("d:Streckenschaden", None, self.NS)
                         streckenschaden_lfdnr = _strip_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
                         pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
                         pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
-                        foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
+                        foto_dateiname = _untersuchdat.findtext("d:Fotodatei", None, self.NS)
 
 
                         ZD = _strip_int_2(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
@@ -1944,9 +1952,9 @@ class ImportTask:
                 for block in blocks:
                     for _untersuchdat_haltung in block.findall("d:Film/d:FilmObjekte/..", self.NS):
 
-                        name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", "not found", self.NS)
+                        name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
 
-                        film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", "not found", self.NS)
+                        film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
 
                         bandnr = _strip_int(_untersuchdat_haltung.findtext("d:Videoablagereferenz", 0, self.NS))
 
@@ -2083,12 +2091,12 @@ class ImportTask:
             for block in blocks:
                 found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
                 if found_leitung != '':
-                    name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                    name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                     # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
                     for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
-                        schoben = _haltung.findtext("d:KnotenZulauf", "not found", self.NS)
-                        schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
+                        schoben = _haltung.findtext("d:KnotenZulauf", None, self.NS)
+                        schunten = _haltung.findtext("d:KnotenAblauf", None, self.NS)
 
                         sohleoben = _strip_float(
                             _haltung.findtext("d:SohlhoeheZulauf", 0.0, self.NS)
@@ -2098,10 +2106,10 @@ class ImportTask:
                         )
                         laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
 
-                        material = _haltung.findtext("d:Material", "not found", self.NS)
+                        material = _haltung.findtext("d:Material", None, self.NS)
 
                         for profil in _haltung.findall("d:Profil", self.NS):
-                            profilnam = profil.findtext("d:Profilart", "not found", self.NS)
+                            profilnam = profil.findtext("d:Profilart", None, self.NS)
                             hoehe = (
                                 _strip_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
                                 / 1000
@@ -2176,7 +2184,7 @@ class ImportTask:
                         deckeloben=deckeloben,
                         deckelunten=deckelunten,
                         profilnam=profilnam,
-                        entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
+                        entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                         ks=1.5,  # in Hydraulikdaten enthalten.
                         simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                         kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -2199,7 +2207,7 @@ class ImportTask:
             ks = 1.5
             laenge = 0.0
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
                 # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
@@ -2353,7 +2361,7 @@ class ImportTask:
             found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
             if found_leitung != '':
 
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 # hier ergännzen mit dem fall das x,y unter Polygone steht!!
                 # Haltungen können alternativ als Kanten oder als Polygone vorkommen.
@@ -2482,9 +2490,9 @@ class ImportTask:
             for block in blocks:
                 # TODO: Does <HydraulikObjekt> even contain multiple <Wehr>?
                 for _wehr in block.findall("d:Wehr", self.NS):
-                    schoben = _wehr.findtext("d:SchachtZulauf", "not found", self.NS)
-                    schunten = _wehr.findtext("d:SchachtAblauf", "not found", self.NS)
-                    wehrtyp = _wehr.findtext("d:WehrTyp", "not found", self.NS)
+                    schoben = _wehr.findtext("d:SchachtZulauf", None, self.NS)
+                    schunten = _wehr.findtext("d:SchachtAblauf", None, self.NS)
+                    wehrtyp = _wehr.findtext("d:WehrTyp", None, self.NS)
 
                     schwellenhoehe = _strip_float(
                         _wehr.findtext("d:Schwellenhoehe", 0.0, self.NS)
@@ -2500,7 +2508,7 @@ class ImportTask:
                     )
 
                 yield Wehr(
-                    wnam=block.findtext("d:Objektbezeichnung", "not found", self.NS),
+                    wnam=block.findtext("d:Objektbezeichnung", None, self.NS),
                     schoben=schoben,
                     schunten=schunten,
                     wehrtyp=wehrtyp,
@@ -2559,7 +2567,7 @@ class ImportTask:
 
             for block in blocks:
                 yield Pumpe(
-                    pnam=block.findtext("d:Objektbezeichnung", "not found", self.NS),
+                    pnam=block.findtext("d:Objektbezeichnung", None, self.NS),
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
@@ -2581,15 +2589,15 @@ class ImportTask:
                 # `_pumpe = block.find("d:Pumpe", NS)` should be used if it does not
                 for _pumpe in block.findall("d:Pumpe", self.NS):
                     _pumpentyp = _strip_int(_pumpe.findtext("d:PumpenTyp", -1, self.NS))
-                    schoben = _pumpe.findtext("d:SchachtZulauf", "not found", self.NS)
-                    schunten = _pumpe.findtext("d:SchachtAblauf", "not found", self.NS)
-                    steuersch = _pumpe.findtext("d:Steuerschacht", "not found", self.NS)
+                    schoben = _pumpe.findtext("d:SchachtZulauf", None, self.NS)
+                    schunten = _pumpe.findtext("d:SchachtAblauf", None, self.NS)
+                    steuersch = _pumpe.findtext("d:Steuerschacht", None, self.NS)
                     sohle = _strip_float(_pumpe.findtext("d:Sohlhoehe", 0.0, self.NS))
                     volanf = _strip_float(_pumpe.findtext("d:Anfangsvolumen", 0.0, self.NS))
                     volges = _strip_float(_pumpe.findtext("d:Gesamtvolumen", 0.0, self.NS))
 
                 yield Pumpe(
-                    pnam=block.findtext("d:Objektbezeichnung", "not found", self.NS),
+                    pnam=block.findtext("d:Objektbezeichnung", None, self.NS),
                     schoben=schoben,
                     schunten=schunten,
                     pumpentyp=_pumpentyp,

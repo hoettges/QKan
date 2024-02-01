@@ -43,7 +43,6 @@ class Subkans_funkt:
 
         if check_cb['cb4']:
             self.schadens_ueberlagerung()
-            self.schadens_laenge()
 
         if check_cb['cb5']:
             self.subkans()
@@ -5531,7 +5530,9 @@ class Subkans_funkt:
                 film_dateiname,
                 bw_bs,
                 cratedat,
-                 
+                Zustandsklasse_D,
+                Zustandsklasse_S,
+                Zustandsklasse_B,
                 FROM untersuchdat_haltung_bewertung"""
         curs1.execute(sql)
 
@@ -5575,17 +5576,16 @@ class Subkans_funkt:
 
             curs.execute(sql, data)
 
+            try:
+                curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensart TEXT ;""")
+            except:
+                pass
+            try:
+                curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensauspraegung TEXT ;""")
+            except:
+                pass
+
             for attr in curs.fetchall():
-                try:
-                    curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensart TEXT ;""")
-                except:
-                    pass
-                try:
-                    curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensauspraegung TEXT ;""")
-                except:
-                    pass
-
-
 
                 if (attr[10] == "BAA" and attr[11] == "A") or ( attr[10] == "BAA" and attr[11] == "B"):
                     if attr[15] in ["", "None", "not found"]:
@@ -5814,7 +5814,7 @@ class Subkans_funkt:
 
 
     def schadens_ueberlagerung(self):
-        #Schadensüberlagerung, Schäden an der gleichen Position entfernen, der schwere schaden wird behalten
+        #Schadensüberlagerung, Schäden an der gleichen Position entfernen, der schwerste schaden wird behalten
 
         date = self.date + '%'
         db_x = self.db
@@ -5823,41 +5823,49 @@ class Subkans_funkt:
 
         data = db_x
 
+        entf_list=[]
+
         db1 = spatialite_connect(data)
-        curs1 = db1.cursor()
+        curs = db1.cursor()
 
         logger.debug(f'Start_Bewertung_Haltungen.liste: {datetime.now()}')
         # nach DWA
+        try:
+            curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Zustandsklasse_ges TEXT ;""")
+        except:
+            pass
 
-        sql = """CREATE TABLE IF NOT EXISTS substanz_haltung_bewertung AS 
-                        SELECT pk, 
-                        untersuchhal, 
-                        untersuchrichtung,
-                        schoben,
-                        schunten,
-                        id,
-                        videozaehler,
-                        inspektionslaenge,
-                        station,
-                        timecode,
-                        kuerzel,
-                        charakt1,
-                        charakt2,
-                        quantnr1,
-                        quantnr2,
-                        streckenschaden,
-                        pos_von,
-                        pos_bis,
-                        foto_dateiname,
-                        film_dateiname,
-                        bw_bs,
-                        cratedat,
+        try:
+            curs.execute("""Update
+                                    substanz_haltung_bewertung
+                                    set
+                                    Zustandsklasse_ges =
+                                    (Case
+                                     When Zustandsklasse_D <= Zustandsklasse_S And Zustandsklasse_D <= Zustandsklasse_B Then Zustandsklasse_D
+                                     When Zustandsklasse_S <= Zustandsklasse_D And Zustandsklasse_S <= Zustandsklasse_B Then Zustandsklasse_S
+                                     When Zustandsklasse_B <= Zustandsklasse_D And Zustandsklasse_B <= Zustandsklasse_S Then Zustandsklasse_B
+                                     Else 'Prüfen!'
+                                     END
+                                     );""")
+            db1.commit()
+        except:
+            pass
 
-                        FROM untersuchdat_haltung_bewertung"""
-        curs1.execute(sql)
+        try:
+            curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadenslaenge TEXT ;""")
+        except:
+            pass
 
-        db = spatialite_connect(db_x)
-        curs = db.cursor()
+        curs.execute("""SELECT s.untersuchhal, (t.station-s.station) as length from substanz_haltung_bewertung AS s INNER JOIN substanz_haltung_bewertung AS t ON s.untersuchhal = t.untersuchhal
+                WHERE s.streckenschaden='A' AND t.streckenschaden ='B' AND s.streckenschaden_lfdnr = t.streckenschaden_lfdnr""")
+        db1.commit()
+
+        for attr in curs.fetchall:
+
+            sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.untersuchhal = ?"""
+            data = (attr[1],attr[0])
+
+            curs.execute(sql, data)
 
         if haltung == True:
             sql = """
@@ -5877,6 +5885,8 @@ class Subkans_funkt:
                                substanz_haltung_bewertung.charakt2,
                                substanz_haltung_bewertung.quantnr1,
                                substanz_haltung_bewertung.quantnr2,
+                               substanz_haltung_bewertung.Schadensart,
+                               substanz_haltung_bewertung.Schadensauspraegung,
                                substanz_haltung_bewertung.streckenschaden,
                                substanz_haltung_bewertung.pos_von,
                                substanz_haltung_bewertung.pos_bis,
@@ -5884,6 +5894,11 @@ class Subkans_funkt:
                                substanz_haltung_bewertung.film_dateiname,
                                substanz_haltung_bewertung.richtung,
                                substanz_haltung_bewertung.bw_bs,
+                               substanz_haltung_bewertung.Zustandsklasse_D,
+                               substanz_haltung_bewertung.Zustandsklasse_S,
+                               substanz_haltung_bewertung.Zustandsklasse_B,
+                               substanz_haltung_bewertung.Zustandsklasse_ges,
+                               substanz_haltung_bewertung.Schadenslaenge,
                                substanz_haltung_bewertung.createdat,
                                haltungen.haltnam,
                                haltungen.material,
@@ -5891,38 +5906,266 @@ class Subkans_funkt:
                                haltungen.createdat
                            FROM substanz_haltung_bewertung, haltungen
                            WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                           AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                           AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS' OR substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
                        """
             data = (date,)
 
             curs.execute(sql, data)
 
-            liste = []
+            #nur schäden mit OfS und DdS auswählen
+            #nur PktS und UmfS auswählem
 
+            # TODO: Sonderregeln für Streckenschäden ergänzen Anlage 8-9
+
+            #streckenschaden überlagern anhand von kg*stg?
+
+            dictionary = {}
+            entf_list = []
             for attr in curs.fetchall():
-                a = []
-                a.append(attr[0])
-                a.append(attr[1])
-                a.append(attr[8])
-                a.append(attr[15])
 
-                liste.append(a)
+                #schadenslänge ergänzen
+                if attr[15] == "PktS":
+                    sl = 0.3
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
+
+                if attr[15] == "UmfS":
+                    sl = attr[31]
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
 
 
+                if attr[0] in dictionary:
+                    continue
+                new_list = []
+                for x in curs.fetchall():
+                    if x[0] == attr[0]:
+                        new_list.append(x)
+                dictionary[attr[0]] = new_list
 
-    def schadens_laenge(self):
-        # TODO: Berechnung Schadenslänge ergänzen
-        pass
-        # if x = "PktS":
-        #     sl = 0.3
-        #
-        # if x = "UmfS":
-        #     sl = DN
-        #
-        # if x = "StrS":
-        #     sl = strecke zwischen Schadensanfang und Ende
+            for values in dictionary.values():
+                new_items = []
+                vergl = []
+
+                for i in values:
+                    if i[8] not in new_items:
+                        # i[1] ist die Stationierung
+                        x = i[8]
+                        new_items.append(i[8])
+                    else:
+                        for i in values:
+                            if i[8] == x:
+                                vergl.append(i)
+
+                zustand = []
+                for i in vergl:
+                    # i[3] Zustandsbewertung
+                    zustand.append(i[27])
+
+                if len(zustand) > 0:
+                    entf = min(zustand)
+                    entf_index = zustand.index(entf)
+
+                    # pk von dem element welches entfernt werden soll
+                    entf_list.append(vergl[entf_index][0])
+
+        #Datenbank anweisung um die Elemente zu löschen
+        for i in entf_list:
+
+            sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+            data = (i,)
+            curs.execute(sql, data)
 
 
     def subkans(self):
         #Berechnung der Substanzklassen
-        pass
 
+        date = self.date + '%'
+        db_x = self.db
+        crs = self.crs
+        haltung = self.haltung
+
+        data = db_x
+
+        db1 = spatialite_connect(data)
+        curs = db1.cursor()
+
+        try:
+            curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Substanzklasse TEXT ;""")
+        except:
+            pass
+
+        try:
+            curs.execute("""ALTER TABLE substanz_haltung_bewertung ADD COLUMN Schadensgewicht TEXT ;""")
+        except:
+            pass
+
+        if haltung == True:
+            sql = """
+                                   SELECT
+                                       substanz_haltung_bewertung.pk,
+                                       substanz_haltung_bewertung.untersuchhal,
+                                       substanz_haltung_bewertung.untersuchrichtung,
+                                       substanz_haltung_bewertung.schoben,
+                                       substanz_haltung_bewertung.schunten,
+                                       substanz_haltung_bewertung.id,
+                                       substanz_haltung_bewertung.videozaehler,
+                                       substanz_haltung_bewertung.inspektionslaenge,
+                                       substanz_haltung_bewertung.station,
+                                       substanz_haltung_bewertung.timecode,
+                                       substanz_haltung_bewertung.kuerzel,
+                                       substanz_haltung_bewertung.charakt1,
+                                       substanz_haltung_bewertung.charakt2,
+                                       substanz_haltung_bewertung.quantnr1,
+                                       substanz_haltung_bewertung.quantnr2,
+                                       substanz_haltung_bewertung.Schadensart,
+                                       substanz_haltung_bewertung.Schadensauspraegung,
+                                       substanz_haltung_bewertung.streckenschaden,
+                                       substanz_haltung_bewertung.pos_von,
+                                       substanz_haltung_bewertung.pos_bis,
+                                       substanz_haltung_bewertung.foto_dateiname,
+                                       substanz_haltung_bewertung.film_dateiname,
+                                       substanz_haltung_bewertung.richtung,
+                                       substanz_haltung_bewertung.bw_bs,
+                                       substanz_haltung_bewertung.Zustandsklasse_D,
+                                       substanz_haltung_bewertung.Zustandsklasse_S,
+                                       substanz_haltung_bewertung.Zustandsklasse_B,
+                                       substanz_haltung_bewertung.Zustandsklasse_ges,
+                                       substanz_haltung_bewertung.Schadenslaenge,
+                                       substanz_haltung_bewertung.createdat,
+                                       haltungen.haltnam,
+                                       haltungen.material,
+                                       haltungen.hoehe,
+                                       haltungen.createdat
+                                   FROM substanz_haltung_bewertung, haltungen
+                                   WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                   AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                   AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS' OR substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
+                               """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+        for attr in curs.fetchall():
+
+            sl = attr[28]
+
+
+            #Klassengewichte
+            if attr[27] == 0:
+                kg = 1.0
+            if attr[27] == 1:
+                kg = 0.8
+            if attr[27] == 2:
+                kg = 0.25
+            if attr[27] == 3:
+                kg = 0.15
+            if attr[27] == 4:
+                kg = 0.05
+            if attr[27] == 5:
+                kg =0
+
+            #startgewicht:
+            if attr[15] == 'PktS' and attr[16] in [ 'OfS','DdS', 'SoB']:
+                stg = 8
+
+            if attr[15] == 'UmfS' and attr[16] in ['OfS', 'DdS', 'SoB']:
+                stg = 3
+
+            if attr[15] == 'StrS' and attr[16] in ['OfS', 'DdS', 'SoB']:
+                stg = 1
+
+            # schadensgewicht:
+            sg = sl * stg * kg
+
+            #schadensgewicht für streckenschäden seperat ermitteln
+            if attr[15] == 'StrS':
+                if sg < (8*kg*0.3):
+                    stg_neu = (8*kg*0.3)/sg
+                    sg = sl * stg_neu * kg
+                else:
+                    continue
+
+            #sg in tabelle schreiben
+            sql = """UPDATE substanz_haltung_bewertung SET Schadensgewicht = ? WHERE substanz_haltung_bewertung.pk = ?"""
+            data = (sg, attr[0])
+
+            curs.execute(sql, data)
+
+
+        sql = """CREATE TABLE IF NOT EXISTS haltungen_substanz_bewertung AS 
+                        SELECT pk, 
+                        haltnam, 
+                        schoben,
+                        schunten,
+                        hoehe,
+                        breite,
+                        laenge,
+                        baujahr,
+                        untersuchtag,
+                        untersucher,
+                        wetter,
+                        bewertungsart,
+                        bewertungstag,
+                        strasse,
+                        datenart,
+                        objektklasse_dichtheit,
+                        objektklasse_standsicherheit,
+                        objektklasse_betriebssicherheit,
+                        objektklasse_gesamt,
+                        kommentar,
+                        cratedat,
+                        FROM haltungen_untersucht_bewertung"""
+        curs.execute(sql)
+
+        db = spatialite_connect(db_x)
+        curs = db.cursor()
+
+
+        # #Bruttoschadenslänge BSL und Abnutzung ABN
+        #
+        # bsl= summe von allen sg
+        sql = """SELECT
+                   pk,
+                   untersuchhal,
+                   SUM(Schadensgewicht),
+                   laenge,
+                FROM substanz_haltung_bewertung
+                GROUP BY untersuchhal;"""
+
+        data = (date,)
+
+        curs.execute(sql, data)
+
+        for attr in curs.fetchall():
+            # abn = bsl/länge*100
+            abn=attr[2]/attr[3]*100
+
+            # #substanzklasse
+            sub_ges = 100-abn
+
+            if sub_ges >= 95:
+                sbk = 5
+            if 95>sub_ges>=85:
+                sbk = 4
+            if 85>sub_ges>=67:
+                sbk = 3
+            if 67>sub_ges>=33:
+                sbk = 2
+            if 33>sub_ges>5:
+                sbk = 1
+            if 5>=sub_ges:
+                sbk = 0
+
+            # sg in tabelle schreiben
+            sql = """UPDATE haltungen_substanz_bewertung SET Substanzklasse = ? WHERE haltungen_substanz_bewertung.haltnam = ?"""
+            data = (sbk, attr[1])
+
+            curs.execute(sql, data)

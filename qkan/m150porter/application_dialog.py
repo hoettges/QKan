@@ -11,6 +11,7 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QPushButton,
     QWidget,
+    QDialogButtonBox,
 )
 
 from qkan import QKan
@@ -35,6 +36,7 @@ class _Dialog(QDialog):
 
 
 class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_export: QLineEdit
 
@@ -60,6 +62,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Attach events
         self.pb_database.clicked.connect(self.select_database)
         self.pb_export.clicked.connect(self.select_export)
+
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -109,6 +113,11 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
 
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_XML.html#import-aus-isybau-xml"
+        os.startfile(help_file)
+
 
 IMPORT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "xml_import_dialog_base.ui")
@@ -152,6 +161,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_import_3.clicked.connect(self.select_import_3)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
+
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -231,3 +242,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_XML.html#import-aus-dwa-xml"
+        os.startfile(help_file)

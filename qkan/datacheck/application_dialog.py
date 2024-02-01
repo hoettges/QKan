@@ -128,7 +128,7 @@ class PlausiDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://qkan.eu/Qkan_flaechen.html?highlight=plausibili"
+        help_file = "https://qkan.eu/QKan_Daten.html#plausibilitatsprufung"
         os.startfile(help_file)
 
 

@@ -78,6 +78,7 @@ class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):  # type: ignore
 
         self.rb_within.clicked.connect(lambda _: self.enable_bufferradius(True))
         self.rb_overlaps.clicked.connect(lambda _: self.enable_bufferradius(False))
+        self.button_box.helpRequested.connect(self.click_help)
 
     def enable_bufferradius(self, status: bool = True) -> None:
         """
@@ -89,6 +90,9 @@ class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):  # type: ignore
         self.tf_bufferradius.setEnabled(status)
         self.unit_bufferradius.setEnabled(status)
 
+    def click_help(self) -> None:
+        help_file = "https://qkan.eu/QKan_Flaechenverarbeitung.html#zuordnung-zu-teilgebiet"
+        os.startfile(help_file)
 
 class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
     button_box: QDialogButtonBox
@@ -307,7 +311,7 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
                 self.lf_anzahl_haltungen.setText("0")
 
     def click_help_fl(self) -> None:
-        help_file = "https://qkan.eu/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen"
+        help_file = "https://qkan.eu/QKan_Flaechenverarbeitung.html#verknupfungslinien-von-flachen-zu-haltungen-erstellen"
         os.startfile(help_file)
 
 
@@ -442,7 +446,7 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
                 self.lf_anzahl_einleit.setText("0")
 
     def click_help_sw(self) -> None:
-        help_file = "https://qkan.eu/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern"
+        help_file = "https://qkan.eu/QKan_Flaechenverarbeitung.html#verknupfungslinien-von-einzeleinleitungen-zu-haltungen-erstellen"
         os.startfile(help_file)
 
 
@@ -465,6 +469,7 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):  # type: ignore
         self.setupUi(self)
 
         self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
+        self.button_box.helpRequested.connect(self.click_help)
 
     def changed_tf_fangradius(self) -> None:
         """Gibt eine Warnung, falls Fangradius zu groß"""
@@ -482,6 +487,11 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):  # type: ignore
             self.lf_warning.setText("")
             self.lf_warning.setStyleSheet("color: black; font: bold;")
             self.lf_unit_fangradius.setStyleSheet("color: black")
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Flaechenverarbeitung.html#verknupfungen-bereinigen"
+        os.startfile(help_file)
 
 
 class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):  # type: ignore
@@ -515,6 +525,7 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):  # type: ignore
         self.lw_gruppen.itemClicked.connect(self.click_lw_groups)
         self.pb_storegroup.clicked.connect(self.click_store_group)
         self.pb_reloadgroup.clicked.connect(self.click_reload_group)
+        self.button_box.helpRequested.connect(self.click_help)
 
     def click_reload_group(self) -> None:
         if not self.gruppe:
@@ -618,3 +629,8 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):  # type: ignore
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.lw_gruppen.addItem(QListWidgetItem(elem[0]))
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Flaechenverarbeitung.html#teilgebietszuordnung-als-gruppe-verwalten"
+        os.startfile(help_file)

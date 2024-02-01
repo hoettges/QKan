@@ -39,6 +39,7 @@ def SubElementText(parent: Element, name: str, text: Union[str, int]) -> Element
         s.text = str(text)
     return s
 
+#TODO: Testen und Verknuepfung zu Refernztabellen prüfen
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:

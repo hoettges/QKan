@@ -71,7 +71,7 @@ class SWMMPorter(QKanPlugin):
         icon_export = ":/plugins/qkan/swmmporter/res/icon_exportSWMM.png"
         QKan.instance.add_action(
             icon_export,
-            text=self.tr("Export nach SWMM-Datei (*.INP)"),
+            text=self.tr("Export in SWMM-Datei (*.INP)"),
             callback=self.run_export,
             parent=self.iface.mainWindow(),
         )
@@ -79,7 +79,7 @@ class SWMMPorter(QKanPlugin):
         icon_import = ":/plugins/qkan/swmmporter/res/icon_importSWMM.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import von SWMM-Datei (*.INP)"),
+            text=self.tr("Import aus SWMM-Datei (*.INP)"),
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )

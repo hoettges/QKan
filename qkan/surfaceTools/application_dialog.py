@@ -48,7 +48,7 @@ class SurfaceToolDialog(_Dialog, SURFACE_CLASS):  # type: ignore
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
         self.setupUi(self)
-        #self.buttonBox.helpRequested.connect(self.click_help)
+        self.buttonBox.helpRequested.connect(self.click_help)
 
     def prepareDialog(self, database_qkan: str, epsg: int) -> bool:
         """Bereitet das Formular vor"""
@@ -79,6 +79,11 @@ class SurfaceToolDialog(_Dialog, SURFACE_CLASS):  # type: ignore
             self.cb_geschnitten.addItem(attr)
 
         return True
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Flaechenverarbeitung.html#entferne-uberlappungenl"
+        os.startfile(help_file)
 
 
 
@@ -321,5 +326,5 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://qkan.eu/Qkan_flaechen.html#erzeugung-von-haltungsflachen"
+        help_file = "https://qkan.eu/Qkan_Formulare.html#erzeugung-von-haltungsflachen"
         os.startfile(help_file)

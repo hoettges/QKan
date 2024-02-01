@@ -431,7 +431,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
 
-        help_file = "https://qkan.eu/Qkan_allgemein.html?highlight=dyna"
+        help_file = "https://qkan.eu/QKan_DYNA.html#export-in-dyna-datei"
         os.startfile(help_file)
 
 
@@ -451,6 +451,8 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
         super().__init__(plugin, parent)
 
         QKanDBDialog.open_mode = False
+
+        self.button_box.helpRequested.connect(self.click_help)
 
         self.bind_select_path(
             title="Dateinamen der zu lesenden Kanal++-Datei eingeben",
@@ -516,3 +518,8 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
                 projectfile,
                 epsg,
             )
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+
+        help_file = "https://qkan.eu/QKan_DYNA.html#import-aus-dyna-datei"
+        os.startfile(help_file)

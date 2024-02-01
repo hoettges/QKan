@@ -16,6 +16,7 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
     QWidget,
+    QDialogButtonBox,
 )
 from qgis.utils import pluginDirectory
 
@@ -49,6 +50,7 @@ class _Dialog(QDialog):
 
 
 class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_template: QLineEdit
     tf_exportdb: QLineEdit
@@ -104,7 +106,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
         self.pb_exportdb.clicked.connect(self.select_exportdb)
         self.pb_template.clicked.connect(self.select_template)
-        # self.button_box.helpRequested.connect(self.click_help)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
@@ -265,6 +267,11 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
         return True
 
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Mike.html#import-aus-mike"
+        os.startfile(help_file)
+
     def prepareDialog(self) -> bool:
         """Füllt Auswahllisten im Dialog"""
 
@@ -339,6 +346,7 @@ IMPORT_CLASS, _ = uic.loadUiType(
 
 
 class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_import: QLineEdit
     tf_project: QLineEdit
@@ -387,7 +395,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_database.clicked.connect(self.select_database)
         self.cb_flaechen.clicked.connect(self.check_flaechen)
         self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
-        # self.button_box.helpRequested.connect(self.click_help)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
         self.tf_database.setText(QKan.config.mu.database)
@@ -465,3 +473,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if self.cb_tezg_hf.isChecked():
             QKan.config.check_import.flaechen = False
             self.cb_flaechen.setChecked(False)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Mike.html#import-aus-mike"
+        os.startfile(help_file)
