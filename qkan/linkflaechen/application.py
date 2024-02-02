@@ -71,7 +71,7 @@ class LinkFl(QKanPlugin):
         QKan.instance.add_action(
             icon_assigntgeb_path,
             text=self.tr(
-                "Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen"
+                "Zuordnung zu Teilgebiet"
             ),
             callback=self.run_assigntgeb,
             parent=self.iface.mainWindow(),
@@ -89,7 +89,7 @@ class LinkFl(QKanPlugin):
         QKan.instance.add_action(
             icon_createlinesw_path,
             text=self.tr(
-                "Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen"
+                "Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen"
             ),
             callback=self.run_createlinesw,
             parent=self.iface.mainWindow(),

@@ -14,6 +14,7 @@ from qgis.PyQt.QtWidgets import (
     QListWidgetItem,
     QPushButton,
     QRadioButton,
+    QDialogButtonBox,
     QWidget,
 )
 
@@ -49,6 +50,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_exportdb: QLineEdit
 
     # cb_use_templatedir: QCheckBox
+    button_box: QDialogButtonBox
 
     pb_database: QPushButton
     pb_template: QPushButton
@@ -97,7 +99,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.pb_template.clicked.connect(self.select_template)
         self.cb_flaechen.clicked.connect(self.check_flaechen)
         self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
-        # self.button_box.helpRequested.connect(self.click_help)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
@@ -338,6 +340,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             QKan.config.check_export.flaechen = False
             self.cb_flaechen.setChecked(False)
 
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Hystem_Extran.html#export-nach-hystem-extran"
+        os.startfile(help_file)
 
 IMPORT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "he8_import_dialog_base.ui")
@@ -345,6 +351,8 @@ IMPORT_CLASS, _ = uic.loadUiType(
 
 
 class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
+
     tf_database: QLineEdit
     tf_import: QLineEdit
     tf_project: QLineEdit
@@ -396,7 +404,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_import.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
-        # self.button_box.helpRequested.connect(self.click_help)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -469,6 +477,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
 
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Hystem_Extran.html#import-aus-hystem-extran"
+        os.startfile(help_file)
 
 RESULTS_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "he8_results_dialog_base.ui")
@@ -476,6 +488,7 @@ RESULTS_CLASS, _ = uic.loadUiType(
 
 
 class ResultsDialog(_Dialog, RESULTS_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_resultsDB: QLineEdit
     tf_project: QLineEdit
@@ -508,6 +521,8 @@ class ResultsDialog(_Dialog, RESULTS_CLASS):  # type: ignore
         self.rb_uebh.clicked.connect(self.disable_tf_qmlfile)
         self.rb_uebvol.clicked.connect(self.disable_tf_qmlfile)
         self.rb_none.clicked.connect(self.disable_tf_qmlfile)
+
+        self.button_box.helpRequested.connect(self.click_help)
 
         self.tf_resultsDB.setText(QKan.config.he8.results_file)
 
@@ -569,3 +584,8 @@ class ResultsDialog(_Dialog, RESULTS_CLASS):  # type: ignore
         """deaktiviert das Textfeld für die qml-Stildatei"""
         self.tf_qmlfile.setEnabled(False)
         self.pb_selectqmlfile.setEnabled(False)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_Hystem_Extran.html#ergebnisse-aus-hystem-extran-8"
+        os.startfile(help_file)

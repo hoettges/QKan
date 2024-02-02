@@ -16,6 +16,7 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
     QWidget,
+    QDialogButtonBox,
 )
 from qgis.utils import pluginDirectory
 
@@ -49,6 +50,7 @@ IMPORT_CLASS, _ = uic.loadUiType(
 
 
 class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_import: QLineEdit
     tf_project: QLineEdit
@@ -87,7 +89,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_import.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
-        # self.button_box.helpRequested.connect(self.click_help)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -143,6 +145,11 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_STRAKAT.html#import-aus-strakat"
+        os.startfile(help_file)
 
 
 RESULTS_CLASS, _ = uic.loadUiType(

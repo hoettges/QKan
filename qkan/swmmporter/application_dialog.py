@@ -15,6 +15,7 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
     QWidget,
+    QDialogButtonBox,
 )
 
 from qkan import QKan, enums, list_selected_items
@@ -46,6 +47,7 @@ class _Dialog(QDialog):
         self.tr = tr
 
 class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_SWMM_template: QLineEdit
     tf_SWMM_dest: QLineEdit
@@ -77,6 +79,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Attach events
         self.pb_SWMM_dest.clicked.connect(self.select_exportfile)
         self.pb_SWMM_template.clicked.connect(self.select_template)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
@@ -283,6 +286,11 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     #        QKan.config.check_export.flaechen = False
     #        self.cb_flaechen.setChecked(False)
 
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_SWMM.html#export-in-swmm-datei"
+        os.startfile(help_file)
+
 
 IMPORT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "importSWMM.ui")
@@ -290,6 +298,7 @@ IMPORT_CLASS, _ = uic.loadUiType(
 
 
 class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
+    button_box: QDialogButtonBox
     tf_database: QLineEdit
     tf_import: QLineEdit
     tf_project: QLineEdit
@@ -312,6 +321,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_import.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
+        self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -357,4 +367,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_project.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://qkan.eu/QKan_SWMM.html#import-aus-swmm-datei"
+        os.startfile(help_file)
 
