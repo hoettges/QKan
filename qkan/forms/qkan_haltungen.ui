@@ -610,7 +610,7 @@
     <widget class="QLineEdit" name="hoehe">
      <property name="geometry">
       <rect>
-       <x>171</x>
+       <x>170</x>
        <y>60</y>
        <width>61</width>
        <height>20</height>
@@ -657,7 +657,7 @@
     <widget class="QLineEdit" name="breite">
      <property name="geometry">
       <rect>
-       <x>171</x>
+       <x>170</x>
        <y>90</y>
        <width>61</width>
        <height>20</height>
@@ -774,7 +774,7 @@
     <widget class="QLineEdit" name="aussendurchmesser">
      <property name="geometry">
       <rect>
-       <x>171</x>
+       <x>170</x>
        <y>150</y>
        <width>61</width>
        <height>20</height>
@@ -797,7 +797,7 @@
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>120</y>
+       <y>90</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -816,7 +816,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>120</y>
+       <y>90</y>
        <width>161</width>
        <height>20</height>
       </rect>
@@ -838,7 +838,7 @@
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>150</y>
+       <y>120</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -857,7 +857,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>150</y>
+       <y>120</y>
        <width>161</width>
        <height>20</height>
       </rect>
@@ -873,6 +873,65 @@
      </property>
      <property name="statusTip">
       <string>Innenmaterial</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="druckdicht">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>160</y>
+       <width>101</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Druckleitung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Druckleitung</string>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string>Druckleitung</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="transport">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>160</y>
+       <width>151</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Transportkanal ohne Regen- und Schmutzwasseranschlüsse&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Transportkanal ohne Regen- und Schmutzwasseranschlüsse</string>
+     </property>
+     <property name="whatsThis">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Transportkanal ohne Regen- und Schmutzwasseranschlüsse&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string>Transportleitung</string>
      </property>
     </widget>
    </widget>

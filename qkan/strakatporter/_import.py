@@ -1,18 +1,16 @@
 import logging, os
 from struct import unpack
-from qgis.core import Qgis, QgsProcessingFeedback
+from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.PyQt.QtCore import Qt
 from typing import Dict, Iterator, Tuple, Union
 
-import qkan.config
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.config import ClassObject
 
 logger = logging.getLogger("QKan.strakat.import")
 
-class Bericht(ClassObject):
+class Bericht_STRAKAT(ClassObject):
     datum: str = ""
     untersucher: str = ""
     ag_kontrolle: str = ""
@@ -42,6 +40,67 @@ class Bericht(ClassObject):
     berichtid: str = ""
 
 
+class Schacht_STRAKAT(ClassObject):
+    nummer: int = 0
+    rw_gerinne_o: float = 0.0
+    hw_gerinne_o: float = 0.0
+    rw_gerinne_u: float = 0.0
+    hw_gerinne_u: float = 0.0
+    rw_rohranfang: float = 0.0
+    hw_rohranfang: float = 0.0
+    rw_rohrende: float = 0.0
+    hw_rohrende: float = 0.0
+    zuflussnummer1: int = 0
+    zuflussnummer2: int = 0
+    zuflussnummer3: int = 0
+    zuflussnummer4: int = 0
+    zuflussnummer5: int = 0
+    zuflussnummer6: int = 0
+    zuflussnummer7: int = 0
+    zuflussnummer8: int = 0
+    abflussnummer1: int = 0
+    abflussnummer2: int = 0
+    abflussnummer3: int = 0
+    abflussnummer4: int = 0
+    abflussnummer5: int = 0
+    schacht_oben: str = ""
+    schacht_unten: str = ""
+    haltungsname: str = ""
+    rohrbreite_v: float = 0.0
+    rohrhoehe___v: float = 0.0
+    flaechenfactor_v: float = 0.0
+    deckel_oben_v: float = 0.0
+    deckel_unten_v: float = 0.0
+    sohle_oben___v: float = 0.0
+    sohle_unten__v: float = 0.0
+    s_sohle_oben_v: float = 0.0
+    sohle_zufluss1: float = 0.0
+    sohle_zufluss2: float = 0.0
+    sohle_zufluss3: float = 0.0
+    sohle_zufluss4: float = 0.0
+    sohle_zufluss5: float = 0.0
+    sohle_zufluss6: float = 0.0
+    sohle_zufluss7: float = 0.0
+    sohle_zufluss8: float = 0.0
+    kanalart: int = 0
+    profilart_v: int = 0
+    material_v: int = 0
+    e_gebiet: int = 0
+    strassennummer: int = 0
+    schachtnummer: int = 0
+    schachtart: int = 0
+    berichtsnummer: int = 0
+    laenge: float = 0.0
+    schachtmaterial: int = 0
+    oberflaeche: int = 0
+    baujahr: int = 0
+    wasserschutz: int = 0
+    eigentum: int = 0
+    naechste_halt: int = 0
+    rueckadresse: int = 0
+    strakatid: str = ""
+
+
 class ImportTask:
     def __init__(
         self,
@@ -58,40 +117,39 @@ class ImportTask:
 
     def run(self) -> bool:
 
-        iface = QKan.instance.iface
+        self.iface = QKan.instance.iface
 
         # Create progress bar
-        self.progress_bar = QProgressBar(iface.messageBar())
+        self.progress_bar = QProgressBar(self.iface.messageBar())
         self.progress_bar.setRange(0, 100)
 
-        status_message = iface.messageBar().createMessage(
+        self.status_message = self.iface.messageBar().createMessage(
             "", "Import aus STRAKAT läuft. Bitte warten..."
         )
-        status_message.layout().addWidget(self.progress_bar)
-        iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
-
-        def progress_changed(progress):
-            self.progress_bar.setValue(progress)
+        self.status_message.layout().addWidget(self.progress_bar)
+        self.iface.messageBar().pushWidget(self.status_message, Qgis.Info, 60)
+        self.progress_bar.setValue(0)
+        logger.debug("progress_bar initialisiert")
 
         result = all(
             [
-                self._strakat_reftables(), self.progress_bar.setValue(30), logger.debug("_strakat_reftables"),
-                self._reftables(), self.progress_bar.setValue(60), logger.debug("_reftables"),
-                self._strakat_kanaltabelle(), self.progress_bar.setValue(20), logger.debug("strakat_kanaltabelle"),
-                self._schaechte(), self.progress_bar.setValue(70), logger.debug("_schaechte"),
-                self._haltungen(), self.progress_bar.setValue(80), logger.debug("_haltungen"),
-                self._strakat_hausanschl(), self.progress_bar.setValue(40), logger.debug("_strakat_hausanschl"),
+                self._strakat_reftables(), self.progress_bar.setValue(10), logger.debug("_strakat_reftables"),
+                self._reftables(), self.progress_bar.setValue(15), logger.debug("_reftables"),
+                self._strakat_kanaltabelle(), self.progress_bar.setValue(30), logger.debug("strakat_kanaltabelle"),
+                self._schaechte(), self.progress_bar.setValue(40), logger.debug("_schaechte"),
+                self._haltungen(), self.progress_bar.setValue(50), logger.debug("_haltungen"),
+                self._strakat_hausanschl(), self.progress_bar.setValue(80), logger.debug("_strakat_hausanschl"),
                 self._anschlussleitungen(), self.progress_bar.setValue(90), logger.debug("_anschlussleitungen"),
-                self._strakat_berichte(), self.progress_bar.setValue(50), logger.debug("_strakat_berichte"),
+                self._strakat_berichte(), self.progress_bar.setValue(95), logger.debug("_strakat_berichte"),
                 # self._schachtschaeden(),
                 # self._haltungsschaeden(),
             ]
         )
 
         self.progress_bar.setValue(100)
-        status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
+        self.status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
 
-        iface.messageBar().clearWidgets()
+        self.iface.messageBar().clearWidgets()
 
         return result
 
@@ -170,165 +228,243 @@ class ImportTask:
             if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatkanal"'):
                 return False
 
+        def _iter() -> Iterator[Schacht_STRAKAT]:
         # Datei kanal.rwtopen einlesen und in Tabelle schreiben
-        blength = 1024                      # Blocklänge in der STRAKAT-Datei
-        with open(os.path.join(self.strakatdir, 'kanal.rwtopen'), 'rb') as fo:
-            _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
-            maxloop = 1000000           # Begrenzung zur Sicherheit. Falls erreicht: Meldung
-            for n in range(1, maxloop):
-                b = fo.read(blength)
-                if not b:
-                    break
-                (
-                    rw_gerinne_o, hw_gerinne_o,
-                    rw_gerinne_u, hw_gerinne_u,
-                    rw_rohranfang, hw_rohranfang,
-                    rw_rohrende, hw_rohrende
-                ) = (round(el, 3) for el in unpack('dddddddd', b[0:64]))
+            blength = 1024                      # Blocklänge in der STRAKAT-Datei
+            with open(os.path.join(self.strakatdir, 'kanal.rwtopen'), 'rb') as fo:
 
-                (
-                    zuflussnummer1, zuflussnummer2,
-                    zuflussnummer3, zuflussnummer4,
-                    zuflussnummer5, zuflussnummer6,
-                    zuflussnummer7, zuflussnummer8,
-                    abflussnummer1, abflussnummer2,
-                    abflussnummer3, abflussnummer4,
-                    abflussnummer5
-                ) = unpack('iiiiiiiiiiiii', b[64:116])
+                _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
 
-                (
-                    schacht_oben, haltungsname
-                ) = [t.decode('ansi').strip() for t in unpack('15s15s', b[172:202].replace(b'\x00', b' '))]
+                maxloop = 1000000           # Begrenzung zur Sicherheit. Falls erreicht: Meldung
+                for n in range(1, maxloop):
+                    b = fo.read(blength)
+                    if not b:
+                        break
+                    (
+                        rw_gerinne_o, hw_gerinne_o,
+                        rw_gerinne_u, hw_gerinne_u,
+                        rw_rohranfang, hw_rohranfang,
+                        rw_rohrende, hw_rohrende
+                    ) = (round(el, 3) for el in unpack('dddddddd', b[0:64]))
 
-                (
-                    rohrbreite_v, rohrbreite_g, rohrhoehe___v, rohrhoehe___g,
-                    wandstaerke_v, wandstaerke_g, ersatzdu___v, ersatzdu___g,
-                    flaechenfactor_v, flaechenfactor_g, umfangsfactor_v, umfangsfactor_g,
-                    hydr__radius_v, hydr__radius_g
-                ) = unpack('ffffffffffffff', b[116:172])
+                    (
+                        zuflussnummer1, zuflussnummer2,
+                        zuflussnummer3, zuflussnummer4,
+                        zuflussnummer5, zuflussnummer6,
+                        zuflussnummer7, zuflussnummer8,
+                        abflussnummer1, abflussnummer2,
+                        abflussnummer3, abflussnummer4,
+                        abflussnummer5
+                    ) = unpack('iiiiiiiiiiiii', b[64:116])
 
-                (
-                    deckel_oben_v, deckel_oben_g, deckel_unten_v, deckel_unten_g,
-                    sohle_oben___v, sohle_oben___g, sohle_unten__v, sohle_unten__g
-                ) = (round(el, 3) for el in unpack('ffffffff', b[202:234]))
+                    (
+                        schacht_oben, haltungsname
+                    ) = [t.decode('ansi').strip() for t in unpack('15s15s', b[172:202].replace(b'\x00', b' '))]
 
-                (
-                    sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4,
-                    sohle_zufluss5, sohle_zufluss6, sohle_zufluss7, sohle_zufluss8
-                ) = (round(el, 3) for el in unpack('ffffffff', b[434:466]))
+                    (
+                        rohrbreite_v, rohrbreite_g, rohrhoehe___v, rohrhoehe___g,
+                        wandstaerke_v, wandstaerke_g, ersatzdu___v, ersatzdu___g,
+                        flaechenfactor_v, flaechenfactor_g, umfangsfactor_v, umfangsfactor_g,
+                        hydr__radius_v, hydr__radius_g
+                    ) = unpack('ffffffffffffff', b[116:172])
 
-                (
-                    kanalart, profilart_v, profilart_g, material_v,
-                    material_g, e_gebiet, strassennummer
-                ) = unpack('hhhhhhh', b[490:504])
+                    (
+                        deckel_oben_v, deckel_oben_g, deckel_unten_v, deckel_unten_g,
+                        sohle_oben___v, sohle_oben___g, sohle_unten__v, sohle_unten__g
+                    ) = (round(el, 3) for el in unpack('ffffffff', b[202:234]))
 
-                (
-                    schachtnummer, schachtart
-                ) = unpack('ih', b[504:510])
+                    s_sohle_oben_v = 0.0                        # Position in Datei kanal.rwtopen unbekannt
 
-                (  # kann nicht mit dem vorherigen
-                    berichtsnummer, laenge, schachtmaterial  # zusammengefasst werden, weil Startadresse
-                ) = unpack('ifh', b[510:520])  # glattes Vielfaches der Länge sein muss
+                    (
+                        sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4,
+                        sohle_zufluss5, sohle_zufluss6, sohle_zufluss7, sohle_zufluss8
+                    ) = (round(el, 3) for el in unpack('ffffffff', b[434:466]))
 
-                laenge = round(laenge, 3)
+                    (
+                        kanalart, profilart_v, profilart_g, material_v,
+                        material_g, e_gebiet, strassennummer
+                    ) = unpack('hhhhhhh', b[490:504])
 
-                oberflaeche = unpack('h', b[528:530])[0]
-                oberflaeche_b = b[528:530]
-                baujahr = unpack('h', b[550:552])[0]
-                wasserschutz = unpack('h', b[554:556])[0]
-                eigentum = unpack('h', b[556:558])[0]
-                naechste_halt = unpack('i', b[558:562])[0]
-                rueckadresse = unpack('i', b[562:566])[0]
+                    (
+                        schachtnummer, schachtart
+                    ) = unpack('ih', b[504:510])
 
-                nummer = unpack('i', b[829:833])[0]
+                    (  # kann nicht mit dem vorherigen
+                        berichtsnummer, laenge, schachtmaterial  # zusammengefasst werden, weil Startadresse
+                    ) = unpack('ifh', b[510:520])  # glattes Vielfaches der Länge sein muss
 
-                (
-                    h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
-                ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[917:933])]
-                strakatid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
+                    laenge = round(laenge, 3)
 
-                schacht_unten = unpack('15s', b[965:980])[0].replace(b'\x00', b' ').decode('ansi').strip()
+                    oberflaeche = unpack('h', b[528:530])[0]
+                    oberflaeche_b = b[528:530]
+                    baujahr = unpack('h', b[550:552])[0]
+                    wasserschutz = unpack('h', b[554:556])[0]
+                    eigentum = unpack('h', b[556:558])[0]
+                    naechste_halt = unpack('i', b[558:562])[0]
+                    rueckadresse = unpack('i', b[562:566])[0]
 
-                params = {
-                        'nummer': nummer,
-                        'rw_gerinne_o': rw_gerinne_o, 'hw_gerinne_o': hw_gerinne_o,
-                        'rw_gerinne_u': rw_gerinne_u, 'hw_gerinne_u': hw_gerinne_u,
-                        'rw_rohranfang': rw_rohranfang, 'hw_rohranfang': hw_rohranfang,
-                        'rw_rohrende': rw_rohrende, 'hw_rohrende': hw_rohrende,
-                        'zuflussnummer1': zuflussnummer1, 'zuflussnummer2': zuflussnummer2,
-                        'zuflussnummer3': zuflussnummer3, 'zuflussnummer4': zuflussnummer4,
-                        'zuflussnummer5': zuflussnummer5, 'zuflussnummer6': zuflussnummer6,
-                        'zuflussnummer7': zuflussnummer7, 'zuflussnummer8': zuflussnummer8,
-                        'abflussnummer1': abflussnummer1, 'abflussnummer2': abflussnummer2,
-                        'abflussnummer3': abflussnummer3, 'abflussnummer4': abflussnummer4,
-                        'abflussnummer5': abflussnummer5,
-                        'schacht_oben': schacht_oben, 'schacht_unten': schacht_unten, 'haltungsname': haltungsname,
-                        'rohrbreite_v': rohrbreite_v, 'rohrhoehe___v': rohrhoehe___v,
-                        'flaechenfactor_v': flaechenfactor_v,
-                        'deckel_oben_v': deckel_oben_v, 'deckel_unten_v': deckel_unten_v,
-                        'sohle_oben___v': sohle_oben___v, 'sohle_unten__v': sohle_unten__v,
-                        's_sohle_oben_v': 0,
-                        'sohle_zufluss1': sohle_zufluss1, 'sohle_zufluss2': sohle_zufluss2,
-                        'sohle_zufluss3': sohle_zufluss3, 'sohle_zufluss4': sohle_zufluss4,
-                        'sohle_zufluss5': sohle_zufluss5, 'sohle_zufluss6': sohle_zufluss6,
-                        'sohle_zufluss7': sohle_zufluss7, 'sohle_zufluss8': sohle_zufluss8,
-                        'kanalart': kanalart, 'profilart_v': profilart_v, 'material_v': material_v,
-                        'e_gebiet': e_gebiet, 'strassennummer': strassennummer,
-                        'schachtnummer': schachtnummer, 'schachtart': schachtart, 'berichtsnummer': berichtsnummer,
-                        'laenge': laenge, 'schachtmaterial': schachtmaterial, 'oberflaeche': oberflaeche,
-                        'baujahr': baujahr, 'wasserschutz': wasserschutz, 'eigentum': eigentum,
-                        'naechste_halt': naechste_halt, 'rueckadresse': rueckadresse, 'strakatid': strakatid}
+                    nummer = unpack('i', b[829:833])[0]
 
-                sql = """INSERT INTO t_strakatkanal (
-                    nummer, 
-                    rw_gerinne_o, hw_gerinne_o, rw_gerinne_u, hw_gerinne_u,
-                    rw_rohranfang, hw_rohranfang, rw_rohrende, hw_rohrende,
-                    zuflussnummer1, zuflussnummer2, zuflussnummer3, zuflussnummer4,
-                    zuflussnummer5, zuflussnummer6, zuflussnummer7, zuflussnummer8,
-                    abflussnummer1, abflussnummer2, abflussnummer3, abflussnummer4, abflussnummer5,
-                    schacht_oben, schacht_unten, haltungsname,
-                    rohrbreite_v, rohrhoehe___v, flaechenfactor_v,
-                    deckel_oben_v, deckel_unten_v, sohle_oben___v, sohle_unten__v, s_sohle_oben_v,
-                    sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4,
-                    sohle_zufluss5, sohle_zufluss6, sohle_zufluss7, sohle_zufluss8,
-                    kanalart, profilart_v, material_v,
-                    e_gebiet, strassennummer,
-                    schachtnummer, schachtart, berichtsnummer,
-                    laenge, schachtmaterial, oberflaeche,
-                    baujahr, wasserschutz, eigentum,
-                    naechste_halt, rueckadresse, strakatid
-                )
-                VALUES (
-                    :nummer, 
-                    :rw_gerinne_o, :hw_gerinne_o, :rw_gerinne_u, :hw_gerinne_u,
-                    :rw_rohranfang, :hw_rohranfang, :rw_rohrende, :hw_rohrende,
-                    :zuflussnummer1, :zuflussnummer2, :zuflussnummer3, :zuflussnummer4,
-                    :zuflussnummer5, :zuflussnummer6, :zuflussnummer7, :zuflussnummer8,
-                    :abflussnummer1, :abflussnummer2, :abflussnummer3, :abflussnummer4, :abflussnummer5,
-                    :schacht_oben, :schacht_unten, :haltungsname,
-                    :rohrbreite_v, :rohrhoehe___v, :flaechenfactor_v,
-                    :deckel_oben_v, :deckel_unten_v, :sohle_oben___v, :sohle_unten__v, :s_sohle_oben_v,
-                    :sohle_zufluss1, :sohle_zufluss2, :sohle_zufluss3, :sohle_zufluss4,
-                    :sohle_zufluss5, :sohle_zufluss6, :sohle_zufluss7, :sohle_zufluss8,
-                    :kanalart, :profilart_v, :material_v,
-                    :e_gebiet, :strassennummer,
-                    :schachtnummer, :schachtart, :berichtsnummer,
-                    :laenge, :schachtmaterial, :oberflaeche,
-                    :baujahr, :wasserschutz, :eigentum,
-                    :naechste_halt, :rueckadresse, :strakatid                
-                )"""
+                    (
+                        h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
+                    ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[917:933])]
+                    strakatid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
 
-                if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
-                    logger.error('Fehler beim Lesen der Datei "kanal.rwtopen"')
+                    schacht_unten = unpack('15s', b[965:980])[0].replace(b'\x00', b' ').decode('ansi').strip()
+
+                    yield Schacht_STRAKAT(
+                        nummer=nummer,
+                        rw_gerinne_o=rw_gerinne_o,
+                        hw_gerinne_o=hw_gerinne_o,
+                        rw_gerinne_u=rw_gerinne_u,
+                        hw_gerinne_u=hw_gerinne_u,
+                        rw_rohranfang=rw_rohranfang,
+                        hw_rohranfang=hw_rohranfang,
+                        rw_rohrende=rw_rohrende,
+                        hw_rohrende=hw_rohrende,
+                        zuflussnummer1=zuflussnummer1,
+                        zuflussnummer2=zuflussnummer2,
+                        zuflussnummer3=zuflussnummer3,
+                        zuflussnummer4=zuflussnummer4,
+                        zuflussnummer5=zuflussnummer5,
+                        zuflussnummer6=zuflussnummer6,
+                        zuflussnummer7=zuflussnummer7,
+                        zuflussnummer8=zuflussnummer8,
+                        abflussnummer1=abflussnummer1,
+                        abflussnummer2=abflussnummer2,
+                        abflussnummer3=abflussnummer3,
+                        abflussnummer4=abflussnummer4,
+                        abflussnummer5=abflussnummer5,
+                        schacht_oben=schacht_oben,
+                        schacht_unten=schacht_unten,
+                        haltungsname=haltungsname,
+                        rohrbreite_v=rohrbreite_v,
+                        rohrhoehe___v=rohrhoehe___v,
+                        flaechenfactor_v=flaechenfactor_v,
+                        deckel_oben_v=deckel_oben_v,
+                        deckel_unten_v=deckel_unten_v,
+                        sohle_oben___v=sohle_oben___v,
+                        sohle_unten__v=sohle_unten__v,
+                        s_sohle_oben_v=s_sohle_oben_v,
+                        sohle_zufluss1=sohle_zufluss1,
+                        sohle_zufluss2=sohle_zufluss2,
+                        sohle_zufluss3=sohle_zufluss3,
+                        sohle_zufluss4=sohle_zufluss4,
+                        sohle_zufluss5=sohle_zufluss5,
+                        sohle_zufluss6=sohle_zufluss6,
+                        sohle_zufluss7=sohle_zufluss7,
+                        sohle_zufluss8=sohle_zufluss8,
+                        kanalart=kanalart,
+                        profilart_v=profilart_v,
+                        material_v=material_v,
+                        e_gebiet=e_gebiet,
+                        strassennummer=strassennummer,
+                        schachtnummer=schachtnummer,
+                        schachtart=schachtart,
+                        berichtsnummer=berichtsnummer,
+                        laenge=laenge,
+                        schachtmaterial=schachtmaterial,
+                        oberflaeche=oberflaeche,
+                        baujahr=baujahr,
+                        wasserschutz=wasserschutz,
+                        eigentum=eigentum,
+                        naechste_halt=naechste_halt,
+                        rueckadresse=rueckadresse,
+                        strakatid=strakatid,
+                    )
+                else:
+                    logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nach '
+                                 '1000000 Datensätze abgebrochen!"')
                     return False
-            else:
-                logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nach '
-                         '1000000 Datensätze abgebrochen!"')
-                return False
+
+        params = ()                           # STRAKAT data stored in tuple of dicts for better performance
+                                            # with sql-statement executemany
+        logger.debug("{__name__}: Berichte werden gelesen und in data gespeichert ...")
+
+        for _schacht in _iter():
+            data = {
+                'nummer': _schacht.nummer,
+                'rw_gerinne_o': _schacht.rw_gerinne_o, 'hw_gerinne_o': _schacht.hw_gerinne_o,
+                'rw_gerinne_u': _schacht.rw_gerinne_u, 'hw_gerinne_u': _schacht.hw_gerinne_u,
+                'rw_rohranfang': _schacht.rw_rohranfang, 'hw_rohranfang': _schacht.hw_rohranfang,
+                'rw_rohrende': _schacht.rw_rohrende, 'hw_rohrende': _schacht.hw_rohrende,
+                'zuflussnummer1': _schacht.zuflussnummer1, 'zuflussnummer2': _schacht.zuflussnummer2,
+                'zuflussnummer3': _schacht.zuflussnummer3, 'zuflussnummer4': _schacht.zuflussnummer4,
+                'zuflussnummer5': _schacht.zuflussnummer5, 'zuflussnummer6': _schacht.zuflussnummer6,
+                'zuflussnummer7': _schacht.zuflussnummer7, 'zuflussnummer8': _schacht.zuflussnummer8,
+                'abflussnummer1': _schacht.abflussnummer1, 'abflussnummer2': _schacht.abflussnummer2,
+                'abflussnummer3': _schacht.abflussnummer3, 'abflussnummer4': _schacht.abflussnummer4,
+                'abflussnummer5': _schacht.abflussnummer5,
+                'schacht_oben': _schacht.schacht_oben, 'schacht_unten': _schacht.schacht_unten,
+                'haltungsname': _schacht.haltungsname,
+                'rohrbreite_v': _schacht.rohrbreite_v, 'rohrhoehe___v': _schacht.rohrhoehe___v,
+                'flaechenfactor_v': _schacht.flaechenfactor_v,
+                'deckel_oben_v': _schacht.deckel_oben_v, 'deckel_unten_v': _schacht.deckel_unten_v,
+                'sohle_oben___v': _schacht.sohle_oben___v, 'sohle_unten__v': _schacht.sohle_unten__v,
+                's_sohle_oben_v': 0.0,
+                'sohle_zufluss1': _schacht.sohle_zufluss1, 'sohle_zufluss2': _schacht.sohle_zufluss2,
+                'sohle_zufluss3': _schacht.sohle_zufluss3, 'sohle_zufluss4': _schacht.sohle_zufluss4,
+                'sohle_zufluss5': _schacht.sohle_zufluss5, 'sohle_zufluss6': _schacht.sohle_zufluss6,
+                'sohle_zufluss7': _schacht.sohle_zufluss7, 'sohle_zufluss8': _schacht.sohle_zufluss8,
+                'kanalart': _schacht.kanalart, 'profilart_v': _schacht.profilart_v,
+                'material_v': _schacht.material_v,
+                'e_gebiet': _schacht.e_gebiet, 'strassennummer': _schacht.strassennummer,
+                'schachtnummer': _schacht.schachtnummer, 'schachtart': _schacht.schachtart,
+                'berichtsnummer': _schacht.berichtsnummer,
+                'laenge': _schacht.laenge, 'schachtmaterial': _schacht.schachtmaterial,
+                'oberflaeche': _schacht.oberflaeche,
+                'baujahr': _schacht.baujahr, 'wasserschutz': _schacht.wasserschutz, 'eigentum': _schacht.eigentum,
+                'naechste_halt': _schacht.naechste_halt, 'rueckadresse': _schacht.rueckadresse,
+                'strakatid': _schacht.strakatid
+            }
+            params += (data,)
+
+        logger.debug("{__name__}: Berichte werden in temporäre STRAKAT-Tabellen geschrieben ...")
+
+        sql = """INSERT INTO t_strakatkanal (
+            nummer, 
+            rw_gerinne_o, hw_gerinne_o, rw_gerinne_u, hw_gerinne_u,
+            rw_rohranfang, hw_rohranfang, rw_rohrende, hw_rohrende,
+            zuflussnummer1, zuflussnummer2, zuflussnummer3, zuflussnummer4,
+            zuflussnummer5, zuflussnummer6, zuflussnummer7, zuflussnummer8,
+            abflussnummer1, abflussnummer2, abflussnummer3, abflussnummer4, abflussnummer5,
+            schacht_oben, schacht_unten, haltungsname,
+            rohrbreite_v, rohrhoehe___v, flaechenfactor_v,
+            deckel_oben_v, deckel_unten_v, sohle_oben___v, sohle_unten__v, s_sohle_oben_v,
+            sohle_zufluss1, sohle_zufluss2, sohle_zufluss3, sohle_zufluss4,
+            sohle_zufluss5, sohle_zufluss6, sohle_zufluss7, sohle_zufluss8,
+            kanalart, profilart_v, material_v,
+            e_gebiet, strassennummer,
+            schachtnummer, schachtart, berichtsnummer,
+            laenge, schachtmaterial, oberflaeche,
+            baujahr, wasserschutz, eigentum,
+            naechste_halt, rueckadresse, strakatid
+        )
+        VALUES (
+            :nummer, 
+            :rw_gerinne_o, :hw_gerinne_o, :rw_gerinne_u, :hw_gerinne_u,
+            :rw_rohranfang, :hw_rohranfang, :rw_rohrende, :hw_rohrende,
+            :zuflussnummer1, :zuflussnummer2, :zuflussnummer3, :zuflussnummer4,
+            :zuflussnummer5, :zuflussnummer6, :zuflussnummer7, :zuflussnummer8,
+            :abflussnummer1, :abflussnummer2, :abflussnummer3, :abflussnummer4, :abflussnummer5,
+            :schacht_oben, :schacht_unten, :haltungsname,
+            :rohrbreite_v, :rohrhoehe___v, :flaechenfactor_v,
+            :deckel_oben_v, :deckel_unten_v, :sohle_oben___v, :sohle_unten__v, :s_sohle_oben_v,
+            :sohle_zufluss1, :sohle_zufluss2, :sohle_zufluss3, :sohle_zufluss4,
+            :sohle_zufluss5, :sohle_zufluss6, :sohle_zufluss7, :sohle_zufluss8,
+            :kanalart, :profilart_v, :material_v,
+            :e_gebiet, :strassennummer,
+            :schachtnummer, :schachtart, :berichtsnummer,
+            :laenge, :schachtmaterial, :oberflaeche,
+            :baujahr, :wasserschutz, :eigentum,
+            :naechste_halt, :rueckadresse, :strakatid                
+        )"""
+
+        if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Schächte", parameters=params, many=True):
+            logger.error('Fehler beim Lesen der Datei "kanal.rwtopen"')
+            return False
 
         self.db_qkan.commit()
-
-        self.progress_bar.setValue(20)
 
         return True
 
@@ -336,7 +472,8 @@ class ImportTask:
         """Import der STRAKAT-Referenztabellen aus der STRAKAT-Datei 'referenztabelle.strakat'
         """
 
-        # Erstellung Tabelle t_reflists
+        # Erstellung Tabelle t_reflists. Diese Tabelle enthält die STRAKAT-Rohdaten aller Referenztabellen.
+        # Diese werden in den einzelnen Importen mittels Filter auf die Spalte "tabtyp" spezifiziert und eingebunden.
         sql = "PRAGMA table_list('t_reflists')"
         if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_reflists', vorhanden ist"):
             return False                                        # Abbruch weil Anfrage fehlgeschlagen
@@ -441,8 +578,6 @@ class ImportTask:
                 return False
 
         self.db_qkan.commit()
-
-        self.progress_bar.setValue(40)
 
         return True
 
@@ -589,54 +724,52 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.progress_bar.setValue(60)
-
         return True
 
     def _strakat_berichte(self) -> bool:
         """Import der Schadensdaten aus der STRAKAT-Datei 'ENBericht.rwtopen', ACCESS-Tabelle 'SCHADENSTABELLE'
         """
-        def _iter() -> Iterator[Bericht]:
-            # Erstellung Tabelle t_strakatberichte
-            sql = "PRAGMA table_list('t_strakatberichte')"
-            if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_strakatberichte', vorhanden ist"):
-                return False                                        # Abbruch weil Anfrage fehlgeschlagen
-            if not self.db_qkan.fetchone():
-                sql = """ 
-                CREATE TABLE IF NOT EXISTS t_strakatberichte (
-                    pk INTEGER PRIMARY KEY,
-                    datum TEXT,
-                    untersucher TEXT,
-                    ag_kontrolle TEXT,
-                    fahrzeug TEXT,
-                    inspekteur TEXT,
-                    wetter TEXT,
-                    atv149 REAL,
-                    fortsetzung INTEGER,
-                    station_gegen REAL,
-                    station_untersucher REAL,
-                    atv_kuerzel TEXT,
-                    atv_langtext TEXT,
-                    sandatum TEXT,
-                    geloescht INTEGER,
-                    schadensklasse INTEGER,
-                    untersuchungsrichtung INTEGER,
-                    videoband TEXT,
-                    videozaehler INTEGER,
-                    vonuhr INTEGER,
-                    bisuhr INTEGER,
-                    atv143 REAL,
-                    skdichtheit INTEGER,
-                    skstandsicherheit INTEGER,
-                    skbetriebssicherheit INTEGER,
-                    strakatid TEXT,
-                    hausanschlid TEXT,
-                    berichtid TEXT
-                )"""
+        # Erstellung Tabelle t_strakatberichte
+        sql = "PRAGMA table_list('t_strakatberichte')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_strakatberichte', vorhanden ist"):
+            return False                                        # Abbruch weil Anfrage fehlgeschlagen
+        if not self.db_qkan.fetchone():
+            sql = """ 
+            CREATE TABLE IF NOT EXISTS t_strakatberichte (
+                pk INTEGER PRIMARY KEY,
+                datum TEXT,
+                untersucher TEXT,
+                ag_kontrolle TEXT,
+                fahrzeug TEXT,
+                inspekteur TEXT,
+                wetter TEXT,
+                atv149 REAL,
+                fortsetzung INTEGER,
+                station_gegen REAL,
+                station_untersucher REAL,
+                atv_kuerzel TEXT,
+                atv_langtext TEXT,
+                sandatum TEXT,
+                geloescht INTEGER,
+                schadensklasse INTEGER,
+                untersuchungsrichtung INTEGER,
+                videoband TEXT,
+                videozaehler INTEGER,
+                vonuhr INTEGER,
+                bisuhr INTEGER,
+                atv143 REAL,
+                skdichtheit INTEGER,
+                skstandsicherheit INTEGER,
+                skbetriebssicherheit INTEGER,
+                strakatid TEXT,
+                hausanschlid TEXT,
+                berichtid TEXT
+            )"""
 
-                if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatberichte"'):
-                    return False
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatberichte"'):
+                return False
 
+        def _iter() -> Iterator[Bericht_STRAKAT]:
             # Datei kanal.rwtopen einlesen und in Tabelle schreiben
             blength = 1024                      # Blocklänge in der STRAKAT-Datei
             with open(os.path.join(self.strakatdir, 'ENBericht.rwtopen'), 'rb') as fo:
@@ -649,11 +782,9 @@ class ImportTask:
                     maxloop = 5000000  # Begrenzung zur Sicherheit. Falls erreicht: Meldung
 
                 for n in range(1, maxloop):
-                    b = fo.read(1024)
+                    b = fo.read(blength)
                     if not b:
                         break
-                    if n == 0:
-                        continue
 
                     datum = b[0:10].decode('ansi')
                     untersucher = b[11:b[11:31].find(b'\x00') + 11].decode('ansi').strip()
@@ -695,7 +826,7 @@ class ImportTask:
                      ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[675:691])]
                     berichtid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
 
-                    yield Bericht(
+                    yield Bericht_STRAKAT(
                         datum=datum,
                         untersucher=untersucher,
                         ag_kontrolle=ag_kontrolle,
@@ -831,6 +962,7 @@ class ImportTask:
         """
 
         if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Bericht", parameters=params, many=True):
+            logger.error('Fehler beim Lesen der Datei "ENBericht.rwtopen"')
             return False
 
         self.db_qkan.commit()
@@ -843,6 +975,9 @@ class ImportTask:
         """Referenztabellen mit Datensätzen für HE-Import füllen"""
 
         # Hinweis: 'None' bewirkt beim Import eine Zuordnung unabhängig vom Wert
+
+        # Referenztabelle Entwässerungsarten
+
         daten = [
             ('Regenwasser', 'R', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
             ('Schmutzwasser', 'S', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
@@ -864,6 +999,8 @@ class ImportTask:
         if not self.db_qkan.sql(sql, "strakat_import Referenzliste entwaesserungsarten", daten, many=True):
             return False
 
+        # Referenztabelle Haltungstypen
+
         daten = [
             ('Haltung', None),
             ('Drossel', 'HYSTEM-EXTRAN 8'),
@@ -882,6 +1019,8 @@ class ImportTask:
 
         if not self.db_qkan.sql(sql, "strakat_import Referenzliste haltungstypen", daten, many=True):
             return False
+
+        # Referenztabelle Rohrprofile
 
         daten = [
             ('Kreis', 1, 1, None),
@@ -926,12 +1065,14 @@ class ImportTask:
         if not self.db_qkan.sql(sql, "strakat_import Referenzliste profile", daten, many=True):
             return False
 
+        # Referenztabelle Pumpentypen
+
         daten = [
-             ('Offline', 1),
-             ('Online Schaltstufen', 2),
-             ('Online Kennlinie', 3),
-             ('Online Wasserstandsdifferenz', 4),
-             ('Ideal', 5),
+            ('Offline', 1),
+            ('Online Schaltstufen', 2),
+            ('Online Kennlinie', 3),
+            ('Online Wasserstandsdifferenz', 4),
+            ('Ideal', 5),
         ]
 
         daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
@@ -942,25 +1083,68 @@ class ImportTask:
         if not self.db_qkan.sql(sql, "strakat_import Referenzliste pumpentypen", daten, many=True):
             return False
 
-        # Wegen der sehr eigenwilligen Logik in STRAKAT enthält die Tabelle 'schachtarten'
-        # Zuordnungen sowohl zu Schächten als auch Haltungen
+        # Referenztabelle Untersuchungsrichtung
 
-        # Erstellung Tabelle t_schachtarten2schachttypen
-        sql = "PRAGMA table_list('t_schachtarten2schachttypen')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_schachtarten2schachttypen', vorhanden ist"):
+        daten = [
+            ('in Fließrichtung', '0', 'automatisch hinzugefügt'),
+            ('gegen Fließrichtung', 'U', 'automatisch hinzugefügt'),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO untersuchungsrichtung (bezeichnung, kuerzel, bemerkung)
+                    SELECT ?, ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM untersuchungsrichtung)"""
+
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste untersuchungsrichtung", daten, many=True):
+            return False
+
+        # Erstellung Tabelle t_mapper_untersuchungsrichtung
+        sql = "PRAGMA table_list('t_mapper_untersuchungsrichtung')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_untersuchungsrichtung', vorhanden ist"):
             return False                                        # Abbruch weil Anfrage fehlgeschlagen
         if not self.db_qkan.fetchone():
             sql = """ 
-            CREATE TABLE IF NOT EXISTS t_schachtarten2schachttypen (
+            CREATE TABLE IF NOT EXISTS t_mapper_untersuchungsrichtung (
+                id INTEGER PRIMARY KEY,
+                untersuchungsrichtung TEXT
+            )"""
+
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_untersuchungsrichtung"'):
+                return False
+
+        # Liste enthält nur Schachtarten, die nicht 'Schacht' und dabei 'vorhanden' sind (einschließlich 1: 'NS Normalschacht')
+        daten = [
+            (0,  'in Fließrichtung'),
+            (1,  'gegen Fließrichtung'),
+        ]
+        sql = """INSERT INTO t_mapper_untersuchungsrichtung (id, untersuchungsrichtung)
+                    VALUES (?, ?)"""
+
+        if not self.db_qkan.sql(sql,
+                                "strakat_import Referenzliste t_mapper_untersuchungsrichtung",
+                                daten,
+                                many=True):
+            return False
+
+        # Wegen der sehr eigenwilligen Logik in STRAKAT enthält die Tabelle 'schachtarten'
+        # Zuordnungen sowohl zu Schächten als auch Haltungen
+
+        # Erstellung Tabelle t_mapper_schachtarten2typen
+        sql = "PRAGMA table_list('t_mapper_schachtarten2typen')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_schachtarten2typen', vorhanden ist"):
+            return False                                        # Abbruch weil Anfrage fehlgeschlagen
+        if not self.db_qkan.fetchone():
+            sql = """ 
+            CREATE TABLE IF NOT EXISTS t_mapper_schachtarten2typen (
                 id INTEGER PRIMARY KEY,
                 schachttyp TEXT,
                 simstatus TEXT
             )"""
 
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_schachtarten2schachttypen"'):
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_schachtarten2typen"'):
                 return False
 
-        # Liste enthält nur Schachtarten, die nicht 'Schacht' und 'vorhanden' sind (einschließlich 1: 'NS Normalschacht')
+        # Liste enthält nur Schachtarten, die nicht 'Schacht' und dabei 'vorhanden' sind (einschließlich 1: 'NS Normalschacht')
         daten = [
             (2,  'Auslass', 'vorhanden'),
             (5,  'Schacht', 'fiktiv'),
@@ -972,28 +1156,28 @@ class ImportTask:
             (27, 'Schacht', 'geplant'),
             (31, 'Schacht', 'fiktiv'),
         ]
-        sql = """INSERT INTO t_schachtarten2schachttypen (id, schachttyp, simstatus)
+        sql = """INSERT INTO t_mapper_schachtarten2typen (id, schachttyp, simstatus)
                     VALUES (?, ?, ?)"""
 
         if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_schachtarten2schachttypen",
+                                "strakat_import Referenzliste t_mapper_schachtarten2typen",
                                 daten,
                                 many=True):
             return False
 
-        # Erstellung Tabelle t_schachtarten2haltungstypen
-        sql = "PRAGMA table_list('t_schachtarten2haltungstypen')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_schachtarten2haltungstypen', vorhanden ist"):
+        # Erstellung Tabelle t_mapper_schart2haltyp
+        sql = "PRAGMA table_list('t_mapper_schart2haltyp')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_schart2haltyp', vorhanden ist"):
             return False                                        # Abbruch weil Anfrage fehlgeschlagen
         if not self.db_qkan.fetchone():
             sql = """ 
-            CREATE TABLE IF NOT EXISTS t_schachtarten2haltungstypen (
+            CREATE TABLE IF NOT EXISTS t_mapper_schart2haltyp (
                 id INTEGER PRIMARY KEY,
                 haltungstyp TEXT,
                 simstatus TEXT
             )"""
 
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_schachtarten2haltungstypen"'):
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_schart2haltyp"'):
                 return False
 
         # Liste enthält nur Haltungsarten, die nicht 'Haltung' und 'vorhanden' sind
@@ -1006,28 +1190,28 @@ class ImportTask:
             (27, 'Haltung', 'geplant'),
             (31, 'Haltung', 'fiktiv'),
         ]
-        sql = """INSERT INTO t_schachtarten2haltungstypen (id, haltungstyp, simstatus)
+        sql = """INSERT INTO t_mapper_schart2haltyp (id, haltungstyp, simstatus)
                     VALUES (?, ?, ?)"""
 
         if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_schachtarten2haltungstypen",
+                                "strakat_import Referenzliste t_mapper_schart2haltyp",
                                 daten,
                                 many=True):
             return False
 
-        # Erstellung Tabelle t_kanalarten2entwart
-        sql = "PRAGMA table_list('t_kanalarten2entwart')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_kanalarten2entwart', vorhanden ist"):
+        # Erstellung Tabelle t_mapper_kanalarten2entwart
+        sql = "PRAGMA table_list('t_mapper_kanalarten2entwart')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_kanalarten2entwart', vorhanden ist"):
             return False                                        # Abbruch weil Anfrage fehlgeschlagen
         if not self.db_qkan.fetchone():
             sql = """ 
-            CREATE TABLE IF NOT EXISTS t_kanalarten2entwart (
+            CREATE TABLE IF NOT EXISTS t_mapper_kanalarten2entwart (
                 id INTEGER PRIMARY KEY,
                 entwart TEXT,
                 druckdicht INTEGER
             )"""
 
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_kanalarten2entwart"'):
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_kanalarten2entwart"'):
                 return False
 
         # Liste enthält nur Haltungsarten, die nicht 'Haltung' sind
@@ -1041,25 +1225,23 @@ class ImportTask:
             (16, 'Rinnen/Gräben', False),
             (9, 'stillgelegt', False),
         ]
-        sql = """INSERT INTO t_kanalarten2entwart (id, entwart, druckdicht)
+        sql = """INSERT INTO t_mapper_kanalarten2entwart (id, entwart, druckdicht)
                     VALUES (?, ?, ?)"""
 
         if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_kanalarten2entwart",
+                                "strakat_import Referenzliste t_mapper_kanalarten2entwart",
                                 daten,
                                 many=True):
             return False
 
         self.db_qkan.commit()
 
-        self.progress_bar.setValue(70)
-
         return True
 
         # Liste der Kanalarten entspricht im Wesentlichen der QKan-Tabelle 'Entwässerungsarten'
 
     def _schaechte(self) -> bool:
-        """Import der STRAKAT-Tabelle KANALTABELLE"""
+        """Import der Schächte aus der STRAKAT-Tabelle KANALTABELLE"""
 
         sql = """WITH
             t_strakatkanal_oberhalb AS (
@@ -1124,9 +1306,9 @@ class ImportTask:
                 ON t_strakatkanal.strassennummer = strassen.id
                 LEFT JOIN schachtmaterial                       
                 ON t_strakatkanal.schachtmaterial = schachtmaterial.id
-                LEFT JOIN t_schachtarten2schachttypen AS s2s    
+                LEFT JOIN t_mapper_schachtarten2typen AS s2s    
                 ON t_strakatkanal.schachtart = s2s.id
-                LEFT JOIN t_kanalarten2entwart AS k2e           
+                LEFT JOIN t_mapper_kanalarten2entwart AS k2e           
                 ON t_strakatkanal.kanalart = k2e.id
             WHERE
                 t_strakatkanal.schachtnummer <> 0
@@ -1155,12 +1337,10 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.progress_bar.setValue(80)
-
         return True
 
     def _haltungen(self) -> bool:
-        """Import der STRAKAT-Tabelle KANALTABELLE"""
+        """Import der Haltungen aus der STRAKAT-Tabelle KANALTABELLE"""
 
         sql = """
             WITH
@@ -1227,9 +1407,9 @@ class ImportTask:
                 ON t_strakatkanal.Material_v = rohrmaterialien.ID
                 LEFT JOIN Strassen
                 ON t_strakatkanal.strassennummer = Strassen.ID
-                LEFT JOIN t_schachtarten2haltungstypen AS s2h
+                LEFT JOIN t_mapper_schart2haltyp AS s2h
                 ON t_strakatkanal.schachtart = s2h.id
-                LEFT JOIN t_kanalarten2entwart AS k2e
+                LEFT JOIN t_mapper_kanalarten2entwart AS k2e
                 ON t_strakatkanal.kanalart = k2e.id
                 LEFT JOIN t_strakatkanal_oberhalb
                 ON t_strakatkanal.Zuflussnummer1 = t_strakatkanal_oberhalb.Nummer
@@ -1243,8 +1423,6 @@ class ImportTask:
             return False
 
         self.db_qkan.commit()
-
-        self.progress_bar.setValue(90)
 
         return True
 
@@ -1345,18 +1523,16 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.progress_bar.setValue(98)
-
         return True
 
     def _schachtschaeden(self) -> bool:
-        """Import der STRAKAT-Tabelle KANALTABELLE"""
+        """Import der Schachtschäden aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
         """
 
         params = {}
-        if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
+        if not self.db_qkan.sql(sql, "strakat_import Schachtschäden", params):
             return False
 
         self.db_qkan.commit()
@@ -1364,13 +1540,13 @@ class ImportTask:
         return True
 
     def _haltungsschaeden(self) -> bool:
-        """Import der STRAKAT-Tabelle KANALTABELLE"""
+        """Import der Haltungsschäden aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
         """
 
         params = {}
-        if not self.db_qkan.sql(sql, "strakat_import Schächte", params):
+        if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
             return False
 
         self.db_qkan.commit()

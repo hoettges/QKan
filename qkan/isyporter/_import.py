@@ -26,7 +26,7 @@ class Schacht(ClassObject):
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
-    knotentyp: int = 0
+    knotentyp: str = ""
     schachttyp: str = ""
     material: str = ""
     simstatus: int = 0
@@ -38,7 +38,7 @@ class Schacht_untersucht(ClassObject):
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
-    knotentyp: int = 0
+    knotentyp: str = ""
     simstatus: int = 0
     kommentar: str = ""
     baujahr: int = 0
@@ -98,7 +98,7 @@ class Haltung(ClassObject):
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
-    aussendurchmesser: int = 0
+    aussendurchmesser: float = 0.0
     profilauskleidung: str = ""
     innenmaterial: str = ""
     xschob: float = 0.0
@@ -1173,7 +1173,7 @@ class ImportTask:
                     sohleunten = _strip_float(block.findtext("d:Kante/d:SohlhoeheAblauf", 0.0, self.NS))
                     laenge = _strip_float(block.findtext("d:Kante/d:Laenge", 0.0, self.NS))
                     material = block.findtext("d:Kante/d:Material", "not found", self.NS)
-                    aussendurchmesser = block.findtext("d:Kante/d:Profil/d:Aussendurchmesser", "0", self.NS)
+                    aussendurchmesser = _strip_float(block.findtext("d:Kante/d:Profil/d:Aussendurchmesser", 0.0, self.NS))
                     profilauskleidung = block.findtext("d:Kante/d:Haltung/d:Auskleidung", "not found", self.NS)
                     innenmaterial = block.findtext("d:Kante/d:Haltung/d:MaterialAuskleidung", "not found", self.NS)
                     profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", "not found", self.NS)

@@ -326,6 +326,12 @@ class DBConnection:
             )
             return False
         try:
+            # fürs logging:
+            if isinstance(parameters, tuple):
+                logparams = parameters[:5]      # Länge der Ausgabe beschränken...
+            else:
+                logparams = parameters
+
             if many:
                 self.cursl.executemany(sql, parameters)
             else:
@@ -347,25 +353,27 @@ class DBConnection:
             self.sqltime = self.sqltime.now()
             logger.debug(
                 "dbfunc.DBConnection.sql (Nr. {}): {}\nsql: {}\nparameters: {}\n".format(
-                    self.sqlcount+1, stmt_category, sql, parameters
+                    self.sqlcount+1, stmt_category, sql, logparams
                 )
             )
             return True
         except sqlite3.Error as e:
             if ignore:
+                logger.debug(f'Typ von parameters: {type(parameters)}')
                 warnung(
                     "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(
                         e=stmt_category
                     ),
-                    "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
+                    "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=logparams),
                 )
             else:
-                logger.error(f"dbfunc.sql: \nsql: {sql}\n" f"parameters: {parameters}")
+                logger.debug(f'Typ von parameters: {type(parameters)}')
+                logger.error(f"dbfunc.sql: \nsql: {sql}\n" f"parameters: {logparams}")
                 fehlermeldung(
                     "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(
                         e=stmt_category
                     ),
-                    "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
+                    "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=logparams),
                 )
                 self._disconnect()
             return False

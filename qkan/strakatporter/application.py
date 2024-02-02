@@ -30,7 +30,6 @@ class StrakatPorter(QKanPlugin):
 
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
 
-
     # noinspection PyPep8Naming
     def initGui(self) -> None:
         icon_import = ":/plugins/qkan/strakatporter/res/icon_import.png"
