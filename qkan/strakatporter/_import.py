@@ -1,4 +1,5 @@
 import logging, os
+import re
 from struct import unpack
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
@@ -31,6 +32,7 @@ class Bericht_STRAKAT(ClassObject):
     videozaehler: int = 0
     vonuhr: int = 0
     bisuhr: int = 0
+    sanierung: str = ""
     atv143: float = 0.0
     skdichtheit: int = 0
     skstandsicherheit: int = 0
@@ -142,7 +144,8 @@ class ImportTask:
                 self._anschlussleitungen(), self.progress_bar.setValue(90), logger.debug("_anschlussleitungen"),
                 self._strakat_berichte(), self.progress_bar.setValue(95), logger.debug("_strakat_berichte"),
                 # self._schachtschaeden(),
-                # self._haltungsschaeden(),
+                self.haltungen_untersucht(),
+                self._untersuchdat_haltung(),
             ]
         )
 
@@ -747,6 +750,7 @@ class ImportTask:
                 fortsetzung INTEGER,
                 station_gegen REAL,
                 station_untersucher REAL,
+                station_text REAL,
                 atv_kuerzel TEXT,
                 atv_langtext TEXT,
                 sandatum TEXT,
@@ -757,6 +761,7 @@ class ImportTask:
                 videozaehler INTEGER,
                 vonuhr INTEGER,
                 bisuhr INTEGER,
+                sanierung TEXT,
                 atv143 REAL,
                 skdichtheit INTEGER,
                 skstandsicherheit INTEGER,
@@ -772,12 +777,13 @@ class ImportTask:
         def _iter() -> Iterator[Bericht_STRAKAT]:
             # Datei kanal.rwtopen einlesen und in Tabelle schreiben
             blength = 1024                      # Blocklänge in der STRAKAT-Datei
+            leer = b'\x00'*128
             with open(os.path.join(self.strakatdir, 'ENBericht.rwtopen'), 'rb') as fo:
 
                 _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
 
                 if QKan.config.check_import.testmodus:
-                    maxloop = 1000  # Testmodus für Anwender
+                    maxloop = 20000  # Testmodus für Anwender
                 else:
                     maxloop = 5000000  # Begrenzung zur Sicherheit. Falls erreicht: Meldung
 
@@ -786,7 +792,23 @@ class ImportTask:
                     if not b:
                         break
 
+                    anf = b[0:128]
+                    rest = b[896:1024]          # if rest != leer
+                    if anf == leer:
+                        continue
                     datum = b[0:10].decode('ansi')
+                    if datum[2] != '.' or datum[5] != '.':
+                        if re.fullmatch('\\d\\d[\\.\\,\\:\\;\\/\\*\\>\\+\\-_]'
+                                        '\\d\\d[\\.\\,\\:\\;\\/\\*\\>\\+\\-_]\\d\\d\\d\\d',
+                                        datum
+                                        ):
+                            logger.debug(f"Warnung STRAKAT-Berichte Nr. {n}: Datumsformat wird korrigiert: {datum}")
+                            datum = datum[:2] + '.' + datum[3:5] + '.' + datum[6:10]
+                        else:
+                            logger.debug(f"Lesefehler STRAKAT-Berichte Nr. {n}: Datumsformat fehlerhaft"
+                                         f". Datensatz wird ignoriert: {datum}")
+
+                            continue
                     untersucher = b[11:b[11:31].find(b'\x00') + 11].decode('ansi').strip()
                     ag_kontrolle = b[31:b[31:46].find(b'\x00') + 31].decode('ansi').strip()
                     fahrzeug = b[46:b[46:57].find(b'\x00') + 46].decode('ansi').strip()
@@ -796,8 +818,8 @@ class ImportTask:
                     atv149 = unpack('f', b[90:94])[0]
 
                     fortsetzung = unpack('I', b[103:107])[0]
-                    station_gegen = unpack('d', b[107:115])[0]
-                    station_untersucher = unpack('d', b[115:123])[0]
+                    station_gegen = round(unpack('d', b[107:115])[0], 3)
+                    station_untersucher = round(unpack('d', b[115:123])[0], 3)
 
                     atv_kuerzel = b[123:b[123:134].find(b'\x00') + 123].decode('ansi').strip()
                     atv_langtext = b[134:b[134:295].find(b'\x00') + 134].decode('ansi').strip()
@@ -810,8 +832,8 @@ class ImportTask:
 
                     vonuhr = unpack('B', b[366:367])[0]
                     bisuhr = unpack('B', b[367:368])[0]
+                    sanierung = b[400:b[400:411].find(b'\x00') + 400].decode('ansi').strip()
                     atv143 = unpack('f', b[430:434])[0]
-
                     skdichtheit = unpack('B', b[714:715])[0]
                     skstandsicherheit = unpack('B', b[715:716])[0]
                     skbetriebssicherheit = unpack('B', b[716:717])[0]
@@ -847,6 +869,7 @@ class ImportTask:
                         videozaehler=videozaehler,
                         vonuhr=vonuhr,
                         bisuhr=bisuhr,
+                        sanierung=sanierung,
                         atv143=atv143,
                         skdichtheit=skdichtheit,
                         skstandsicherheit=skstandsicherheit,
@@ -857,7 +880,7 @@ class ImportTask:
                     )
                 else:
                     if QKan.config.check_import.testmodus:
-                        logger.debug("Testmodus: Import Berichte nach 1000. Datensatz abgebrochen")
+                        logger.debug(f"Testmodus: Import Berichte nach {maxloop}. Datensatz abgebrochen")
                     else:
                         logger.error('Programmfehler: Einlesen der Datei "kanal.rwtopen wurde nicht '
                                  'ordnungsgemäß abgeschlossen!"')
@@ -889,6 +912,7 @@ class ImportTask:
                 'videozaehler': _bericht.videozaehler,
                 'vonuhr': _bericht.vonuhr,
                 'bisuhr': _bericht.bisuhr,
+                'sanierung': _bericht.sanierung,
                 'atv143': _bericht.atv143,
                 'skdichtheit': _bericht.skdichtheit,
                 'skstandsicherheit': _bericht.skstandsicherheit,
@@ -913,6 +937,7 @@ class ImportTask:
                 fortsetzung, 
                 station_gegen, 
                 station_untersucher, 
+                station_text,
                 atv_kuerzel, 
                 atv_langtext, 
                 sandatum, 
@@ -922,7 +947,8 @@ class ImportTask:
                 videoband, 
                 videozaehler, 
                 vonuhr, 
-                bisuhr, 
+                bisuhr,
+                sanierung, 
                 atv143, 
                 skdichtheit, 
                 skstandsicherheit, 
@@ -941,6 +967,7 @@ class ImportTask:
                 :fortsetzung, 
                 :station_gegen, 
                 :station_untersucher, 
+                0.0,
                 :atv_kuerzel, 
                 :atv_langtext, 
                 :sandatum, 
@@ -950,7 +977,8 @@ class ImportTask:
                 :videoband, 
                 :videozaehler, 
                 :vonuhr, 
-                :bisuhr, 
+                :bisuhr,
+                :sanierung, 
                 :atv143, 
                 :skdichtheit, 
                 :skstandsicherheit, 
@@ -1091,25 +1119,25 @@ class ImportTask:
         ]
 
         daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
-        sql = """INSERT INTO untersuchungsrichtung (bezeichnung, kuerzel, bemerkung)
+        sql = """INSERT INTO untersuchrichtung (bezeichnung, kuerzel, bemerkung)
                     SELECT ?, ?, ?
-                    WHERE ? NOT IN (SELECT bezeichnung FROM untersuchungsrichtung)"""
+                    WHERE ? NOT IN (SELECT bezeichnung FROM untersuchrichtung)"""
 
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste untersuchungsrichtung", daten, many=True):
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste untersuchrichtung", daten, many=True):
             return False
 
-        # Erstellung Tabelle t_mapper_untersuchungsrichtung
-        sql = "PRAGMA table_list('t_mapper_untersuchungsrichtung')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_untersuchungsrichtung', vorhanden ist"):
+        # Erstellung Tabelle t_mapper_untersuchrichtung
+        sql = "PRAGMA table_list('t_mapper_untersuchrichtung')"
+        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_untersuchrichtung', vorhanden ist"):
             return False                                        # Abbruch weil Anfrage fehlgeschlagen
         if not self.db_qkan.fetchone():
             sql = """ 
-            CREATE TABLE IF NOT EXISTS t_mapper_untersuchungsrichtung (
+            CREATE TABLE IF NOT EXISTS t_mapper_untersuchrichtung (
                 id INTEGER PRIMARY KEY,
                 untersuchungsrichtung TEXT
             )"""
 
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_untersuchungsrichtung"'):
+            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_untersuchrichtung"'):
                 return False
 
         # Liste enthält nur Schachtarten, die nicht 'Schacht' und dabei 'vorhanden' sind (einschließlich 1: 'NS Normalschacht')
@@ -1117,11 +1145,11 @@ class ImportTask:
             (0,  'in Fließrichtung'),
             (1,  'gegen Fließrichtung'),
         ]
-        sql = """INSERT INTO t_mapper_untersuchungsrichtung (id, untersuchungsrichtung)
+        sql = """INSERT INTO t_mapper_untersuchrichtung (id, untersuchungsrichtung)
                     VALUES (?, ?)"""
 
         if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_mapper_untersuchungsrichtung",
+                                "strakat_import Referenzliste t_mapper_untersuchrichtung",
                                 daten,
                                 many=True):
             return False
@@ -1526,12 +1554,12 @@ class ImportTask:
         return True
 
     def _schachtschaeden(self) -> bool:
-        """Import der Schachtschäden aus der STRAKAT-Tabelle t_strakatberichte"""
+        """Import der Schächte mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
         """
 
-        params = {}
+        params = {"epsg": self.epsg}
         if not self.db_qkan.sql(sql, "strakat_import Schachtschäden", params):
             return False
 
@@ -1539,13 +1567,81 @@ class ImportTask:
 
         return True
 
-    def _haltungsschaeden(self) -> bool:
-        """Import der Haltungsschäden aus der STRAKAT-Tabelle t_strakatberichte"""
+    def haltungen_untersucht(self) -> bool:
+        """Import der Haltungen mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
+            WITH
+            sto AS (
+                SELECT nummer, schacht_unten
+                FROM t_strakatkanal
+                WHERE schachtnummer <> 0
+            ),
+            strassen AS (
+                SELECT n1 AS id, kurz, text AS name
+                FROM t_reflists
+                WHERE tabtyp = 'strasse'
+            )
+            INSERT INTO haltungen_untersucht (haltnam, schoben, schunten, laenge, 
+                xschob, yschob, xschun, yschun, 
+                breite, hoehe, 
+                strasse, 
+                baujahr, untersuchtag, untersucher, 
+                wetter,
+                bewertungsart, bewertungstag, datenart, 
+                max_ZD, max_ZB, max_ZS, 
+                kommentar, geom)
+            SELECT
+                Trim(stk.haltungsname)       AS haltnam,
+                Trim(Coalesce(
+                    sto.schacht_unten,stk.schacht_oben
+                    ))                                  AS schoben,
+                Trim(stk.schacht_unten)         AS schunten,
+                stk.laenge                      AS laenge,
+                stk.rw_gerinne_o                AS xschob,
+                stk.hw_gerinne_o                AS yschob,
+                stk.rw_gerinne_u                AS xschun,
+                stk.hw_gerinne_u                AS yschun,
+                stk.rohrbreite_v/1000.          AS breite,
+                stk.rohrhoehe___v/1000.         AS hoehe,
+                CASE WHEN INSTR(strassen.name,' ') > 0
+                    THEN substr(strassen.name, INSTR(strassen.name,' ')+1)
+                    ELSE strassen.name
+                END                             AS strasse,
+                stk.baujahr                     AS baujahr,
+                stb.datum                       AS untersuchtag,
+                stb.untersucher                 AS untersucher,
+                CASE WHEN instr(lower(stb.wetter), 'trock') + 
+                           instr(lower(stb.wetter), 'kein Nied') > 0 THEN 1
+                      WHEN instr(lower(stb.wetter), 'reg')       > 0 THEN 2
+                      WHEN instr(lower(stb.wetter), 'fros') +
+                           instr(lower(stb.wetter), 'chnee')     > 0 THEN 3
+                      ELSE NULL END 		    AS wetter,
+                'DWA'                           AS bewertungsart,
+                NULL                           AS bewertungstag,
+                'DWA'                           AS datenart,
+                stb.skdichtheit                 AS max_ZD,
+                stb.skbetriebssicherheit        AS max_ZB,
+                stb.skstandsicherheit           AS max_ZS,
+                'QKan-STRAKAT-Import'                   AS kommentar,
+                MakeLine(MakePoint(stk.rw_gerinne_o,
+                                   stk.hw_gerinne_o, :epsg),
+                         MakePoint(stk.rw_gerinne_u,
+                                   stk.hw_gerinne_u, :epsg)) AS geom
+            FROM
+                t_strakatkanal AS stk
+                LEFT JOIN Strassen
+                ON stk.strassennummer = Strassen.ID
+                LEFT JOIN sto
+                ON stk.Zuflussnummer1 = sto.Nummer
+                JOIN t_strakatberichte AS stb
+                ON stb.strakatid = stk.strakatid
+            WHERE stk.laenge > 0.04 AND
+                   stk.schachtnummer <> 0
+            GROUP BY stk.strakatid, stb.strakatid
         """
 
-        params = {}
+        params = {"epsg": self.epsg}
         if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
             return False
 
@@ -1553,3 +1649,19 @@ class ImportTask:
 
         return True
 
+    def _untersuchdat_haltung(self) -> bool:
+        """Import der Haltungsschäden aus der STRAKAT-Tabelle t_strakatberichte"""
+
+        sql =  """
+            INSERT INTO untersuchdat_haltung (
+                untersuchhal, untersuchrichtung
+            )
+        """
+
+        params = {"epsg": self.epsg}
+        if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
+            return False
+
+        self.db_qkan.commit()
+
+        return True

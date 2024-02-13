@@ -124,10 +124,10 @@ class DBConnection:
 
     def __del__(self) -> None:
         """Closes connection once object is deleted"""
-        warnings.warn(
-            "Deleting the database object is deprecated. Use a context manager instead.",
-            DeprecationWarning,
-        )
+        # warnings.warn(
+        #     "Deleting the database object is deprecated. Use a context manager instead.",
+        #     DeprecationWarning,
+        # )
         self._disconnect()
 
     def _connect(

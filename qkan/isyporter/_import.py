@@ -245,22 +245,7 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         try:
             return int(value)
         except ValueError:
-            return default
-
-
-    return default
-
-
-def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
-    if isinstance(value, int):
-        return value
-
-    if isinstance(value, str) and value.strip() != "":
-        try:
-            return int(value)
-        except ValueError:
-            print("isyporter._import.py._strip_int_2: %s" % sys.exc_info()[1])
-            return default
+            print("isyporter._import.py._strip_int: %s" % sys.exc_info()[1])
 
     return default
 
@@ -818,9 +803,9 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", None, self.NS)
                     foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", None, self.NS)
 
-                    ZD = _strip_int_2(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
-                    ZS = _strip_int_2(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
-                    ZB = _strip_int_2(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
+                    ZD = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
+                    ZS = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
+                    ZB = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
 
 
                     yield Untersuchdat_schacht(
@@ -1905,9 +1890,9 @@ class ImportTask:
                         foto_dateiname = _untersuchdat.findtext("d:Fotodatei", None, self.NS)
 
 
-                        ZD = _strip_int_2(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
-                        ZS = _strip_int_2(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
-                        ZB = _strip_int_2(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
+                        ZD = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
+                        ZS = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
+                        ZB = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
 
 
 

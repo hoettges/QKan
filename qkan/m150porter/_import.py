@@ -8,6 +8,8 @@ from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
 
 logger = logging.getLogger("QKan.xml.import")
 
@@ -75,7 +77,7 @@ class Untersuchdat_schacht(ClassObject):
     ZS: int = 63
 
 class Haltung(ClassObject):
-    haltnam: str
+    haltnam: Union[str, None] = ""
     schoben: str = ""
     schunten: str = ""
     hoehe: float = 0.0
@@ -101,7 +103,7 @@ class Haltung(ClassObject):
     yschun: float = 0.0
 
 class Haltung_untersucht(ClassObject):
-    haltnam: str
+    haltnam: str = ""
     schoben: str = ""
     schunten: str = ""
     hoehe: float = 0.0
@@ -248,20 +250,8 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
             return int(value)
         except ValueError:
             print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
-            return default
-
-    return default
-
-def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
-    if isinstance(value, int):
-        return value
-
-    if isinstance(value, str) and value.strip() != "":
-        try:
-            return int(value)
         except Exception:
             print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
-
     return default
 
 
@@ -759,9 +749,9 @@ class ImportTask:
 
                     bewertungstag = _schacht.findtext("KI204", None)
 
-                    max_ZD = _strip_int_2(_schacht.findtext("KI206", 63))
-                    max_ZB = _strip_int_2(_schacht.findtext("KI208", 63))
-                    max_ZS = _strip_int_2(_schacht.findtext("KI207", 63))
+                    max_ZD = _strip_int(_schacht.findtext("KI206", 63))
+                    max_ZB = _strip_int(_schacht.findtext("KI208", 63))
+                    max_ZS = _strip_int(_schacht.findtext("KI207", 63))
 
                 yield Schacht_untersucht(
                     schnam=name,
@@ -912,9 +902,9 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("KZ013", None)
                     foto_dateiname = _untersuchdat_schacht.findtext("KZ009", None)
 
-                    ZD = _strip_int_2(_untersuchdat_schacht.findtext("KZ206", 63))
-                    ZB = _strip_int_2(_untersuchdat_schacht.findtext("KZ208", 63))
-                    ZS = _strip_int_2(_untersuchdat_schacht.findtext("KZ207", 63))
+                    ZD = _strip_int(_untersuchdat_schacht.findtext("KZ206", 63))
+                    ZB = _strip_int(_untersuchdat_schacht.findtext("KZ208", 63))
+                    ZS = _strip_int(_untersuchdat_schacht.findtext("KZ207", 63))
 
 
                     yield Untersuchdat_schacht(
@@ -1246,7 +1236,10 @@ class ImportTask:
 
                     name = block.findtext("HG001")
                     if name is None:
-                        name = block.findtext("HG002", None)
+                        name = block.findtext("HG002", "")
+                        # if name is None:
+                        #     logger.warning("Haltung ohne (Alternativ-) Name HG001/HG002 wird ignoriert!")
+                        #     continue
 
                     schoben = block.findtext("HG003", None)
                     schunten = block.findtext("HG004", None)
@@ -1701,9 +1694,9 @@ class ImportTask:
 
                     bewertungstag = _haltung.findtext("HI204", None)
 
-                    max_ZD = _strip_int_2(_haltung.findtext("HI206", 63))
-                    max_ZB = _strip_int_2(_haltung.findtext("HI208", 63))
-                    max_ZS = _strip_int_2(_haltung.findtext("HI207", 63))
+                    max_ZD = _strip_int(_haltung.findtext("HI206", 63))
+                    max_ZB = _strip_int(_haltung.findtext("HI208", 63))
+                    max_ZS = _strip_int(_haltung.findtext("HI207", 63))
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1910,9 +1903,9 @@ class ImportTask:
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
                     pos_bis = _strip_int(_untersuchdat.findtext("HZ007", 0))
                     foto_dateiname = _untersuchdat.findtext("HZ009", None)
-                    ZD = _strip_int_2(_untersuchdat.findtext("HZ206", 63))
-                    ZB = _strip_int_2(_untersuchdat.findtext("HZ208", 63))
-                    ZS = _strip_int_2(_untersuchdat.findtext("HZ207", 63))
+                    ZD = _strip_int(_untersuchdat.findtext("HZ206", 63))
+                    ZB = _strip_int(_untersuchdat.findtext("HZ208", 63))
+                    ZS = _strip_int(_untersuchdat.findtext("HZ207", 63))
 
 
                     yield Untersuchdat_haltung(
