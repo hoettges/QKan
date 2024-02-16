@@ -253,11 +253,13 @@ def createdbtables(
             untersuchrichtung TEXT,
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
-            id INTEGER,
+            id INTEGER,                                     -- TODO: join haltungen_untersucht.pk
+            untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler INTEGER,
             inspektionslaenge REAL,
             station REAL,
+            stationtext REAL,
             timecode INTEGER,
             video_offset REAL,
             kuerzel TEXT,
@@ -450,7 +452,8 @@ def createdbtables(
         """CREATE TABLE untersuchdat_schacht (
             pk INTEGER PRIMARY KEY,
             untersuchsch TEXT,
-            id INTEGER,
+            id INTEGER,                                     -- TODO: join schaechte_untersucht.pk
+            untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler INTEGER,
             timecode INTEGER,

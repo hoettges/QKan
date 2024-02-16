@@ -27,12 +27,18 @@ class ClassObject:
         for key, value in kwargs.items():
             if key in annotation_keys:
                 # Handle classes
-                if issubclass(self.__annotations__[key], ClassObject) and isinstance(
-                    value, dict
-                ):
-                    # Try to parse class
-                    setattr(self, key, self.__annotations__[key](**value))
-                    continue
+                try:
+                    if issubclass(self.__annotations__[key], ClassObject) and isinstance(
+                        value, dict
+                    ):
+                        # Try to parse class
+                        setattr(self, key, self.__annotations__[key](**value))
+                        continue
+                # except TypeError:
+                #     raise TypeError(f"key {self.__annotations__[key]} is not a class")
+                except:
+                    log.error(f"key {self.__annotations__[key]} is not a class")
+                    raise TypeError(f"key {self.__annotations__[key]} is not a class")
 
                 # Handle enums, right now only string enums are supported
                 if issubclass(self.__annotations__[key], enum.Enum) and isinstance(
@@ -46,7 +52,7 @@ class ClassObject:
                     continue
 
                 # Type does not match annotation
-                if type(value) is not self.__annotations__[key]:
+                if (type(value) is not self.__annotations__[key] and value is not None):
                     # TODO: Notify user that setting has been reset/removed
                     if hasattr(self, key):
                         log.warning(
@@ -104,7 +110,7 @@ class ClassObject:
             return
 
         # Verify type if in annotation
-        if key in self.__annotations__ and type(value) is not self.__annotations__[key]:
+        if key in self.__annotations__ and (type(value) is not self.__annotations__[key] and value is not None):
             raise TypeError(
                 f"{self.__class__.__name__}: Value of {key} ({value}, "
                 f"{type(value)}) does not match"

@@ -1,6 +1,7 @@
 import logging
 import sys
 import re
+from array import array
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from fnmatch import fnmatch
@@ -55,6 +56,7 @@ class Schacht_untersucht(ClassObject):
 class Untersuchdat_schacht(ClassObject):
     untersuchsch: str = ""
     id: int = 0
+    untersuchtag: str = ""
     #TODO: videozaehler = Uhrzeit hh:mm
     videozaehler: int = 0
     timecode: int = 0
@@ -77,7 +79,7 @@ class Untersuchdat_schacht(ClassObject):
     ZS: int = 63
 
 class Haltung(ClassObject):
-    haltnam: Union[str, None] = ""
+    haltnam: str = ""
     schoben: str = ""
     schunten: str = ""
     hoehe: float = 0.0
@@ -85,8 +87,6 @@ class Haltung(ClassObject):
     laenge: float = 0.0
     sohleoben: float = 0.0
     sohleunten: float = 0.0
-    deckeloben: float = 0.0
-    deckelunten: float = 0.0
     profilnam: str = ""
     entwart: str = ""
     material: str = ""
@@ -94,7 +94,7 @@ class Haltung(ClassObject):
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
-    aussendurchmesser: int = 0
+    aussendurchmesser: float = 0.0
     profilauskleidung: str = ""
     innenmaterial: str = ""
     xschob: float = 0.0
@@ -132,6 +132,7 @@ class Untersuchdat_haltung(ClassObject):
     schoben: str = ""
     schunten: str = ""
     id: int = 0
+    untersuchtag: str = ""
     inspektionslaenge: float = 0.0
     videozaehler: int = 0
     station: float = 0.0
@@ -181,10 +182,10 @@ class Anschlussleitung(ClassObject):
     yschun: float = 0.0
 
 class Wehr(ClassObject):
-    wnam: str
-    schoben: str
-    schunten: str
-    wehrtyp: str
+    wnam: str =""
+    schoben: str =""
+    schunten: str =""
+    wehrtyp: str =""
     schwellenhoehe: float
     kammerhoehe: float
     laenge: float
@@ -195,7 +196,7 @@ class Wehr(ClassObject):
     ysch: float = 0.0
 
 class Pumpe(ClassObject):
-    pnam: str
+    pnam: str =""
     schoben: str = ""  # //HydraulikObjekt/Pumpe/SchachtZulauf
     schunten: str = ""  # //HydraulikObjekt/Pumpe/SchachtAblauf
     pumpentyp: int = 0  # //HydraulikObjekt/Pumpe/PumpenTyp
@@ -253,6 +254,64 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         except Exception:
             print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
     return default
+
+def calctextpositions(data, tdist = 0.2, bdist = 0.1):
+    """ Liest aus einer Datenbank mit der aus einem Import vorhandenen STRAKAT-Importtabelle t_strakatberichte
+        die Stationen, ATV-Kuerzel, ATV-Langtexte, berechnet in einer internen Tabelle die auseinandergezogenen
+        Textpositionen und schreibt die entsprechenden Polylinine für die Haltungen in die
+        QKan-Tabelle 'untersuchungsdaten_haltungen'
+
+        """
+
+    si = len(data)
+    pa = array('d', [0.0]*si)
+    pe = array('d', [0.0]*si)
+    ma = array('B', [0]*si)
+    me = array('B', [0]*si)
+    po = array('d', [0.0]*si)
+
+    # logger.debug(f'Ergebnis der SQL-Anweisung: {data}')
+
+    strakatid = data[0][1]
+    ianf = 0
+    for iend in range(si):
+        if data[iend][1] == strakatid and iend < si - 1:
+        # iend innerhalb eines Blocks der akteullen strakatid
+            continue
+
+        pavor = 0
+        mavor = 1           # Initialisierung mit 1 = True
+        stvor = 0
+        for i in range(ianf, iend):
+            station = data[i][2]
+            pa[i] = max(station, pavor + (abs(station - stvor) > 0.0001) * bdist + tdist)
+            ma[i] = mavor * (station - pa[i] < - 0.000001)
+            pavor = pa[i]
+            mavor = ma[i]
+            stvor = station
+
+        stvor = 0
+        for i in range(iend - 1, ianf - 1, -1):
+            station = data[i][2]
+            pe[i] = max(station, pavor + (abs(station - stvor) > 0.0001) * bdist + tdist)
+            me[i] = mavor * (station - pe[i] < - 0.000001)
+            pavor = pe[i]
+            mavor = me[i]
+            stvor = station
+
+        for i in range(ianf, iend):
+            if ma[i]:
+                po[i] = pa[i]
+            elif me[i]:
+                po[i] = pe[i]
+            else:
+                po[i] = (pa[i] + pe[i]) / 2.
+        # Nächsten Block vorbereiten
+        ianf = iend
+        strakatid = data[iend][1]
+
+    for i in range(si):
+        data[i] = (data[i][0], data[i][1], po[i])
 
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
@@ -578,13 +637,13 @@ class ImportTask:
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=deckelhoehe,
                     durchm=_strip_float(block.findtext("KG309", 0.0)),
+                    druckdicht=_strip_int(block.findtext("KG315", 0)),
                     entwart=block.findtext("KG302", None),
                     strasse=block.findtext("KG102", None),
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
                     simstatus=_strip_int(block.findtext("KG407", "0")),
-                    kommentar=block.findtext("KG999", "-"),
-                    druckdicht=_strip_int(block.findtext("KG315", 0))
+                    kommentar=block.findtext("KG999", "-")
                 )
 
 
@@ -668,6 +727,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
+                    stmt_category='m150-import schaechte',
                     mute_logger=False,
                     **params
             ):
@@ -794,6 +854,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="schaechte_untersucht",
+                    stmt_category='m150-import schachte_untersucht',
                     mute_logger=False,
                     **params
             ):
@@ -837,8 +898,10 @@ class ImportTask:
                 "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, baujahr=?, bewertungsart=?," 
                 "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE schnam = ?",
                 "xml_import Schächte_untersucht [4]",
-                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, schacht_untersucht.baujahr, bewertungsart, schacht_untersucht.bewertungstag, schacht_untersucht.datenart,
-                            schacht_untersucht.max_ZD, schacht_untersucht.max_ZB, schacht_untersucht.max_ZS, schacht_untersucht.schnam),
+                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter,
+                            schacht_untersucht.baujahr, bewertungsart, schacht_untersucht.bewertungstag,
+                            schacht_untersucht.datenart, schacht_untersucht.max_ZD, schacht_untersucht.max_ZB,
+                            schacht_untersucht.max_ZS, schacht_untersucht.schnam),
             ):
                 return None
 
@@ -846,9 +909,7 @@ class ImportTask:
 
     def _untersuchdat_schaechte(self) -> None:
         def _iter() -> Iterator[Untersuchdat_schacht]:
-            blocks = self.xml.findall(
-                "KG"
-            )
+            blocks = self.xml.findall("KG/KI/..")
 
             ordner = self.ordner_bild
 
@@ -879,11 +940,9 @@ class ImportTask:
             for block in blocks:
 
                 name = block.findtext("KG001", None)
-                #inspektionslaenge = _strip_float(_untersuchdat_schacht.findtext(
-                 #   "d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand[d:InspektionsKode='DDB'][d:Streckenschaden='B']/d:VertikaleLage",
-                  #  "0.0", self.NS))
+                untersuchtag = block.findtext("KI/KI104")
 
-                for _untersuchdat_schacht in block.findall("KI/KZ"):
+                for _untersuchdat_schacht in block.findall("KZ"):
 
                     #id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
                     inspektionslaenge = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
@@ -910,6 +969,7 @@ class ImportTask:
                     yield Untersuchdat_schacht(
                     untersuchsch = name,
                     id = id,
+                    untersuchtag = untersuchtag,
                     videozaehler = videozaehler,
                     timecode = timecode,
                     kuerzel = kuerzel,
@@ -933,41 +993,8 @@ class ImportTask:
 
         for untersuchdat_schacht in _iter():
 
-            # sql = f"""
-            # INSERT INTO untersuchdat_schacht (untersuchsch, id, videozaehler, timecode, kuerzel,
-            #                                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS)
-            # VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
-            # """
-            # if not self.db_qkan.sql(
-            #     sql,
-            #     "xml_import untersuchdat_schacht [1]",
-            #     parameters=(
-            #         untersuchdat_schacht.untersuchsch,
-            #         untersuchdat_schacht.id,
-            #         untersuchdat_schacht.videozaehler,
-            #         untersuchdat_schacht.timecode,
-            #         untersuchdat_schacht.kuerzel,
-            #         untersuchdat_schacht.charakt1,
-            #         untersuchdat_schacht.charakt2,
-            #         untersuchdat_schacht.quantnr1,
-            #         untersuchdat_schacht.quantnr2,
-            #         untersuchdat_schacht.streckenschaden,
-            #         untersuchdat_schacht.streckenschaden_lfdnr,
-            #         untersuchdat_schacht.pos_von,
-            #         untersuchdat_schacht.pos_bis,
-            #         untersuchdat_schacht.vertikale_lage,
-            #         untersuchdat_schacht.inspektionslaenge,
-            #         untersuchdat_schacht.bereich,
-            #         untersuchdat_schacht.foto_dateiname,
-            #         untersuchdat_schacht.ordner,
-            #         untersuchdat_schacht.ZD,
-            #         untersuchdat_schacht.ZB,
-            #         untersuchdat_schacht.ZS,
-            #     ),
-            # ):
-            #     return None
-
             params = {'untersuchsch': untersuchdat_schacht.untersuchsch, 'id': untersuchdat_schacht.id,
+                      'untersuchtag': untersuchdat_schacht.untersuchtag,
                       'videozaehler': untersuchdat_schacht.videozaehler, 'timecode': untersuchdat_schacht.timecode,
                       'kuerzel': untersuchdat_schacht.kuerzel, 'charakt1': untersuchdat_schacht.charakt1,
                       'charakt2': untersuchdat_schacht.charakt2, 'quantnr1': untersuchdat_schacht.quantnr1,
@@ -983,6 +1010,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_schacht",
+                    stmt_category='m150-import untersuchdat_schacht',
                     mute_logger=False,
                     **params
             ):
@@ -1102,6 +1130,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
+                    stmt_category='m150-import auslaesse',
                     mute_logger=False,
                     **params
             ):
@@ -1224,9 +1253,7 @@ class ImportTask:
                 laenge,
                 hoehe,
                 breite,
-                deckeloben,
-                deckelunten,
-            ) = (0.0,) * 7
+            ) = (0.0,) * 5
 
             for block in blocks:
                 if block.findtext("[HG006='L']")is not None:
@@ -1307,7 +1334,6 @@ class ImportTask:
                             wert = _gp.findtext("GP006")
                         yschun = _strip_float(wert)
                         sohleunten = _strip_float(_gp.findtext("GP007", 0.0))
-
 
                 yield Haltung(
                     haltnam=name,
@@ -1431,6 +1457,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
+                    stmt_category='m150-import haltungen',
                     mute_logger=False,
                     **params
             ):
@@ -1757,6 +1784,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
+                    stmt_category='m150-import haltungen_untersucht',
                     mute_logger=False,
                     **params
             ):
@@ -1869,6 +1897,8 @@ class ImportTask:
                 if untersuchrichtung == "G":
                     untersuchrichtung = "gegen Fließrichtung"
 
+                untersuchtag = block.findtext("HI/HI104")
+
                     #inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionslaenge", "0.0", self.NS))
                     #if inspektionslaenge == 0.0:
                      #   inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionsdaten/d:RZustand[d:InspektionsKode='BCE'][d:Charakterisierung1='XP']/d:Station", "0.0", self.NS))
@@ -1889,15 +1919,21 @@ class ImportTask:
                     charakt2 = _untersuchdat.findtext("HZ015", None)
                     quantnr1 = _strip_float(_untersuchdat.findtext("HZ003", 0.0))
                     quantnr2 = _strip_float(_untersuchdat.findtext("HZ004", 0.0))
-                    if len(_untersuchdat.findtext("HZ005", None))<1:
+                    _text = _untersuchdat.findtext("HZ005", None)
+                    if _text is not None:
+                        streckenschaden = _text[0]
+                        if any(i.isdigit() for i in _text) == True:
+                            streckenschaden_lfdnr = [int(num) for num in re.findall(r"\d+", _text)][0]
+                        else:
+                            streckenschaden_lfdnr = 0
+                    else:
                         streckenschaden = None
-                    else:
-                        streckenschaden = (_untersuchdat.findtext("HZ005", None))[0]
-                    streckenschaden_lfdnra = _untersuchdat.findtext("HZ005", None)
-                    if any(i.isdigit() for i in streckenschaden_lfdnra) == True:
-                        streckenschaden_lfdnr = [int(num) for num in re.findall(r"\d+", streckenschaden_lfdnra)][0]
-                    else:
-                        streckenschaden_lfdnr = 0
+                        streckenschaden_lfdnr = None
+                    # if len(_untersuchdat.findtext("HZ005", None))<1:              # @nora: Änderung o.k.?
+                    #     streckenschaden = None
+                    # else:
+                    #     streckenschaden = (_untersuchdat.findtext("HZ005", None))[0]
+                    # streckenschaden_lfdnra = _untersuchdat.findtext("HZ005", None)
                     #if streckenschaden_lfdnr is not None or streckenschaden_lfdnr != "" or streckenschaden_lfdnr != None:
                     #    streckenschaden_lfdnr = int(streckenschaden_lfdnr)
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
@@ -1914,6 +1950,7 @@ class ImportTask:
                     schoben=schoben,
                     schunten=schunten,
                     id=id,
+                    untersuchtag=untersuchtag,
                     inspektionslaenge=inspektionslaenge,
                     videozaehler=videozaehler,
                     station=station,
@@ -1935,28 +1972,7 @@ class ImportTask:
                     ZD=ZD,
                     ZB=ZB,
                     ZS=ZS,
-
             )
-
-#        def _iter2() -> Iterator[Untersuchdat_haltung]:
-#                blocks = self.xml.findall(
-#                    "d:Datenkollektive/d:Zustandsdatenkollektiv/d:Filme/d:Film/d:Filmname/../..",
-#                    self.NS,
-#                )
-#                logger.debug(f"Anzahl Untersuchdat_haltung: {len(blocks)}")
-#
-#                film_dateiname = ""
-#                for block in blocks:
-#                    for _untersuchdat_haltung in block.findall("d:Film/d:FilmObjekte/..", self.NS):
-#
-#                        name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
-#
-#                        film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
-#
-#                        yield Untersuchdat_haltung(
-#                            untersuchhal=name,
-#                            film_dateiname=film_dateiname,
-#                        )
 
         for untersuchdat_haltung in _iter():
 
@@ -1975,49 +1991,10 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
                     return None
 
-            # sql = f"""
-            # INSERT INTO untersuchdat_haltung (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel,
-            #                                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
-            #                                          ordner_bild, ordner_video, richtung, ZD, ZB, ZS)
-            # VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
-            # """
-            # if not self.db_qkan.sql(
-            #     sql,
-            #     "xml_import untersuchdat_haltung [2]",
-            #     parameters=(
-            #         untersuchdat_haltung.untersuchhal,
-            #         untersuchrichtung,
-            #         untersuchdat_haltung.schoben,
-            #         untersuchdat_haltung.schunten,
-            #         untersuchdat_haltung.id,
-            #         untersuchdat_haltung.videozaehler,
-            #         untersuchdat_haltung.inspektionslaenge,
-            #         untersuchdat_haltung.station,
-            #         untersuchdat_haltung.timecode,
-            #         untersuchdat_haltung.kuerzel,
-            #         untersuchdat_haltung.charakt1,
-            #         untersuchdat_haltung.charakt2,
-            #         untersuchdat_haltung.quantnr1,
-            #         untersuchdat_haltung.quantnr2,
-            #         untersuchdat_haltung.streckenschaden,
-            #         untersuchdat_haltung.streckenschaden_lfdnr,
-            #         untersuchdat_haltung.pos_von,
-            #         untersuchdat_haltung.pos_bis,
-            #         untersuchdat_haltung.foto_dateiname,
-            #         untersuchdat_haltung.film_dateiname,
-            #         untersuchdat_haltung.ordner_bild,
-            #         untersuchdat_haltung.ordner_video,
-            #         untersuchdat_haltung.richtung,
-            #         untersuchdat_haltung.ZD,
-            #         untersuchdat_haltung.ZB,
-            #         untersuchdat_haltung.ZS,
-            #     ),
-            # ):
-            #     return None
-
             params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchrichtung,
                       'schoben': untersuchdat_haltung.schoben, 'schunten': untersuchdat_haltung.schunten,
-                      'id': untersuchdat_haltung.id, 'videozaehler': untersuchdat_haltung.videozaehler,
+                      'id': untersuchdat_haltung.id, 'untersuchtag': untersuchdat_haltung.untersuchtag,
+                      'videozaehler': untersuchdat_haltung.videozaehler,
                       'inspektionslaenge': untersuchdat_haltung.inspektionslaenge, 'station': untersuchdat_haltung.station,
                       'timecode': untersuchdat_haltung.timecode, 'kuerzel': untersuchdat_haltung.kuerzel,
                       'charakt1': untersuchdat_haltung.charakt1, 'charakt2': untersuchdat_haltung.charakt2,
@@ -2027,19 +2004,15 @@ class ImportTask:
                       'foto_dateiname': untersuchdat_haltung.foto_dateiname, 'film_dateiname': untersuchdat_haltung.film_dateiname,
                       'ordner_bild': untersuchdat_haltung.ordner_bild, 'ordner_video': untersuchdat_haltung.ordner_video,
                       'richtung': untersuchdat_haltung.richtung, 'ZD': untersuchdat_haltung.ZD,
-                      'ZB': untersuchdat_haltung.ZB, 'ZS': untersuchdat_haltung.ZS, 'epsg': QKan.config.epsg}
-
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_haltung\n'
-                         f'params: {params}')
+                      'ZB': untersuchdat_haltung.ZB, 'ZS': untersuchdat_haltung.ZS}
 
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_haltung",
+                    stmt_category='m150-import untersuchdat_haltung',
                     mute_logger=False,
                     **params
             ):
                 return
-
-        self.db_qkan.commit()
 
         #for untersuchdat_haltung in _iter2():
         #    if not self.db_qkan.sql(
@@ -2050,7 +2023,16 @@ class ImportTask:
             #):
              #   return None
 
-      #  self.db_qkan.commit()
+        # Textpositionen für Schadenstexte berechnen
+
+        sql = """SELECT
+                pk, strakatid || '-' || datum AS id, station_untersucher
+            FROM t_strakatberichte
+            GROUP BY strakatid, station_untersucher, atv_kuerzel
+            ORDER BY id, station_untersucher;"""
+
+
+        self.db_qkan.commit()
 
 
     def _anschlussleitungen(self) -> None:
@@ -2224,6 +2206,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                     tabnam="anschlussleitungen",
+                    stmt_category='m150-import anschlussleitung',
                     mute_logger=False,
                     **params
             ):
@@ -2519,6 +2502,7 @@ class ImportTask:
 
             if not self.db_qkan.insertdata(
                 tabnam="haltungen",
+                stmt_category='m150-import pumpen',
                 mute_logger=False,
                 **params
             ):
