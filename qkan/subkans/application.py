@@ -102,7 +102,7 @@ class subkans(QKanPlugin):
         QKan.config.zustand.date = self.import_dlg.date.currentText()
 
         check_cb = {}
-        check_cb['cb1'] = self.import_dlg.checkBox.isChecked()
+        check_cb['cb1'] = self.import_dlg.checkBox_1.isChecked()
         check_cb['cb2'] = self.import_dlg.checkBox_2.isChecked()
         check_cb['cb3'] = self.import_dlg.checkBox_3.isChecked()
         check_cb['cb4'] = self.import_dlg.checkBox_4.isChecked()
