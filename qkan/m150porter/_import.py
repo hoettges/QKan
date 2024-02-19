@@ -1873,13 +1873,6 @@ class ImportTask:
                     else:
                         streckenschaden = None
                         streckenschaden_lfdnr = None
-                    # if len(_untersuchdat.findtext("HZ005", None))<1:              # @nora: Änderung o.k.?
-                    #     streckenschaden = None
-                    # else:
-                    #     streckenschaden = (_untersuchdat.findtext("HZ005", None))[0]
-                    # streckenschaden_lfdnra = _untersuchdat.findtext("HZ005", None)
-                    #if streckenschaden_lfdnr is not None or streckenschaden_lfdnr != "" or streckenschaden_lfdnr != None:
-                    #    streckenschaden_lfdnr = int(streckenschaden_lfdnr)
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
                     pos_bis = _strip_int(_untersuchdat.findtext("HZ007", 0))
                     foto_dateiname = _untersuchdat.findtext("HZ009", None)
