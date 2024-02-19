@@ -35,6 +35,7 @@ class Schacht(ClassObject):
 class Schacht_untersucht(ClassObject):
     schnam: str = ""
     durchm: float = 0.0
+    sohlhoehe: float = 0.0
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""

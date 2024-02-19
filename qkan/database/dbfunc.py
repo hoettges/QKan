@@ -11,7 +11,7 @@ import logging
 import os
 import shutil
 import sqlite3
-import warnings
+from array import array
 from distutils.version import LooseVersion
 from sqlite3 import Connection
 from typing import Any, List, Optional, Union, cast
@@ -333,9 +333,16 @@ class DBConnection:
                 logparams = parameters
 
             if many:
-                self.cursl.executemany(sql, parameters)
+                try:
+                    self.cursl.executemany(sql, parameters)
+                except ValueError as err:
+                    raise ValueError(f"{err}\nTyp von parameters: {type(parameters)}")
             else:
-                self.cursl.execute(sql, parameters)
+                try:
+                    self.cursl.execute(sql, parameters)
+                except ValueError as err:
+                    logger.error(f"{err}\nTyp von parameters: {type(parameters)}")
+                    raise ValueError(f"{err}\nTyp von parameters: {type(parameters)}")
 
             if mute_logger:
                 return True
@@ -575,6 +582,7 @@ class DBConnection:
                 "schoben",
                 "schunten",
                 "id",
+                "untersuchtag",
                 "videozaehler",
                 "inspektionslaenge",
                 "station",
@@ -604,15 +612,16 @@ class DBConnection:
                     parameters[el] = None
             sql = f"""  
                 INSERT INTO untersuchdat_haltung
-                  (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, 
-                    ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat)
+                  (untersuchhal, untersuchrichtung, schoben, schunten, id, untersuchtag, videozaehler, 
+                    inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
+                    quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
+                    film_dateiname, ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat)
                 SELECT
-                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, 
-                    :id, :videozaehler, :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, 
-                    :charakt1, :charakt2, :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, :foto_dateiname, :film_dateiname,
-                    :ordner_bild, :ordner_video, :richtung, coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63),
-                    coalesce(:createdat, CURRENT_TIMESTAMP)
+                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :videozaehler, 
+                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
+                  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+                  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video, :richtung, 
+                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
                 FROM
                 schaechte AS schob,
                 schaechte AS schun,
@@ -620,11 +629,11 @@ class DBConnection:
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
                 UNION
                 SELECT
-                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, 
-                    :id, :videozaehler, :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, 
-                    :charakt1, :charakt2, :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, :foto_dateiname, :film_dateiname,
-                    :ordner_bild, :ordner_video, :richtung, coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63),
-                    coalesce(:createdat, CURRENT_TIMESTAMP)
+                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :videozaehler, 
+                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
+                  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+                  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video, :richtung, 
+                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
                 FROM
                 schaechte AS schob,
                 schaechte AS schun,
@@ -737,6 +746,7 @@ class DBConnection:
             parlis = [
                 "untersuchsch",
                 "id",
+                "untersuchtag",
                 "videozaehler",
                 "timecode",
                 "kuerzel",
@@ -763,21 +773,21 @@ class DBConnection:
                     parameters[el] = None
             sql = """
                 INSERT INTO untersuchdat_schacht
-                  (untersuchsch, id, videozaehler, timecode, kuerzel, 
+                  (untersuchsch, id, untersuchtag, videozaehler, timecode, kuerzel, 
                     charakt1, charakt2, quantnr1, quantnr2, 
                     streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, 
                     vertikale_lage, inspektionslaenge, bereich, 
                     foto_dateiname, ordner, 
                     ZD, ZB, ZS, 
-                    createdat, geop)
+                    createdat)
                 SELECT 
-                  :untersuchsch, :id, :videozaehler, :timecode, :kuerzel, 
+                  :untersuchsch, :id, :untersuchtag, :videozaehler, :timecode, :kuerzel, 
                     :charakt1, :charakt2, :quantnr1, :quantnr2, 
                     :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                     :vertikale_lage, :inspektionslaenge, :bereich, 
                     :foto_dateiname, :ordner, 
                     coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), 
-                    coalesce(:createdat, CURRENT_TIMESTAMP), sch.geop
+                    coalesce(:createdat, CURRENT_TIMESTAMP)
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = :untersuchsch;"""
@@ -851,6 +861,79 @@ class DBConnection:
         result = self.sql(sql, stmt_category, parameters, mute_logger, ignore)
 
         return result
+
+    def calctextpositions(self, data, tdist:float = 0.5, bdist:float = 0.25):
+        """Berechnet in einer internen Tabelle die Textpositionen für die Haltungsschäden.
+           Dabei werden zunächst vom Haltungsanfang (pa) sowie dem Haltungsende aus die Textpositionen
+           mindestens im Abstand bdist gesetzt. Die endgültigen Textpositionen ergeben sich im Anfangs-
+           und Endbereich jeweils aus diesen Werten, dazwischen aus deren Mittelwert.
+        """
+
+        si = len(data)
+        pa = array('d', [0.0] * si)         # Textposition berechnet mit Haltungsrichtung
+        pe = array('d', [0.0] * si)         # Textposition berechnet gegen Haltungsrichtung
+        ma = array('B', [0] * si)           # markiert den Anfangsbereich, in dem nur pa verwendet wird
+        me = array('B', [0] * si)           # markiert den Endbereich, in dem nur pe verwendet wird
+        po = array('d', [0.0] * si)         # Für ma: pa, für me: pe, sonst: (pa+pe)/2.
+
+        id = data[0][1]
+        ianf = 0
+        for iend in range(si):
+            if data[iend][1] == id and iend < si - 1:
+                # iend innerhalb eines Blocks der aktuellen id
+                continue
+
+            pavor = 0
+            mavor = 1                           # Initialisierung mit 1 = True
+            stvor = 0
+            for i in range(ianf, iend):
+                station = data[i][2]
+                if i == ianf:
+                    dist = 0
+                else:
+                    dist = (abs(station - stvor) > 0.0001) * bdist + tdist
+                pa[i] = max(station, pavor + dist)
+                ma[i] = mavor * (pavor + dist > station - 0.0001)
+                pavor = pa[i]
+                mavor = ma[i]
+                stvor = station
+
+            pevor = data[i][3]
+            mevor = 1                           # Initialisierung mit 1 = True
+            stvor = 0
+            for i in range(iend - 1, ianf - 1, -1):
+                station = data[i][2]
+                if i == iend - 1:
+                    dist = 0
+                else:
+                    dist = (abs(station - stvor) > 0.0001) * bdist + tdist
+                pe[i] = min(station, pevor - dist)
+                me[i] = mevor * (pevor - dist < station + 0.0001)
+                pevor = pe[i]
+                mevor = me[i]
+                stvor = station
+
+            for i in range(ianf, iend):
+                if ma[i]:
+                    po[i] = pa[i]
+                elif me[i]:
+                    po[i] = pe[i]
+                else:
+                    po[i] = (pa[i] + pe[i]) / 2.
+            # Nächsten Block vorbereiten
+            ianf = iend
+            id = data[iend][1]
+
+        # Debug:
+        logzeilen = []
+        for i in range(si):
+            zeile = f'{data[i][0]:8d} {data[i][1]:8s} {data[i][2]:8.2f} {pa[i]:8.2f} {pe[i]:8.2f} {ma[i]:8.2f} {me[i]:8.2f} {po[i]:8.2f}'
+            logzeilen.append(zeile)
+        proto = '\n'.join(logzeilen)
+        logger.debug(f'{self.__class__.__name__} - calctextpositions: Ergebnis der SQL-Anweisung: \n{proto}')
+
+        for i in range(si):
+            data[i] = (data[i][0], data[i][1], po[i])
 
     def executefile(self, filenam):
         """Liest eine Datei aus dem template-Verzeichnis und führt sie als SQL-Befehle aus"""

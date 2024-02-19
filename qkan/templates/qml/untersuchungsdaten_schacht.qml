@@ -1,42 +1,42 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis labelsEnabled="0" simplifyDrawingHints="0" simplifyDrawingTol="1" maxScale="0" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="0" readOnly="0" simplifyMaxScale="1" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Notes" minScale="100000000" simplifyLocal="1" version="3.22.16-Białowieża" symbologyReferenceScale="-1">
+<qgis version="3.22.16-Białowieża" minScale="100000000" simplifyDrawingHints="0" simplifyLocal="1" simplifyAlgorithm="0" maxScale="0" hasScaleBasedVisibilityFlag="0" readOnly="0" labelsEnabled="0" simplifyDrawingTol="1" simplifyMaxScale="1" symbologyReferenceScale="-1" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Notes">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <renderer-v2 enableorderby="0" referencescale="-1" forceraster="0" symbollevels="0" type="singleSymbol">
+  <renderer-v2 enableorderby="0" type="singleSymbol" forceraster="0" symbollevels="0" referencescale="-1">
     <symbols>
-      <symbol alpha="1" name="0" force_rhr="0" type="marker" clip_to_extent="1">
+      <symbol type="marker" name="0" force_rhr="0" clip_to_extent="1" alpha="1">
         <data_defined_properties>
           <Option type="Map">
-            <Option name="name" value="" type="QString"/>
+            <Option type="QString" name="name" value=""/>
             <Option name="properties"/>
-            <Option name="type" value="collection" type="QString"/>
+            <Option type="QString" name="type" value="collection"/>
           </Option>
         </data_defined_properties>
         <layer pass="0" class="SimpleMarker" locked="0" enabled="1">
           <Option type="Map">
-            <Option name="angle" value="0" type="QString"/>
-            <Option name="cap_style" value="square" type="QString"/>
-            <Option name="color" value="255,127,0,255" type="QString"/>
-            <Option name="horizontal_anchor_point" value="1" type="QString"/>
-            <Option name="joinstyle" value="bevel" type="QString"/>
-            <Option name="name" value="circle" type="QString"/>
-            <Option name="offset" value="0,0" type="QString"/>
-            <Option name="offset_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
-            <Option name="offset_unit" value="MM" type="QString"/>
-            <Option name="outline_color" value="35,35,35,255" type="QString"/>
-            <Option name="outline_style" value="solid" type="QString"/>
-            <Option name="outline_width" value="0" type="QString"/>
-            <Option name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
-            <Option name="outline_width_unit" value="MM" type="QString"/>
-            <Option name="scale_method" value="diameter" type="QString"/>
-            <Option name="size" value="2" type="QString"/>
-            <Option name="size_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
-            <Option name="size_unit" value="MM" type="QString"/>
-            <Option name="vertical_anchor_point" value="1" type="QString"/>
+            <Option type="QString" name="angle" value="0"/>
+            <Option type="QString" name="cap_style" value="square"/>
+            <Option type="QString" name="color" value="255,127,0,255"/>
+            <Option type="QString" name="horizontal_anchor_point" value="1"/>
+            <Option type="QString" name="joinstyle" value="bevel"/>
+            <Option type="QString" name="name" value="circle"/>
+            <Option type="QString" name="offset" value="0,0"/>
+            <Option type="QString" name="offset_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+            <Option type="QString" name="offset_unit" value="MM"/>
+            <Option type="QString" name="outline_color" value="35,35,35,255"/>
+            <Option type="QString" name="outline_style" value="solid"/>
+            <Option type="QString" name="outline_width" value="0"/>
+            <Option type="QString" name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+            <Option type="QString" name="outline_width_unit" value="MM"/>
+            <Option type="QString" name="scale_method" value="diameter"/>
+            <Option type="QString" name="size" value="2"/>
+            <Option type="QString" name="size_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+            <Option type="QString" name="size_unit" value="MM"/>
+            <Option type="QString" name="vertical_anchor_point" value="1"/>
           </Option>
           <prop k="angle" v="0"/>
           <prop k="cap_style" v="square"/>
@@ -59,9 +59,9 @@
           <prop k="vertical_anchor_point" v="1"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option name="name" value="" type="QString"/>
+              <Option type="QString" name="name" value=""/>
               <Option name="properties"/>
-              <Option name="type" value="collection" type="QString"/>
+              <Option type="QString" name="type" value="collection"/>
             </Option>
           </data_defined_properties>
         </layer>
@@ -72,10 +72,10 @@
   </renderer-v2>
   <customproperties>
     <Option type="Map">
-      <Option name="dualview/previewExpressions" type="List">
-        <Option value="&quot;foto_dateiname&quot;" type="QString"/>
+      <Option type="List" name="dualview/previewExpressions">
+        <Option type="QString" value="&quot;foto_dateiname&quot;"/>
       </Option>
-      <Option name="embeddedWidgets/count" value="0" type="int"/>
+      <Option type="int" name="embeddedWidgets/count" value="0"/>
       <Option name="variableNames"/>
       <Option name="variableValues"/>
     </Option>
@@ -84,319 +84,319 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <fieldConfiguration>
-    <field name="pk" configurationFlags="None">
+    <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="untersuchsch" configurationFlags="None">
+    <field configurationFlags="None" name="untersuchsch">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="id" configurationFlags="None">
+    <field configurationFlags="None" name="id">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="untersuchtag" configurationFlags="None">
+    <field configurationFlags="None" name="untersuchtag">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="bandnr" configurationFlags="None">
+    <field configurationFlags="None" name="bandnr">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="videozaehler" configurationFlags="None">
+    <field configurationFlags="None" name="videozaehler">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="timecode" configurationFlags="None">
+    <field configurationFlags="None" name="timecode">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="kuerzel" configurationFlags="None">
+    <field configurationFlags="None" name="kuerzel">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="charakt1" configurationFlags="None">
+    <field configurationFlags="None" name="charakt1">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="charakt2" configurationFlags="None">
+    <field configurationFlags="None" name="charakt2">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="quantnr1" configurationFlags="None">
+    <field configurationFlags="None" name="quantnr1">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="quantnr2" configurationFlags="None">
+    <field configurationFlags="None" name="quantnr2">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="streckenschaden" configurationFlags="None">
+    <field configurationFlags="None" name="streckenschaden">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="streckenschaden_lfdnr" configurationFlags="None">
+    <field configurationFlags="None" name="streckenschaden_lfdnr">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="pos_von" configurationFlags="None">
+    <field configurationFlags="None" name="pos_von">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="pos_bis" configurationFlags="None">
+    <field configurationFlags="None" name="pos_bis">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="vertikale_lage" configurationFlags="None">
+    <field configurationFlags="None" name="vertikale_lage">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="inspektionslaenge" configurationFlags="None">
+    <field configurationFlags="None" name="inspektionslaenge">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="bereich" configurationFlags="None">
+    <field configurationFlags="None" name="bereich">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="foto_dateiname" configurationFlags="None">
+    <field configurationFlags="None" name="foto_dateiname">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="ordner" configurationFlags="None">
+    <field configurationFlags="None" name="ordner">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option name="IsMultiline" value="false" type="bool"/>
-            <Option name="UseHtml" value="false" type="bool"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="ZD" configurationFlags="None">
+    <field configurationFlags="None" name="ZD">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="ZB" configurationFlags="None">
+    <field configurationFlags="None" name="ZB">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="ZS" configurationFlags="None">
+    <field configurationFlags="None" name="ZS">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="createdat" configurationFlags="None">
+    <field configurationFlags="None" name="createdat">
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option name="allow_null" value="true" type="bool"/>
-            <Option name="calendar_popup" value="true" type="bool"/>
-            <Option name="display_format" value="dd.MM.yyyy HH:mm:ss" type="QString"/>
-            <Option name="field_format" value="yyyy-MM-dd HH:mm:ss" type="QString"/>
-            <Option name="field_iso_format" value="false" type="bool"/>
+            <Option type="bool" name="allow_null" value="true"/>
+            <Option type="bool" name="calendar_popup" value="true"/>
+            <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+            <Option type="QString" name="field_format" value="yyyy-MM-dd HH:mm:ss"/>
+            <Option type="bool" name="field_iso_format" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias index="0" name="" field="pk"/>
-    <alias index="1" name="Name" field="untersuchsch"/>
-    <alias index="2" name="ID" field="id"/>
-    <alias index="3" name="Inspektionsdatum" field="untersuchtag"/>
-    <alias index="4" name="" field="bandnr"/>
-    <alias index="5" name="Videozähler" field="videozaehler"/>
-    <alias index="6" name="Zeitstempel" field="timecode"/>
-    <alias index="7" name="Kürzel" field="kuerzel"/>
-    <alias index="8" name="" field="charakt1"/>
-    <alias index="9" name="" field="charakt2"/>
-    <alias index="10" name="" field="quantnr1"/>
-    <alias index="11" name="" field="quantnr2"/>
-    <alias index="12" name="Streckenschaden" field="streckenschaden"/>
-    <alias index="13" name="Streckenschäden Laufnummer" field="streckenschaden_lfdnr"/>
-    <alias index="14" name="Position Anfang" field="pos_von"/>
-    <alias index="15" name="Position Ende" field="pos_bis"/>
-    <alias index="16" name="Länge vertikal" field="vertikale_lage"/>
-    <alias index="17" name="Inspektionslänge" field="inspektionslaenge"/>
-    <alias index="18" name="Bereich" field="bereich"/>
-    <alias index="19" name="Dateiname Foto" field="foto_dateiname"/>
-    <alias index="20" name="Ordner" field="ordner"/>
-    <alias index="21" name="" field="ZD"/>
-    <alias index="22" name="" field="ZB"/>
-    <alias index="23" name="" field="ZS"/>
-    <alias index="24" name="bearbeitet" field="createdat"/>
+    <alias index="0" field="pk" name=""/>
+    <alias index="1" field="untersuchsch" name="Name"/>
+    <alias index="2" field="id" name="ID"/>
+    <alias index="3" field="untersuchtag" name="Inspektionsdatum"/>
+    <alias index="4" field="bandnr" name=""/>
+    <alias index="5" field="videozaehler" name="Videozähler"/>
+    <alias index="6" field="timecode" name="Zeitstempel"/>
+    <alias index="7" field="kuerzel" name="Kürzel"/>
+    <alias index="8" field="charakt1" name=""/>
+    <alias index="9" field="charakt2" name=""/>
+    <alias index="10" field="quantnr1" name=""/>
+    <alias index="11" field="quantnr2" name=""/>
+    <alias index="12" field="streckenschaden" name="Streckenschaden"/>
+    <alias index="13" field="streckenschaden_lfdnr" name="Streckenschäden Laufnummer"/>
+    <alias index="14" field="pos_von" name="Position Anfang"/>
+    <alias index="15" field="pos_bis" name="Position Ende"/>
+    <alias index="16" field="vertikale_lage" name="Länge vertikal"/>
+    <alias index="17" field="inspektionslaenge" name="Inspektionslänge"/>
+    <alias index="18" field="bereich" name="Bereich"/>
+    <alias index="19" field="foto_dateiname" name="Dateiname Foto"/>
+    <alias index="20" field="ordner" name="Ordner"/>
+    <alias index="21" field="ZD" name=""/>
+    <alias index="22" field="ZB" name=""/>
+    <alias index="23" field="ZS" name=""/>
+    <alias index="24" field="createdat" name="bearbeitet"/>
   </aliases>
   <defaults>
-    <default applyOnUpdate="0" field="pk" expression=""/>
-    <default applyOnUpdate="0" field="untersuchsch" expression=""/>
-    <default applyOnUpdate="0" field="id" expression=""/>
-    <default applyOnUpdate="0" field="untersuchtag" expression=""/>
-    <default applyOnUpdate="0" field="bandnr" expression=""/>
-    <default applyOnUpdate="0" field="videozaehler" expression=""/>
-    <default applyOnUpdate="0" field="timecode" expression=""/>
-    <default applyOnUpdate="0" field="kuerzel" expression=""/>
-    <default applyOnUpdate="0" field="charakt1" expression=""/>
-    <default applyOnUpdate="0" field="charakt2" expression=""/>
-    <default applyOnUpdate="0" field="quantnr1" expression=""/>
-    <default applyOnUpdate="0" field="quantnr2" expression=""/>
-    <default applyOnUpdate="0" field="streckenschaden" expression=""/>
-    <default applyOnUpdate="0" field="streckenschaden_lfdnr" expression=""/>
-    <default applyOnUpdate="0" field="pos_von" expression=""/>
-    <default applyOnUpdate="0" field="pos_bis" expression=""/>
-    <default applyOnUpdate="0" field="vertikale_lage" expression=""/>
-    <default applyOnUpdate="0" field="inspektionslaenge" expression=""/>
-    <default applyOnUpdate="0" field="bereich" expression=""/>
-    <default applyOnUpdate="0" field="foto_dateiname" expression=""/>
-    <default applyOnUpdate="0" field="ordner" expression=""/>
-    <default applyOnUpdate="0" field="ZD" expression=""/>
-    <default applyOnUpdate="0" field="ZB" expression=""/>
-    <default applyOnUpdate="0" field="ZS" expression=""/>
-    <default applyOnUpdate="0" field="createdat" expression=" format_date( now(), 'yyyy-MM-dd HH:mm:ss')"/>
+    <default field="pk" expression="" applyOnUpdate="0"/>
+    <default field="untersuchsch" expression="" applyOnUpdate="0"/>
+    <default field="id" expression="" applyOnUpdate="0"/>
+    <default field="untersuchtag" expression="" applyOnUpdate="0"/>
+    <default field="bandnr" expression="" applyOnUpdate="0"/>
+    <default field="videozaehler" expression="" applyOnUpdate="0"/>
+    <default field="timecode" expression="" applyOnUpdate="0"/>
+    <default field="kuerzel" expression="" applyOnUpdate="0"/>
+    <default field="charakt1" expression="" applyOnUpdate="0"/>
+    <default field="charakt2" expression="" applyOnUpdate="0"/>
+    <default field="quantnr1" expression="" applyOnUpdate="0"/>
+    <default field="quantnr2" expression="" applyOnUpdate="0"/>
+    <default field="streckenschaden" expression="" applyOnUpdate="0"/>
+    <default field="streckenschaden_lfdnr" expression="" applyOnUpdate="0"/>
+    <default field="pos_von" expression="" applyOnUpdate="0"/>
+    <default field="pos_bis" expression="" applyOnUpdate="0"/>
+    <default field="vertikale_lage" expression="" applyOnUpdate="0"/>
+    <default field="inspektionslaenge" expression="" applyOnUpdate="0"/>
+    <default field="bereich" expression="" applyOnUpdate="0"/>
+    <default field="foto_dateiname" expression="" applyOnUpdate="0"/>
+    <default field="ordner" expression="" applyOnUpdate="0"/>
+    <default field="ZD" expression="" applyOnUpdate="0"/>
+    <default field="ZB" expression="" applyOnUpdate="0"/>
+    <default field="ZS" expression="" applyOnUpdate="0"/>
+    <default field="createdat" expression=" format_date( now(), 'yyyy-MM-dd HH:mm:ss')" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint constraints="3" exp_strength="0" field="pk" notnull_strength="2" unique_strength="2"/>
-    <constraint constraints="0" exp_strength="0" field="untersuchsch" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="id" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="untersuchtag" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="bandnr" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="videozaehler" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="timecode" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="kuerzel" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="charakt1" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="charakt2" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="quantnr1" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="quantnr2" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="streckenschaden" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="streckenschaden_lfdnr" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="pos_von" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="pos_bis" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="vertikale_lage" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="inspektionslaenge" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="bereich" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="foto_dateiname" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="ordner" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="ZD" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="ZB" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="ZS" notnull_strength="0" unique_strength="0"/>
-    <constraint constraints="0" exp_strength="0" field="createdat" notnull_strength="0" unique_strength="0"/>
+    <constraint exp_strength="0" field="pk" unique_strength="2" constraints="3" notnull_strength="2"/>
+    <constraint exp_strength="0" field="untersuchsch" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="id" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="untersuchtag" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="bandnr" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="videozaehler" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="timecode" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="kuerzel" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="charakt1" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="charakt2" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="quantnr1" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="quantnr2" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="streckenschaden" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="streckenschaden_lfdnr" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="pos_von" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="pos_bis" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="vertikale_lage" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="inspektionslaenge" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="bereich" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="foto_dateiname" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="ordner" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="ZD" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="ZB" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="ZS" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" field="createdat" unique_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="pk" exp="" desc=""/>
@@ -428,39 +428,39 @@
   <expressionfields/>
   <attributeactions>
     <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
-    <actionsetting shortTitle="Bild öffnen" action="[%ordner%]/Band[%substr(foto_dateiname,0,5)%]/[%foto_dateiname%]" capture="0" id="{6a7ccf62-fbb3-48e1-bd21-b1c5c799f460}" isEnabledOnlyWhenEditable="0" name="Bild öffnen" notificationMessage="" type="5" icon="">
+    <actionsetting type="5" capture="0" icon="" id="{6a7ccf62-fbb3-48e1-bd21-b1c5c799f460}" name="Bild öffnen" shortTitle="Bild öffnen" notificationMessage="" isEnabledOnlyWhenEditable="0" action="[%ordner%]/Band[%substr(foto_dateiname,0,5)%]/[%foto_dateiname%]">
       <actionScope id="Feature"/>
       <actionScope id="Canvas"/>
     </actionsetting>
   </attributeactions>
-  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column hidden="0" width="-1" name="pk" type="field"/>
-      <column hidden="0" width="-1" name="untersuchsch" type="field"/>
-      <column hidden="0" width="-1" name="id" type="field"/>
-      <column hidden="0" width="-1" name="videozaehler" type="field"/>
-      <column hidden="0" width="-1" name="timecode" type="field"/>
-      <column hidden="0" width="-1" name="kuerzel" type="field"/>
-      <column hidden="0" width="-1" name="charakt1" type="field"/>
-      <column hidden="0" width="-1" name="charakt2" type="field"/>
-      <column hidden="0" width="-1" name="quantnr1" type="field"/>
-      <column hidden="0" width="-1" name="quantnr2" type="field"/>
-      <column hidden="0" width="116" name="streckenschaden" type="field"/>
-      <column hidden="0" width="200" name="pos_von" type="field"/>
-      <column hidden="0" width="-1" name="pos_bis" type="field"/>
-      <column hidden="0" width="-1" name="bereich" type="field"/>
-      <column hidden="0" width="-1" name="foto_dateiname" type="field"/>
-      <column hidden="0" width="501" name="ordner" type="field"/>
-      <column hidden="1" width="-1" type="actions"/>
-      <column hidden="0" width="-1" name="streckenschaden_lfdnr" type="field"/>
-      <column hidden="0" width="-1" name="vertikale_lage" type="field"/>
-      <column hidden="0" width="-1" name="inspektionslaenge" type="field"/>
-      <column hidden="0" width="-1" name="ZD" type="field"/>
-      <column hidden="0" width="-1" name="ZB" type="field"/>
-      <column hidden="0" width="-1" name="ZS" type="field"/>
-      <column hidden="0" width="-1" name="untersuchtag" type="field"/>
-      <column hidden="0" width="-1" name="bandnr" type="field"/>
-      <column hidden="0" width="-1" name="createdat" type="field"/>
+      <column type="field" name="pk" hidden="0" width="-1"/>
+      <column type="field" name="untersuchsch" hidden="0" width="-1"/>
+      <column type="field" name="id" hidden="0" width="-1"/>
+      <column type="field" name="untersuchtag" hidden="0" width="-1"/>
+      <column type="field" name="videozaehler" hidden="0" width="-1"/>
+      <column type="field" name="timecode" hidden="0" width="-1"/>
+      <column type="field" name="kuerzel" hidden="0" width="-1"/>
+      <column type="field" name="charakt1" hidden="0" width="-1"/>
+      <column type="field" name="charakt2" hidden="0" width="-1"/>
+      <column type="field" name="quantnr1" hidden="0" width="-1"/>
+      <column type="field" name="quantnr2" hidden="0" width="100"/>
+      <column type="field" name="streckenschaden" hidden="0" width="116"/>
+      <column type="field" name="pos_von" hidden="0" width="200"/>
+      <column type="field" name="pos_bis" hidden="0" width="-1"/>
+      <column type="field" name="bereich" hidden="0" width="-1"/>
+      <column type="field" name="foto_dateiname" hidden="0" width="100"/>
+      <column type="field" name="ordner" hidden="0" width="501"/>
+      <column type="actions" hidden="1" width="-1"/>
+      <column type="field" name="streckenschaden_lfdnr" hidden="0" width="-1"/>
+      <column type="field" name="vertikale_lage" hidden="0" width="-1"/>
+      <column type="field" name="inspektionslaenge" hidden="0" width="-1"/>
+      <column type="field" name="ZD" hidden="0" width="-1"/>
+      <column type="field" name="ZB" hidden="0" width="-1"/>
+      <column type="field" name="ZS" hidden="0" width="-1"/>
+      <column type="field" name="bandnr" hidden="0" width="-1"/>
+      <column type="field" name="createdat" hidden="0" width="-1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -492,31 +492,31 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="ZB"/>
-    <field editable="1" name="ZD"/>
-    <field editable="1" name="ZS"/>
-    <field editable="1" name="bandnr"/>
-    <field editable="1" name="bereich"/>
-    <field editable="1" name="charakt1"/>
-    <field editable="1" name="charakt2"/>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="foto_dateiname"/>
-    <field editable="1" name="id"/>
-    <field editable="1" name="inspektionslaenge"/>
-    <field editable="1" name="kuerzel"/>
-    <field editable="1" name="ordner"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="pos_bis"/>
-    <field editable="1" name="pos_von"/>
-    <field editable="1" name="quantnr1"/>
-    <field editable="1" name="quantnr2"/>
-    <field editable="1" name="streckenschaden"/>
-    <field editable="1" name="streckenschaden_lfdnr"/>
-    <field editable="1" name="timecode"/>
-    <field editable="1" name="untersuchsch"/>
-    <field editable="1" name="untersuchtag"/>
-    <field editable="1" name="vertikale_lage"/>
-    <field editable="1" name="videozaehler"/>
+    <field name="ZB" editable="1"/>
+    <field name="ZD" editable="1"/>
+    <field name="ZS" editable="1"/>
+    <field name="bandnr" editable="1"/>
+    <field name="bereich" editable="1"/>
+    <field name="charakt1" editable="1"/>
+    <field name="charakt2" editable="1"/>
+    <field name="createdat" editable="1"/>
+    <field name="foto_dateiname" editable="1"/>
+    <field name="id" editable="1"/>
+    <field name="inspektionslaenge" editable="1"/>
+    <field name="kuerzel" editable="1"/>
+    <field name="ordner" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="pos_bis" editable="1"/>
+    <field name="pos_von" editable="1"/>
+    <field name="quantnr1" editable="1"/>
+    <field name="quantnr2" editable="1"/>
+    <field name="streckenschaden" editable="1"/>
+    <field name="streckenschaden_lfdnr" editable="1"/>
+    <field name="timecode" editable="1"/>
+    <field name="untersuchsch" editable="1"/>
+    <field name="untersuchtag" editable="1"/>
+    <field name="vertikale_lage" editable="1"/>
+    <field name="videozaehler" editable="1"/>
   </editable>
   <labelOnTop>
     <field name="ZB" labelOnTop="0"/>
@@ -546,31 +546,31 @@ def my_form_open(dialog, layer, feature):
     <field name="videozaehler" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
-    <field reuseLastValue="0" name="ZB"/>
-    <field reuseLastValue="0" name="ZD"/>
-    <field reuseLastValue="0" name="ZS"/>
-    <field reuseLastValue="0" name="bandnr"/>
-    <field reuseLastValue="0" name="bereich"/>
-    <field reuseLastValue="0" name="charakt1"/>
-    <field reuseLastValue="0" name="charakt2"/>
-    <field reuseLastValue="0" name="createdat"/>
-    <field reuseLastValue="0" name="foto_dateiname"/>
-    <field reuseLastValue="0" name="id"/>
-    <field reuseLastValue="0" name="inspektionslaenge"/>
-    <field reuseLastValue="0" name="kuerzel"/>
-    <field reuseLastValue="0" name="ordner"/>
-    <field reuseLastValue="0" name="pk"/>
-    <field reuseLastValue="0" name="pos_bis"/>
-    <field reuseLastValue="0" name="pos_von"/>
-    <field reuseLastValue="0" name="quantnr1"/>
-    <field reuseLastValue="0" name="quantnr2"/>
-    <field reuseLastValue="0" name="streckenschaden"/>
-    <field reuseLastValue="0" name="streckenschaden_lfdnr"/>
-    <field reuseLastValue="0" name="timecode"/>
-    <field reuseLastValue="0" name="untersuchsch"/>
-    <field reuseLastValue="0" name="untersuchtag"/>
-    <field reuseLastValue="0" name="vertikale_lage"/>
-    <field reuseLastValue="0" name="videozaehler"/>
+    <field name="ZB" reuseLastValue="0"/>
+    <field name="ZD" reuseLastValue="0"/>
+    <field name="ZS" reuseLastValue="0"/>
+    <field name="bandnr" reuseLastValue="0"/>
+    <field name="bereich" reuseLastValue="0"/>
+    <field name="charakt1" reuseLastValue="0"/>
+    <field name="charakt2" reuseLastValue="0"/>
+    <field name="createdat" reuseLastValue="0"/>
+    <field name="foto_dateiname" reuseLastValue="0"/>
+    <field name="id" reuseLastValue="0"/>
+    <field name="inspektionslaenge" reuseLastValue="0"/>
+    <field name="kuerzel" reuseLastValue="0"/>
+    <field name="ordner" reuseLastValue="0"/>
+    <field name="pk" reuseLastValue="0"/>
+    <field name="pos_bis" reuseLastValue="0"/>
+    <field name="pos_von" reuseLastValue="0"/>
+    <field name="quantnr1" reuseLastValue="0"/>
+    <field name="quantnr2" reuseLastValue="0"/>
+    <field name="streckenschaden" reuseLastValue="0"/>
+    <field name="streckenschaden_lfdnr" reuseLastValue="0"/>
+    <field name="timecode" reuseLastValue="0"/>
+    <field name="untersuchsch" reuseLastValue="0"/>
+    <field name="untersuchtag" reuseLastValue="0"/>
+    <field name="vertikale_lage" reuseLastValue="0"/>
+    <field name="videozaehler" reuseLastValue="0"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>

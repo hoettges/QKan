@@ -34,6 +34,7 @@ class Schacht(ClassObject):
 class Schacht_untersucht(ClassObject):
     schnam: str = ""
     durchm: float = 0.0
+    sohlhoehe: float = 0.0
     druckdicht: int = 0
     entwart: str = ""
     strasse: str = ""
@@ -44,7 +45,7 @@ class Schacht_untersucht(ClassObject):
     untersuchtag: str = ""
     untersucher: str = ""
     wetter: int = 0
-    bewertungsart: int = 0
+    bewertungsart: str = ""
     bewertungstag: str = ""
     datenart: str = ""
     max_ZD: int = 63
@@ -58,7 +59,7 @@ class Untersuchdat_schacht(ClassObject):
     id: int = 0
     untersuchtag: str = ""
     #TODO: videozaehler = Uhrzeit hh:mm
-    videozaehler: int = 0
+    videozaehler: str = ""
     timecode: int = 0
     kuerzel: str = ""
     charakt1: str = ""
@@ -115,7 +116,7 @@ class Haltung_untersucht(ClassObject):
     untersucher: str = ""
     wetter: int = 0
     strasse: str = ""
-    bewertungsart: int = 0
+    bewertungsart: str = ""
     bewertungstag: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
@@ -134,7 +135,7 @@ class Untersuchdat_haltung(ClassObject):
     id: int = 0
     untersuchtag: str = ""
     inspektionslaenge: float = 0.0
-    videozaehler: int = 0
+    videozaehler: str = ""
     station: float = 0.0
     timecode: int = 0
     kuerzel: str = ""
@@ -255,64 +256,6 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
             print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
     return default
 
-def calctextpositions(data, tdist = 0.2, bdist = 0.1):
-    """ Liest aus einer Datenbank mit der aus einem Import vorhandenen STRAKAT-Importtabelle t_strakatberichte
-        die Stationen, ATV-Kuerzel, ATV-Langtexte, berechnet in einer internen Tabelle die auseinandergezogenen
-        Textpositionen und schreibt die entsprechenden Polylinine für die Haltungen in die
-        QKan-Tabelle 'untersuchungsdaten_haltungen'
-
-        """
-
-    si = len(data)
-    pa = array('d', [0.0]*si)
-    pe = array('d', [0.0]*si)
-    ma = array('B', [0]*si)
-    me = array('B', [0]*si)
-    po = array('d', [0.0]*si)
-
-    # logger.debug(f'Ergebnis der SQL-Anweisung: {data}')
-
-    strakatid = data[0][1]
-    ianf = 0
-    for iend in range(si):
-        if data[iend][1] == strakatid and iend < si - 1:
-        # iend innerhalb eines Blocks der akteullen strakatid
-            continue
-
-        pavor = 0
-        mavor = 1           # Initialisierung mit 1 = True
-        stvor = 0
-        for i in range(ianf, iend):
-            station = data[i][2]
-            pa[i] = max(station, pavor + (abs(station - stvor) > 0.0001) * bdist + tdist)
-            ma[i] = mavor * (station - pa[i] < - 0.000001)
-            pavor = pa[i]
-            mavor = ma[i]
-            stvor = station
-
-        stvor = 0
-        for i in range(iend - 1, ianf - 1, -1):
-            station = data[i][2]
-            pe[i] = max(station, pavor + (abs(station - stvor) > 0.0001) * bdist + tdist)
-            me[i] = mavor * (station - pe[i] < - 0.000001)
-            pavor = pe[i]
-            mavor = me[i]
-            stvor = station
-
-        for i in range(ianf, iend):
-            if ma[i]:
-                po[i] = pa[i]
-            elif me[i]:
-                po[i] = pe[i]
-            else:
-                po[i] = (pa[i] + pe[i]) / 2.
-        # Nächsten Block vorbereiten
-        ianf = iend
-        strakatid = data[iend][1]
-
-    for i in range(si):
-        data[i] = (data[i][0], data[i][1], po[i])
-
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
@@ -342,7 +285,7 @@ class ImportTask:
         self.mapper_simstatus: Dict[str, str] = {}
         self.mapper_untersuchrichtung: Dict[str, str] = {}
         self.mapper_wetter: Dict[str, str] = {}
-        self.mapper_bewertungsart: Dict[str, str] = {}
+        # self.mapper_bewertungsart: Dict[str, str] = {}
         self.mapper_druckdicht: Dict[str, str] = {}
 
 
@@ -359,7 +302,7 @@ class ImportTask:
         self.progress_bar.setRange(0, 100)
 
         status_message = iface.messageBar().createMessage(
-            "", "Import aus STRAKAT läuft. Bitte warten..."
+            "", "Import aus M150 läuft. Bitte warten..."
         )
         status_message.layout().addWidget(self.progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
@@ -387,7 +330,7 @@ class ImportTask:
             self._untersuchdat_haltung()                    ;self.progress_bar.setValue(95)
 
         self.progress_bar.setValue(100)
-        status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
+        status_message.setText("Fertig! M150-Import abgeschlossen.")
 
         return True
 
@@ -575,10 +518,10 @@ class ImportTask:
         subject = "xml_import wetter"
         consume(sql, subject, self.mapper_wetter)
 
-        sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
-        subject = "xml_import bewertungsart"
-        consume(sql, subject, self.mapper_bewertungsart)
-
+        # sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
+        # subject = "xml_import bewertungsart"
+        # consume(sql, subject, self.mapper_bewertungsart)
+        #
         sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
         subject = "xml_import druckdicht"
         consume(sql, subject, self.mapper_druckdicht)
@@ -722,8 +665,8 @@ class ImportTask:
                       'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart, 'strasse': schacht.strasse,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
@@ -745,7 +688,7 @@ class ImportTask:
 
             for block in blocks:
                 name = block.findtext("KG001", None)
-                strasse = block.findtext("KG102", None),
+                strasse = block.findtext("KG102", None)
 
                 smp = block.find("GO/GP")
                 if smp is None:
@@ -786,7 +729,7 @@ class ImportTask:
             untersuchtag = ""
             untersucher = ""
             wetter = 0
-            bewertungsart = 0
+            bewertungsart = ""
             bewertungstag = ""
             datenart = self.datenart
             max_ZD = 63
@@ -795,7 +738,7 @@ class ImportTask:
 
             for block in blocks:
                 name = block.findtext("KG001", None)
-                baujahr = _strip_int(block.findtext("KG303", 0))
+                baujahr = _strip_int(block.findtext("KG303"))
 
                 for _schacht in block.findall("KI"):
 
@@ -803,9 +746,9 @@ class ImportTask:
 
                     untersucher = _schacht.findtext("KI112", None)
 
-                    wetter = _strip_int(_schacht.findtext("KI106", 0))
+                    wetter = _strip_int(_schacht.findtext("KI106"))
 
-                    bewertungsart = _schacht.findtext("KI005", "0")
+                    bewertungsart = _schacht.findtext("KI005")
 
                     bewertungstag = _schacht.findtext("KI204", None)
 
@@ -849,8 +792,8 @@ class ImportTask:
             params = {'schnam': schacht_untersucht.schnam, 'xsch': schacht_untersucht.xsch, 'ysch': schacht_untersucht.ysch,
                       'durchm': schacht_untersucht.durchm, 'kommentar': schacht_untersucht.kommentar, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte_untersucht\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte_untersucht\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="schaechte_untersucht",
@@ -879,20 +822,20 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [2]"):
                     return None
 
-            if schacht_untersucht.bewertungsart in self.mapper_bewertungsart:
-                bewertungsart = self.mapper_bewertungsart[schacht_untersucht.bewertungsart]
-            else:
-                sql = """
-                           INSERT INTO bewertungsart (kuerzel, bezeichnung)
-                           VALUES ('{e}', '{e}')
-                           """.format(
-                    e=schacht_untersucht.bewertungsart
-                )
-                self.mapper_bewertungsart[schacht_untersucht.bewertungsart] = schacht_untersucht.bewertungsart
-                bewertungsart = schacht_untersucht.bewertungsart
-
-                if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [3]"):
-                    return None
+            # if schacht_untersucht.bewertungsart in self.mapper_bewertungsart:
+            #     bewertungsart = self.mapper_bewertungsart[schacht_untersucht.bewertungsart]
+            # else:
+            #     sql = """
+            #                INSERT INTO bewertungsart (kuerzel, bezeichnung)
+            #                VALUES ('{e}', '{e}')
+            #                """.format(
+            #         e=schacht_untersucht.bewertungsart
+            #     )
+            #     self.mapper_bewertungsart[schacht_untersucht.bewertungsart] = schacht_untersucht.bewertungsart
+            bewertungsart = schacht_untersucht.bewertungsart
+            #
+            #     if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [3]"):
+            #         return None
 
             if not self.db_qkan.sql(
                 "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, baujahr=?, bewertungsart=?," 
@@ -918,7 +861,7 @@ class ImportTask:
             name = ""
             inspektionslaenge = 0.0
             id = 0
-            videozaehler = 0
+            videozaehler = ""
             timecode = 0
             kuerzel = ""
             charakt1 = ""
@@ -942,7 +885,7 @@ class ImportTask:
                 name = block.findtext("KG001", None)
                 untersuchtag = block.findtext("KI/KI104")
 
-                for _untersuchdat_schacht in block.findall("KZ"):
+                for _untersuchdat_schacht in block.findall("KI/KZ"):
 
                     #id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
                     inspektionslaenge = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
@@ -1005,8 +948,8 @@ class ImportTask:
                       'foto_dateiname': untersuchdat_schacht.foto_dateiname, 'ordner': untersuchdat_schacht.ordner,
                       'ZD': untersuchdat_schacht.ZD, 'ZB': untersuchdat_schacht.ZB, 'ZS': untersuchdat_schacht.ZS, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_schacht",
@@ -1125,8 +1068,8 @@ class ImportTask:
                       'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
@@ -1452,8 +1395,8 @@ class ImportTask:
                       'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
@@ -1698,7 +1641,7 @@ class ImportTask:
             untersuchtag = ""
             untersucher = ""
             wetter = 0
-            bewertungsart = 0
+            bewertungsart = ""
             bewertungstag = ""
             datenart = self.datenart
             max_ZD = 63
@@ -1717,7 +1660,7 @@ class ImportTask:
 
                     wetter = _strip_int(_haltung.findtext("HI106", 0))
 
-                    bewertungsart = _strip_int(_haltung.findtext("HI005", "0"))
+                    bewertungsart = _haltung.findtext("HI005")
 
                     bewertungstag = _haltung.findtext("HI204", None)
 
@@ -1779,8 +1722,8 @@ class ImportTask:
                       'yschob': haltung_untersucht.yschob, 'xschub': haltung_untersucht.xschun,
                       'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
@@ -1819,20 +1762,20 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
                     return None
 
-            if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
-                bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
-            else:
-                sql = """
-                           INSERT INTO bewertungsart (kuerzel, bezeichnung)
-                           VALUES ('{e}', '{e}')
-                           """.format(
-                    e=haltung_untersucht.bewertungsart
-                )
-                self.mapper_bewertungsart[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
-                bewertungsart = haltung_untersucht.bewertungsart
-
-                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
-                    return None
+            # if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
+            #     bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
+            # else:
+            #     sql = """
+            #                INSERT INTO bewertungsart (kuerzel, bezeichnung)
+            #                VALUES ('{e}', '{e}')
+            #                """.format(
+            #         e=haltung_untersucht.bewertungsart
+            #     )
+            #     self.mapper_bewertungsart[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
+            bewertungsart = haltung_untersucht.bewertungsart
+            #
+            #     if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
+            #         return None
 
             if not self.db_qkan.sql(
                 "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
@@ -1861,8 +1804,9 @@ class ImportTask:
             schoben = ""
             schunten = ""
             id = 0
+            untersuchtag = ""
             inspektionslaenge = 0.0
-            videozaehler = 0
+            videozaehler = ""
             station = 0.0
             timecode = 0
             kuerzel = ""
@@ -2026,11 +1970,66 @@ class ImportTask:
         # Textpositionen für Schadenstexte berechnen
 
         sql = """SELECT
-                pk, strakatid || '-' || datum AS id, station_untersucher
-            FROM t_strakatberichte
-            GROUP BY strakatid, station_untersucher, atv_kuerzel
-            ORDER BY id, station_untersucher;"""
+            uh.pk, uh.untersuchhal || '-' || uh.untersuchtag AS id,
+            CASE untersuchrichtung
+                WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
+                WHEN 'in Fließrichtung'    THEN uh.station
+                                           ELSE NULL END        AS station,
+            GLength(hu.geom)                                     AS laenge
+            FROM untersuchdat_haltung AS uh
+            JOIN haltungen_untersucht AS hu ON hu.haltnam = uh.untersuchhal AND hu.untersuchtag = uh.untersuchtag
+            WHERE uh.untersuchhal IS NOT NULL AND uh.untersuchtag IS NOT NULL AND coalesce(laenge, 0) > 0.05
+            GROUP BY uh.untersuchhal, uh.untersuchtag, station, uh.kuerzel
+            ORDER BY id, station;"""
 
+        if not self.db_qkan.sql(
+            sql, "untersuchdat_haltung.station read"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen")
+        data = self.db_qkan.fetchall()
+        logger.debug(f'Anzahl Datensätze in calctextpositions: {len(data)}')
+        # logger.debug(f'{data[1]=}')
+        # logger.debug(f'{[type(el) for el in data[1]]}')
+        self.db_qkan.calctextpositions(data, 0.5, 0.25)
+
+        params = ()
+        for ds in data:
+            params += ([ds[2], ds[0]],)
+
+        sql = """UPDATE untersuchdat_haltung
+            SET stationtext = round(?, 3)
+            WHERE pk = ?"""
+        if not self.db_qkan.sql(
+                sql=sql,
+                stmt_category="untersuchdat_haltung.station write",
+                parameters=params,
+                many=True
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Schreiben der Stationen")
+
+        # Erzeugen der Polylinien für die Schadenstexte
+        sql = """
+            WITH dist AS (
+                SELECT column1 AS d, column2 AS stat, column3 AS tpos 
+                FROM (VALUES (0.0000000001, 1.0, 0.0), (1.0, 1.0, 0.0), (1.5, 0.0, 1.0), (4.0, 0.0, 1.0))
+            )
+            UPDATE untersuchdat_haltung SET geom = (
+                SELECT MakeLine(Line_Interpolate_Point(OffsetCurve(ha.geom, di.d), 
+                    (
+                    CASE untersuchrichtung
+                        WHEN 'gegen Fließrichtung' THEN ST_Length(ha.geom) - uh.station
+                        WHEN 'in Fließrichtung'    THEN uh.station
+                                                   ELSE ST_Length(ha.geom) - uh.station END * di.stat +  
+                    uh.stationtext * di.tpos) / ST_Length(ha.geom))) AS textline
+                FROM dist AS di, untersuchdat_haltung AS uh
+                JOIN haltungen_untersucht AS ha ON ha.haltnam = uh.untersuchhal
+                WHERE uh.pk = untersuchdat_haltung.pk
+                GROUP BY uh.pk)"""
+        if not self.db_qkan.sql(
+                sql=sql,
+                stmt_category="untersuchdat_haltung.geom SET"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Erzeugen der Schadenspolylinien")
 
         self.db_qkan.commit()
 
@@ -2201,8 +2200,8 @@ class ImportTask:
                       'xschun': anschlussleitung.xschun, 'yschob': anschlussleitung.yschob,
                       'yschun': anschlussleitung.yschun, 'epsg': QKan.config.epsg}
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: anschlussleitungen\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: anschlussleitungen\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="anschlussleitungen",
@@ -2497,8 +2496,8 @@ class ImportTask:
             # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
             #     return None
 
-            logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
-                         f'params: {params}')
+            # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
+            #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                 tabnam="haltungen",
