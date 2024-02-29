@@ -144,17 +144,27 @@ def list_qkan_layers(qgs_template: str = None) -> Dict[str, List]:
 
     qgsxml = ElementTree()
     qgsxml.parse(qgs_template)
-    tag_group = "layer-tree-group/layer-tree-group/[@name='QKan']/layer-tree-group"
-    qgs_groups = qgsxml.findall(tag_group)
+
+    # Search all levels of nested groups
+    tag_group = "layer-tree-group/layer-tree-group/[@name='QKan']"
+    qgs_groups = []
+    while True:
+        qqsgroup = qgsxml.findall(tag_group)
+        if not qqsgroup:
+            break
+        qgs_groups += qqsgroup
+        tag_group += '/layer-tree-group'
     qkan_layers = {}
     for group in qgs_groups:
         group_name = group.attrib["name"]
         group_layers = group.findall("layer-tree-layer")
         for layer in group_layers:
-            layer_name = layer.attrib["name"]
-            layer_source = layer.attrib["source"]
-            dbname, table, geom, sql = get_qkanlayer_attributes(layer_source)
-            qkan_layers[layer_name] = [table, geom, sql, group_name]
+            layer_name = layer.attrib.get("name", None)
+            if layer_name:
+                # only when group level has layers ...
+                layer_source = layer.attrib["source"]
+                dbname, table, geom, sql = get_qkanlayer_attributes(layer_source)
+                qkan_layers[layer_name] = [table, geom, sql, group_name]
     logger.debug("qkan_layers: \n{}".format(qkan_layers))
     return qkan_layers
 

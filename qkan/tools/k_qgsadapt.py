@@ -143,8 +143,8 @@ def qgsadapt(
         qkanTemplate
     )  # Liste aller Layernamen aus gewählter QGS-Vorlage
     qkanTables = set([el[0] for el in qkanLayers.values()])
-    #logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
-    #logger.debug(f'k_qgsadapt.qkanLayers: {qkanTables}')
+    logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
+    logger.debug(f'k_qgsadapt.qkanLayers: {qkanTables}')
 
     # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen
     # auf jeden Fall ergänzt.

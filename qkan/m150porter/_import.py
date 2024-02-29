@@ -1963,16 +1963,19 @@ class ImportTask:
         # Textpositionen für Schadenstexte berechnen
 
         sql = """SELECT
-            uh.pk, uh.untersuchhal || '-' || uh.untersuchtag AS id,
+            uh.pk, hu.pk AS id,
             CASE untersuchrichtung
                 WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'in Fließrichtung'    THEN uh.station
                                            ELSE NULL END        AS station,
             GLength(hu.geom)                                     AS laenge
             FROM untersuchdat_haltung AS uh
-            JOIN haltungen_untersucht AS hu ON hu.haltnam = uh.untersuchhal AND hu.untersuchtag = uh.untersuchtag
-            WHERE uh.untersuchhal IS NOT NULL AND uh.untersuchtag IS NOT NULL AND coalesce(laenge, 0) > 0.05
-            GROUP BY uh.untersuchhal, uh.untersuchtag, station, uh.kuerzel
+            JOIN haltungen_untersucht AS hu
+            ON hu.haltnam = uh.untersuchhal AND
+               hu.schoben = uh.schoben AND
+               hu.schunten = uh.schunten
+            WHERE hu.haltnam IS NOT NULL AND hu.untersuchtag IS NOT NULL AND coalesce(laenge, 0) > 0.05
+            GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station;"""
 
         if not self.db_qkan.sql(
@@ -2007,15 +2010,18 @@ class ImportTask:
                 FROM (VALUES (0.0000000001, 1.0, 0.0), (1.0, 1.0, 0.0), (1.5, 0.0, 1.0), (4.0, 0.0, 1.0))
             )
             UPDATE untersuchdat_haltung SET geom = (
-                SELECT MakeLine(Line_Interpolate_Point(OffsetCurve(ha.geom, di.d), 
+                SELECT MakeLine(Line_Interpolate_Point(OffsetCurve(hu.geom, di.d), 
                     (
                     CASE untersuchrichtung
-                        WHEN 'gegen Fließrichtung' THEN ST_Length(ha.geom) - uh.station
+                        WHEN 'gegen Fließrichtung' THEN ST_Length(hu.geom) - uh.station
                         WHEN 'in Fließrichtung'    THEN uh.station
-                                                   ELSE ST_Length(ha.geom) - uh.station END * di.stat +  
-                    uh.stationtext * di.tpos) / ST_Length(ha.geom))) AS textline
+                                                   ELSE ST_Length(hu.geom) - uh.station END * di.stat +  
+                    uh.stationtext * di.tpos) / ST_Length(hu.geom))) AS textline
                 FROM dist AS di, untersuchdat_haltung AS uh
-                JOIN haltungen_untersucht AS ha ON ha.haltnam = uh.untersuchhal
+                JOIN haltungen_untersucht AS hu
+                ON hu.haltnam = uh.untersuchhal AND
+                   hu.schoben = uh.schoben AND
+                   hu.schunten = uh.schunten
                 WHERE uh.pk = untersuchdat_haltung.pk
                 GROUP BY uh.pk)"""
         if not self.db_qkan.sql(

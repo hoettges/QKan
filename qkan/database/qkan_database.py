@@ -22,7 +22,7 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.3.7"  # Version der QKan-Datenbank
+__dbVersion__ = "3.3.8"  # Version der QKan-Datenbank
 __qgsVersion__ = "3.3.8"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
@@ -471,9 +471,9 @@ def createdbtables(
             bereich TEXT,
             foto_dateiname TEXT,
             ordner TEXT,
-        ZD INTEGER,
-        ZB INTEGER,
-        ZS INTEGER,
+            ZD INTEGER,
+            ZB INTEGER,
+            ZS INTEGER,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP
             )""",
         """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(epsg),

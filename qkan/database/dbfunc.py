@@ -878,8 +878,8 @@ class DBConnection:
 
         id = data[0][1]
         ianf = 0
-        for iend in range(si):
-            if data[iend][1] == id and iend < si - 1:
+        for iend in range(si + 1):
+            if iend < si and data[iend][1] == id:
                 # iend innerhalb eines Blocks der aktuellen id
                 continue
 
@@ -898,7 +898,7 @@ class DBConnection:
                 mavor = ma[i]
                 stvor = station
 
-            pevor = data[i][3]
+            pevor = data[iend - 1][3] - (tdist + bdist)
             mevor = 1                           # Initialisierung mit 1 = True
             stvor = 0
             for i in range(iend - 1, ianf - 1, -1):
@@ -921,13 +921,14 @@ class DBConnection:
                 else:
                     po[i] = (pa[i] + pe[i]) / 2.
             # Nächsten Block vorbereiten
-            ianf = iend
-            id = data[iend][1]
+            if iend < si:
+                ianf = iend
+                id = data[iend][1]
 
         # Debug:
-        logzeilen = []
+        logzeilen = ['   uh.pk    hu.pk  station       pa       pe       ma       me       po']
         for i in range(si):
-            zeile = f'{data[i][0]:8d} {data[i][1]:8s} {data[i][2]:8.2f} {pa[i]:8.2f} {pe[i]:8.2f} {ma[i]:8.2f} {me[i]:8.2f} {po[i]:8.2f}'
+            zeile = f'{data[i][0]:8d} {data[i][1]:8d} {data[i][2]:8.2f} {pa[i]:8.2f} {pe[i]:8.2f} {ma[i]:8.2f} {me[i]:8.2f} {po[i]:8.2f}'
             logzeilen.append(zeile)
         proto = '\n'.join(logzeilen)
         logger.debug(f'{self.__class__.__name__} - calctextpositions: Ergebnis der SQL-Anweisung: \n{proto}')
