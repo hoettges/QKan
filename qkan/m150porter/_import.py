@@ -1831,9 +1831,6 @@ class ImportTask:
                 name = block.findtext("HG001", None)
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
-
-
-
                 untersuchrichtung = block.findtext("HI/HI101", None)
                 if untersuchrichtung == "I":
                     untersuchrichtung = "in Fließrichtung"
@@ -1973,7 +1970,8 @@ class ImportTask:
             JOIN haltungen_untersucht AS hu
             ON hu.haltnam = uh.untersuchhal AND
                hu.schoben = uh.schoben AND
-               hu.schunten = uh.schunten
+               hu.schunten = uh.schunten AND
+               hu.untersuchtag = uh.untersuchtag
             WHERE hu.haltnam IS NOT NULL AND hu.untersuchtag IS NOT NULL AND coalesce(laenge, 0) > 0.05
             GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station;"""
@@ -2021,7 +2019,8 @@ class ImportTask:
                 JOIN haltungen_untersucht AS hu
                 ON hu.haltnam = uh.untersuchhal AND
                    hu.schoben = uh.schoben AND
-                   hu.schunten = uh.schunten
+                   hu.schunten = uh.schunten AND
+                   hu.untersuchtag = uh.untersuchtag
                 WHERE uh.pk = untersuchdat_haltung.pk
                 GROUP BY uh.pk)"""
         if not self.db_qkan.sql(
