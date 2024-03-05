@@ -1,14 +1,23 @@
 import os
 from typing import Callable, Optional, List
-import logging
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QLabel, QWidget, QComboBox, QCheckBox, QListWidget, \
-    QListWidgetItem
-from qkan.database.dbfunc import DBConnection
-from qkan import QKan, list_selected_items
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QWidget,
+    QComboBox,
+    QCheckBox,
+    QListWidget,
+    QListWidgetItem,
+)
 
-logger = logging.getLogger(f"QKan.surfaceTools.application_dialog")
+from qkan import QKan, list_selected_items
+from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
+
+logger = get_logger("QKan.surfaceTools.application_dialog")
 
 
 class _Dialog(QDialog):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from qgis.core import *
@@ -7,8 +6,22 @@ import sqlite3
 import math
 import pandas as pd
 
-class sanierungsbedarfszahl_funkt:
-    def __init__(self, check_cb, db, date, speicher, atlas_path, massstab, format, excel_format, excel_speicher, epsg, db_format):
+
+class SanierungsbedarfszahlFunkt:
+    def __init__(
+        self,
+        check_cb,
+        db,
+        date,
+        speicher,
+        atlas_path,
+        massstab,
+        format,
+        excel_format,
+        excel_speicher,
+        epsg,
+        db_format,
+    ):
 
         self.check_cb = check_cb
         self.db = db

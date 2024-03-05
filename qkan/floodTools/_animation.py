@@ -1,18 +1,28 @@
-import logging
-from datetime import datetime
 import os.path
 import shutil
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import (
-    Qgis, QgsProject, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsVectorFileWriter,
-    QgsCoordinateTransformContext, QgsInterval, QgsTemporalUtils, QgsRasterLayer, QgsLayerTreeLayer
+    Qgis,
+    QgsProject,
+    QgsVectorLayer,
+    QgsCoordinateReferenceSystem,
+    QgsVectorFileWriter,
+    QgsCoordinateTransformContext,
+    QgsInterval,
+    QgsTemporalUtils,
+    QgsRasterLayer,
+    QgsLayerTreeLayer,
 )
-from .flood_db import FloodDB
-from qkan import QKan
 
-logger = logging.getLogger("QKan.floodTools._animation")
+from qkan import QKan
+from .flood_db import FloodDB
+from ..utils import get_logger
+
+logger = get_logger("QKan.floodTools._animation")
+
 
 class FloodanimationTask:
     def __init__(self):

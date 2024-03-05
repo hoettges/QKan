@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   Datenbankmanagement fuer SpatiaLite-Datenbanken
@@ -24,15 +22,15 @@ __author__ = "Joerg Hoettges"
 __date__ = "October 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
-import logging
 import os
 from typing import Any, List, Union
 
 from qgis.utils import spatialite_connect
 
 from .qkan_utils import fehlermeldung
+from ..utils import get_logger
 
-logger = logging.getLogger(u"QKan")
+logger = get_logger("QKan")
 
 # Hauptprogramm ----------------------------------------------------------------
 

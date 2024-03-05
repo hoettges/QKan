@@ -11,13 +11,10 @@ from qkan.database.qkan_utils import eval_node_types, fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from ._import import ImportTask
 from .application_dialog import ImportDialog
-
-# noinspection PyUnresolvedReferences
-from . import resources
-
-# logger = logging.getLogger("QKan.strakat.application")
 
 
 class StrakatPorter(QKanPlugin):
@@ -171,36 +168,3 @@ class StrakatPorter(QKanPlugin):
 
         help_file = "https://qkan.eu/Qkan_allgemein.html?highlight=strakat"
         os.startfile(help_file)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

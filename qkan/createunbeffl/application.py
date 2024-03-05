@@ -6,7 +6,7 @@ from qkan.plugin import QKanPlugin
 from .application_dialog import CreateUnbefFlDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
 
 
 class CreateUnbefFl(QKanPlugin):

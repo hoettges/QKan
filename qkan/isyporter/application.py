@@ -3,18 +3,18 @@ from pathlib import Path
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import read_qml, fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from ._export import ExportTask
 from ._import import ImportTask
 from .application_dialog import ExportDialog, ImportDialog
-
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
 
 
 class IsyPorter(QKanPlugin):

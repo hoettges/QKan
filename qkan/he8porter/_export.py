@@ -1,15 +1,15 @@
-import logging
 from typing import List
 
-from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.he8.export")
+logger = get_logger("QKan.he8.export")
 
 
 # noinspection SqlNoDataSourceInspection, SqlResolve

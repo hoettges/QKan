@@ -1,18 +1,20 @@
-import logging
 import sys
 import re
-from array import array
+import sys
 import xml.etree.ElementTree as ElementTree
-from typing import Dict, Iterator, Tuple, Union
 from fnmatch import fnmatch
+from typing import Dict, Iterator, Union
+
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
+
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
-from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.xml.import")
+logger = get_logger("QKan.xml.import")
 
 
 # region objects

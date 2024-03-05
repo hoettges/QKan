@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
   QGIS-Plugin
   ===========
@@ -18,12 +17,12 @@ Verknüpft Flächen mit nächster Haltung
   (at your option) any later version.
 
 """
-from typing import List, Optional, cast
-import logging
 
+from typing import List, Optional, cast
+
+from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtWidgets import QListWidgetItem
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
@@ -36,6 +35,8 @@ from qkan.database.qkan_utils import (
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 from qkan.plugin import QKanPlugin
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from .application_dialog import (
     AssigntgebDialog,
     CreatelineflDialog,
@@ -44,11 +45,9 @@ from .application_dialog import (
     UpdateLinksDialog,
 )
 from .k_link import assigntgeb, createlinkfl, createlinksw
+from ..utils import get_logger
 
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
-
-logger = logging.getLogger("QKan.linkflaechen.application")
+logger = get_logger("QKan.linkflaechen.application")
 
 
 class LinkFl(QKanPlugin):

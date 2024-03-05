@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  Laengsschnitt
@@ -20,8 +19,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import copy
-import logging
 import os.path
 from typing import Any, List, Optional, Union
 
@@ -30,23 +29,21 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QFileDialog, QGridLayout, QLabel, QMessageBox
-from qgis._core import QgsVectorLayer
-from qgis.core import Qgis, QgsProject
+from qgis.core import Qgis, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
 
 from qkan import QKan
-from qkan.database.sbfunc import SBConnection
 from qkan.database.qkan_utils import get_qkanlayer_attributes
+from qkan.database.sbfunc import SBConnection
+from . import plotter, slider as s
 
 # noinspection PyUnresolvedReferences
-from . import plotter, resources, slider as s  # isort:skip
+from . import resources  # noqa: F401
 from .application_dialog import LaengsschnittDialog
 from .dijkstra import find_route
 from .ganglinie8 import Ganglinie8
 from .models import HaltungenStruct, LayerType, SliderMode, Type
-
-main_logger = logging.getLogger("QKan.ganglinienhe8.application.main")
-main_logger.info("Application-Modul gestartet")
+from ..utils import get_logger
 
 
 class GanglinienHE8:
@@ -60,7 +57,7 @@ class GanglinienHE8:
             application at run time.
         :type iface: QgsInterface
         """
-        self.__log = logging.getLogger("QKan.application.Laengsschnitt")
+        self.__log = get_logger("QKan.application.Laengsschnitt")
         self.__t = 2
         # Save reference to the QGIS interface
         self.__iface = iface
@@ -77,6 +74,8 @@ class GanglinienHE8:
         self.__ganglinie = Ganglinie8(1)
         self.__dlg2 = self.__ganglinie.get_dialog()
         self.__workspace = ""
+
+        self.__log.info("Application-Modul gestartet")
 
     def initGui(self) -> None:
         """
@@ -349,7 +348,7 @@ class GanglinienHE8:
 
         db = SBConnection(self.__result_db)
         if db is None:
-            main_logger.error(
+            self.__log.error(
                 "QKan.Ganglinie8.__check_resultDB:\nDatenbank konnte nicht geöffnet werden:\n{}".format(
                     self.__result_db
                 )

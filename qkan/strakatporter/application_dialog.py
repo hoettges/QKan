@@ -1,30 +1,24 @@
-import logging
 import os
-from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
     QFileDialog,
     QLineEdit,
-    QListWidget,
-    QListWidgetItem,
     QPushButton,
-    QRadioButton,
     QWidget,
     QDialogButtonBox,
 )
-from qgis.utils import pluginDirectory
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionWidget
 
-from qkan import QKan, enums, list_selected_items
-from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
+from qkan import QKan
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.strakat.application_dialog")
+logger = get_logger("QKan.strakat.application_dialog")
+
 
 class _Dialog(QDialog):
     def __init__(
@@ -121,7 +115,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
-        dirname = QFileDialog.getExistingDirectory (
+        dirname = QFileDialog.getExistingDirectory(
             self,
             self.tr("Zu importierendes STRAKAT-Verzeichnis"),
             self.default_dir,
@@ -185,5 +179,3 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 RESULTS_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "strakat_import_dialog_base.ui")
 )
-
-

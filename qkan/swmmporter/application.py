@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   QGIS-Plugin
@@ -19,31 +17,28 @@
   (at your option) any later version.                                  
 
 """
-import os
 
 from pathlib import Path
-import shutil
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
-import logging
 
-import qkan.config
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import read_qml, fehlermeldung
+from qkan.database.qkan_utils import fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from ._exportSWMM import ExportTask
 from ._importSWMM import ImportTask
 from .application_dialog import ExportDialog, ImportDialog
+from ..utils import get_logger
 
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+logger = get_logger("QKan.importswmm")
 
-logger = logging.getLogger("QKan.importswmm")
 
 class SWMMPorter(QKanPlugin):
     """QGIS Plugin Implementation."""

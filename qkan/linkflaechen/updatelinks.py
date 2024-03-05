@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 
   Aktualisierung der Verknüpfungen für Flächen und SW-Einleiter
@@ -25,12 +24,11 @@ __author__ = "Joerg Hoettges"
 __date__ = "February 2018"
 __copyright__ = "(C) 2018, Joerg Hoettges"
 
-import logging
-
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fortschritt
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.linkflaechen.updatelinks")
+logger = get_logger("QKan.linkflaechen.updatelinks")
 
 # progress_bar = None
 

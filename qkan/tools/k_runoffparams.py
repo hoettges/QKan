@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   Set runoff parameters
@@ -24,18 +22,18 @@ __author__ = "Joerg Hoettges"
 __date__ = "July 2018"
 __copyright__ = "(C) 2018, Joerg Hoettges"
 
-import logging
 from typing import List
 
-from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis, QgsMessageLog
 
 from qkan import QKan, enums
 from qkan.config import ToolsConfig
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import sqlconditions
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.tools.k_runoffparams")
+logger = get_logger("QKan.tools.k_runoffparams")
 
 progress_bar = None
 

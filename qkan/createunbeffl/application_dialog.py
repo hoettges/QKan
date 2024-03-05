@@ -1,7 +1,4 @@
-import logging
 import os
-import webbrowser
-from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from qgis.PyQt import uic
@@ -19,17 +16,16 @@ from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.tools.dialogs import QKanDialog
-
 from .k_unbef import create_unpaved_areas
+from ..utils import get_logger
 
 if TYPE_CHECKING:
     from .application import CreateUnbefFl
 
-logger = logging.getLogger("QKan.createunbeffl.application_dialog")
+logger = get_logger("QKan.createunbeffl.application_dialog")
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "application_dialog_base.ui")
 )
-
 
 
 def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
@@ -69,11 +65,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
     lf_anzahl_tezg: QLabel
     tw_selAbflparamTeilgeb: QTableWidget
 
-    def __init__(
-        self,
-        plugin: "CreateUnbefFl",
-        parent: Optional[QWidget] = None
-        ):
+    def __init__(self, plugin: "CreateUnbefFl", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.db_name: Union[str, None] = None
@@ -111,7 +103,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
         der betroffenen TEZG-Flächen
         """
 
-        if not self.db_name :
+        if not self.db_name:
             logger.error("db_name is not initialized.")
             return
 
@@ -171,7 +163,9 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
                 f"SELECT count(*) AS anz FROM tezg WHERE 1{auswahl}",
                 "QKan.CreateUnbefFlaechen (5)",
             ):
-                logger.info("CreateUnbefFlDialog.count_selection: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
+                logger.info(
+                    "CreateUnbefFlDialog.count_selection: QKan-Datenbank wurde wegen eines Fehlers geschlossen"
+                )
                 return
 
             data = db_qkan.fetchone()
@@ -288,7 +282,9 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             logger.debug("result = {}".format(repr(result)))
             # See if OK was pressed
             if result:
-                selected_abflparam = list_selected_tab_items(self.tw_selAbflparamTeilgeb)
+                selected_abflparam = list_selected_tab_items(
+                    self.tw_selAbflparamTeilgeb
+                )
                 logger.debug(
                     "\nliste_selAbflparamTeilgeb (1): {}".format(selected_abflparam)
                 )

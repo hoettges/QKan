@@ -12,10 +12,7 @@ from ._plausi import PlausiTask
 from .application_dialog import PlausiDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
-
-
-# logger = logging.getLogger("QKan.he8.application")
+from . import resources  # noqa: F401
 
 
 class Plausi(QKanPlugin):

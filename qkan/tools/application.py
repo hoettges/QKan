@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Flaechenzuordnungen
 Diverse Tools zur QKan-Datenbank
@@ -7,13 +6,13 @@ Diverse Tools zur QKan-Datenbank
 import os
 from typing import Optional, cast
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgisInterface, QgsMessageBar
 from qgis.PyQt.QtWidgets import QListWidgetItem
-from qgis.utils import iface
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
+from qgis.gui import QgisInterface
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_database import qgs_version
 from qkan.database.qkan_utils import (
     fehlermeldung,
     get_database_QKan,
@@ -23,24 +22,22 @@ from qkan.database.qkan_utils import (
 )
 from qkan.plugin import QKanPlugin
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from .dialogs.dbAdapt import DbAdaptDialog
 from .dialogs.empty_db import EmptyDBDialog
+from .dialogs.filepath import QgsFileDialog
+from .dialogs.help import QgsHelpDialog
 from .dialogs.layersadapt import LayersAdaptDialog
 from .dialogs.qgsadapt import QgsAdaptDialog
 from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadData
 from .dialogs.runoffparams import RunoffParamsDialog
-from .dialogs.help import QgsHelpDialog
-from .dialogs.filepath import QgsFileDialog
 from .k_dbAdapt import dbAdapt
+from .k_filepath import setfilepath
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
-from .k_filepath import setfilepath
-from qkan.database.qkan_database import qgs_version
-
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
 
 
 class QKanTools(QKanPlugin):

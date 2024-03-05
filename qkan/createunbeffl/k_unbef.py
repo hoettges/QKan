@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
   Import from HE
   ==============
@@ -15,17 +13,17 @@ __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
-import logging
 from typing import List
 
+from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtWidgets import QProgressBar
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.createunbeffl.k_unbef")
+logger = get_logger("QKan.createunbeffl.k_unbef")
 progress_bar = None
 
 
@@ -133,7 +131,7 @@ def create_unpaved_areas(
         if attr[4] == "None" or attr[1] == "None":
             fehlermeldung(
                 "Datenfehler: ",
-                u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").',
+                'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").',
             )
             return False
         if first:

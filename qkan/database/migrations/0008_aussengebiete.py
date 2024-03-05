@@ -1,14 +1,13 @@
-import logging
-
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
 VERSION = "2.5.2"
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:
-    """ Einleitungen aus Aussengebieten """
+    """Einleitungen aus Aussengebieten"""
 
     sql = """
     CREATE TABLE IF NOT EXISTS aussengebiete (

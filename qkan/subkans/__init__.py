@@ -1,4 +1,1 @@
-# -*- coding: utf-8 -*-
-
-from .application import subkans
-
+from .application import Substanzklasse

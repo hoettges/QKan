@@ -1,12 +1,12 @@
-import logging
 import os
 from typing import TYPE_CHECKING, Optional
 
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QLineEdit, QPushButton, QWidget
 
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.tools.dialogs")
+logger = get_logger("QKan.tools.dialogs")
 
 if TYPE_CHECKING:
     from qkan.plugin import QKanPlugin

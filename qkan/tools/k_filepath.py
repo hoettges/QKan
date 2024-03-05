@@ -1,20 +1,10 @@
-# -*- coding: utf-8 -*-
-
-
-import logging
-from typing import List
 import os
-from qgis.core import Qgis, QgsMessageLog
-from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.utils import iface, spatialite_connect
 
-from qkan import QKan, enums
-from qkan.config import ToolsConfig
-from qkan.database.dbfunc import DBConnection
+from qgis.utils import spatialite_connect
 
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.tools.k_filepath")
+logger = get_logger("QKan.tools.k_filepath")
 
 
 def setfilepath(

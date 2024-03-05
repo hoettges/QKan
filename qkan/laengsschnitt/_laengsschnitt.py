@@ -1,23 +1,25 @@
-import logging
-from qgis.utils import iface, spatialite_connect
-from qgis.core import Qgis
 import datetime
 
-import win32com.client
-import pywintypes
-from PyQt5 import QtCore
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-import matplotlib.dates as mdates
 import matplotlib.animation as animation
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import pywintypes
+import win32com.client
+from PyQt5 import QtCore
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from qgis.core import Qgis
+from qgis.utils import iface, spatialite_connect
+
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import ffloat
 from qkan.database.qkan_utils import get_qkanlayer_attributes
 from .dijkstra import find_route
+from ..utils import get_logger
 
-logger = logging.getLogger("QKan.laengs.import")
+logger = get_logger("QKan.laengs.import")
 
-#TODO: mit einpflegen, dass die Geländehöhe von meheren DGM Layern angezeigt wird
+# TODO: mit einpflegen, dass die Geländehöhe von meheren DGM Layern angezeigt wird
+
 
 class LaengsTask:
     def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure,

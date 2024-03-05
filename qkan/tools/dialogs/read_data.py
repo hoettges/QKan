@@ -1,23 +1,23 @@
-import logging
-from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast, Any, Callable
 from fnmatch import fnmatch
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, Any, Callable
 
-from qgis.core import QgsApplication, QgsProject, QgsMessageLog, QgsGeometry
 from qgis.PyQt.QtWidgets import QWidget
-from qkan.database.dbfunc import DBConnection
 from qgis.core import Qgis
+from qgis.core import QgsApplication, QgsProject, QgsMessageLog, QgsGeometry
 
 from qkan import QKan
+from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
-    get_database_QKan,
     get_qkanlayer_attributes,
 )
+from qkan.utils import get_logger
 
 if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
-logger = logging.getLogger("QKan.tools.dialogs.read_data")
+logger = get_logger("QKan.tools.dialogs.read_data")
+
 
 def wktmod(wkt_geom):
     """Wandelt einen WKT-Ausdruck in einen WKB-Ausdruck um, um das Dezimaltrennzeichenproblem

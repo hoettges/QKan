@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os,math
+import math
+import os
+import warnings
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 from xml.etree.ElementTree import ElementTree
 
@@ -9,32 +8,39 @@ from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
 
 from qkan import QKan
+from ..utils import get_logger
 
 if TYPE_CHECKING:
     from .dbfunc import DBConnection
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.database.qkan_utils")
+logger = get_logger("QKan.database.qkan_utils")
 
 
 # Fortschritts- und Fehlermeldungen
-
-
 def meldung(title: str, text: str) -> None:
+    warnings.warn("deprecated, use logger.notice instead", DeprecationWarning)
+
     logger.info("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
-    QgsMessageLog.logMessage(message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Info)
+    QgsMessageLog.logMessage(
+        message="{:s} {:s}".format(title, text), tag="QKan", level=Qgis.Info
+    )
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
-def warnung(title: str, text: str, duration: int=-1) -> None:
+def warnung(title: str, text: str, duration: int = -1) -> None:
+    warnings.warn("deprecated, use logger.warning instead", DeprecationWarning)
+
     logger.warning("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
     QgsMessageLog.logMessage(
-        message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Warning
+        message="{:s} {:s}".format(title, text), tag="QKan", level=Qgis.Warning
     )
     QKan.instance.iface.openMessageLog()
-    QKan.instance.iface.messageBar().pushMessage(title, text, duration=duration, level=Qgis.Warning)
+    QKan.instance.iface.messageBar().pushMessage(
+        title, text, duration=duration, level=Qgis.Warning
+    )
 
 
 def fortschritt(text: str, prozent: float = 0) -> None:
@@ -48,17 +54,14 @@ def fortschritt(text: str, prozent: float = 0) -> None:
 
 
 def fehlermeldung(title: str, text: str = "") -> None:
+    warnings.warn("deprecated, use logger.error instead", DeprecationWarning)
+
     logger.error("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
     QgsMessageLog.logMessage(
-        message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Critical)
+        message="{:s} {:s}".format(title, text), tag="QKan", level=Qgis.Critical
+    )
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
-
-    # Protokolldatei anzeigen
-
-    # dnam = dt.today().strftime("%Y%m%d")
-    # fnam = os.path.join(tempfile.gettempdir(), u'QKan{}.log'.format(dnam))
-    # os.startfile(fnam)
 
 
 # Allgemeine Funktionen

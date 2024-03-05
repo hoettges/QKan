@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Import from HE
 
@@ -13,19 +11,19 @@ __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
-import logging
 from typing import List
 
+from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtWidgets import QProgressBar
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.linkflaechen.k_link")
+logger = get_logger("QKan.linkflaechen.k_link")
 
 
 # noinspection PyArgumentList

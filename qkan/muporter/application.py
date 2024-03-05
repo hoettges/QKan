@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 from pathlib import Path
@@ -14,14 +13,14 @@ from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from ._export import ExportTask
 from ._import import ImportTask
 from .application_dialog import ExportDialog, ImportDialog
+from ..utils import get_logger
 
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
-
-logger = logging.getLogger("QKan.he8.application")
+logger = get_logger("QKan.he8.application")
 
 
 class MuPorter(QKanPlugin):

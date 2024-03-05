@@ -1,10 +1,9 @@
-import logging
-from qkan import QKan
-from qkan.database.dbfunc import DBConnection
-from qgis.core import Qgis
-from qgis.utils import iface, spatialite_connect
+from qgis.utils import spatialite_connect
 
-logger = logging.getLogger("QKan.xml.info")
+from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
+
+logger = get_logger("QKan.xml.info")
 
 
 class Info:
@@ -19,10 +18,8 @@ class Info:
         self.curs = db.cursor()
 
     def _infos(self) -> None:
-        #anzahl haltungen
-        sql = """
-        select count() from haltungen
-        """
+        # anzahl haltungen
+        sql = """select count() from haltungen"""
 
         if not self.db_qkan.sql(sql):
             return
@@ -30,9 +27,7 @@ class Info:
         self.anz_haltungen = self.db_qkan.fetchall()[0][0]
 
         # anzahl schaechte
-        sql = """
-           select count() from schaechte
-           """
+        sql = """select count() from schaechte"""
 
         if not self.db_qkan.sql(sql):
             return
@@ -40,23 +35,15 @@ class Info:
         self.anz_schaechte = self.db_qkan.fetchall()[0][0]
 
         # anzahl teilgebiete
-        sql = """
-               select count() from teilgebiete
-               """
+        sql = """select count() from teilgebiete"""
 
         if not self.db_qkan.sql(sql):
             return
 
-
         self.anz_teilgeb = self.db_qkan.fetchall()[0][0]
 
         # anzahl lange haltungen
-        sql = """
-                   SELECT
-                    SUM(laenge)
-                    FROM
-                    haltungen
-                   """
+        sql = """SELECT SUM(laenge) FROM haltungen"""
 
         if not self.db_qkan.sql(sql):
             return

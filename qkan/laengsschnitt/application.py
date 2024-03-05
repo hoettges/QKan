@@ -1,27 +1,19 @@
-from pathlib import Path
-
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
+from PyQt5.QtWidgets import *
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from qgis.core import Qgis
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory,iface
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
-from qkan.tools.k_qgsadapt import qgsadapt
-
-import matplotlib.dates as mdates
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-
-from qgis.PyQt.QtWidgets import QWidget, QCheckBox, QFileDialog
-
-from ._laengsschnitt import LaengsTask
-from .application_dialog import LaengsDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
-from PyQt5.QtWidgets import *
+from . import resources  # noqa: F401
+from ._laengsschnitt import LaengsTask
+from .application_dialog import LaengsDialog
 
 
 class Laengsschnitt(QKanPlugin):

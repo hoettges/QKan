@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   Adapt QKan-Layers to QKan-Standard
@@ -21,7 +19,7 @@
   (at your option) any later version.
 
 """
-import logging
+
 import os
 from typing import cast
 from xml.etree import ElementTree
@@ -32,7 +30,7 @@ from qgis.core import (
     QgsDataSourceUri,
     QgsProject,
     QgsVectorLayer,
-    QgsAction
+    QgsAction,
 )
 from qgis.utils import pluginDirectory
 
@@ -46,13 +44,14 @@ from qkan.database.qkan_utils import (
     meldung,
     warnung,
 )
+from qkan.utils import get_logger
 
 __author__ = "Joerg Hoettges"
 __date__ = "September 2018"
 __copyright__ = "(C) 2018, Joerg Hoettges"
 
 
-logger = logging.getLogger("QKan.tools.k_layersadapt")
+logger = get_logger("QKan.tools.k_layersadapt")
 
 progress_bar = None
 
