@@ -64,6 +64,11 @@ class QKanLoggingManager(logging.Manager):
 def setup_logging(log_to_console: bool) -> tuple[QKanLogger, Path]:
     """Set up our custom logger & logging manager"""
 
+    # remove handlers if a prior instance of our logger exists
+    logging_instance = logging.getLogger("QKan")
+    if type(logging_instance).__name__ == QKanLogger.__name__:
+        logging_instance.handlers.clear()
+
     # create custom logger
     logger = QKanLogger("Qkan")
     logger.setLevel(logging.DEBUG)
@@ -104,6 +109,20 @@ def setup_logging(log_to_console: bool) -> tuple[QKanLogger, Path]:
         stream_handler.setFormatter(formatter)
         stream_handler.setLevel(logging.DEBUG)
         logger.addHandler(stream_handler)
+
+    # inject our logger into global logger registry
+    acquire_lock = getattr(logging, "_acquireLock")
+    if acquire_lock is not None and callable(acquire_lock):
+        acquire_lock()
+    else:
+        logger.error_code("logging is missing _acquireLock()")
+
+    logging.Logger.manager.loggerDict["QKan"] = logger
+    release_lock = getattr(logging, "_releaseLock")
+    if release_lock is not None and callable(release_lock):
+        release_lock()
+    else:
+        logger.error_code("logging is missing _releaseLock()")
 
     return logger, log_path
 
