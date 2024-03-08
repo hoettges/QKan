@@ -24,19 +24,25 @@ class Bericht_STRAKAT(ClassObject):
     station_untersucher: float = 0.0
     atv_kuerzel: str = ""
     atv_langtext: str = ""
+    charakt1: str = ""
+    charakt2: str = ""
+    quantnr1: str = ""
+    quantnr2: str = ""
+    streckenschaden: str = ""
+    pos_von: int = 0
+    pos_bis: int = 0
     sandatum: str = ""
     geloescht: int = 0
     schadensklasse: int = 0
     untersuchungsrichtung: int = 0
-    videoband: str = ""
+    bandnr: str = ""
     videozaehler: int = 0
-    vonuhr: int = 0
-    bisuhr: int = 0
     sanierung: str = ""
     atv143: float = 0.0
     skdichtheit: int = 0
-    skstandsicherheit: int = 0
     skbetriebssicherheit: int = 0
+    skstandsicherheit: int = 0
+    bemerkung: str = ""
     strakatid: str = ""
     hausanschlid: str = ""
     berichtid: str = ""
@@ -116,6 +122,7 @@ class ImportTask:
         self.strakatdir = QKan.config.strakat.import_dir
         self.projectfile = QKan.config.project.file
         self.db_name = QKan.config.database.qkan
+        self.richtung = 'fließrichtung'         # QKan.config.xml.richt_choice
 
     def run(self) -> bool:
 
@@ -752,19 +759,25 @@ class ImportTask:
                 station_untersucher REAL,
                 atv_kuerzel TEXT,
                 atv_langtext TEXT,
+                charakt1 TEXT,
+                charakt2 TEXT,
+                quantnr1 TEXT,
+                quantnr2 TEXT,
+                streckenschaden TEXT,
+                pos_von INTEGER,
+                pos_bis INTEGER,
                 sandatum TEXT,
                 geloescht INTEGER,
                 schadensklasse INTEGER,
                 untersuchungsrichtung INTEGER,
-                videoband TEXT,
+                bandnr TEXT,
                 videozaehler INTEGER,
-                vonuhr INTEGER,
-                bisuhr INTEGER,
                 sanierung TEXT,
                 atv143 REAL,
                 skdichtheit INTEGER,
-                skstandsicherheit INTEGER,
                 skbetriebssicherheit INTEGER,
+                skstandsicherheit INTEGER,
+                bemerkung TEXT,
                 strakatid TEXT,
                 hausanschlid TEXT,
                 berichtid TEXT
@@ -826,16 +839,22 @@ class ImportTask:
                     geloescht = unpack('b', b[296:297])[0]
                     schadensklasse = unpack('B', b[295:296])[0]
                     untersuchungsrichtung = unpack('B', b[297:298])[0]
-                    videoband = b[301:b[301:320].find(b'\x00') + 301].decode('ansi').strip()
+                    bandnr = b[301:b[301:320].find(b'\x00') + 301].decode('ansi').strip()
                     videozaehler = unpack('I', b[320:324])[0]
 
-                    vonuhr = unpack('B', b[366:367])[0]
-                    bisuhr = unpack('B', b[367:368])[0]
+                    pos_von, pos_bis = unpack('BB', b[366:368])
                     sanierung = b[400:b[400:411].find(b'\x00') + 400].decode('ansi').strip()
                     atv143 = unpack('f', b[430:434])[0]
-                    skdichtheit = unpack('B', b[714:715])[0]
-                    skstandsicherheit = unpack('B', b[715:716])[0]
-                    skbetriebssicherheit = unpack('B', b[716:717])[0]
+
+                    quantnr1, quantnr2 = unpack('bb', b[434:436])
+                    streckenschaden = b[436:b[436:437].find(b'\x00') + 436].decode('ansi').strip()
+                    charakt1 = b[438:b[438:449].find(b'\x00') + 438].decode('ansi').strip()
+                    charakt2 = b[449:b[449:].find(b'\x00') + 449].decode('ansi').strip()
+
+                    anmerkung = b[463:b[463:715].find(b'\x00') + 463].decode('ansi').strip()
+                    bemerkung = sanierung + ', ' + anmerkung
+
+                    skdichtheit, skstandsicherheit, skbetriebssicherheit = unpack('BBB', b[714:71])
 
                     (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
                      ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[643:659])]
@@ -860,19 +879,25 @@ class ImportTask:
                         station_untersucher=station_untersucher,
                         atv_kuerzel=atv_kuerzel,
                         atv_langtext=atv_langtext,
+                        charakt1=charakt1,
+                        charakt2=charakt2,
+                        quantnr1=quantnr1,
+                        quantnr2=quantnr2,
+                        streckenschaden=streckenschaden,
+                        pos_von=pos_von,
+                        pos_bis=pos_bis,
                         sandatum=sandatum,
                         geloescht=geloescht,
                         schadensklasse=schadensklasse,
                         untersuchungsrichtung=untersuchungsrichtung,
-                        videoband=videoband,
+                        bandnr=bandnr,
                         videozaehler=videozaehler,
-                        vonuhr=vonuhr,
-                        bisuhr=bisuhr,
                         sanierung=sanierung,
                         atv143=atv143,
                         skdichtheit=skdichtheit,
-                        skstandsicherheit=skstandsicherheit,
                         skbetriebssicherheit=skbetriebssicherheit,
+                        skstandsicherheit=skstandsicherheit,
+                        bemerkung=bemerkung,
                         strakatid=strakatid,
                         hausanschlid=hausanschlid,
                         berichtid=berichtid,
@@ -903,19 +928,27 @@ class ImportTask:
                 'station_untersucher': _bericht.station_untersucher,
                 'atv_kuerzel': _bericht.atv_kuerzel,
                 'atv_langtext': _bericht.atv_langtext,
+                'charakt1': _bericht.charakt1,
+                'charakt2': _bericht.charakt2,
+                'quantnr1': _bericht.quantnr1,
+                'quantnr2': _bericht.quantnr2,
+                'streckenschaden': _bericht.streckenschaden,
+                'pos_von': _bericht.pos_von,
+                'pos_bis': _bericht.pos_bis,
                 'sandatum': _bericht.sandatum,
                 'geloescht': _bericht.geloescht,
                 'schadensklasse': _bericht.schadensklasse,
                 'untersuchungsrichtung': _bericht.untersuchungsrichtung,
-                'videoband': _bericht.videoband,
+                'bandnr': _bericht.bandnr,
                 'videozaehler': _bericht.videozaehler,
                 'vonuhr': _bericht.vonuhr,
                 'bisuhr': _bericht.bisuhr,
                 'sanierung': _bericht.sanierung,
                 'atv143': _bericht.atv143,
                 'skdichtheit': _bericht.skdichtheit,
-                'skstandsicherheit': _bericht.skstandsicherheit,
                 'skbetriebssicherheit': _bericht.skbetriebssicherheit,
+                'skstandsicherheit': _bericht.skstandsicherheit,
+                'bemerkung': _bericht.bemerkung,
                 'strakatid': _bericht.strakatid,
                 'hausanschlid': _bericht.hausanschlid,
                 'berichtid': _bericht.berichtid,
@@ -938,19 +971,27 @@ class ImportTask:
                 station_untersucher, 
                 atv_kuerzel, 
                 atv_langtext, 
+                charakt1,
+                charakt2,
+                quantnr1,
+                quantnr2,
+                streckenschaden,
+                pos_von,
+                pos_bis,
                 sandatum, 
                 geloescht, 
                 schadensklasse, 
                 untersuchungsrichtung, 
-                videoband, 
+                bandnr, 
                 videozaehler, 
                 vonuhr, 
                 bisuhr,
                 sanierung, 
                 atv143, 
                 skdichtheit, 
+                skbetriebssicherheit,
                 skstandsicherheit, 
-                skbetriebssicherheit, 
+                bemerkung, 
                 strakatid, 
                 hausanschlid, 
                 berichtid
@@ -967,19 +1008,27 @@ class ImportTask:
                 :station_untersucher, 
                 :atv_kuerzel, 
                 :atv_langtext, 
+                :charakt1,
+                :charakt2,
+                :quantnr1,
+                :quantnr2,
+                :streckenschaden,
+                :pos_von,
+                :pos_bis,
                 :sandatum, 
                 :geloescht, 
                 :schadensklasse, 
                 :untersuchungsrichtung, 
-                :videoband, 
+                :bandnr, 
                 :videozaehler, 
                 :vonuhr, 
                 :bisuhr,
                 :sanierung, 
                 :atv143, 
                 :skdichtheit, 
+                :skbetriebssicherheit,
                 :skstandsicherheit, 
-                :skbetriebssicherheit, 
+                :bemerkung, 
                 :strakatid, 
                 :hausanschlid, 
                 :berichtid
@@ -1650,12 +1699,72 @@ class ImportTask:
         """Import der Haltungsschäden aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql =  """
+            WITH
+            sto AS (
+                SELECT nummer, schacht_unten
+                FROM t_strakatkanal
+                WHERE schachtnummer <> 0
+            ),
             INSERT INTO untersuchdat_haltung (
-                untersuchhal, untersuchrichtung
+                untersuchhal, schoben, schunten,
+                id, untersuchtag, untersuchrichtung,
+                inspektionslaenge, videozaehler, station, timecode
+                kuerzel, charakt1, charakt2, quantnr1, quantnr2,
+                streckenschaden, streckenschaden_lfdnr,
+                pos_von, pos_bis,
+
+
+                foto_dateiname, film_dateiname, ordner_bild, ordner_video,
+                richtung, ZD, ZB, ZS
             )
+            SELECT
+                Trim(stk.haltungsname)          AS untersuchhal,
+                Trim(Coalesce(
+                    sto.schacht_unten,stk.schacht_oben
+                    ))                          AS schoben,
+                Trim(stk.schacht_unten)         AS schunten,
+                NULL                            AS id, 
+                stb.datum                       AS untersuchtag,
+                CASE stb.untersuchungsrichtung
+                WHEN 0 THEN 'gegen Fließrichtung'
+                WHEN 1 THEN 'in Fließrichtung'
+                ELSE NULL END                   AS untersuchrichtung, 
+                stk.laenge                      AS inspektionslaenge,
+                stb.bandnr                      AS bandnr,
+                printf('%02u:%02u:%02u', 
+                    (videozaehler % 1000000 - (videozaehler % 10000)) / 10000 % 60, 
+                    (videozaehler % 10000 - (videozaehler % 100)) / 100 % 60, 
+                    videozaehler % 100 % 60)    AS videozaehler,
+                stb.station_untersucher         AS station,
+                NULL                            AS timecode,
+                stb.atv_kuerzel                 AS kuerzel,
+                stb.charakt1                    AS charakt1,
+                stb.charakt2                    AS charakt2,                
+                stb.quantnr1                    AS quantnr1,
+                stb.quantnr2                    AS quantnr2,                
+                stb.streckenschaden             AS streckenschaden,
+                stb.fortsetzung                 AS streckenschadenlfdnr,
+                stb.pos_von                     AS pos_von, 
+                stb.pos_bis                     AS pos_bis,
+                NULL                            AS foto_dateiname,
+                NULL                            AS film_dateiname,
+                NULL                            AS ordner_bild,
+                NULL                            AS ordner_video,
+                :richtung                       AS richtung,
+                bemerkung                       AS bemerkung,        -- Kombi aus STRAKAT-Feldern Sanierung + Anmerkung
+                stb.skdichtheit                 AS ZD,
+                stb.skbetriebssicherheit        AS ZB,
+                stb.skstandsicherheit           AS ZS,
+            FROM
+                t_strakatkanal AS stk
+                LEFT JOIN sto
+                ON stk.Zuflussnummer1 = sto.Nummer
+                JOIN t_strakatberichte AS stb
+                ON stb.strakatid = stk.strakatid
+            WHERE stk.laenge > 0.04 AND stk.schachtnummer <> 0
         """
 
-        params = {"epsg": self.epsg}
+        params = {"richtung": self.richtung}
         if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
             return False
 

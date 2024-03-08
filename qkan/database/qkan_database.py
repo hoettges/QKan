@@ -279,6 +279,7 @@ def createdbtables(
             ZD INTEGER,
             ZB INTEGER,
             ZS INTEGER,
+            kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('untersuchdat_haltung','geom')",
@@ -474,6 +475,7 @@ def createdbtables(
             ZD INTEGER,
             ZB INTEGER,
             ZS INTEGER,
+            kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP
             )""",
         """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(epsg),
