@@ -1168,7 +1168,7 @@ class ImportTask:
                     laenge = _strip_float(block.findtext("d:Kante/d:Laenge", 0.0, self.NS))
                     material = block.findtext("d:Kante/d:Material", None, self.NS)
                     aussendurchmesser = _strip_float(block.findtext("d:Kante/d:Profil/d:Aussendurchmesser", None, self.NS))
-                    profilauskleidung = _block.findtext("d:Kante/d:Haltung/d:Auskleidung", None, self.NS)
+                    profilauskleidung = block.findtext("d:Kante/d:Haltung/d:Auskleidung", None, self.NS)
                     innenmaterial = block.findtext("d:Kante/d:Haltung/d:MaterialAuskleidung", None, self.NS)
                     profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", None, self.NS)
                     hoehe = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.

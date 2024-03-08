@@ -2785,260 +2785,1915 @@ class Subkans_funkt:
 
             for attr in curs.fetchall():
 
-                #Testdaten Anfang
-                z = 'DdS'
-                sql = f"""
-                                                 UPDATE substanz_haltung_bewertung
-                                                   SET Schadensauspraegung = ?
-                                                   WHERE substanz_haltung_bewertung.pk = ? 
-                                                   """
-                data = (z, attr[0])
-                try:
-                    curs.execute(sql, data)
-                    db.commit()
-                except:
-                    pass
-
-                z = 'PktS'
-                sql = f"""
+                # 1 BAA-AB
+                if (attr[10] == "BAA" and attr[11] == "A") or (attr[10] == "BAA" and attr[11] == "B"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
                                                  UPDATE substanz_haltung_bewertung
                                                    SET Schadensart = ?
                                                    WHERE substanz_haltung_bewertung.pk = ?;
                                                    """
-                data = (z, attr[0])
-                try:
-                    curs.execute(sql, data)
-                    db.commit()
-                    continue
-                except:
-                    pass
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
 
-                # Testdaten Ende
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
 
-                # if (attr[10] == "BAA" and attr[11] == "A") or ( attr[10] == "BAA" and attr[11] == "B"):
-                #     if attr[15] in ["", "None", "not found"]:
-                #         z = 'PktS'
-                #         sql = f"""
-                #                  UPDATE substanz_haltung_bewertung
-                #                    SET Schadensart = ?
-                #                    WHERE substanz_haltung_bewertung.pk = ?;
-                #                    """
-                #         data = (z, attr[0])
-                #         try:
-                #             curs.execute(sql, data)
-                #             db.commit()
-                #         except:
-                #             pass
-                #
-                #         z = 'DdS'
-                #         sql = f"""
-                #                  UPDATE substanz_haltung_bewertung
-                #                    SET Schadensauspraegung = ?
-                #                    WHERE substanz_haltung_bewertung.pk = ?
-                #                    """
-                #         data = (z, attr[0])
-                #         try:
-                #             curs.execute(sql, data)
-                #             db.commit()
-                #             continue
-                #         except:
-                #             pass
-                #     else:
-                #         z = 'StrS'
-                #         sql = f"""
-                #                  UPDATE substanz_haltung_bewertung
-                #                    SET Schadensart = ?
-                #                    WHERE substanz_haltung_bewertung.pk = ?;
-                #                    """
-                #         data = (z, attr[0])
-                #         try:
-                #             curs.execute(sql, data)
-                #             db.commit()
-                #         except:
-                #             pass
-                #
-                #         z = 'DdS'
-                #         sql = f"""
-                #                                          UPDATE substanz_haltung_bewertung
-                #                                            SET Schadensauspraegung = ?
-                #                                            WHERE substanz_haltung_bewertung.pk = ?
-                #                                            """
-                #         data = (z, attr[0])
-                #         try:
-                #             curs.execute(sql, data)
-                #             db.commit()
-                #             continue
-                #         except:
-                #             pass
-                #
-                # # Tab A.3
-                # if attr[10] == "BAB" and attr[11] == "A" and (
-                #         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
-                #     z = '4'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         #     db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and (
-                #         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
-                #     if attr[13] >= 3:
-                #         z = '1'
-                #     elif 3 > attr[13] >= 2:
-                #         z = '2'
-                #     elif attr[13] < 2:
-                #         z = '3'
-                #     else:
-                #         z = '5'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_D = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         #     db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] in ["",
-                #                                                                                                    "not found"]:
-                #     if attr[13] >= 8:
-                #         z = '0'
-                #     elif 8 > attr[13] >= 5:
-                #         z = '1'
-                #     elif 5 > attr[13] >= 3:
-                #         z = '2'
-                #     elif 3 > attr[13] >= 1:
-                #         z = '3'
-                #     elif attr[13] < 1:
-                #         z = '4'
-                #     else:
-                #         z = '5'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         # db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] <= 0.3:
-                #     if attr[13] >= 3:
-                #         z = '0'
-                #     elif 3 > attr[13] >= 2:
-                #         z = '1'
-                #     elif 2 > attr[13] >= 1:
-                #         z = '2'
-                #     elif 1 > attr[13] >= 0.5:
-                #         z = '3'
-                #     else:
-                #         z = '5'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         # db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.5 >= attr[
-                #     25] > 0.3:
-                #     if attr[13] >= 5:
-                #         z = '0'
-                #     elif 5 > attr[13] >= 3:
-                #         z = '1'
-                #     elif 3 > attr[13] >= 2:
-                #         z = '2'
-                #     elif 2 > attr[13] >= 1:
-                #         z = '3'
-                #     elif attr[13] < 1:
-                #         z = '4'
-                #     else:
-                #         z = '5'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         # db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.7 >= attr[
-                #     25] > 0.5:
-                #     if attr[13] >= 8:
-                #         z = '0'
-                #     elif 8 > attr[13] >= 4:
-                #         z = '1'
-                #     elif 4 > attr[13] >= 3:
-                #         z = '2'
-                #     elif 3 > attr[13] >= 2:
-                #         z = '3'
-                #     elif attr[13] < 2:
-                #         z = '4'
-                #     else:
-                #         z = '5'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         # db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
-                #     z = '4'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         # db.commit()
-                #         continue
-                #     except:
-                #         pass
-                # if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and (
-                #         attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
-                #     z = 'Einzelfallbetrachtung'
-                #     sql = f"""
-                #              UPDATE untersuchdat_haltung_bewertung
-                #                SET Zustandsklasse_S = ?
-                #                WHERE untersuchdat_haltung_bewertung.pk = ?;
-                #                """
-                #     data = (z, attr[0])
-                #     try:
-                #         curs.execute(sql, data)
-                #         # db.commit()
-                #         continue
-                #     except:
-                #         pass
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 2 BAB-A-ACE
+                if (attr[10] == "BAB" and attr[11] == "A" and attr[12] == "A") or (
+                        attr[10] == "BAB" and attr[11] == "A" and attr[12] == "C") \
+                        or (attr[10] == "BAB" and attr[11] == "A" and attr[12] == "E"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 2 BAB-A-BD
+                if (attr[10] == "BAB" and attr[11] == "A" and attr[12] == "B") or (
+                        attr[10] == "BAB" and attr[11] == "A" and attr[12] == "D"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'UmfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 2 BAB-BC-ACE
+                if (attr[10] == "BAB" and attr[11] == "B" and attr[12] == "A") or (
+                        attr[10] == "BAB" and attr[11] == "B" and attr[12] == "C") or (
+                        attr[10] == "BAB" and attr[11] == "B" and attr[12] == "E") \
+                        or (attr[10] == "BAB" and attr[11] == "C" and attr[12] == "A") or (
+                        attr[10] == "BAB" and attr[11] == "C" and attr[12] == "C") or (
+                        attr[10] == "BAB" and attr[11] == "C" and attr[12] == "E"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 2 BAB-BC-BD
+                if (attr[10] == "BAB" and attr[11] == "B" and attr[12] == "B") or (
+                        attr[10] == "BAB" and attr[11] == "B" and attr[12] == "D") \
+                        or (attr[10] == "BAB" and attr[11] == "C" and attr[12] == "B") or (
+                        attr[10] == "BAB" and attr[11] == "C" and attr[12] == "D"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'UmfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 3 BAC-ABC
+                if (attr[10] == "BAC" and attr[11] == "A") or (attr[10] == "BAC" and attr[11] == "B") or (
+                        attr[10] == "BAC" and attr[11] == "C"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 4 BAD-ABCD-AB
+                if (attr[10] == "BAD" and attr[11] == "A" and attr[12] == "A") or (
+                        attr[10] == "BAD" and attr[11] == "A" and attr[12] == "B") \
+                        or (attr[10] == "BAD" and attr[11] == "B" and attr[12] == "A") or (
+                        attr[10] == "BAD" and attr[11] == "B" and attr[12] == "B") \
+                        or (attr[10] == "BAD" and attr[11] == "C" and attr[12] == "A") or (
+                        attr[10] == "BAD" and attr[11] == "C" and attr[12] == "B") \
+                        or (attr[10] == "BAD" and attr[11] == "D" and attr[12] == "A") or (
+                        attr[10] == "BAD" and attr[11] == "D" and attr[12] == "B"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 5 BAE
+                if (attr[10] == "BAE"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 6 BAF-ABCDEFGHJKZ-ABCDEZ
+                if (attr[10] == "BAF" and attr[11] == "A") or (attr[10] == "BAF" and attr[11] == "B") or (
+                        attr[10] == "BAF" and attr[11] == "C") \
+                        or (attr[10] == "BAF" and attr[11] == "D") or (attr[10] == "BAF" and attr[11] == "E") or (
+                        attr[10] == "BAF" and attr[11] == "F") \
+                        or (attr[10] == "BAF" and attr[11] == "G") or (attr[10] == "BAF" and attr[11] == "H") or (
+                        attr[10] == "BAF" and attr[11] == "J") \
+                        or (attr[10] == "BAF" and attr[11] == "K") or (attr[10] == "BAF" and attr[11] == "Z"):
+                    iface.messageBar().pushMessage("Error",
+                                                   str(attr[15]),
+                                                   level=Qgis.Critical)
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 6 BAF-I-ABCDEZ
+                if (attr[10] == "BAF" and attr[11] == "I"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 7 BAG
+                if (attr[10] == "BAG"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 8 BAH-ABCDZ
+                if (attr[10] == "BAH" and attr[11] == "A") or (attr[10] == "BAH" and attr[11] == "B") or (
+                        attr[10] == "BAH" and attr[11] == "C") \
+                        or (attr[10] == "BAH" and attr[11] == "D") or (attr[10] == "BAF" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 9 BAI-AZ-ABCD
+                if (attr[10] == "BAI" and attr[11] == "A") or (attr[10] == "BAI" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'UmfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 10 BAJ-ABC
+                if (attr[10] == "BAJ" and attr[11] == "A") or (attr[10] == "BAJ" and attr[11] == "B") or (
+                        attr[10] == "BAJ" and attr[11] == "C"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'UmfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 11 BAK-ACDEFGHIJKLMN-ABCD
+                if (attr[10] == "BAK" and attr[11] == "A") or (attr[10] == "BAK" and attr[11] == "C") or (
+                        attr[10] == "BAK" and attr[11] == "D") \
+                        or (attr[10] == "BAK" and attr[11] == "E") or (attr[10] == "BAK" and attr[11] == "F") or (
+                        attr[10] == "BAK" and attr[11] == "G") \
+                        or (attr[10] == "BAK" and attr[11] == "H") or (attr[10] == "BAK" and attr[11] == "I") or (
+                        attr[10] == "BAK" and attr[11] == "J") \
+                        or (attr[10] == "BAK" and attr[11] == "K") or (attr[10] == "BAK" and attr[11] == "L") or (
+                        attr[10] == "BAK" and attr[11] == "M") \
+                        or (attr[10] == "BAK" and attr[11] == "N"):
+                    if attr[15] in ["", None,
+                                    "not found"]:  # hier muss noch eine Unterscheidung für UmfS statt nur PktS/StrS getroffen werden. Wie sähe der Tabellenwert dann aus?
+                        z = 'PktS'  # or z = 'UmfS' berücksichtigen!
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 11 BAK-BZ-ABCD
+                if (attr[10] == "BAK" and attr[11] == "B") or (attr[10] == "BAK" and attr[11] == "Z"):
+                    if attr[15] in ["", None,
+                                    "not found"]:  # hier muss noch eine Unterscheidung für UmfS statt nur PktS/StrS getroffen werden. Wie sähe der Tabellenwert dann aus?
+                        z = 'PktS'  # or z = 'UmfS' berücksichtigen!
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 12 BAL-ABCDFGZ-ABCD
+                if (attr[10] == "BAL" and attr[11] == "A") or (attr[10] == "BAL" and attr[11] == "B") or (
+                        attr[10] == "BAL" and attr[11] == "C") \
+                        or (attr[10] == "BAL" and attr[11] == "D") or (attr[10] == "BAL" and attr[11] == "F") or (
+                        attr[10] == "BAL" and attr[11] == "G") \
+                        or (attr[10] == "BAL" and attr[11] == "Z"):
+                    if attr[15] in ["", None,
+                                    "not found"]:  # hier muss noch eine Unterscheidung für UmfS statt nur PktS/StrS getroffen werden. Wie sähe der Tabellenwert dann aus?
+                        z = 'PktS'  # or z = 'UmfS' berücksichtigen!
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 12 BAL-E-ABCD
+                if (attr[10] == "BAK" and attr[11] == "B") or (attr[10] == "BAK" and attr[11] == "Z"):
+                    if attr[15] in ["", None,
+                                    "not found"]:  # hier muss noch eine Unterscheidung für UmfS statt nur PktS/StrS getroffen werden. Wie sähe der Tabellenwert dann aus?
+                        z = 'PktS'  # or z = 'UmfS' berücksichtigen!
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 13 BAM-A
+                if (attr[10] == "BAM" and attr[11] == "A"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 13 BAM-BC
+                if (attr[10] == "BAM" and attr[11] == "B") or (attr[10] == "BAM" and attr[11] == "C"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'UmfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 14 BAN
+                if (attr[10] == "BAN"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 15 BAO
+                if (attr[10] == "BAO"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 16 BAP
+                if (attr[10] == "BAP"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 17 BBA-ABC
+                if (attr[10] == "BBA" and attr[11] == "A") or (attr[10] == "BBA" and attr[11] == "B") or (
+                        attr[10] == "BBA" and attr[11] == "C"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 18 BBB-ABCZ
+                if (attr[10] == "BBB" and attr[11] == "A") or (attr[10] == "BBB" and attr[11] == "B") or (
+                        attr[10] == "BBB" and attr[11] == "C") \
+                        or (attr[10] == "BBB" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 19 BBC-ABC
+                if (attr[10] == "BBC" and attr[11] == "A") or (attr[10] == "BBC" and attr[11] == "B") or (
+                        attr[10] == "BBC" and attr[11] == "C"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 19 BBC-Z
+                if (attr[10] == "BBC" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = '-'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = '-'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 20 BBD
+                if (attr[10] == "BBD"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 21 BBE-ABCDEFGHZ
+                if (attr[10] == "BBE" and attr[11] == "A") or (attr[10] == "BBE" and attr[11] == "B") or (
+                        attr[10] == "BBE" and attr[11] == "C") \
+                        or (attr[10] == "BBE" and attr[11] == "D") or (attr[10] == "BBE" and attr[11] == "E") or (
+                        attr[10] == "BBE" and attr[11] == "F") \
+                        or (attr[10] == "BBE" and attr[11] == "G") or (attr[10] == "BBE" and attr[11] == "H") or (
+                        attr[10] == "BBE" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'SoB'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 22 BBF-ABCD
+                if (attr[10] == "BBF" and attr[11] == "A") or (attr[10] == "BBF" and attr[11] == "B") or (
+                        attr[10] == "BBF" and attr[11] == "C") \
+                        or (attr[10] == "BBF" and attr[11] == "D"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 23 BBG
+                if (attr[10] == "BBG"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 25 BCA-ABCDEFZ
+                if (attr[10] == "BCA" and attr[11] == "A") or (attr[10] == "BCA" and attr[11] == "B") or (
+                        attr[10] == "BCA" and attr[11] == "C") \
+                        or (attr[10] == "BCA" and attr[11] == "D") or (attr[10] == "BCA" and attr[11] == "E") or (
+                        attr[10] == "BCA" and attr[11] == "F") \
+                        or (attr[10] == "BCA" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # 26 BCB-ABFGZ
+                if (attr[10] == "BCB" and attr[11] == "A") or (attr[10] == "BCB" and attr[11] == "B") or (
+                        attr[10] == "BCB" and attr[11] == "F") \
+                        or (attr[10] == "BCB" and attr[11] == "G") or (attr[10] == "BCB" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'OfS'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+
+                # 26 BCB-CDE
+                if (attr[10] == "BCB" and attr[11] == "C") or (attr[10] == "BCB" and attr[11] == "D") or (
+                        attr[10] == "BCB" and attr[11] == "E"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'DdS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # "keine Relevanz":  #24 BBH-ABZ, #27 BCC-AB, #28 BDB, #31 BDE-ACDEYY, #32 BDF-ABCZ, #33 BDG-ABCZ
+                if (attr[10] == "BBH" and attr[11] == "A") or (attr[10] == "BBH" and attr[11] == "B") or (
+                        attr[10] == "BBH" and attr[11] == "Z") \
+                        or (attr[10] == "BCC" and attr[11] == "A") or (attr[10] == "BCC" and attr[11] == "B") or (
+                        attr[10] == "BDB") or (attr[10] == "BDE" and attr[11] == "A") \
+                        or (attr[10] == "BDE" and attr[11] == "C") or (attr[10] == "BDE" and attr[11] == "D") or (
+                        attr[10] == "BDE" and attr[11] == "E") \
+                        or (attr[10] == "BDE" and attr[11] == "YY") or (attr[10] == "BDF" and attr[11] == "A") or (
+                        attr[10] == "BDF" and attr[11] == "B") \
+                        or (attr[10] == "BDF" and attr[11] == "C") or (attr[10] == "BDF" and attr[11] == "Z") or (
+                        attr[10] == "BDG" and attr[11] == "A") \
+                        or (attr[10] == "BDG" and attr[11] == "B") or (attr[10] == "BDG" and attr[11] == "C") or (
+                        attr[10] == "BDG" and attr[11] == "Z"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = '-'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'keine Relevanz'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        pass
+
+                # "keine Relevanz": #8 BAH-E, #29 BDC-ABCZ, #30 BDD-ABCDE
+                if (attr[10] == "BAH" and attr[11] == "E") or (attr[10] == "BDC" and attr[11] == "A") or (
+                        attr[10] == "BDC" and attr[11] == "B") \
+                        or (attr[10] == "BDC" and attr[11] == "C") or (attr[10] == "BDC" and attr[11] == "Z") or (
+                        attr[10] == "BDD" and attr[11] == "A") \
+                        or (attr[10] == "BDD" and attr[11] == "B") or (attr[10] == "BDD" and attr[11] == "C") or (
+                        attr[10] == "BDD" and attr[11] == "D") \
+                        or (attr[10] == "BDD" and attr[11] == "E"):
+                    if attr[15] in ["", None, "not found"]:
+                        z = 'PktS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'keine Relevanz'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensauspraegung = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ? 
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
+                    else:
+                        z = 'StrS'
+                        sql = f"""
+                                                 UPDATE substanz_haltung_bewertung
+                                                   SET Schadensart = ?
+                                                   WHERE substanz_haltung_bewertung.pk = ?;
+                                                   """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                        except:
+                            pass
+
+                        z = 'keine Relevanz'
+                        sql = f"""
+                                                                         UPDATE substanz_haltung_bewertung
+                                                                           SET Schadensauspraegung = ?
+                                                                           WHERE substanz_haltung_bewertung.pk = ? 
+                                                                           """
+                        data = (z, attr[0])
+                        try:
+                            curs.execute(sql, data)
+                            db.commit()
+                            continue
+                        except:
+                            pass
 
         sql = """SELECT RecoverGeometryColumn('substanz_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
@@ -3047,6 +4702,25 @@ class Subkans_funkt:
             db.commit()
         except:
             pass
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'substanz_haltung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        substanz_haltung_bewertung = 'substanz_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), substanz_haltung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(substanz_haltung_bewertung)[0].id())
+        except:
+            pass
+
+        # TODO: Layer style erstellen
+        #x = os.path.dirname(os.path.abspath(__file__))
+        #vlayer.loadNamedStyle(x + '/substanz_haltung_bewertung.qml')
+        QgsProject.instance().addMapLayer(vlayer)
 
 
 
@@ -3094,54 +4768,50 @@ class Subkans_funkt:
 
         if haltung == True:
 
-            #nur schäden mit OfS und DdS auswählen
-            #nur PktS und UmfS auswählem
-
-            # TODO: Sonderregeln für Streckenschäden ergänzen Anlage 8-9
-
+            #Sonderregeln für Streckenschäden ergänzen Anlage 8-9
 
             sql = """
-                                                   SELECT
-                                                       substanz_haltung_bewertung.pk,
-                                                       substanz_haltung_bewertung.untersuchhal,
-                                                       substanz_haltung_bewertung.untersuchrichtung,
-                                                       substanz_haltung_bewertung.schoben,
-                                                       substanz_haltung_bewertung.schunten,
-                                                       substanz_haltung_bewertung.id,
-                                                       substanz_haltung_bewertung.videozaehler,
-                                                       substanz_haltung_bewertung.inspektionslaenge,
-                                                       substanz_haltung_bewertung.station,
-                                                       substanz_haltung_bewertung.timecode,
-                                                       substanz_haltung_bewertung.kuerzel,
-                                                       substanz_haltung_bewertung.charakt1,
-                                                       substanz_haltung_bewertung.charakt2,
-                                                       substanz_haltung_bewertung.quantnr1,
-                                                       substanz_haltung_bewertung.quantnr2,
-                                                       substanz_haltung_bewertung.Schadensart,
-                                                       substanz_haltung_bewertung.Schadensauspraegung,
-                                                       substanz_haltung_bewertung.streckenschaden,
-                                                       substanz_haltung_bewertung.pos_von,
-                                                       substanz_haltung_bewertung.pos_bis,
-                                                       substanz_haltung_bewertung.foto_dateiname,
-                                                       substanz_haltung_bewertung.film_dateiname,
-                                                       substanz_haltung_bewertung.richtung,
-                                                       substanz_haltung_bewertung.bw_bs,
-                                                       substanz_haltung_bewertung.Zustandsklasse_D,
-                                                       substanz_haltung_bewertung.Zustandsklasse_S,
-                                                       substanz_haltung_bewertung.Zustandsklasse_B,
-                                                       substanz_haltung_bewertung.Zustandsklasse_ges,
-                                                       substanz_haltung_bewertung.Schadenslaenge,
-                                                       substanz_haltung_bewertung.createdat,
-                                                       haltungen.haltnam,
-                                                       haltungen.material,
-                                                       haltungen.hoehe,
-                                                       haltungen.createdat
-                                                   FROM substanz_haltung_bewertung, haltungen
-                                                   WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                                                   AND (substanz_haltung_bewertung.Schadensart = 'StrS') 
-                                                   AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS' OR substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
-                                                   AND Zustandsklasse_ges IN (0,1,2,3,4)
-                                               """
+                       SELECT
+                           substanz_haltung_bewertung.pk,
+                           substanz_haltung_bewertung.untersuchhal,
+                           substanz_haltung_bewertung.untersuchrichtung,
+                           substanz_haltung_bewertung.schoben,
+                           substanz_haltung_bewertung.schunten,
+                           substanz_haltung_bewertung.id,
+                           substanz_haltung_bewertung.videozaehler,
+                           substanz_haltung_bewertung.inspektionslaenge,
+                           substanz_haltung_bewertung.station,
+                           substanz_haltung_bewertung.timecode,
+                           substanz_haltung_bewertung.kuerzel,
+                           substanz_haltung_bewertung.charakt1,
+                           substanz_haltung_bewertung.charakt2,
+                           substanz_haltung_bewertung.quantnr1,
+                           substanz_haltung_bewertung.quantnr2,
+                           substanz_haltung_bewertung.Schadensart,
+                           substanz_haltung_bewertung.Schadensauspraegung,
+                           substanz_haltung_bewertung.streckenschaden,
+                           substanz_haltung_bewertung.pos_von,
+                           substanz_haltung_bewertung.pos_bis,
+                           substanz_haltung_bewertung.foto_dateiname,
+                           substanz_haltung_bewertung.film_dateiname,
+                           substanz_haltung_bewertung.richtung,
+                           substanz_haltung_bewertung.bw_bs,
+                           substanz_haltung_bewertung.Zustandsklasse_D,
+                           substanz_haltung_bewertung.Zustandsklasse_S,
+                           substanz_haltung_bewertung.Zustandsklasse_B,
+                           substanz_haltung_bewertung.Zustandsklasse_ges,
+                           substanz_haltung_bewertung.Schadenslaenge,
+                           substanz_haltung_bewertung.createdat,
+                           haltungen.haltnam,
+                           haltungen.material,
+                           haltungen.hoehe,
+                           haltungen.createdat
+                       FROM substanz_haltung_bewertung, haltungen
+                       WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                       AND (substanz_haltung_bewertung.Schadensart = 'StrS') 
+                       AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS')
+                       AND Zustandsklasse_ges IN (0,1,2,3,4)
+                   """
             data = (date,)
 
             curs.execute(sql, data)
@@ -3150,7 +4820,6 @@ class Subkans_funkt:
             entf_list = []
             for attr in curs.fetchall():
                 #testen, ob die streckenschaden sich überlagern
-                # TODO: Schadensüberlagerung nur OFS mit OFS und Dds mit Dds überlagern!
                 stg = 1
                 # Klassengewichte
                 if int(attr[27]) == 0:
@@ -3171,8 +4840,172 @@ class Subkans_funkt:
                 #auf überlagerungen prüfen!
                 #überall wo die Streckenschäden an der gleichen position sind stg*kg vergleichen und nur den schwersten behalten
 
-            #TODO: Schadensüberlagerung nur OFS mit OFS und Dds mit Dds überlagern!
-            #momentan wird alles mit einander verglichen, Datanbank abfrage ändern!
+                #wenn attr[0] zwischen station und station+schadenslänge
+
+                if attr[0] in dictionary:
+                    continue
+                new_list = []
+                for x in curs.fetchall():
+                    if x[0] == attr[0]:
+                        new_list.append(x)
+                dictionary[attr[0]] = new_list
+
+            for values in dictionary.values():
+                new_items = []
+                vergl = []
+
+                for i in values:
+                    if i[8] not in new_items:
+                        # i[8] ist die Stationierung
+                        x = i[8]
+                        new_items.append(i[8])
+                    else:
+                        for i in values:
+                            if i[8] == x or x<i[8]<x+i[28]:
+                                vergl.append(i)
+
+                zustand = []
+                for i in vergl:
+                    # i[27] Zustandsbewertung
+                    zustand.append(kg)
+
+                if len(zustand) > 0:
+                    entf = min(zustand)
+                    entf_index = zustand.index(entf)
+
+                    # pk von dem element welches entfernt werden soll
+                    entf_list.append(vergl[entf_index][0])
+
+            # Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+
+            try:
+                db.commit()
+            except:
+                pass
+
+            sql = """
+                                   SELECT
+                                       substanz_haltung_bewertung.pk,
+                                       substanz_haltung_bewertung.untersuchhal,
+                                       substanz_haltung_bewertung.untersuchrichtung,
+                                       substanz_haltung_bewertung.schoben,
+                                       substanz_haltung_bewertung.schunten,
+                                       substanz_haltung_bewertung.id,
+                                       substanz_haltung_bewertung.videozaehler,
+                                       substanz_haltung_bewertung.inspektionslaenge,
+                                       substanz_haltung_bewertung.station,
+                                       substanz_haltung_bewertung.timecode,
+                                       substanz_haltung_bewertung.kuerzel,
+                                       substanz_haltung_bewertung.charakt1,
+                                       substanz_haltung_bewertung.charakt2,
+                                       substanz_haltung_bewertung.quantnr1,
+                                       substanz_haltung_bewertung.quantnr2,
+                                       substanz_haltung_bewertung.Schadensart,
+                                       substanz_haltung_bewertung.Schadensauspraegung,
+                                       substanz_haltung_bewertung.streckenschaden,
+                                       substanz_haltung_bewertung.pos_von,
+                                       substanz_haltung_bewertung.pos_bis,
+                                       substanz_haltung_bewertung.foto_dateiname,
+                                       substanz_haltung_bewertung.film_dateiname,
+                                       substanz_haltung_bewertung.richtung,
+                                       substanz_haltung_bewertung.bw_bs,
+                                       substanz_haltung_bewertung.Zustandsklasse_D,
+                                       substanz_haltung_bewertung.Zustandsklasse_S,
+                                       substanz_haltung_bewertung.Zustandsklasse_B,
+                                       substanz_haltung_bewertung.Zustandsklasse_ges,
+                                       substanz_haltung_bewertung.Schadenslaenge,
+                                       substanz_haltung_bewertung.createdat,
+                                       haltungen.haltnam,
+                                       haltungen.material,
+                                       haltungen.hoehe,
+                                       haltungen.createdat
+                                   FROM substanz_haltung_bewertung, haltungen
+                                   WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                   AND (substanz_haltung_bewertung.Schadensart = 'StrS') 
+                                   AND (substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
+                                   AND Zustandsklasse_ges IN (0,1,2,3,4)
+                               """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+            dictionary = {}
+            entf_list = []
+            for attr in curs.fetchall():
+                # testen, ob die streckenschaden sich überlagern
+                #Schadensüberlagerung nur OFS mit OFS und Dds mit Dds überlagern!
+                stg = 1
+                # Klassengewichte
+                if int(attr[27]) == 0:
+                    kg = 1.0
+                elif int(attr[27]) == 1:
+                    kg = 0.8
+                elif int(attr[27]) == 2:
+                    kg = 0.25
+                elif int(attr[27]) == 3:
+                    kg = 0.15
+                elif int(attr[27]) == 4:
+                    kg = 0.05
+                elif int(attr[27]) == 5:
+                    kg = 0.0
+
+                # streckenschaden überlagern anhand von kg*stg?
+
+                # auf überlagerungen prüfen!
+                # überall wo die Streckenschäden an der gleichen position sind stg*kg vergleichen und nur den schwersten behalten
+
+                # wenn attr[0] zwischen station und station+schadenslänge
+
+                if attr[0] in dictionary:
+                    continue
+                new_list = []
+                for x in curs.fetchall():
+                    if x[0] == attr[0]:
+                        new_list.append(x)
+                dictionary[attr[0]] = new_list
+
+            for values in dictionary.values():
+                new_items = []
+                vergl = []
+
+                for i in values:
+                    if i[8] not in new_items:
+                        # i[8] ist die Stationierung
+                        x = i[8]
+                        new_items.append(i[8])
+                    else:
+                        for i in values:
+                            if i[8] == x or x < i[8] < x+i[28]:
+                                vergl.append(i)
+
+                zustand = []
+                for i in vergl:
+                    # i[27] Zustandsbewertung
+                    zustand.append(kg)
+
+                if len(zustand) > 0:
+                    entf = min(zustand)
+                    entf_index = zustand.index(entf)
+
+                    # pk von dem element welches entfernt werden soll
+                    entf_list.append(vergl[entf_index][0])
+
+            # Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+
+            try:
+                db.commit()
+            except:
+                pass
+
+
             sql = """
                                        SELECT
                                            substanz_haltung_bewertung.pk,
@@ -3212,7 +5045,7 @@ class Subkans_funkt:
                                        FROM substanz_haltung_bewertung, haltungen
                                        WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
                                        AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
-                                       AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS' OR substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
+                                       AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS')
                                        AND Zustandsklasse_ges IN (0,1,2,3,4)
                                    """
             data = (date,)
@@ -3233,7 +5066,7 @@ class Subkans_funkt:
                     curs.execute(sql, data)
 
                 if attr[15] == "UmfS":
-                    sl = attr[31]
+                    sl = attr[32]
 
                     sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
                     data = (sl, attr[0])
@@ -3279,23 +5112,144 @@ class Subkans_funkt:
                     # pk von dem element welches entfernt werden soll
                     entf_list.append(vergl[entf_index][0])
 
-        # try:
-        #     db.commit()
-        # except:
-        #     pass
+            # try:
+            #     db.commit()
+            # except:
+            #     pass
 
-        #Datenbank anweisung um die Elemente zu löschen
-        for i in entf_list:
+            #Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
 
-            sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
-            data = (i,)
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+
+            try:
+                db.commit()
+            except:
+                pass
+
+
+            sql = """
+                                               SELECT
+                                                   substanz_haltung_bewertung.pk,
+                                                   substanz_haltung_bewertung.untersuchhal,
+                                                   substanz_haltung_bewertung.untersuchrichtung,
+                                                   substanz_haltung_bewertung.schoben,
+                                                   substanz_haltung_bewertung.schunten,
+                                                   substanz_haltung_bewertung.id,
+                                                   substanz_haltung_bewertung.videozaehler,
+                                                   substanz_haltung_bewertung.inspektionslaenge,
+                                                   substanz_haltung_bewertung.station,
+                                                   substanz_haltung_bewertung.timecode,
+                                                   substanz_haltung_bewertung.kuerzel,
+                                                   substanz_haltung_bewertung.charakt1,
+                                                   substanz_haltung_bewertung.charakt2,
+                                                   substanz_haltung_bewertung.quantnr1,
+                                                   substanz_haltung_bewertung.quantnr2,
+                                                   substanz_haltung_bewertung.Schadensart,
+                                                   substanz_haltung_bewertung.Schadensauspraegung,
+                                                   substanz_haltung_bewertung.streckenschaden,
+                                                   substanz_haltung_bewertung.pos_von,
+                                                   substanz_haltung_bewertung.pos_bis,
+                                                   substanz_haltung_bewertung.foto_dateiname,
+                                                   substanz_haltung_bewertung.film_dateiname,
+                                                   substanz_haltung_bewertung.richtung,
+                                                   substanz_haltung_bewertung.bw_bs,
+                                                   substanz_haltung_bewertung.Zustandsklasse_D,
+                                                   substanz_haltung_bewertung.Zustandsklasse_S,
+                                                   substanz_haltung_bewertung.Zustandsklasse_B,
+                                                   substanz_haltung_bewertung.Zustandsklasse_ges,
+                                                   substanz_haltung_bewertung.Schadenslaenge,
+                                                   substanz_haltung_bewertung.createdat,
+                                                   haltungen.haltnam,
+                                                   haltungen.material,
+                                                   haltungen.hoehe,
+                                                   haltungen.createdat
+                                               FROM substanz_haltung_bewertung, haltungen
+                                               WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                               AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                               AND (substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
+                                               AND Zustandsklasse_ges IN (0,1,2,3,4)
+                                           """
+            data = (date,)
+
             curs.execute(sql, data)
 
-        try:
-            db.commit()
-        except:
-            pass
+            dictionary = {}
+            entf_list = []
+            for attr in curs.fetchall():
 
+                # schadenslänge ergänzen
+                if attr[15] == "PktS":
+                    sl = 0.3
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
+
+                if attr[15] == "UmfS":
+                    sl = attr[32]
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
+                try:
+                    db.commit()
+                except:
+                    pass
+
+                if attr[0] in dictionary:
+                    continue
+                new_list = []
+                for x in curs.fetchall():
+                    if x[0] == attr[0]:
+                        new_list.append(x)
+                dictionary[attr[0]] = new_list
+
+            for values in dictionary.values():
+                new_items = []
+                vergl = []
+
+                for i in values:
+                    if i[8] not in new_items:
+                        # i[1] ist die Stationierung
+                        x = i[8]
+                        new_items.append(i[8])
+                    else:
+                        for i in values:
+                            if i[8] == x:
+                                vergl.append(i)
+
+                zustand = []
+                for i in vergl:
+                    # i[3] Zustandsbewertung
+                    zustand.append(i[27])
+
+                if len(zustand) > 0:
+                    entf = min(zustand)
+                    entf_index = zustand.index(entf)
+
+                    # pk von dem element welches entfernt werden soll
+                    entf_list.append(vergl[entf_index][0])
+
+            # try:
+            #     db.commit()
+            # except:
+            #     pass
+
+            # Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+
+            try:
+                db.commit()
+            except:
+                pass
 
     def subkans(self):
         #Berechnung der Substanzklassen
@@ -3402,6 +5356,9 @@ class Subkans_funkt:
         for attr in curs.fetchall():
 
             sl = attr[28]
+            iface.messageBar().pushMessage("Error",
+                                           str(sl),
+                                           level=Qgis.Critical)
             sg=0
             kg=0
             stg=0
@@ -3432,7 +5389,7 @@ class Subkans_funkt:
                 stg = 1
 
             # schadensgewicht:
-            if sl not in ("", None, "None", "not found"):
+            if sl not in ("", None, "not found"):
 
                 sg = float(sl) * stg * kg
 
@@ -3474,7 +5431,7 @@ class Subkans_funkt:
         abn='-'
         for attr in curs.fetchall():
             # abn = bsl/länge*100
-            if attr[2] not in ("","not found", None, "None") and attr[3] not in ("","not found", None, "None"):
+            if attr[2] not in ("","not found", None, None) and attr[3] not in ("","not found", None, None):
                 abn=float(attr[2])/float(attr[4])*100
 
                 # #substanzklasse
@@ -3493,7 +5450,7 @@ class Subkans_funkt:
                 elif 5>=sub_ges:
                     sbk = 0
 
-            # sg in tabelle schreiben
+            # abn in tabelle schreiben
             sql = """UPDATE haltungen_substanz_bewertung SET Abnutzung = ? WHERE haltungen_substanz_bewertung.pk = ?"""
             data = (abn, attr[5])
 
@@ -3509,3 +5466,30 @@ class Subkans_funkt:
             db1.commit()
         except:
             pass
+
+        sql = """SELECT RecoverGeometryColumn('haltungen_substanz_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db1.commit()
+        except:
+            pass
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'haltungen_substanz_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        haltungen_substanz_bewertung = 'haltungen_substanz_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), haltungen_substanz_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(haltungen_substanz_bewertung)[0].id())
+        except:
+            pass
+
+        # TODO: Layer style erstellen
+        # x = os.path.dirname(os.path.abspath(__file__))
+        # vlayer.loadNamedStyle(x + '/haltungen_substanz_bewertung.qml')
+        QgsProject.instance().addMapLayer(vlayer)

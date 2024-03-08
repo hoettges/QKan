@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
-from datetime import date
+
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.utils import iface
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
@@ -39,7 +38,6 @@ def SubElementText(parent: Element, name: str, text: Union[str, int]) -> Element
         s.text = str(text)
     return s
 
-#TODO: Testen und Verknuepfung zu Refernztabellen prüfen
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
@@ -51,6 +49,8 @@ class ExportTask:
         self.stamm: Optional[Element] = None
         self.hydraulik_objekte: Optional[Element] = None
 
+        # Mappings
+        self.mapper_simstatus: Dict[int, str] = {}
 
     def _export_wehre(self) -> None:
         if (
@@ -61,21 +61,25 @@ class ExportTask:
             return
         sql = """
         SELECT
-            haltnam,
+            wnam,
             schoben,
             schunten,
-            sohleunten,
-            sohleoben,
+            wehrtyp,
+            schwellenhoehe,
+            kammerhoehe,
             laenge,
+            uebeiwert,
+            aussentyp,
+            aussenwsp,
             simstatus,
             kommentar
-        FROM haltungen WHERE haltungstyp = 'Wehr'
+        FROM wehre
         """
 
         if not self.db_qkan.sql(sql, "db_qkan: export_wehre"):
             return
 
-        fortschritt("Export Wehre...", 0.5)
+        fortschritt("Export Wehre...", 0.35)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
@@ -88,24 +92,26 @@ class ExportTask:
                 {
                     "SchachtZulauf": attr[1],
                     "SchachtAblauf": attr[2],
+                    "Wehrtyp": attr[3],
                     "Schwellenhoehe": attr[4],
                     "Kammerhoehe": attr[5],
                     "LaengeWehrschwelle": attr[6],
+                    "Ueberfallbeiwert": attr[7],
                 },
             )
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             SubElementText(abw, "Objektbezeichnung", attr[0])
-            SubElement(abw, "Objektart", str(1))
-            SubElementText(abw, "Status", attr[10])
+            SubElement(abw, "Objektart")
+            SubElementText(abw, "Status", self.mapper_simstatus.get(attr[10], -1))
             _create_children_text(
                 SubElement(
                     SubElement(SubElement(abw, "Knoten"), "Bauwerk"), "Wehr_Ueberlauf"
                 ),
-                {"LaengeWehrschwelle": attr[6]},
+                {"Wehrtyp": attr[3], "LaengeWehrschwelle": attr[6]},
             )
 
-        fortschritt("Wehre eingefügt", 0.10)
+        fortschritt("Wehre eingefügt")
 
     def _export_pumpen(self) -> None:
         if (
@@ -117,19 +123,25 @@ class ExportTask:
 
         sql = """
         SELECT
-            haltnam,
-            sohleoben,
+            pnam,
+            volanf,
+            volges,
+            sohle,
             schunten,
             schoben,
+            steuersch,
+            einschalthoehe,
+            ausschalthoehe,
             simstatus,
-            kommentar
-        FROM haltungen WHERE haltungstyp = 'Pumpe'
+            kommentar,
+            pumpentyp
+        FROM pumpen
         """
 
         if not self.db_qkan.sql(sql, "db_qkan: export_pumpen"):
             return
 
-        fortschritt("Export Pumpen...", 0.15)
+        fortschritt("Export Pumpen...", 0.35)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
@@ -138,9 +150,15 @@ class ExportTask:
                 SubElement(obj, "Pumpe"),
                 {
                     "HydObjektTyp": None,
-                    "Sohlhoehe": attr[1],
-                    "SchachtAblauf": attr[2],
-                    "SchachtZulauf": attr[3],
+                    "Anfangsvolumen": attr[1],
+                    "Gesamtvolumen": attr[2],
+                    "Sohlhoehe": attr[3],
+                    "SchachtAblauf": attr[4],
+                    "SchachtZulauf": attr[5],
+                    "Steuerschacht": attr[6],
+                    "Schaltpunkt1-2": attr[7],
+                    "Schaltpunkt2-1": attr[8],
+                    "PumpenTyp": attr[11],
                 },
             )
 
@@ -149,13 +167,13 @@ class ExportTask:
                 abw,
                 {
                     "Objektbezeichnung": attr[0],
-                    "Objektart": str(1),
-                    "Status": attr[4],
+                    "Status": self.mapper_simstatus.get(attr[9], -1),
+                    "Objektart": None,
                 },
             )
             SubElement(SubElement(abw, "Knoten"), "Bauwerk")
 
-        fortschritt("Pumpen eingefügt", 0.20)
+        fortschritt("Pumpen eingefügt")
 
     def _export_auslaesse(self) -> None:
         if (
@@ -174,9 +192,7 @@ class ExportTask:
             y(schaechte.geop) AS ysch,
             schaechte.kommentar,
             schaechte.simstatus,
-            ea.isybau,
-            schaechte.entwart,
-            schaechte.strasse,
+            ea.he_nr,
             schaechte.knotentyp
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
@@ -187,54 +203,42 @@ class ExportTask:
         if not self.db_qkan.sql(sql, u"db_qkan: export_auslaesse"):
             return
 
-        fortschritt("Export Auslässe...", 0.25)
+        fortschritt("Export Auslässe...", 0.20)
         for attr in self.db_qkan.fetchall():
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             _create_children_text(
                 abw,
                 {
+                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Objektart": str(2),
                     "Kommentar": attr[6],
-                    "Status": attr[7],
+                    "Status": self.mapper_simstatus.get(attr[7], -1),
                     "Entwaesserungsart": attr[8],
                 },
             )
-            strasse = SubElement(abw, "Lage")
-            SubElementText(strasse, "Strassenname", attr[10])
+
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp", 0)  # TODO: Is None sometimes
-            schacht = SubElement(knoten, "Schacht")
-            SubElementText(schacht, "Schachttiefe", attr[1]-attr[2])
+            SubElementText(knoten, "KnotenTyp", attr[9])  # TODO: Is None sometimes
             _create_children(
                 SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
             )
-            # geom_knoten = SubElement(
-            #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
-            # )
-            # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
-            geo = SubElement(abw, "Geometrie")
-            _create_children_text(
-                geo,
-                {
-                    "CRSLage": iface.activeLayer().crs().authid(),
-                }, )
 
-            geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
+            geom_knoten = SubElement(
+                SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
+            )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
-                    "PunktattributAbwasser": "DMP",
+                    "PunktattributAbwasser": "GOK",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[7],
-                    "Hochwert": attr[8],
+                    "Rechtswert": attr[4],
+                    "Hochwert": attr[5],
                 },
             )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
-                {"PunktattributAbwasser": "GOK", "Punkthoehe": attr[2]},
+                {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
             )
-            #TODO: prüfen ob GOK oder HP
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
@@ -244,7 +248,7 @@ class ExportTask:
                     "Hochwert": attr[5],
                 },
             )
-        fortschritt("Auslässe eingefügt", 0.3)
+        fortschritt("Auslässe eingefügt")
 
     def _export_schaechte(self) -> None:
         if (
@@ -259,10 +263,7 @@ class ExportTask:
             schaechte.deckelhoehe,
             schaechte.sohlhoehe,
             schaechte.durchm,
-            schaechte.druckdicht,
-            ea.isybau,
-            schaechte.entwart,
-            schaechte.strasse,
+            ea.he_nr,
             schaechte.knotentyp,
             schaechte.kommentar,
             schaechte.simstatus,
@@ -282,58 +283,47 @@ class ExportTask:
             _create_children_text(
                 abw,
                 {
+                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Objektart": str(2),
-                    "Entwaesserungsart": attr[5],
-                    "Kommentar": attr[9],
-                    "Status": attr[10],
+                    "Entwaesserungsart": attr[4],
+                    "Kommentar": attr[6],
+                    "Status": self.mapper_simstatus.get(attr[7], -1),
                 },
             )
 
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp", 0)
-            schacht = SubElement(knoten, "Schacht")
-            SubElementText(schacht, "Schachttiefe", attr[1] - attr[2])
+            SubElementText(knoten, "KnotenTyp", attr[5])
             _create_children(
                 SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
             )
-            # geom_knoten = SubElement(
-            #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
-            # )
-            # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
-            geo = SubElement(abw, "Geometrie")
-            _create_children_text(
-                geo,
-                {
-                    "CRSLage": iface.activeLayer().crs().authid(),
-                }, )
 
-            geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
+            geom_knoten = SubElement(
+                SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
+            )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
-                    "PunktattributAbwasser": "DMP",
+                    "PunktattributAbwasser": "GOK",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[7],
-                    "Hochwert": attr[8],
+                    "Rechtswert": attr[8],
+                    "Hochwert": attr[9],
                 },
             )
-
-            #_create_children_text(
-            #    SubElement(geom_knoten, "Punkt"),
-            #    {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
-            #)
+            _create_children_text(
+                SubElement(geom_knoten, "Punkt"),
+                {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
+            )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
                     "PunktattributAbwasser": "SMP",
                     "Punkthoehe": attr[2],
-                    "Rechtswert": attr[11],
-                    "Hochwert": attr[12],
+                    "Rechtswert": attr[8],
+                    "Hochwert": attr[9],
                 },
             )
 
-        fortschritt("Schächte eingefügt", 0.4)
+        fortschritt("Schächte eingefügt")
 
     def _export_speicher(self) -> None:
         if (
@@ -348,9 +338,7 @@ class ExportTask:
             schaechte.deckelhoehe,
             schaechte.sohlhoehe,
             schaechte.durchm,
-            ea.isybau,
-            schaechte.entwart,
-            schaechte.strasse,
+            ea.he_nr,
             x(schaechte.geop) AS xsch,
             y(schaechte.geop) AS ysch,
             schaechte.kommentar,
@@ -365,59 +353,54 @@ class ExportTask:
         if not self.db_qkan.sql(sql, "db_qkan: export_speicher"):
             return
 
-        fortschritt("Export Speicherschächte...", 0.45)
+        fortschritt("Export Speicherschächte...", 0.35)
         for attr in self.db_qkan.fetchall():
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             _create_children_text(
                 abw,
                 {
+                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Objektart": str(2),
                     "Entwaesserungsart": attr[4],
-                    "Kommentar": attr[9],
-                    "Status": attr[10],
+                    "Kommentar": attr[7],
+                    "Status": self.mapper_simstatus.get(attr[8], -1),
                 },
             )
 
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp",0)  # TODO: Is None sometimes
+            SubElementText(knoten, "KnotenTyp", attr[9])  # TODO: Is None sometimes
             bauwerk = SubElement(knoten, "Bauwerk")
             SubElement(bauwerk, "Bauwerkstyp")
             _create_children(
                 SubElement(bauwerk, "Becken"), ["AnzahlZulaeufe", "AnzahlAblaeufe"]
             )
 
-            #geom_knoten = SubElement(
-            #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
-            #)
-            # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
-            geo = SubElement(abw, "Geometrie")
-            _create_children_text(
-                geo,
-                {
-                    "CRSLage": iface.activeLayer().crs().authid(),
-                },)
-
-            geom_knoten= SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
+            geom_knoten = SubElement(
+                SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
+            )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
                     "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[7],
-                    "Hochwert": attr[8],
+                    "Rechtswert": attr[5],
+                    "Hochwert": attr[6],
                 },
+            )
+            _create_children_text(
+                SubElement(geom_knoten, "Punkt"),
+                {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
             )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
                     "PunktattributAbwasser": "SMP",
                     "Punkthoehe": attr[2],
-                    "Rechtswert": attr[7],
-                    "Hochwert": attr[8],
+                    "Rechtswert": attr[5],
+                    "Hochwert": attr[6],
                 },
             )
-        fortschritt("Speicher eingefügt", 0.5)
+        fortschritt("Speicher eingefügt")
 
     def _export_haltungen(self) -> None:
         if (
@@ -437,11 +420,10 @@ class ExportTask:
             haltungen.laenge,
             haltungen.sohleoben,
             haltungen.sohleunten,
+            haltungen.deckeloben,
+            haltungen.deckelunten,
             haltungen.profilnam,
-            haltungen.strasse,
-            haltungen.material,
-            ea.isybau,
-            haltungen.entwart,
+            ea.he_nr,
             haltungen.ks,
             haltungen.simstatus,
             haltungen.kommentar,
@@ -457,32 +439,24 @@ class ExportTask:
         if not self.db_qkan.sql(sql, "db_qkan: export_haltungen"):
             return
 
-        fortschritt("Export Haltungen...", 0.55)
+        fortschritt("Export Haltungen...", 0.35)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
             _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
             _create_children_text(
                 SubElement(obj, "Haltung"),
-                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5],"Rauigkeitsansatz": 1, "RauigkeitsbeiwertKb": attr[13]},
+                {"Berechnungslaenge": attr[5], "RauigkeitsbeiwertKb": attr[12]},
             )
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             _create_children_text(
                 abw,
                 {
+                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Objektart": str(1),
                     "Entwaesserungsart": attr[11],
-                    "Status": attr[14],
-                },
-            )
-
-            strasse = SubElement(abw, "Lage")
-            _create_children_text(
-                strasse,
-                {
-                    "Strassenname": attr[9],
+                    "Status": self.mapper_simstatus.get(attr[13], -1),
                 },
             )
 
@@ -490,133 +464,12 @@ class ExportTask:
             _create_children_text(
                 kante,
                 {
-                    "KantenTyp": 0,
+                    "KantenTyp": None,
+                    "KnotenAblaufTyp": None,
+                    "KnotenZulaufTyp": None,
+                    "Material": None,
                     "KnotenZulauf": attr[1],
-                    "KnotenZulaufTyp": 0,
                     "KnotenAblauf": attr[2],
-                    "KnotenAblaufTyp": 0,
-                    "Material": attr[10],
-                    "SohlhoeheZulauf": attr[6],
-                    "SohlhoeheAblauf": attr[7],
-                    "Laenge": attr[5],
-                },
-            )
-
-            _create_children_text(
-                SubElement(kante, "Profil"),
-                {
-                    "ProfilID": None,
-                    "SonderprofilVorhanden": None,
-                    "Profilart": attr[8],
-                    "Profilbreite": (attr[4]*1000),
-                    "Profilhoehe": (attr[3]*1000),
-                },
-            )
-
-            SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", attr[5])
-
-            geom = SubElement(abw, "Geometrie")
-
-            _create_children_text(
-                geom,
-                {
-                    "CRSLage": iface.activeLayer().crs().authid(),
-                }, )
-
-            _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
-
-            kante = SubElement(
-                SubElement(SubElement(geom, "Geometriedaten"), "Kanten"), "Kante"
-            )
-            _create_children_text(
-                SubElement(kante, "Start"),
-                {
-                    "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[16],
-                    "Hochwert": attr[17],
-                },
-            )
-            _create_children_text(
-                SubElement(kante, "Ende"),
-                {
-                    "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[18],
-                    "Hochwert": attr[19],
-                },
-            )
-
-        fortschritt("Haltungen eingefügt", 0.60)
-
-    def _export_anschlussleitungen(self) -> None:
-        if (
-            not getattr(QKan.config.check_export, "export_anschlussleitungen", True)
-            #or not self.hydraulik_objekte
-            or not self.stamm
-        ):
-            return
-
-        sql = """
-                SELECT
-                    anschlussleitungen.leitnam,
-                    anschlussleitungen.schoben,
-                    anschlussleitungen.schunten,
-                    anschlussleitungen.hoehe,
-                    anschlussleitungen.breite,
-                    anschlussleitungen.laenge,
-                    anschlussleitungen.sohleoben,
-                    anschlussleitungen.sohleunten,
-                    anschlussleitungen.deckeloben,
-                    anschlussleitungen.deckelunten,
-                    anschlussleitungen.profilnam,
-                    anschlussleitungen.material,
-                    ea.isybau,
-                    anschlussleitungen.entwart,
-                    anschlussleitungen.ks,
-                    anschlussleitungen.simstatus,
-                    anschlussleitungen.kommentar,
-                    x(PointN(anschlussleitungen.geom, 1)) AS xschob,
-                    y(PointN(anschlussleitungen.geom, 1)) AS yschob,
-                    x(PointN(anschlussleitungen.geom, -1)) AS xschun,
-                    y(PointN(anschlussleitungen.geom, -1)) AS yschun
-                FROM anschlussleitungen
-                LEFT JOIN Entwaesserungsarten AS ea 
-                ON anschlussleitungen.entwart = ea.bezeichnung
-                """
-
-        if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
-            return
-
-        fortschritt("Export Anschlussleitungen...", 0.65)
-
-        for attr in self.db_qkan.fetchall():
-            obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
-            _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
-            _create_children_text(
-                SubElement(obj, "Leitung"),
-                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5], "Rauigkeitsansatz": 1,  "RauigkeitsbeiwertKb": attr[14]},
-            )
-
-            abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-            _create_children_text(
-                abw,
-                {
-                    "Objektbezeichnung": attr[0],
-                    "Objektart": str(1),
-                    "Entwaesserungsart": attr[12],
-                    "Status": attr[15],
-                },
-            )
-
-            kante = SubElement(abw, "Kante")
-            _create_children_text(
-                kante,
-                {
-                    "KantenTyp": 1,
-                    "KnotenZulauf": attr[1],
-                    "KnotenZulaufTyp": 0,
-                    "KnotenAblauf": attr[2],
-                    "KnotenAblaufTyp": 0,
-                    "Material": attr[11],
                     "SohlhoeheZulauf": attr[6],
                     "SohlhoeheAblauf": attr[7],
                     "Laenge": attr[5],
@@ -629,19 +482,14 @@ class ExportTask:
                     "ProfilID": None,
                     "SonderprofilVorhanden": None,
                     "Profilart": attr[10],
-                    "Profilbreite": (attr[4]*1000),
-                    "Profilhoehe": (attr[3]*1000),
+                    "Profilbreite": attr[4],
+                    "Profilhoehe": attr[3],
                 },
             )
 
-            SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", attr[5])
+            SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", attr[5])
 
             geom = SubElement(abw, "Geometrie")
-            _create_children_text(
-                geom,
-                {
-                    "CRSLage": iface.activeLayer().crs().authid(),
-                }, )
             _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
             kante = SubElement(
@@ -651,20 +499,136 @@ class ExportTask:
                 SubElement(kante, "Start"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[17],
-                    "Hochwert": attr[18],
+                    "Rechtswert": attr[15],
+                    "Hochwert": attr[16],
+                    "Punkthoehe": attr[8],
                 },
             )
             _create_children_text(
                 SubElement(kante, "Ende"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[19],
-                    "Hochwert": attr[20],
+                    "Rechtswert": attr[17],
+                    "Hochwert": attr[18],
+                    "Punkthoehe": attr[9],
                 },
             )
 
-        fortschritt("Leitung eingefügt", 0.7)
+        fortschritt("Haltungen eingefügt")
+
+    def _export_anschlussleitungen(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_anschlussleitungen", True)
+            #or not self.hydraulik_objekte
+            or not self.stamm
+        ):
+            return
+
+        sql = """
+        SELECT
+            anschlussleitungen.leitnam,
+            anschlussleitungen.schoben,
+            anschlussleitungen.schunten,
+            anschlussleitungen.hoehe,
+            anschlussleitungen.breite,
+            anschlussleitungen.laenge,
+            anschlussleitungen.sohleoben,
+            anschlussleitungen.sohleunten,
+            anschlussleitungen.deckeloben,
+            anschlussleitungen.deckelunten,
+            anschlussleitungen.profilnam,
+            ea.he_nr,
+            anschlussleitungen.ks,
+            anschlussleitungen.simstatus,
+            anschlussleitungen.kommentar,
+            x(PointN(anschlussleitungen.geom, 1)) AS xschob,
+            y(PointN(anschlussleitungen.geom, 1)) AS yschob,
+            x(PointN(anschlussleitungen.geom, -1)) AS xschun,
+            y(PointN(anschlussleitungen.geom, -1)) AS yschun
+        FROM anschlussleitungen
+        LEFT JOIN Entwaesserungsarten AS ea 
+        ON anschlussleitungen.entwart = ea.bezeichnung
+        """
+
+        if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
+            return
+
+        fortschritt("Export Anschlussleitungen...", 0.35)
+
+        for attr in self.db_qkan.fetchall():
+            obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
+            _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
+            _create_children_text(
+                SubElement(obj, "Leitung"),
+                {"Berechnungslaenge": attr[5], "RauigkeitsbeiwertKb": attr[12]},
+            )
+
+            abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
+            _create_children_text(
+                abw,
+                {
+                    "Objektart": None,
+                    "Objektbezeichnung": attr[0],
+                    "Entwaesserungsart": attr[11],
+                    "Status": self.mapper_simstatus.get(attr[13], -1),
+                },
+            )
+
+            kante = SubElement(abw, "Kante")
+            _create_children_text(
+                kante,
+                {
+                    "KantenTyp": None,
+                    "KnotenAblaufTyp": None,
+                    "KnotenZulaufTyp": None,
+                    "Material": None,
+                    "KnotenZulauf": attr[1],
+                    "KnotenAblauf": attr[2],
+                    "SohlhoeheZulauf": attr[6],
+                    "SohlhoeheAblauf": attr[7],
+                    "Laenge": attr[5],
+                },
+            )
+
+            _create_children_text(
+                SubElement(kante, "Profil"),
+                {
+                    "ProfilID": None,
+                    "SonderprofilVorhanden": None,
+                    "Profilart": attr[10],
+                    "Profilbreite": attr[4],
+                    "Profilhoehe": attr[3],
+                },
+            )
+
+            SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", attr[5])
+
+            geom = SubElement(abw, "Geometrie")
+            _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
+
+            kante = SubElement(
+                SubElement(SubElement(geom, "Geometriedaten"), "Kanten"), "Kante"
+            )
+            _create_children_text(
+                SubElement(kante, "Start"),
+                {
+                    "PunktattributAbwasser": "DMP",
+                    "Rechtswert": attr[15],
+                    "Hochwert": attr[16],
+                    "Punkthoehe": attr[8],
+                },
+            )
+            _create_children_text(
+                SubElement(kante, "Ende"),
+                {
+                    "PunktattributAbwasser": "DMP",
+                    "Rechtswert": attr[17],
+                    "Hochwert": attr[18],
+                    "Punkthoehe": attr[9],
+                },
+            )
+
+        fortschritt("Leitung eingefügt")
 
     def run(self) -> None:
         """
@@ -682,10 +646,18 @@ class ExportTask:
         status_message.layout().addWidget(progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
+        # Init status mapper
+        if not self.db_qkan.sql(
+            "SELECT he_nr, bezeichnung FROM simulationsstatus",
+            "xml_export simulationsstatus",
+        ):
+            raise Exception("Failed to init SIMSTATUS mapper")
+        for row in self.db_qkan.fetchall():
+            self.mapper_simstatus[row[1]] = row[0]
 
         # region Create XML structure
         root = Element(
-            "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation", "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",}
+            "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation"}
         )
         SubElementText(root, "Version", "2013-02")
 
@@ -699,32 +671,24 @@ class ExportTask:
         _create_children_text(
             daten_kollektive,
             {
-                "Datenstatus": "2",
-                "Erstellungsdatum": str(date.today()),
+                "Datenstatus": None,
+                "Erstellungsdatum": None,
                 "Kommentar": "Created with QKan's XML export module",
             },
         )
-        kennungen = SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
-        #je ein Kollektiv für Stammdaten und Zustandsdaten, die Kennung muss dort auftauchen
-        _create_children_text(
-            kennungen,
-            {
-                "Kennung": "STA01",
-                "Kollektivart": "1",
-            },
-        )
+        SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
 
         self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
-        _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
+        _create_children(self.stamm, ["Kennung", "Beschreibung"])
 
         hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
-        _create_children_text(
+        _create_children(
             hydro_kollektiv,
-            {"Kennung": "STA01", "Beschreibung": "Hydraulikdaten",},
+            ["Kennung", "Beschreibung", "Flaechen", "Systembelastungen"],
         )
         rechen = SubElement(hydro_kollektiv, "Rechennetz")
         SubElement(rechen, "Stammdatenkennung")
-        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
+        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekte")
         # endregion
 
         # Export
@@ -739,9 +703,6 @@ class ExportTask:
         Path(self.export_file).write_text(
             minidom.parseString(tostring(root)).toprettyxml(indent="  ")
         )
-
-        # Close connection
-        del self.db_qkan
 
         fortschritt("Ende...", 1)
         progress_bar.setValue(100)
