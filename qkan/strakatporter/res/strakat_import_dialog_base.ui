@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>690</width>
-    <height>587</height>
+    <height>510</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>690</width>
-    <height>420</height>
+    <height>510</height>
    </size>
   </property>
   <property name="font">
@@ -827,7 +827,7 @@ Datensätze importieren</string>
     <string comment="Pfade der Import- und Exportdatenbank"/>
    </property>
    <property name="title">
-    <string>Verezichnisse für Videos und Fotos der TV-Befahrungen</string>
+    <string>Verzeichnisse Medien der TV-Befahrungen</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -835,7 +835,7 @@ Datensätze importieren</string>
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QPushButton" name="pb_import_2">
+   <widget class="QPushButton" name="pb_ordnerbild">
     <property name="geometry">
      <rect>
       <x>360</x>
@@ -851,7 +851,7 @@ Datensätze importieren</string>
      <string>...</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_import_2">
+   <widget class="QLineEdit" name="tf_ordnerbild">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -899,7 +899,7 @@ Datensätze importieren</string>
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_import_3">
+   <widget class="QLineEdit" name="tf_ordnervideo">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -947,7 +947,7 @@ Datensätze importieren</string>
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_import_3">
+   <widget class="QPushButton" name="pb_ordnervideo">
     <property name="geometry">
      <rect>
       <x>360</x>

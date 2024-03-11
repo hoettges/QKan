@@ -1964,7 +1964,7 @@ class ImportTask:
             CASE untersuchrichtung
                 WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'in Fließrichtung'    THEN uh.station
-                                           ELSE NULL END        AS station,
+                                           ELSE uh.station END        AS station,
             GLength(hu.geom)                                     AS laenge
             FROM untersuchdat_haltung AS uh
             JOIN haltungen_untersucht AS hu
@@ -1972,7 +1972,12 @@ class ImportTask:
                hu.schoben = uh.schoben AND
                hu.schunten = uh.schunten AND
                hu.untersuchtag = uh.untersuchtag
-            WHERE hu.haltnam IS NOT NULL AND hu.untersuchtag IS NOT NULL AND coalesce(laenge, 0) > 0.05
+            WHERE hu.haltnam IS NOT NULL AND
+                  hu.untersuchtag IS NOT NULL AND
+                  coalesce(laenge, 0) > 0.05 AND
+                  uh.station IS NOT NULL AND
+                  abs(uh.station) < 10000 AND
+                  untersuchrichtung IS NOT NULL
             GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station;"""
 

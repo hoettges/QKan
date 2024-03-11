@@ -892,6 +892,19 @@ class DBConnection:
                     dist = 0
                 else:
                     dist = (abs(station - stvor) > 0.0001) * bdist + tdist
+                if station is None:
+                    logzeilen = [
+                        'Error: station = None',
+                        '   uh.pk    hu.pk  station       pa       pe       ma       me       po'
+                    ]
+                    for i in range(ianf, iend):
+                        p1, p2, p3, p4, p5, p6, p7, p8 = (el if el else -999 for el in [data[i][0], data[i][1], data[i][2], pa[i], pe[i], ma[i], me[i], po[i]])
+                        zeile = f'{p1:8d} {p2:8d} {p3:8.2f} {p4:8.2f} {p5:8.2f} {p6:8.2f} {p7:8.2f} {p8:8.2f}'
+                        logzeilen.append(zeile)
+                    proto = '\n'.join(logzeilen)
+                    logger.debug(f'{self.__class__.__name__} - calctextpositions: Ergebnis der SQL-Anweisung: \n{proto}')
+                    continue
+
                 pa[i] = max(station, pavor + dist)
                 ma[i] = mavor * (pavor + dist > station - 0.0001)
                 pavor = pa[i]
@@ -924,14 +937,6 @@ class DBConnection:
             if iend < si:
                 ianf = iend
                 id = data[iend][1]
-
-        # Debug:
-        logzeilen = ['   uh.pk    hu.pk  station       pa       pe       ma       me       po']
-        for i in range(si):
-            zeile = f'{data[i][0]:8d} {data[i][1]:8d} {data[i][2]:8.2f} {pa[i]:8.2f} {pe[i]:8.2f} {ma[i]:8.2f} {me[i]:8.2f} {po[i]:8.2f}'
-            logzeilen.append(zeile)
-        proto = '\n'.join(logzeilen)
-        logger.debug(f'{self.__class__.__name__} - calctextpositions: Ergebnis der SQL-Anweisung: \n{proto}')
 
         for i in range(si):
             data[i] = (data[i][0], data[i][1], po[i])

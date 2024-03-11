@@ -59,6 +59,12 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     pb_import: QPushButton
     pb_project: QPushButton
 
+    pb_ordnerbild: QPushButton
+    tf_ordnerbild: QLineEdit
+
+    pb_ordnervideo: QPushButton
+    tf_ordnervideo: QLineEdit
+
     pw_epsg: QgsProjectionSelectionWidget
 
     cb_haltungen: QCheckBox
@@ -90,6 +96,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
         self.button_box.helpRequested.connect(self.click_help)
+        self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
+        self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -107,7 +115,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
         self.cb_bodenklassen.setChecked(QKan.config.check_import.bodenklassen)
 
-        self.cb_testmodus.setChecked(QKan.config.check_import.testmodus)
+        self.cb_testmodus.setChecked(False)         # Standard: deaktiviert, vorher QKan.config.check_import.testmodus
 
         self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
 
@@ -145,6 +153,28 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def select_ordnerbild(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        ordner_bild = QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Ordner zur Speicherung der Fotos"),
+            self.default_dir,
+        )
+        if ordner_bild:
+            self.tf_ordnerbild.setText(ordner_bild)
+            self.default_dir = os.path.dirname(ordner_bild)
+
+    def select_ordnervideo(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        ordner_video = QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Ordner zur Speicherung der Videos"),
+            self.default_dir,
+        )
+        if ordner_video:
+            self.tf_ordnervideo.setText(ordner_video)
+            self.default_dir = os.path.dirname(ordner_video)
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""

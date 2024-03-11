@@ -83,6 +83,7 @@ def run(dbcon: DBConnection) -> bool:
             "ZD INTEGER",
             "ZB INTEGER",
             "ZS INTEGER",
+            "kommentar TEXT",
             "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
         ]
     ):
@@ -144,6 +145,7 @@ def run(dbcon: DBConnection) -> bool:
             "ZD INTEGER",
             "ZB INTEGER",
             "ZS INTEGER",
+            "kommentar TEXT",
             "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
         ]
     ):

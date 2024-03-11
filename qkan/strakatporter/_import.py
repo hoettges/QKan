@@ -26,8 +26,8 @@ class Bericht_STRAKAT(ClassObject):
     atv_langtext: str = ""
     charakt1: str = ""
     charakt2: str = ""
-    quantnr1: str = ""
-    quantnr2: str = ""
+    quantnr1: int = 0
+    quantnr2: int = 0
     streckenschaden: str = ""
     pos_von: int = 0
     pos_bis: int = 0
@@ -42,7 +42,7 @@ class Bericht_STRAKAT(ClassObject):
     skdichtheit: int = 0
     skbetriebssicherheit: int = 0
     skstandsicherheit: int = 0
-    bemerkung: str = ""
+    kommentar: str = ""
     strakatid: str = ""
     hausanschlid: str = ""
     berichtid: str = ""
@@ -777,7 +777,7 @@ class ImportTask:
                 skdichtheit INTEGER,
                 skbetriebssicherheit INTEGER,
                 skstandsicherheit INTEGER,
-                bemerkung TEXT,
+                kommentar TEXT,
                 strakatid TEXT,
                 hausanschlid TEXT,
                 berichtid TEXT
@@ -821,6 +821,7 @@ class ImportTask:
                                          f". Datensatz wird ignoriert: {datum}")
 
                             continue
+                    datum = datum[6:10] + '-' + datum[3:5] + '-' + datum[:2]
                     untersucher = b[11:b[11:31].find(b'\x00') + 11].decode('ansi').strip()
                     ag_kontrolle = b[31:b[31:46].find(b'\x00') + 31].decode('ansi').strip()
                     fahrzeug = b[46:b[46:57].find(b'\x00') + 46].decode('ansi').strip()
@@ -834,6 +835,8 @@ class ImportTask:
                     station_untersucher = round(unpack('d', b[115:123])[0], 3)
 
                     atv_kuerzel = b[123:b[123:134].find(b'\x00') + 123].decode('ansi').strip()
+                    if not atv_kuerzel:
+                        continue
                     atv_langtext = b[134:b[134:295].find(b'\x00') + 134].decode('ansi').strip()
                     sandatum = b[284:294].decode('ansi')
                     geloescht = unpack('b', b[296:297])[0]
@@ -842,7 +845,7 @@ class ImportTask:
                     bandnr = b[301:b[301:320].find(b'\x00') + 301].decode('ansi').strip()
                     videozaehler = unpack('I', b[320:324])[0]
 
-                    pos_von, pos_bis = unpack('BB', b[366:368])
+                    pos_von, pos_bis = unpack('BB', b[366:368])                                 # STRAKT: von/bis Uhr
                     sanierung = b[400:b[400:411].find(b'\x00') + 400].decode('ansi').strip()
                     atv143 = unpack('f', b[430:434])[0]
 
@@ -852,9 +855,12 @@ class ImportTask:
                     charakt2 = b[449:b[449:].find(b'\x00') + 449].decode('ansi').strip()
 
                     anmerkung = b[463:b[463:715].find(b'\x00') + 463].decode('ansi').strip()
-                    bemerkung = sanierung + ', ' + anmerkung
+                    if sanierung != '' and anmerkung != '':
+                        kommentar = sanierung + ', ' + anmerkung
+                    else:
+                        kommentar = sanierung + anmerkung               # eins von beiden ist leer
 
-                    skdichtheit, skstandsicherheit, skbetriebssicherheit = unpack('BBB', b[714:71])
+                    skdichtheit, skstandsicherheit, skbetriebssicherheit = unpack('BBB', b[714:717])
 
                     (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
                      ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[643:659])]
@@ -897,7 +903,7 @@ class ImportTask:
                         skdichtheit=skdichtheit,
                         skbetriebssicherheit=skbetriebssicherheit,
                         skstandsicherheit=skstandsicherheit,
-                        bemerkung=bemerkung,
+                        kommentar=kommentar,
                         strakatid=strakatid,
                         hausanschlid=hausanschlid,
                         berichtid=berichtid,
@@ -941,14 +947,12 @@ class ImportTask:
                 'untersuchungsrichtung': _bericht.untersuchungsrichtung,
                 'bandnr': _bericht.bandnr,
                 'videozaehler': _bericht.videozaehler,
-                'vonuhr': _bericht.vonuhr,
-                'bisuhr': _bericht.bisuhr,
                 'sanierung': _bericht.sanierung,
                 'atv143': _bericht.atv143,
                 'skdichtheit': _bericht.skdichtheit,
                 'skbetriebssicherheit': _bericht.skbetriebssicherheit,
                 'skstandsicherheit': _bericht.skstandsicherheit,
-                'bemerkung': _bericht.bemerkung,
+                'kommentar': _bericht.kommentar,
                 'strakatid': _bericht.strakatid,
                 'hausanschlid': _bericht.hausanschlid,
                 'berichtid': _bericht.berichtid,
@@ -984,14 +988,12 @@ class ImportTask:
                 untersuchungsrichtung, 
                 bandnr, 
                 videozaehler, 
-                vonuhr, 
-                bisuhr,
                 sanierung, 
                 atv143, 
                 skdichtheit, 
                 skbetriebssicherheit,
                 skstandsicherheit, 
-                bemerkung, 
+                kommentar, 
                 strakatid, 
                 hausanschlid, 
                 berichtid
@@ -1021,14 +1023,12 @@ class ImportTask:
                 :untersuchungsrichtung, 
                 :bandnr, 
                 :videozaehler, 
-                :vonuhr, 
-                :bisuhr,
                 :sanierung, 
                 :atv143, 
                 :skdichtheit, 
                 :skbetriebssicherheit,
                 :skstandsicherheit, 
-                :bemerkung, 
+                :kommentar, 
                 :strakatid, 
                 :hausanschlid, 
                 :berichtid
@@ -1192,7 +1192,8 @@ class ImportTask:
             (1,  'gegen Fließrichtung'),
         ]
         sql = """INSERT INTO t_mapper_untersuchrichtung (id, untersuchungsrichtung)
-                    VALUES (?, ?)"""
+                    SELECT ? AS id, ? as untersuchungsrichtung
+                WHERE id NOT IN (SELECT id FROM t_mapper_untersuchrichtung)"""
 
         if not self.db_qkan.sql(sql,
                                 "strakat_import Referenzliste t_mapper_untersuchrichtung",
@@ -1688,7 +1689,7 @@ class ImportTask:
         """
 
         params = {"epsg": self.epsg}
-        if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
+        if not self.db_qkan.sql(sql, "strakat_import untersuchte Haltungen", params):
             return False
 
         self.db_qkan.commit()
@@ -1704,18 +1705,16 @@ class ImportTask:
                 SELECT nummer, schacht_unten
                 FROM t_strakatkanal
                 WHERE schachtnummer <> 0
-            ),
+            )
             INSERT INTO untersuchdat_haltung (
                 untersuchhal, schoben, schunten,
                 id, untersuchtag, untersuchrichtung,
-                inspektionslaenge, videozaehler, station, timecode
+                inspektionslaenge, bandnr, videozaehler, station, timecode,
                 kuerzel, charakt1, charakt2, quantnr1, quantnr2,
                 streckenschaden, streckenschaden_lfdnr,
                 pos_von, pos_bis,
-
-
                 foto_dateiname, film_dateiname, ordner_bild, ordner_video,
-                richtung, ZD, ZB, ZS
+                richtung, kommentar, ZD, ZB, ZS
             )
             SELECT
                 Trim(stk.haltungsname)          AS untersuchhal,
@@ -1751,10 +1750,10 @@ class ImportTask:
                 NULL                            AS ordner_bild,
                 NULL                            AS ordner_video,
                 :richtung                       AS richtung,
-                bemerkung                       AS bemerkung,        -- Kombi aus STRAKAT-Feldern Sanierung + Anmerkung
+                kommentar                       AS kommentar,        -- Kombi aus STRAKAT-Feldern Sanierung + Anmerkung
                 stb.skdichtheit                 AS ZD,
                 stb.skbetriebssicherheit        AS ZB,
-                stb.skstandsicherheit           AS ZS,
+                stb.skstandsicherheit           AS ZS
             FROM
                 t_strakatkanal AS stk
                 LEFT JOIN sto
@@ -1766,7 +1765,86 @@ class ImportTask:
 
         params = {"richtung": self.richtung}
         if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
-            return False
+            raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Haltungsschäden")
+
+        self.db_qkan.commit()
+
+        # Textpositionen für Schadenstexte berechnen
+
+        sql = """SELECT
+            uh.pk, hu.pk AS id,
+            CASE untersuchrichtung
+                WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
+                WHEN 'in Fließrichtung'    THEN uh.station
+                                           ELSE uh.station END        AS station,
+            GLength(hu.geom)                                     AS laenge
+            FROM untersuchdat_haltung AS uh
+            JOIN haltungen_untersucht AS hu
+            ON hu.haltnam = uh.untersuchhal AND
+               hu.schoben = uh.schoben AND
+               hu.schunten = uh.schunten AND
+               hu.untersuchtag = uh.untersuchtag
+            WHERE hu.haltnam IS NOT NULL AND
+                  hu.untersuchtag IS NOT NULL AND
+                  coalesce(laenge, 0) > 0.05 AND
+                  uh.station IS NOT NULL AND
+                  abs(uh.station) < 10000 AND
+                  untersuchrichtung IS NOT NULL
+            GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
+            ORDER BY id, station;"""
+
+        if not self.db_qkan.sql(
+            sql, "untersuchdat_haltung.station read"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen")
+        data = self.db_qkan.fetchall()
+        logger.debug(f'Anzahl Datensätze in calctextpositions: {len(data)}')
+        # logger.debug(f'{data[1]=}')
+        # logger.debug(f'{[type(el) for el in data[1]]}')
+        self.db_qkan.calctextpositions(data, 0.5, 0.25)
+
+        params = ()
+        for ds in data:
+            params += ([ds[2], ds[0]],)
+
+        sql = """UPDATE untersuchdat_haltung
+            SET stationtext = round(?, 3)
+            WHERE pk = ?"""
+        if not self.db_qkan.sql(
+                sql=sql,
+                stmt_category="untersuchdat_haltung.station write",
+                parameters=params,
+                many=True
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Schreiben der Stationen")
+
+        # Erzeugen der Polylinien für die Schadenstexte
+        sql = """
+            WITH dist AS (
+                SELECT column1 AS d, column2 AS stat, column3 AS tpos 
+                FROM (VALUES (0.0000000001, 1.0, 0.0), (1.0, 1.0, 0.0), (1.5, 0.0, 1.0), (4.0, 0.0, 1.0))
+            )
+            UPDATE untersuchdat_haltung SET geom = (
+                SELECT MakeLine(Line_Interpolate_Point(OffsetCurve(hu.geom, di.d), 
+                    (
+                    CASE untersuchrichtung
+                        WHEN 'gegen Fließrichtung' THEN ST_Length(hu.geom) - uh.station
+                        WHEN 'in Fließrichtung'    THEN uh.station
+                                                   ELSE ST_Length(hu.geom) - uh.station END * di.stat +  
+                    uh.stationtext * di.tpos) / ST_Length(hu.geom))) AS textline
+                FROM dist AS di, untersuchdat_haltung AS uh
+                JOIN haltungen_untersucht AS hu
+                ON hu.haltnam = uh.untersuchhal AND
+                   hu.schoben = uh.schoben AND
+                   hu.schunten = uh.schunten AND
+                   hu.untersuchtag = uh.untersuchtag
+                WHERE uh.pk = untersuchdat_haltung.pk
+                GROUP BY uh.pk)"""
+        if not self.db_qkan.sql(
+                sql=sql,
+                stmt_category="untersuchdat_haltung.geom SET"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Erzeugen der Schadenspolylinien")
 
         self.db_qkan.commit()
 

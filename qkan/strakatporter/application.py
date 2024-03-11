@@ -54,19 +54,22 @@ class StrakatPorter(QKanPlugin):
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.strakat.import_dir = self.import_dlg.tf_import.text()
 
-            QKan.config.check_import.haltungen = (self.import_dlg.cb_haltungen.isChecked())
-            QKan.config.check_import.schaechte = (self.import_dlg.cb_schaechte.isChecked())
-            QKan.config.check_import.hausanschluesse = (self.import_dlg.cb_hausanschluesse.isChecked())
-            QKan.config.check_import.schachtschaeden = (self.import_dlg.cb_schachtschaeden.isChecked())
-            QKan.config.check_import.haltungsschaeden = (self.import_dlg.cb_haltungsschaeden.isChecked())
+            QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
+            QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
 
-            QKan.config.check_import.abflussparameter = (self.import_dlg.cb_abflussparameter.isChecked())
-            QKan.config.check_import.rohrprofile = (self.import_dlg.cb_rohrprofile.isChecked())
-            QKan.config.check_import.bodenklassen = (self.import_dlg.cb_bodenklassen.isChecked())
+            QKan.config.check_import.haltungen = self.import_dlg.cb_haltungen.isChecked()
+            QKan.config.check_import.schaechte = self.import_dlg.cb_schaechte.isChecked()
+            QKan.config.check_import.hausanschluesse = self.import_dlg.cb_hausanschluesse.isChecked()
+            QKan.config.check_import.schachtschaeden = self.import_dlg.cb_schachtschaeden.isChecked()
+            QKan.config.check_import.haltungsschaeden = self.import_dlg.cb_haltungsschaeden.isChecked()
 
-            QKan.config.check_import.testmodus = (self.import_dlg.cb_testmodus.isChecked())
+            QKan.config.check_import.abflussparameter = self.import_dlg.cb_abflussparameter.isChecked()
+            QKan.config.check_import.rohrprofile = self.import_dlg.cb_rohrprofile.isChecked()
+            QKan.config.check_import.bodenklassen = self.import_dlg.cb_bodenklassen.isChecked()
 
-            QKan.config.check_import.allrefs = (self.import_dlg.cb_allrefs.isChecked())
+            QKan.config.check_import.testmodus = self.import_dlg.cb_testmodus.isChecked()
+
+            QKan.config.check_import.allrefs = self.import_dlg.cb_allrefs.isChecked()
 
             if not QKan.config.strakat.import_dir:
                 fehlermeldung("Fehler beim Import", "Es wurde kein Verzeichnis ausgewählt!")
@@ -110,6 +113,8 @@ class StrakatPorter(QKanPlugin):
 
         Einspringpunkt für Test
         """
+        QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
+        QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
 
         self.log.info("Creating DB")
         with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
