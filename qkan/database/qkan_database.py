@@ -214,6 +214,7 @@ def createdbtables(
             breite REAL,                                    -- Profilbreite (m)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
+            id INTEGER,                                     -- absolute Nummer der Inspektion
             untersuchtag TEXT,
             untersucher TEXT,
             wetter INTEGER DEFAULT 0,
@@ -253,7 +254,7 @@ def createdbtables(
             untersuchrichtung TEXT,
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
-            id INTEGER,                                     -- TODO: join haltungen_untersucht.pk
+            id INTEGER,                                     -- absolute Nummer der Inspektion
             untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler TEXT,
@@ -418,6 +419,7 @@ def createdbtables(
             schnam TEXT, 
             durchm REAL,
             baujahr INTEGER,
+            id INTEGER,                                     -- absolute Nummer der Inspektion
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
@@ -453,7 +455,7 @@ def createdbtables(
         """CREATE TABLE untersuchdat_schacht (
             pk INTEGER PRIMARY KEY,
             untersuchsch TEXT,
-            id INTEGER,                                     -- TODO: join schaechte_untersucht.pk
+            id INTEGER,                                     -- absolute Nummer der Inspektion
             untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler TEXT,

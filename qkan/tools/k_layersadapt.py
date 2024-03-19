@@ -167,7 +167,6 @@ def layersadapt(
             or aktualisieren_Schachttypen
             or zoom_alles
             or fehlende_layer_ergaenzen
-            or anpassen_auswahl
         ):
             logger.error("Interner Fehler: Aufruf von k_layersadapt ohne Datenbankanbindung darf nur "
                          "Formularanbindung durchführen")
@@ -259,23 +258,22 @@ def layersadapt(
         refLayerName = node.findtext("layername")
         refLayerId = node.findtext("id")
         layerobjects = project.mapLayersByName(refLayerName)
-        if len(layerobjects) > 0:
-            layer = layerobjects[0]  # Der Layername muss eindeutig sein.
+        for layer in layerobjects:
             layerId = layer.id()
             logger.debug("layerId: {}".format(layerId))
             layerIdList[refLayerId] = layerId
-            if len(layerobjects) > 1:
-                warnung(
-                    "Layername doppelt: {}".format(refLayerName),
-                    "Es wird nur ein Layer bearbeitet.",
-                )
-        else:
-            layerNotInProjektMeldung = (
-                not fehlende_layer_ergaenzen
-            )  # nur setzen, wenn keine Ergänzung gewählt
-            logger.info(
-                "k_layersadapt: QKan-Layer nicht in Projekt: {}".format(refLayerName)
-            )
+            # if len(layerobjects) > 1:
+            #     warnung(
+            #         "Layername doppelt: {}".format(refLayerName),
+            #         "Es wird nur ein Layer bearbeitet.",
+            #     )
+        # else:
+        #     layerNotInProjektMeldung = (
+        #         not fehlende_layer_ergaenzen
+        #     )  # nur setzen, wenn keine Ergänzung gewählt
+        #     logger.info(
+        #         "k_layersadapt: QKan-Layer nicht in Projekt: {}".format(refLayerName)
+        #     )
     logger.debug("Refliste Layer-Ids: \n{}".format(layerIdList))
 
     selectedLayerNames = []
@@ -407,16 +405,7 @@ def layersadapt(
                 f"projectlayers/maplayer[layername='{layername}'][provider='spatialite']"
             )
             qgsLayers = qgsxml.findall(tagLayer)
-            if len(qgsLayers) > 1:
-                fehlermeldung(
-                    "DateifFehler!",
-                    "In der Vorlage-Projektdatei wurden mehrere Layer {} gefunden".format(
-                        layername
-                    ),
-                )
-                del dbQK
-                return
-            elif len(qgsLayers) == 0:
+            if len(qgsLayers) == 0:
                 logger.info(
                     "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
                         layername
@@ -426,14 +415,15 @@ def layersadapt(
             else:
                 logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
 
-            formpath = qgsLayers[0].findtext("./editform") or ""
-            form = cast(str, os.path.basename(formpath))
-            editFormConfig = layer.editFormConfig()
-            editFormConfig.setUiForm(os.path.join(formsDir, form))
-            layer.setEditFormConfig(editFormConfig)
-            logger.debug(
-                f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
-            )
+            for qgslay in qgsLayers:
+                formpath = qgslay.findtext("./editform") or ""
+                form = cast(str, os.path.basename(formpath))
+                editFormConfig = layer.editFormConfig()
+                editFormConfig.setUiForm(os.path.join(formsDir, form))
+                layer.setEditFormConfig(editFormConfig)
+                logger.debug(
+                    f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
+                )
 
     if layerNotInProjektMeldung:
         meldung(

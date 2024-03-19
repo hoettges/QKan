@@ -32,15 +32,15 @@ def initQKanProject():
 
     projectTemplate = os.path.join(pluginDirectory("qkan"), "templates/Projekt.qgs")
     layersadapt(
-        None,
-        projectTemplate,
-        False,
-        False,
-        False,
-        True,
-        False,
-        False,
-        False,
-        False,
-        enums.SelectedLayers.ALL,
+        database_QKan=None,
+        projectTemplate=projectTemplate,
+        anpassen_ProjektMakros=False,
+        anpassen_Datenbankanbindung=False,
+        anpassen_Wertebeziehungen_in_Tabellen=False,
+        anpassen_Formulare=True,
+        anpassen_Projektionssystem=False,
+        aktualisieren_Schachttypen=False,
+        zoom_alles=False,
+        fehlende_layer_ergaenzen=False,
+        anpassen_auswahl=enums.SelectedLayers.ALL,
     )

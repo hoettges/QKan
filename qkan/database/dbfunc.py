@@ -16,7 +16,7 @@ from distutils.version import LooseVersion
 from sqlite3 import Connection
 from typing import Any, List, Optional, Union, cast
 
-from qgis.core import Qgis, QgsVectorLayer
+from qgis.core import Qgis, QgsVectorLayer, QgsGeometry, QgsPoint
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import spatialite_connect
 
@@ -862,84 +862,128 @@ class DBConnection:
 
         return result
 
-    def calctextpositions(self, data, tdist:float = 0.5, bdist:float = 0.25):
+    def calctextpositions(self, data_hu, data_uh, tdist: float = 0.5, bdist: float = 0.25,
+                          richtung: str = 'Anzeigen in Fließrichtung rechts der Haltung', epsg: int = 25832
+                          ):
         """Berechnet in einer internen Tabelle die Textpositionen für die Haltungsschäden.
            Dabei werden zunächst vom Haltungsanfang (pa) sowie dem Haltungsende aus die Textpositionen
            mindestens im Abstand bdist gesetzt. Die endgültigen Textpositionen ergeben sich im Anfangs-
            und Endbereich jeweils aus diesen Werten, dazwischen aus deren Mittelwert.
         """
 
-        si = len(data)
-        pa = array('d', [0.0] * si)         # Textposition berechnet mit Haltungsrichtung
-        pe = array('d', [0.0] * si)         # Textposition berechnet gegen Haltungsrichtung
-        ma = array('B', [0] * si)           # markiert den Anfangsbereich, in dem nur pa verwendet wird
-        me = array('B', [0] * si)           # markiert den Endbereich, in dem nur pe verwendet wird
-        po = array('d', [0.0] * si)         # Für ma: pa, für me: pe, sonst: (pa+pe)/2.
+        # Die folgenden Felder enthalten die Textpositionen einer Haltung. Aus Effizienzgründen wird auf
+        # 1000 dimensioniert. Falls das zuwenig ist, muss individuell neu dimensioniert werden.
+        maxsj = 1000
+        sj = maxsj
+        pa = array('d', [0.0] * sj)  # Textposition berechnet mit Haltungsrichtung
+        pe = array('d', [0.0] * sj)  # Textposition berechnet gegen Haltungsrichtung
+        ma = array('B', [0] * sj)  # markiert den Anfangsbereich, in dem nur pa verwendet wird
+        me = array('B', [0] * sj)  # markiert den Endbereich, in dem nur pe verwendet wird
+        po = array('d', [0.0] * sj)  # Für ma: pa, für me: pe, sonst: (pa+pe)/2.
 
-        id = data[0][1]
+        abst = [0., 1.0, 1.5, 4.0]  # Abstände der Knickpunkte von der Haltung
+
+        si = len(data_uh)  # Anzahl Untersuchungen
+
+        id = data_uh[0][1]
         ianf = 0
         for iend in range(si + 1):
-            if iend < si and data[iend][1] == id:
+            if iend < si and data_uh[iend][1] == id:
                 # iend innerhalb eines Blocks der aktuellen id
                 continue
 
+            # Hinweis: Nach der Vergrößerung bleiben die Felder so, Zurücksetzen wäre zu umständlich ...
+            if iend - ianf > si:
+                si = iend - ianf
+                pa = array('d', [0.0] * sj)  # Textposition berechnet mit Haltungsrichtung
+                pe = array('d', [0.0] * sj)  # Textposition berechnet gegen Haltungsrichtung
+                ma = array('B', [0] * sj)  # markiert den Anfangsbereich, in dem nur pa verwendet wird
+                me = array('B', [0] * sj)  # markiert den Endbereich, in dem nur pe verwendet wird
+                po = array('d', [0.0] * sj)  # Für ma: pa, für me: pe, sonst: (pa+pe)/2.
+
             pavor = 0
-            mavor = 1                           # Initialisierung mit 1 = True
+            mavor = 1  # Initialisierung mit 1 = True
             stvor = 0
             for i in range(ianf, iend):
-                station = data[i][2]
+                station = data_uh[i][2]
                 if i == ianf:
                     dist = 0
                 else:
                     dist = (abs(station - stvor) > 0.0001) * bdist + tdist
-                if station is None:
-                    logzeilen = [
-                        'Error: station = None',
-                        '   uh.pk    hu.pk  station       pa       pe       ma       me       po'
-                    ]
-                    for i in range(ianf, iend):
-                        p1, p2, p3, p4, p5, p6, p7, p8 = (el if el else -999 for el in [data[i][0], data[i][1], data[i][2], pa[i], pe[i], ma[i], me[i], po[i]])
-                        zeile = f'{p1:8d} {p2:8d} {p3:8.2f} {p4:8.2f} {p5:8.2f} {p6:8.2f} {p7:8.2f} {p8:8.2f}'
-                        logzeilen.append(zeile)
-                    proto = '\n'.join(logzeilen)
-                    logger.debug(f'{self.__class__.__name__} - calctextpositions: Ergebnis der SQL-Anweisung: \n{proto}')
-                    continue
-
-                pa[i] = max(station, pavor + dist)
-                ma[i] = mavor * (pavor + dist > station - 0.0001)
-                pavor = pa[i]
-                mavor = ma[i]
+                pa[i - ianf] = max(station, pavor + dist)
+                ma[i - ianf] = mavor * (pavor + dist > station - 0.0001)
+                pavor = pa[i - ianf]
+                mavor = ma[i - ianf]
                 stvor = station
 
-            pevor = data[iend - 1][3] - (tdist + bdist)
-            mevor = 1                           # Initialisierung mit 1 = True
+            xa, ya, xe, ye = data_hu[id]
+            laenge = ((xe - xa) ** 2. + (ye - ya) ** 2.) ** 0.5
+
+            pevor = laenge - (tdist + bdist)
+            mevor = 1  # Initialisierung mit 1 = True
             stvor = 0
             for i in range(iend - 1, ianf - 1, -1):
-                station = data[i][2]
+                station = data_uh[i][2]
                 if i == iend - 1:
                     dist = 0
                 else:
                     dist = (abs(station - stvor) > 0.0001) * bdist + tdist
-                pe[i] = min(station, pevor - dist)
-                me[i] = mevor * (pevor - dist < station + 0.0001)
-                pevor = pe[i]
-                mevor = me[i]
+                pe[i - ianf] = min(station, pevor - dist)
+                me[i - ianf] = mevor * (pevor - dist < station + 0.0001)
+                pevor = pe[i - ianf]
+                mevor = me[i - ianf]
                 stvor = station
 
             for i in range(ianf, iend):
-                if ma[i]:
-                    po[i] = pa[i]
-                elif me[i]:
-                    po[i] = pe[i]
+                if ma[i - ianf]:
+                    po[i - ianf] = pa[i - ianf]
+                elif me[i - ianf]:
+                    po[i - ianf] = pe[i - ianf]
                 else:
-                    po[i] = (pa[i] + pe[i]) / 2.
+                    po[i - ianf] = (pa[i - ianf] + pe[i - ianf]) / 2.
+
+            # Verbindungsobjekte für diese untersuchte Haltung schreiben
+
+            if laenge > 0.045:
+                # Koordinaten relativ zur Haltung
+                xu = (xe - xa) / laenge
+                yu = (ye - ya) / laenge
+                if richtung == 'Anzeigen in Fließrichtung rechts der Haltung':
+                    xv = yu
+                    yv = -xu
+                else:
+                    xv = -yu
+                    yv = xu
+
+                for i in range(ianf, iend):
+                    id = data_uh[i][0]
+                    st0 = data_uh[i][2]
+                    st1 = po[i - ianf]
+                    x1 = xa + xu * st0 + xv * abst[0]
+                    y1 = ya + yu * st0 + yv * abst[0]
+                    x2 = xa + xu * st0 + xv * abst[1]
+                    y2 = ya + yu * st0 + yv * abst[1]
+                    x3 = xa + xu * st1 + xv * abst[2]
+                    y3 = ya + yu * st1 + yv * abst[2]
+                    x4 = xa + xu * st1 + xv * abst[3]
+                    y4 = ya + yu * st1 + yv * abst[3]
+                    geoobj = QgsGeometry.asWkb(
+                        QgsGeometry.fromPolyline([QgsPoint(x1, y1), QgsPoint(x2, y2), QgsPoint(x3, y3), QgsPoint(x4, y4)]))
+                    sql = "UPDATE untersuchdat_haltung SET geom = GeomFromWKB(?, ?) WHERE pk = ?"
+
+                    if not self.sql(sql, 'set_objekt', parameters=(geoobj, epsg, id,)):
+                        logger.error(f"Fehler in {sql}")
+
             # Nächsten Block vorbereiten
             if iend < si:
                 ianf = iend
-                id = data[iend][1]
+                id = data_uh[iend][1]
 
-        for i in range(si):
-            data[i] = (data[i][0], data[i][1], po[i])
+        self.commit()
+
+    def numuntersuchdat(self, data):
+        """Vergibt fortlaufende Nummern für die untersuchten Haltungen und die Untersuchungsdaten der Haltungen"""
+
 
     def executefile(self, filenam):
         """Liest eine Datei aus dem template-Verzeichnis und führt sie als SQL-Befehle aus"""

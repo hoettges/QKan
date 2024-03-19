@@ -1677,15 +1677,12 @@ class ImportTask:
                                    stk.hw_gerinne_u, :epsg)) AS geom
             FROM
                 t_strakatkanal AS stk
-                LEFT JOIN Strassen
-                ON stk.strassennummer = Strassen.ID
-                LEFT JOIN sto
-                ON stk.Zuflussnummer1 = sto.Nummer
-                JOIN t_strakatberichte AS stb
-                ON stb.strakatid = stk.strakatid
+                LEFT JOIN Strassen ON stk.strassennummer = Strassen.ID
+                LEFT JOIN sto ON stk.Zuflussnummer1 = sto.Nummer
+                JOIN t_strakatberichte AS stb ON stb.strakatid = stk.strakatid
             WHERE stk.laenge > 0.04 AND
                    stk.schachtnummer <> 0
-            GROUP BY stk.strakatid, stb.strakatid
+            GROUP BY stk.strakatid, stb.datum
         """
 
         params = {"epsg": self.epsg}
@@ -1772,12 +1769,33 @@ class ImportTask:
         # Textpositionen für Schadenstexte berechnen
 
         sql = """SELECT
+            hu.pk AS id,
+            st_x(pointn(hu.geom, 1))                AS xanf,
+            st_y(pointn(hu.geom, 1))                AS yanf,
+            st_x(pointn(hu.geom, -1))               AS xend,
+            st_y(pointn(hu.geom, -1))               AS yend
+            FROM haltungen_untersucht AS hu
+            WHERE hu.haltnam IS NOT NULL AND
+                  hu.untersuchtag IS NOT NULL AND
+                  coalesce(hu.laenge, 0) > 0.05
+            ORDER BY id"""
+
+        if not self.db_qkan.sql(
+            sql, "read haltungen_untersucht"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen (1)")
+        data = self.db_qkan.fetchall()
+
+        data_hu = {}
+        for vals in data:
+            data_hu[vals[0]] = vals[1:]
+
+        sql = """SELECT
             uh.pk, hu.pk AS id,
             CASE untersuchrichtung
                 WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'in Fließrichtung'    THEN uh.station
-                                           ELSE uh.station END        AS station,
-            GLength(hu.geom)                                     AS laenge
+                                           ELSE uh.station END        AS station
             FROM untersuchdat_haltung AS uh
             JOIN haltungen_untersucht AS hu
             ON hu.haltnam = uh.untersuchhal AND
@@ -1794,58 +1812,59 @@ class ImportTask:
             ORDER BY id, station;"""
 
         if not self.db_qkan.sql(
-            sql, "untersuchdat_haltung.station read"
+            sql, "read untersuchdat_haltungen"
         ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen")
-        data = self.db_qkan.fetchall()
-        logger.debug(f'Anzahl Datensätze in calctextpositions: {len(data)}')
-        # logger.debug(f'{data[1]=}')
-        # logger.debug(f'{[type(el) for el in data[1]]}')
-        self.db_qkan.calctextpositions(data, 0.5, 0.25)
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen (2)")
 
-        params = ()
-        for ds in data:
-            params += ([ds[2], ds[0]],)
+        data_uh = self.db_qkan.fetchall()
 
-        sql = """UPDATE untersuchdat_haltung
-            SET stationtext = round(?, 3)
-            WHERE pk = ?"""
-        if not self.db_qkan.sql(
-                sql=sql,
-                stmt_category="untersuchdat_haltung.station write",
-                parameters=params,
-                many=True
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Schreiben der Stationen")
+        richtung = 'Anzeigen in Fließrichtung rechts der Haltung'
 
-        # Erzeugen der Polylinien für die Schadenstexte
+        self.db_qkan.calctextpositions(data_hu, data_uh, 0.5, 0.25, richtung, self.epsg)
+
+        # Nummerieren der Untersuchungen an der selben Haltung "haltungen_untersucht"
+
         sql = """
-            WITH dist AS (
-                SELECT column1 AS d, column2 AS stat, column3 AS tpos 
-                FROM (VALUES (0.0000000001, 1.0, 0.0), (1.0, 1.0, 0.0), (1.5, 0.0, 1.0), (4.0, 0.0, 1.0))
-            )
-            UPDATE untersuchdat_haltung SET geom = (
-                SELECT MakeLine(Line_Interpolate_Point(OffsetCurve(hu.geom, di.d), 
-                    (
-                    CASE untersuchrichtung
-                        WHEN 'gegen Fließrichtung' THEN ST_Length(hu.geom) - uh.station
-                        WHEN 'in Fließrichtung'    THEN uh.station
-                                                   ELSE ST_Length(hu.geom) - uh.station END * di.stat +  
-                    uh.stationtext * di.tpos) / ST_Length(hu.geom))) AS textline
-                FROM dist AS di, untersuchdat_haltung AS uh
-                JOIN haltungen_untersucht AS hu
-                ON hu.haltnam = uh.untersuchhal AND
-                   hu.schoben = uh.schoben AND
-                   hu.schunten = uh.schunten AND
-                   hu.untersuchtag = uh.untersuchtag
-                WHERE uh.pk = untersuchdat_haltung.pk
-                GROUP BY uh.pk)"""
-        if not self.db_qkan.sql(
-                sql=sql,
-                stmt_category="untersuchdat_haltung.geom SET"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Erzeugen der Schadenspolylinien")
+            UPDATE haltungen_untersucht
+            SET id = unum.row_number
+            FROM (
+                SELECT hu.pk AS pk, hu.haltnam, row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag) AS row_number
+                FROM haltungen_untersucht AS hu
+                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
+            ) AS unum
+            WHERE haltungen_untersucht.pk = unum.pk
+        """
 
-        self.db_qkan.commit()
+        if not self.db_qkan.sql(
+            sql, "num haltungen_untersucht"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler in num haltungen_untersucht")
+
+        # Nummerieren der Untersuchungsdaten "untersuchdat_haltung"
+
+        sql = """
+            WITH num AS (
+                SELECT uh.untersuchhal, uh.schoben, uh.schunten, uh.untersuchtag, row_number() OVER (PARTITION BY uh.untersuchhal, uh.schoben, uh.schunten ORDER BY uh.untersuchtag) AS row_number
+                FROM untersuchdat_haltung AS uh
+                GROUP BY uh.untersuchhal, uh.schoben, uh.schunten, uh.untersuchtag
+            )
+            UPDATE untersuchdat_haltung
+            SET id = uid.id
+            FROM (
+                SELECT uh.pk AS pk, num.row_number AS id
+                FROM untersuchdat_haltung AS uh
+                JOIN num 
+                ON	uh.untersuchhal = num.untersuchhal AND
+                    uh.schoben = num.schoben AND
+                    uh.schunten = num.schunten AND
+                    uh.untersuchtag = num.untersuchtag
+            ) AS uid
+            WHERE untersuchdat_haltung.pk = uid.pk
+        """
+
+        if not self.db_qkan.sql(
+            sql, "num untersuchdat_haltung"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler in num untersuchdat_haltung")
 
         return True

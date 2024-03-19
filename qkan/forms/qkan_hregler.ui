@@ -172,7 +172,7 @@
     <widget class="QLineEdit" name="ks">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>170</x>
        <y>120</y>
        <width>90</width>
        <height>20</height>
@@ -238,7 +238,7 @@
     <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>250</x>
+       <x>270</x>
        <y>90</y>
        <width>31</width>
        <height>21</height>
@@ -257,7 +257,7 @@
     <widget class="QLabel" name="label_21">
      <property name="geometry">
       <rect>
-       <x>250</x>
+       <x>270</x>
        <y>150</y>
        <width>30</width>
        <height>20</height>
@@ -276,7 +276,7 @@
     <widget class="QLineEdit" name="laenge">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>170</x>
        <y>150</y>
        <width>90</width>
        <height>20</height>
@@ -342,9 +342,9 @@
     <widget class="QComboBox" name="profilnam">
      <property name="geometry">
       <rect>
-       <x>149</x>
+       <x>169</x>
        <y>30</y>
-       <width>151</width>
+       <width>451</width>
        <height>22</height>
       </rect>
      </property>
@@ -399,7 +399,7 @@
       </font>
      </property>
      <property name="text">
-      <string>vorgeg. Länge</string>
+      <string>vorgeg. Haltungslänge</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_11">
@@ -446,7 +446,7 @@
     <widget class="QLineEdit" name="hoehe">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>170</x>
        <y>60</y>
        <width>90</width>
        <height>20</height>
@@ -490,7 +490,7 @@
     <widget class="QLabel" name="label_16">
      <property name="geometry">
       <rect>
-       <x>250</x>
+       <x>270</x>
        <y>60</y>
        <width>31</width>
        <height>21</height>
@@ -509,7 +509,7 @@
     <widget class="QLineEdit" name="breite">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>170</x>
        <y>90</y>
        <width>90</width>
        <height>20</height>
@@ -550,7 +550,7 @@
     <widget class="QLabel" name="label_70">
      <property name="geometry">
       <rect>
-       <x>250</x>
+       <x>270</x>
        <y>120</y>
        <width>46</width>
        <height>21</height>
