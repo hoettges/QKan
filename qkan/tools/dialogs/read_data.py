@@ -107,7 +107,13 @@ class ReadData:  # type: ignore
 
         try:
             if isinstance(func(), float) and isinstance(value, str):
-                result = float(value.replace(",", "."))
+                if '.' in value and ',' in value:
+                    if value.index('.') < value.index(','):
+                        result = float(value.replace(".", "").replace(",", "."))     # 1.234.567,89 -> 1234567.89
+                    else:
+                        result = float(value.replace(",", ""))                       # 1,234,567.89 -> 1234567.89
+                else:
+                    result = float(value.replace("'", "").replace(",", "."))         # 1'234'567,89 -> 1234567.89
             else:
                 result = func(value)
         except:

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>664</width>
-    <height>613</height>
+    <height>649</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -57,96 +57,6 @@
      <string>Haltungsname</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>311</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="title">
-     <string>Schacht oben</string>
-    </property>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>91</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Name</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="schoben">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>30</y>
-       <width>191</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="editable">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_3">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>50</y>
-      <width>311</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="title">
-     <string>Schacht unten</string>
-    </property>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Name</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="schunten">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>30</y>
-       <width>191</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="editable">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
    <widget class="QLineEdit" name="untersuchhal">
     <property name="geometry">
      <rect>
@@ -169,7 +79,7 @@
       <x>10</x>
       <y>110</y>
       <width>641</width>
-      <height>341</height>
+      <height>381</height>
      </rect>
     </property>
     <property name="font">
@@ -184,9 +94,9 @@
     <widget class="QLineEdit" name="untersuchrichtung">
      <property name="geometry">
       <rect>
-       <x>510</x>
+       <x>490</x>
        <y>120</y>
-       <width>91</width>
+       <width>131</width>
        <height>20</height>
       </rect>
      </property>
@@ -197,7 +107,7 @@
     <widget class="QLabel" name="label_17">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>300</x>
        <y>120</y>
        <width>151</width>
        <height>21</height>
@@ -275,8 +185,8 @@
     <widget class="QLabel" name="label_28">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>150</y>
+       <x>300</x>
+       <y>230</y>
        <width>161</width>
        <height>21</height>
       </rect>
@@ -288,8 +198,8 @@
     <widget class="QLabel" name="label_29">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>180</y>
+       <x>300</x>
+       <y>260</y>
        <width>211</width>
        <height>21</height>
       </rect>
@@ -366,9 +276,9 @@
     <widget class="QLineEdit" name="streckenschaden">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>150</y>
-       <width>91</width>
+       <x>490</x>
+       <y>230</y>
+       <width>131</width>
        <height>20</height>
       </rect>
      </property>
@@ -379,9 +289,9 @@
     <widget class="QLineEdit" name="streckenschaden_lfdnr">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>180</y>
-       <width>91</width>
+       <x>490</x>
+       <y>260</y>
+       <width>131</width>
        <height>20</height>
       </rect>
      </property>
@@ -419,9 +329,9 @@ von</string>
     <widget class="QLabel" name="label_51">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>230</y>
-       <width>151</width>
+       <x>10</x>
+       <y>260</y>
+       <width>81</width>
        <height>21</height>
       </rect>
      </property>
@@ -458,9 +368,9 @@ von</string>
     <widget class="QLineEdit" name="richtung">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>230</y>
-       <width>91</width>
+       <x>130</x>
+       <y>260</y>
+       <width>141</width>
        <height>20</height>
       </rect>
      </property>
@@ -471,9 +381,9 @@ von</string>
     <widget class="QLineEdit" name="station">
      <property name="geometry">
       <rect>
-       <x>510</x>
+       <x>490</x>
        <y>90</y>
-       <width>91</width>
+       <width>61</width>
        <height>20</height>
       </rect>
      </property>
@@ -484,7 +394,7 @@ von</string>
     <widget class="QLabel" name="label_34">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>300</x>
        <y>90</y>
        <width>151</width>
        <height>21</height>
@@ -498,7 +408,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>300</y>
+       <y>340</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -511,7 +421,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>270</y>
+       <y>310</y>
        <width>291</width>
        <height>20</height>
       </rect>
@@ -524,7 +434,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>300</y>
+       <y>340</y>
        <width>141</width>
        <height>20</height>
       </rect>
@@ -537,7 +447,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>270</y>
+       <y>310</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -550,7 +460,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>300</y>
+       <y>340</y>
        <width>291</width>
        <height>20</height>
       </rect>
@@ -563,7 +473,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>300</y>
+       <y>340</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -576,7 +486,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>270</y>
+       <y>310</y>
        <width>141</width>
        <height>20</height>
       </rect>
@@ -589,7 +499,7 @@ von</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>270</y>
+       <y>310</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -743,12 +653,116 @@ von</string>
       <string>Inspektionslänge</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>90</y>
+       <width>47</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_36">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>200</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Zustandsklassen</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_37">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>170</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Betrieb</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="ZD">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>200</y>
+       <width>31</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;vorgegebene Haltungslänge, falls diese nicht automatisch berechnet werden soll&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="ZB">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>200</y>
+       <width>31</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;vorgegebene Haltungslänge, falls diese nicht automatisch berechnet werden soll&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_38">
+     <property name="geometry">
+      <rect>
+       <x>590</x>
+       <y>170</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stands.</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="ZS">
+     <property name="geometry">
+      <rect>
+       <x>590</x>
+       <y>200</y>
+       <width>31</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;vorgegebene Haltungslänge, falls diese nicht automatisch berechnet werden soll&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_39">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>170</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Druck</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>470</y>
+      <y>510</y>
       <width>141</width>
       <height>23</height>
      </rect>
@@ -770,7 +784,7 @@ von</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>470</y>
+      <y>510</y>
       <width>151</width>
       <height>21</height>
      </rect>
@@ -783,7 +797,7 @@ von</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>520</y>
+      <y>560</y>
       <width>621</width>
       <height>51</height>
      </rect>
@@ -799,7 +813,7 @@ von</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>500</y>
+      <y>540</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -813,6 +827,126 @@ von</string>
     <property name="text">
      <string>Kommentar</string>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>50</y>
+      <width>311</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Endschacht</string>
+    </property>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="schunten">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>30</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name des unteren Schachts&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name des unteren Schachts</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>311</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Anfangsschacht</string>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="schoben">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>30</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name des oberen Schachts&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name des oberen Schachts</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -836,8 +970,6 @@ von</string>
  </customwidgets>
  <tabstops>
   <tabstop>untersuchhal</tabstop>
-  <tabstop>schoben</tabstop>
-  <tabstop>schunten</tabstop>
   <tabstop>untersuchrichtung</tabstop>
   <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>

@@ -1,14 +1,13 @@
 import os
-import shutil
 from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 
-from qkan import QKan, enums, get_default_dir
+from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import read_qml, eval_node_types, fehlermeldung
+from qkan.database.qkan_utils import eval_node_types, fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -116,7 +115,7 @@ class StrakatPorter(QKanPlugin):
         QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
         QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
 
-        self.log.info("Creating DB")
+        self.log.info("Opening QKan DB")
         with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
             if not db_qkan.connected:
                 fehlermeldung(

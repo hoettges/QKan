@@ -1757,7 +1757,7 @@ class ImportTask:
                 ON stk.Zuflussnummer1 = sto.Nummer
                 JOIN t_strakatberichte AS stb
                 ON stb.strakatid = stk.strakatid
-            WHERE stk.laenge > 0.04 AND stk.schachtnummer <> 0
+            WHERE stk.laenge > 0.04 AND stk.schachtnummer <> 0 AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
         """
 
         params = {"richtung": self.richtung}
@@ -1820,7 +1820,7 @@ class ImportTask:
 
         richtung = 'Anzeigen in Fließrichtung rechts der Haltung'
 
-        self.db_qkan.calctextpositions(data_hu, data_uh, 0.5, 0.25, richtung, self.epsg)
+        self.db_qkan.calctextpositions(data_hu, data_uh, 0.50, 0.15, richtung, self.epsg)
 
         # Nummerieren der Untersuchungen an der selben Haltung "haltungen_untersucht"
 
@@ -1828,7 +1828,9 @@ class ImportTask:
             UPDATE haltungen_untersucht
             SET id = unum.row_number
             FROM (
-                SELECT hu.pk AS pk, hu.haltnam, row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag) AS row_number
+                SELECT
+                    hu.pk AS pk, hu.haltnam, 
+                    row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
                 FROM haltungen_untersucht AS hu
                 GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
             ) AS unum
@@ -1844,9 +1846,11 @@ class ImportTask:
 
         sql = """
             WITH num AS (
-                SELECT uh.untersuchhal, uh.schoben, uh.schunten, uh.untersuchtag, row_number() OVER (PARTITION BY uh.untersuchhal, uh.schoben, uh.schunten ORDER BY uh.untersuchtag) AS row_number
-                FROM untersuchdat_haltung AS uh
-                GROUP BY uh.untersuchhal, uh.schoben, uh.schunten, uh.untersuchtag
+                SELECT
+                    hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, 
+                    row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
+                FROM haltungen_untersucht AS hu
+                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
             )
             UPDATE untersuchdat_haltung
             SET id = uid.id
@@ -1854,7 +1858,7 @@ class ImportTask:
                 SELECT uh.pk AS pk, num.row_number AS id
                 FROM untersuchdat_haltung AS uh
                 JOIN num 
-                ON	uh.untersuchhal = num.untersuchhal AND
+                ON	uh.untersuchhal = num.haltnam AND
                     uh.schoben = num.schoben AND
                     uh.schunten = num.schunten AND
                     uh.untersuchtag = num.untersuchtag

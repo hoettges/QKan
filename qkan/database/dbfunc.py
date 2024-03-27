@@ -862,7 +862,7 @@ class DBConnection:
 
         return result
 
-    def calctextpositions(self, data_hu, data_uh, tdist: float = 0.5, bdist: float = 0.25,
+    def calctextpositions(self, data_hu, data_uh, tdist: float = 0.50, bdist: float = 0.15,
                           richtung: str = 'Anzeigen in Fließrichtung rechts der Haltung', epsg: int = 25832
                           ):
         """Berechnet in einer internen Tabelle die Textpositionen für die Haltungsschäden.

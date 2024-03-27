@@ -1989,7 +1989,7 @@ class ImportTask:
         logger.debug(f'Anzahl Datensätze in calctextpositions: {len(data)}')
         # logger.debug(f'{data[1]=}')
         # logger.debug(f'{[type(el) for el in data[1]]}')
-        self.db_qkan.calctextpositions(data, 0.5, 0.25)
+        self.db_qkan.calctextpositions(data, 0.50, 0.15)
 
         params = ()
         for ds in data:
