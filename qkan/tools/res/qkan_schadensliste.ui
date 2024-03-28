@@ -29,242 +29,15 @@
    <property name="spacing">
     <number>6</number>
    </property>
-   <item row="2" column="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="1" rowspan="2">
-    <widget class="QTableWidget" name="tw_schadenstabelle"/>
-   </item>
-   <item row="1" column="2">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>120</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anzahl der angezeigten Inspektionen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="statusTip">
-      <string>Anzahl der angezeigten Inspektionen</string>
-     </property>
-     <property name="title">
-      <string>Anzeige</string>
-     </property>
-     <widget class="QRadioButton" name="rb_show_1">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nur die aktuellste Inspektion anzeigen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="statusTip">
-       <string>Nur die aktuellste Inspektion anzeigen</string>
-      </property>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rb_show_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die letzten 2 Inspektion anzeigen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="statusTip">
-       <string>Die letzten 2 Inspektion anzeigen</string>
-      </property>
-      <property name="text">
-       <string>2</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rb_show_3">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die letzten 3 Inspektion anzeigen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="statusTip">
-       <string>Die letzten 3 Inspektion anzeigen</string>
-      </property>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rb_show_4">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die letzten 4 Inspektion anzeigen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="statusTip">
-       <string>Die letzten 4 Inspektion anzeigen</string>
-      </property>
-      <property name="text">
-       <string>4</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rb_show_all">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>100</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle Inspektion anzeigen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="statusTip">
-       <string>Alle Inspektion anzeigen</string>
-      </property>
-      <property name="text">
-       <string>alle</string>
-      </property>
-     </widget>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="3">
-    <layout class="QHBoxLayout">
-     <property name="spacing">
-      <number>6</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>131</width>
-         <height>31</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="okButton">
-       <property name="text">
-        <string>OK</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="1" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="minimumSize">
+      <size>
+       <width>590</width>
+       <height>180</height>
+      </size>
+     </property>
+     <property name="maximumSize">
       <size>
        <width>590</width>
        <height>180</height>
@@ -281,7 +54,7 @@
      <property name="title">
       <string>Untersuchte Haltung</string>
      </property>
-     <widget class="QLineEdit" name="haltnam">
+     <widget class="QLineEdit" name="tf_haltnam">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -294,8 +67,8 @@
        <font>
         <family>Tahoma</family>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -347,7 +120,7 @@
        <string>Schacht oben</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="schoben">
+     <widget class="QLineEdit" name="tf_schoben">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -360,8 +133,8 @@
        <font>
         <family>Tahoma</family>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -371,7 +144,7 @@
        <string>Name des oberen Schachts</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="schunten">
+     <widget class="QLineEdit" name="tf_schunten">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -384,8 +157,8 @@
        <font>
         <family>Tahoma</family>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -416,7 +189,7 @@
        <string>Schacht oben</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="hoehe">
+     <widget class="QLineEdit" name="tf_hoehe">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -440,7 +213,7 @@
        <string>Bedeutung hängt vom Profiltyp ab</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="breite">
+     <widget class="QLineEdit" name="tf_breite">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -590,7 +363,7 @@
        <string>Baujahr</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="laenge">
+     <widget class="QLineEdit" name="tf_laenge">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -635,7 +408,7 @@
        <string>m </string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="baujahr">
+     <widget class="QLineEdit" name="tf_baujahr">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -701,7 +474,7 @@
        <string>Wetter</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="bewertungsart">
+     <widget class="QLineEdit" name="tf_bewertungsart">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -714,8 +487,8 @@
        <font>
         <family>Tahoma</family>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -725,7 +498,7 @@
        <string>Name des verwndeten Bewertungsmodells (z.B. DWA-M 149-3)</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="wetter">
+     <widget class="QLineEdit" name="tf_wetter">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -738,8 +511,8 @@
        <font>
         <family>Tahoma</family>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -770,7 +543,7 @@
        <string>Bewertungsart</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="untersucher">
+     <widget class="QLineEdit" name="tf_untersucher">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -783,8 +556,8 @@
        <font>
         <family>Tahoma</family>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -795,6 +568,91 @@
       </property>
      </widget>
     </widget>
+   </item>
+   <item row="4" column="0" colspan="4">
+    <layout class="QHBoxLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <spacer name="hs_1">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>131</width>
+         <height>31</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Schließen</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hs_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pb_showAll">
+       <property name="text">
+        <string>Alle anzeigen</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" rowspan="2" colspan="4">
+    <widget class="QTableWidget" name="tw_schadenstabelle"/>
    </item>
   </layout>
  </widget>

@@ -70,6 +70,11 @@ und "Mittelstand Innovativ & Digital (MID) – Teil MID-Digitalisierung" (2) sow
  - `Tuttahs & Meyer Ing.-GmbH, Aachen (2) <https://tuttahs-meyer.de/>`_
  - `Ingenieurbüro Achten und Jansen GmbH, Aachen (2) <https://www.achten-jansen.de/>`_
 
+Im März 2024 hat die `DBU <https://www.dbu.de/>`_ einen Förderantrag über 168.000,-- EUR für 2 Jahre bewilligt. Antragsteller ist 
+das `Geoinformatikbüro Dassau GmbH (GBD) <https://www.gbd-consult.de/>`_ mit dem `ISCE der FH Aachen <https://isce.fh-aachen.de>`_ als Projektpartner. 
+
+.. image:: ./QKan_Bilder/png-DBU-Logo-gefoerdert-durch-RGB.png
+
 Team
 ----
 

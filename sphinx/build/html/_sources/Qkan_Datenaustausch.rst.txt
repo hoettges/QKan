@@ -68,36 +68,3 @@ Beispiel zum Ausprobieren:
 .. image:: ./QKan_Bilder/netz_aus_clipboard.png
 
 Abbildung: Eingefügtes Kanalnetz in QKan
-
-
-Arbeiten mit Projektdateien
----------------------------
-
-Projektdateien übertragen
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Die :ref:`Funktion <linkprojektdateiuebertragen>` |Tool_projektdatei_uebertragen| :guilabel:`QKan-Projektdatei übertragen` dient dazu,
-eine Vorlage-Projektdatei zu laden, um das Projekt nach eigenen Bedürfnissen z.B. Firmenstandards darzustellen. In der Projektdatei
-können z.B. Beschriftungsstile oder Linientypdarstellungen definiert sein. 
-
-Die neue Projektdatei kann geladen werden, indem das aktuelle Projekt über :guilabel:`Projekt` → :guilabel:`Zuletzt verwendet` 
-neu geladen wird. Der Standard sollte nun in dem aktuellen Projekt geladen sein. 
-
-.. |Tool_projektdatei_uebertragen| image:: ./QKan_Bilder/Tool_projektdatei_uebertragen.png
-                                    :width: 1.25 em
-
-..
-    Export mit HYSTEM-EXTRAN
-    ------------------------
-
-.. _datenaustimporthe:  
-
-Import aus HYSTEM-EXTRAN
-------------------------
-Daten können leicht von einem HYSTEM-EXTRAN Projekt nach QKan übertragen werden mit der :ref:`Funktion <linkimporthe>` |Tool_Import_HE|
-:guilabel:`Import aus HYSTEM-EXTRAN`.
-
-.. |Tool_Import_HE| image:: ./QKan_Bilder/Tool_Import_HE.png
-                                    :width: 1.25 em
-
-Ist das Formular nach den eigenen Wünschen ausgefüllt, kann es mit :guilabel:`OK` geschlossen werden und der Import wird gestartet. 

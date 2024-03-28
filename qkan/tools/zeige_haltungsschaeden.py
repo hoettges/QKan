@@ -17,17 +17,23 @@ class ShowHaltungsschaeden(QDialog, form_class):
     def __init__(self, haltnam: str, schoben: str, schunten: str):
         super(ShowHaltungsschaeden, self).__init__()
 
+        self.haltnam = haltnam
+        self.schoben = schoben
+        self.schunten = schunten
+        self.showschaedencolumns = QKan.config.zustand.showschaedencolumns      # evtl. ergänzen: Eingabe unter Optionen
+
         self.setupUi(self)
 
-        self.showlist(haltnam, schoben, schunten)
+        self.showlist()
 
-        self.tw_schadenstabelle.rb_show_1.clicked.connect(self.recalc_1)
-        self.tw_schadenstabelle.rb_show_2.clicked.connect(self.recalc_2)
-        self.tw_schadenstabelle.rb_show_3.clicked.connect(self.recalc_3)
-        self.tw_schadenstabelle.rb_show_4.clicked.connect(self.recalc_4)
-        self.tw_schadenstabelle.rb_show_all.clicked.connect(self.recalc_all)
+        self.pb_showAll.clicked.connect(self.show_all)
 
-    def showlist(self, haltnam: str, schoben: str, schunten: str):
+    def show_all(self):
+        """Aktualisiert die Schadensliste"""
+        self.showschaedencolumns = 100
+        self.showlist()
+
+    def showlist(self):
         """Textfelder zur Haltung füllen und Liste mit den Haltungsschäden  erstellen"""
 
         with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
@@ -38,6 +44,37 @@ class ShowHaltungsschaeden(QDialog, form_class):
                     level=Qgis.Critical,
                 )
                 return False
+
+            sql = """
+                SELECT
+                    hoehe, breite, untersucher,
+                    wetter, bewertungsart, laenge, baujahr
+                FROM haltungen_untersucht
+                WHERE
+                    haltnam = :haltnam AND
+                    schoben = :schoben AND
+                    schunten = :schunten
+                """
+            params = {'haltnam': self.haltnam, 'schoben': self.schoben, 'schunten': self.schunten}
+
+            if not db_qkan.sql(sql=sql, stmt_category="Anzeige Zustandsdaten (1)", parameters=params):
+                logger.error('Fehler in Anzeige Zustandsdaten (1)')
+                return False
+
+            data = db_qkan.fetchone()
+
+            (hoehe, breite, untersucher, wetter, bewertungsart, laenge, baujahr) = data
+
+            self.tf_haltnam.setText(f'{self.haltnam}')
+            self.tf_schoben.setText(f'{self.schoben}')
+            self.tf_schunten.setText(f'{self.schunten}')
+            self.tf_hoehe.setText(f'{hoehe}')
+            self.tf_breite.setText(f'{breite}')
+            self.tf_untersucher.setText(f'{untersucher}')
+            self.tf_wetter.setText(f'{wetter}')
+            self.tf_bewertungsart.setText(f'{bewertungsart}')
+            self.tf_laenge.setText(f'{laenge}')
+            self.tf_baujahr.setText(f'{baujahr}')
 
             sql = """
                 SELECT hu.untersuchtag
@@ -52,10 +89,11 @@ class ShowHaltungsschaeden(QDialog, form_class):
                     ORDER BY hu.untersuchtag DESC
                     LIMIT :anzahl
                 """
-            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten, 'anzahl': 5}
+            params = {'haltnam': self.haltnam, 'schoben': self.schoben, 'schunten': self.schunten,
+                      'anzahl': self.showschaedencolumns}
 
-            if not db_qkan.sql(sql=sql, stmt_category="Anzeige Zustandsdaten (1)", parameters=params):
-                logger.error('Fehler in Anzeige Zustandsdaten (1)')
+            if not db_qkan.sql(sql=sql, stmt_category="Anzeige Zustandsdaten (2)", parameters=params):
+                logger.error('Fehler in Anzeige Zustandsdaten (2)')
                 return False
 
             data = db_qkan.fetchall()
@@ -109,11 +147,18 @@ class ShowHaltungsschaeden(QDialog, form_class):
                 zd AS (
                 SELECT
                     uh.pk,
-                    uh.untersuchhal AS haltnam, 
+                    uh.untersuchhal                                                     AS haltnam, 
                     uh.schoben,
                     uh.schunten,
                     uh.untersuchtag,
                     uh.kuerzel,
+                    uh.kuerzel || 
+                        CASE  WHEN substr(uh.kuerzel, 1, 1) IN ('A', 'B', 'C', 'D') AND 
+                                   substr(uh.kuerzel, 2, 1) IN ('A', 'B', 'C', 'D')
+                        THEN
+                            substr('  ' || printf('%i', uh.charakt1), 2) ||
+                            substr('  ' || printf('%i', uh.charakt2), 2)
+                        ELSE '' END                                                     AS text,
                     CASE untersuchrichtung
                         WHEN 'gegen Fließrichtung' THEN round(hu.laenge - uh.station, 2)
                         WHEN 'in Fließrichtung'    THEN round(uh.station, 2)
@@ -131,11 +176,11 @@ class ShowHaltungsschaeden(QDialog, form_class):
                           abs(uh.station) < 10000 AND
                           untersuchrichtung IS NOT NULL AND
                           hu.haltnam = :haltnam AND hu.schoben = :schoben AND hu.schunten = :schunten
-                    GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
+                    GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, round(station, 3), uh.kuerzel
                 )
                 SELECT
                     hs.station,
-                    zd.kuerzel
+                    zd.text
                     FROM hs
                     CROSS JOIN ud
                     LEFT JOIN zd
@@ -147,10 +192,11 @@ class ShowHaltungsschaeden(QDialog, form_class):
                        zd.untersuchtag = ud.untersuchtag
                     ORDER BY ud.untersuchtag DESC, hs.station, zd.kuerzel
             """
-            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten, 'anzahl': 5}
+            params = {'haltnam': self.haltnam, 'schoben': self.schoben, 'schunten': self.schunten,
+                      'anzahl': self.showschaedencolumns}
 
-            if not db_qkan.sql(sql=sql, stmt_category="Anzeige Zustandsdaten (2)", parameters=params):
-                logger.error('Fehler in Anzeige Zustandsdaten (2)')
+            if not db_qkan.sql(sql=sql, stmt_category="Anzeige Zustandsdaten (3)", parameters=params):
+                logger.error('Fehler in Anzeige Zustandsdaten (3)')
                 return False
 
             data = db_qkan.fetchall()
@@ -167,10 +213,8 @@ class ShowHaltungsschaeden(QDialog, form_class):
                 if i < nrows:       # Spalten "untersuchtag" und "station" nur beim 1. Mal schreiben
                     cell = "{:.2f}".format(elem[0])
                     self.tw_schadenstabelle.setItem(row, 0, QTableWidgetItem(cell))
-                    logger.debug(f'Schreibe {cell} in Zelle {row}, 0')
                     self.tw_schadenstabelle.setRowHeight(row, 20)
                 cell = ("{}".format(elem[1])).replace('None', '')
-                logger.debug(f'Schreibe {cell} in Zelle {row}, {col + 1}')
                 self.tw_schadenstabelle.setItem(row, col + 1, QTableWidgetItem(cell))
 
 

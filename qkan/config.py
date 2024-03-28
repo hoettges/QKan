@@ -367,9 +367,9 @@ class ToolsConfig(ClassObject):
                 "pow(2*0.02 * fliesslaenge / SQRT(neigung), 0.467), 2)",
             "round(pow(2*0.10 * fliesslaenge / SQRT(neigung), 0.467), 2)",
         ]
-
         def __str__(self) -> str:
             return "<RunoffParams *hidden in __str__*>"
+
 
     class Clipboard(ClassObject):
         """Patterns for replacing column names with the QKan database names"""
@@ -759,6 +759,7 @@ class XmlConfig(ClassObject):
 class ZustandConfig(ClassObject):
     db: str = ""
     date: str = ""
+    showschaedencolumns: int = 2
 
 
 class SanierungConfig(ClassObject):
