@@ -153,6 +153,7 @@ def createdbtables(
         """ CREATE TABLE haltungen (
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
+            objekt_id INTEGER,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (m)
@@ -170,6 +171,7 @@ def createdbtables(
             innenmaterial TEXT,
             ks REAL DEFAULT 1.5,                            -- abs. Rauheit (Prandtl-Colebrook)
             haltungstyp TEXT DEFAULT 'Haltung',             -- join haltungstypen.bezeichnung
+            netztyp TEXT,
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             transport INTEGER DEFAULT 0,                    -- Transporthaltung?
             druckdicht INTEGER DEFAULT 0,                   -- Druckleitung?
@@ -208,6 +210,7 @@ def createdbtables(
         """CREATE TABLE haltungen_untersucht(
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
+            bezugspunkt TEXT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (m)
@@ -215,6 +218,7 @@ def createdbtables(
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
             id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
             untersuchtag TEXT,
             untersucher TEXT,
             wetter INTEGER DEFAULT 0,
@@ -222,6 +226,7 @@ def createdbtables(
             bewertungstag TEXT,
             strasse TEXT,
             datenart TEXT,
+            auftragsbezeichnung TEXT,
             max_ZD INTEGER,
             max_ZB INTEGER, 
             max_ZS INTEGER,
@@ -255,6 +260,7 @@ def createdbtables(
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
             untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler TEXT,
@@ -277,6 +283,9 @@ def createdbtables(
             ordner_bild TEXT,
             ordner_video TEXT,
             richtung TEXT,
+            filmtyp INTEGER,
+            video_start INTEGER,
+            video_ende INTEGER,
             ZD INTEGER,
             ZB INTEGER,
             ZS INTEGER,
@@ -304,6 +313,7 @@ def createdbtables(
         """CREATE TABLE anschlussleitungen (
             pk INTEGER PRIMARY KEY,
             leitnam TEXT,
+            objekt_id INTEGER,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (m)
@@ -313,12 +323,18 @@ def createdbtables(
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
             deckeloben REAL,
             deckelunten REAL,
+            baujahr INTEGER,
+            haltnam TEXT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             qzu REAL,
             profilnam TEXT DEFAULT 'Kreisquerschnitt',
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             material TEXT,
+            profilauskleidung TEXT,
+            innenmaterial TEXT,
             ks REAL DEFAULT 1.5,
+            anschlusstyp TEXT,
+            netztyp TEXT,
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             xschob REAL,
             yschob REAL,
@@ -349,10 +365,12 @@ def createdbtables(
         """CREATE TABLE schaechte (
             pk INTEGER PRIMARY KEY,
             schnam TEXT,
+            objekt_id INTEGER,
             sohlhoehe REAL,
             deckelhoehe REAL,
             durchm REAL,
             druckdicht INTEGER, 
+            bauwerkstyp TEXT,
             ueberstauflaeche REAL DEFAULT 0,
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
@@ -360,6 +378,7 @@ def createdbtables(
             knotentyp TEXT,                                 -- join knotentypen.knotentyp
             auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
             schachttyp TEXT DEFAULT 'Schacht',              -- join schachttypen.schachttyp
+            netztyp TEXT,
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             material TEXT,
             xsch REAL, 
@@ -419,7 +438,9 @@ def createdbtables(
             schnam TEXT, 
             durchm REAL,
             baujahr INTEGER,
+            bezugspunkt TEXT,
             id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
@@ -427,6 +448,7 @@ def createdbtables(
             bewertungsart TEXT, 
             bewertungstag TEXT,
             datenart TEXT,
+            auftragsbezeichnung TEXT,
             max_ZD INTEGER,
             max_ZB INTEGER,
             max_ZS INTEGER, 
