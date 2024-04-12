@@ -2,13 +2,11 @@ import os
 import logging
 
 from qgis.core import Qgis
-from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QApplication, QDialog, QTableWidgetItem
 from qgis.PyQt.uic import loadUiType
 from qkan.database.dbfunc import DBConnection
 from qkan import QKan
 
-# app = QApplication(sys.argv)
 form_class, _ = loadUiType(os.path.join(os.path.dirname(__file__), 'res/qkan_schadensliste.ui'))
 
 logger = logging.getLogger("QKan.tools.zeige_schaeden")
@@ -76,18 +74,29 @@ class ShowHaltungsschaeden(QDialog, form_class):
             self.tf_laenge.setText(f'{laenge}')
             self.tf_baujahr.setText(f'{baujahr}')
 
+            # Auflisten aller Untersuchungstage. Kriterium muss identisch mit nachfolgenden
+            # Abfragen sein, damit nur Untersuchungstage mit Untersuchungsdaten berücksichtigt werden
+
             sql = """
                 SELECT hu.untersuchtag
-                FROM haltungen_untersucht AS hu
+                FROM untersuchdat_haltung AS uh
+                JOIN haltungen_untersucht AS hu
+                ON hu.haltnam = uh.untersuchhal AND
+                   hu.schoben = uh.schoben AND
+                   hu.schunten = uh.schunten AND
+                   hu.untersuchtag = uh.untersuchtag
                 WHERE hu.haltnam IS NOT NULL AND
-                    hu.untersuchtag IS NOT NULL AND
-                    coalesce(hu.laenge, 0) > 0.05 AND
-                    hu.haltnam = :haltnam AND
-                    hu.schoben = :schoben AND
-                    hu.schunten = :schunten
-                    GROUP BY hu.untersuchtag
-                    ORDER BY hu.untersuchtag DESC
-                    LIMIT :anzahl
+                      hu.untersuchtag IS NOT NULL AND
+                      coalesce(laenge, 0) > 0.05 AND
+                      uh.station IS NOT NULL AND
+                      abs(uh.station) < 10000 AND
+                      untersuchrichtung IS NOT NULL AND
+                      hu.haltnam = :haltnam AND
+                      hu.schoben = :schoben AND
+                      hu.schunten = :schunten
+                GROUP BY hu.untersuchtag
+                ORDER BY hu.untersuchtag DESC
+                LIMIT :anzahl
                 """
             params = {'haltnam': self.haltnam, 'schoben': self.schoben, 'schunten': self.schunten,
                       'anzahl': self.showschaedencolumns}
@@ -127,7 +136,9 @@ class ShowHaltungsschaeden(QDialog, form_class):
                               uh.station IS NOT NULL AND
                               abs(uh.station) < 10000 AND
                               untersuchrichtung IS NOT NULL AND
-                              hu.haltnam = :haltnam AND hu.schoben = :schoben AND hu.schunten = :schunten
+                              hu.haltnam = :haltnam AND
+                              hu.schoben = :schoben AND
+                              hu.schunten = :schunten
                         GROUP BY hu.haltnam, hu.schoben, hu.schunten, station, uh.kuerzel
                 ),
                 ud AS (
@@ -175,7 +186,9 @@ class ShowHaltungsschaeden(QDialog, form_class):
                           uh.station IS NOT NULL AND
                           abs(uh.station) < 10000 AND
                           untersuchrichtung IS NOT NULL AND
-                          hu.haltnam = :haltnam AND hu.schoben = :schoben AND hu.schunten = :schunten
+                          hu.haltnam = :haltnam AND
+                          hu.schoben = :schoben AND
+                          hu.schunten = :schunten
                     GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, round(station, 3), uh.kuerzel
                 )
                 SELECT
@@ -221,9 +234,3 @@ class ShowHaltungsschaeden(QDialog, form_class):
 if __name__ == '__main__':
     form = ShowHaltungsschaeden('74115531', '74115531', '74115529')
     form.show()
-# form.exec_()
-# form.close()
-# sys.exit(app.exec_())
-
-# exec(open('C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_strakat/snippets/zeige_schaeden.py').read())
-

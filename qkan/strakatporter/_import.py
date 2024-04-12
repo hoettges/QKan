@@ -123,6 +123,8 @@ class ImportTask:
         self.projectfile = QKan.config.project.file
         self.db_name = QKan.config.database.qkan
         self.richtung = 'fließrichtung'         # QKan.config.xml.richt_choice
+        self.kriterienschaeden = QKan.config.zustand.kriterienschaeden
+
 
     def run(self) -> bool:
 
@@ -142,17 +144,18 @@ class ImportTask:
 
         result = all(
             [
-                self._strakat_reftables(), self.progress_bar.setValue(10), logger.debug("_strakat_reftables"),
-                self._reftables(), self.progress_bar.setValue(15), logger.debug("_reftables"),
-                self._strakat_kanaltabelle(), self.progress_bar.setValue(30), logger.debug("strakat_kanaltabelle"),
-                self._schaechte(), self.progress_bar.setValue(40), logger.debug("_schaechte"),
-                self._haltungen(), self.progress_bar.setValue(50), logger.debug("_haltungen"),
-                self._strakat_hausanschl(), self.progress_bar.setValue(80), logger.debug("_strakat_hausanschl"),
-                self._anschlussleitungen(), self.progress_bar.setValue(90), logger.debug("_anschlussleitungen"),
-                self._strakat_berichte(), self.progress_bar.setValue(95), logger.debug("_strakat_berichte"),
-                # self._schachtschaeden(),
-                self.haltungen_untersucht(),
-                self._untersuchdat_haltung(),
+                self._strakat_reftables(), self.progress_bar.setValue(10),      logger.debug("_strakat_reftables"),
+                self._reftables(), self.progress_bar.setValue(15),              logger.debug("_reftables"),
+                self._strakat_kanaltabelle(), self.progress_bar.setValue(30),   logger.debug("strakat_kanaltabelle"),
+                self._schaechte(), self.progress_bar.setValue(40),              logger.debug("_schaechte"),
+                self._haltungen(), self.progress_bar.setValue(50),              logger.debug("_haltungen"),
+                self._strakat_hausanschl(), self.progress_bar.setValue(80),     logger.debug("_strakat_hausanschl"),
+                self._anschlussleitungen(), self.progress_bar.setValue(90),     logger.debug("_anschlussleitungen"),
+                self._strakat_berichte(), self.progress_bar.setValue(95),       logger.debug("_strakat_berichte"),
+                self._haltungen_untersucht(),                                   logger.debug("_haltungen_untersucht"),
+                self._untersuchdat_haltung(),                                   logger.debug("_untersuchdat_haltung"),
+                self._schaechte_untersucht(),                                   logger.debug("_schaechte_untersucht"),
+                self._untersuchdat_schacht(),                                   logger.debug("_untersuchdat_schacht"),
             ]
         )
 
@@ -1600,7 +1603,7 @@ class ImportTask:
 
         return True
 
-    def _schachtschaeden(self) -> bool:
+    def _schaechte_untersucht(self) -> bool:
         """Import der Schächte mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
@@ -1614,7 +1617,11 @@ class ImportTask:
 
         return True
 
-    def haltungen_untersucht(self) -> bool:
+    def _untersuchdat_schacht(self) -> bool:
+        """Import der Schachtschäden aus der STRAKAT-Tabelle t_strakatberichte"""
+        pass
+
+    def _haltungen_untersucht(self) -> bool:
         """Import der Haltungen mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
@@ -1857,7 +1864,7 @@ class ImportTask:
             FROM (
                 SELECT uh.pk AS pk, num.row_number AS id
                 FROM untersuchdat_haltung AS uh
-                JOIN num 
+                JOIN num
                 ON	uh.untersuchhal = num.haltnam AND
                     uh.schoben = num.schoben AND
                     uh.schunten = num.schunten AND

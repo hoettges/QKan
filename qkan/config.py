@@ -760,6 +760,7 @@ class ZustandConfig(ClassObject):
     db: str = ""
     date: str = ""
     showschaedencolumns: int = 2
+    kriterienschaeden: dict = {'haltung': '[ABC][A-E][A-Z]', 'schacht': '[D][A-E][A-Z]'}
 
 
 class SanierungConfig(ClassObject):
