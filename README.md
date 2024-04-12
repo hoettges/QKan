@@ -62,8 +62,12 @@ Projektförderung durch das Ministerium für Innovation, Wissenschaft und Forsch
 2) Dez. 2019 - Nov. 2020
 3) Aug. 2016 - Aug. 2017
 
+Projektförderung durch die Deutsche Bundesstiftung Umwelt (DBU) März 2024 - Feb. 2026 ![DBU](https://www.dbu.de/app/uploads/png-DBU-Logo-gefoerdert-durch-RGB.png)
+
 Details zum Projekt "QKan" sind in mehreren Vorträgen erläutert:
 
+- Höttges, J. (2024): "QKan - Kanalkataster und Planungssystem für QGIS". FOSSGIS 2024, Hamburg:
+  https://app.media.ccc.de/v/fossgis2024-38564-qkan-kanalkataster-und-planungssystem-fr-qgis
 - Höttges, J. (2017): "QKan - Kanalkataster mit QGIS". FOSSGIS 2017, Passau: 
   https://doi.org/10.5446/30533
 - Höttges, J. (2017): "QKan - Management of drainage system data with QGIS".
