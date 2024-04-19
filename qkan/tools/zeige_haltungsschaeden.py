@@ -6,6 +6,7 @@ from qgis.PyQt.QtWidgets import QApplication, QDialog, QTableWidgetItem
 from qgis.PyQt.uic import loadUiType
 from qkan.database.dbfunc import DBConnection
 from qkan import QKan
+from qkan.database.qkan_utils import get_database_QKan
 
 form_class, _ = loadUiType(os.path.join(os.path.dirname(__file__), 'res/qkan_schadensliste.ui'))
 
@@ -34,7 +35,9 @@ class ShowHaltungsschaeden(QDialog, form_class):
     def showlist(self):
         """Textfelder zur Haltung füllen und Liste mit den Haltungsschäden  erstellen"""
 
-        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+        database_qkan, epsg = get_database_QKan()
+
+        with DBConnection(dbname=database_qkan, epsg=epsg) as db_qkan:
             if not db_qkan.connected:
                 self.iface.messageBar().pushMessage(
                     "Fehler im STRAKAT-Import",
