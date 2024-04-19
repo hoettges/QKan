@@ -15,6 +15,7 @@ def run(dbcon: DBConnection) -> bool:
         "haltungen_untersucht",
         [
             "haltnam TEXT",
+            "bezugspunkt TEXT",
             "schoben TEXT                                    -- join schaechte.schnam",
             "schunten TEXT                                   -- join schaechte.schnam",
             "hoehe REAL                                      -- Profilhoehe (m)",
@@ -22,6 +23,7 @@ def run(dbcon: DBConnection) -> bool:
             "laenge REAL                                     -- abweichende Haltungslänge (m)",
             "baujahr INTEGER",
             "id INTEGER                                      -- absolute Nummer der Inspektion",
+            "objekt_id INTEGER",
             "untersuchtag TEXT",
             "untersucher TEXT",
             "wetter INTEGER DEFAULT 0",
@@ -29,6 +31,7 @@ def run(dbcon: DBConnection) -> bool:
             "bewertungstag TEXT",
             "strasse TEXT",
             "datenart TEXT",
+            "auftragsbezeichnung TEXT",
             "max_ZD INTEGER",
             "max_ZB INTEGER ",
             "max_ZS INTEGER",
@@ -58,6 +61,7 @@ def run(dbcon: DBConnection) -> bool:
             "schoben TEXT                                    -- join schaechte.schnam ",
             "schunten TEXT                                   -- join schaechte.schnam",
             "id INTEGER                                      -- absolute Nummer der Inspektion",
+            "objekt_id INTEGER",
             "untersuchtag TEXT",
             "bandnr INTEGER",
             "videozaehler TEXT",
@@ -80,6 +84,9 @@ def run(dbcon: DBConnection) -> bool:
             "ordner_bild TEXT",
             "ordner_video TEXT",
             "richtung TEXT",
+            "filmtyp INTEGER",
+            "video_start INTEGER",
+            "video_ende INTEGER",
             "ZD INTEGER",
             "ZB INTEGER",
             "ZS INTEGER",
@@ -97,9 +104,11 @@ def run(dbcon: DBConnection) -> bool:
         "schaechte_untersucht",
         [
             "schnam TEXT",
+            "bezugspunkt TEXT",
             "durchm REAL",
             "baujahr INTEGER",
             "id INTEGER                                      -- absolute Nummer der Inspektion",
+            "objekt_id INTEGER",
             "untersuchtag TEXT",
             "untersucher TEXT",
             "wetter INTEGER DEFAULT 0",
@@ -107,6 +116,7 @@ def run(dbcon: DBConnection) -> bool:
             "bewertungsart TEXT",
             "bewertungstag TEXT",
             "datenart TEXT",
+            "auftragsbezeichnung TEXT",
             "max_ZD INTEGER",
             "max_ZB INTEGER",
             "max_ZS INTEGER",
@@ -125,6 +135,7 @@ def run(dbcon: DBConnection) -> bool:
         [
             "untersuchsch TEXT",
             "id INTEGER                                      -- absolute Nummer der Inspektion",
+            "objekt_id INTEGER",
             "untersuchtag TEXT",
             "bandnr INTEGER",
             "videozaehler TEXT",
@@ -156,4 +167,129 @@ def run(dbcon: DBConnection) -> bool:
             "zu Tabelle 'untersuchdat_schacht' fehlgeschlagen"
         )
 
+
+    if not dbcon.alter_table(
+        "haltungen",
+        [
+            "haltnam TEXT",
+            "objekt_id INT",
+            "schoben TEXT                                    -- join schaechte.schnam",
+            "schunten TEXT                                   -- join schaechte.schnam",
+            "hoehe REAL                                      -- Profilhoehe (m)",
+            "breite REAL                                     -- Profilbreite (m)",
+            "laenge REAL                                     -- abweichende Haltungslänge (m)",
+            "aussendurchmesser REAL",
+            "sohleoben REAL                                  -- abweichende Sohlhöhe oben (m)",
+            "sohleunten REAL                                 -- abweichende Sohlhöhe unten (m)",
+            "baujahr INT",
+            "teilgebiet TEXT                                 -- join teilgebiet.tgnam",
+            "strasse TEXT                                    -- für ISYBAU benötigt",
+            "profilnam TEXT DEFAULT 'Kreisquerschnitt'       -- join profile.profilnam",
+            "entwart TEXT DEFAULT 'Regenwasser'              -- join entwaesserungsarten.bezeichnung",
+            "material TEXT",
+            "profilauskleidung TEXT",
+            "innenmaterial TEXT",
+            "ks REAL DEFAULT 1.5                             -- abs. Rauheit (Prandtl-Colebrook)",
+            "haltungstyp TEXT DEFAULT 'Haltung'              -- join haltungstypen.bezeichnung",
+            "netztyp TEXT",
+            "simstatus TEXT DEFAULT 'vorhanden'              -- join simulationsstatus.bezeichnung",
+            "transport INTEGER DEFAULT 0                     -- Transporthaltung?",
+            "druckdicht INTEGER DEFAULT 0                    -- Druckleitung?",
+            "xschob REAL",
+            "yschob REAL",
+            "xschun REAL",
+            "yschun REAL",
+            "kommentar TEXT",
+            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
+        ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
+            "zu Tabelle 'haltungen' fehlgeschlagen"
+        )
+
+    if not load_plausisql(dbcon):
+        logger.error("Fehler in migration 0037_untersuchdat")
+        return False
+
+    if not dbcon.alter_table(
+        "anschlussleitungen",
+        [
+            "leitnam TEXT",
+            "objekt_id INT",
+            "haltnam TEXT",
+            "schoben TEXT                                    -- join schaechte.schnam",
+            "schunten TEXT                                   -- join schaechte.schnam",
+            "hoehe REAL                                      -- Profilhoehe (m)",
+            "breite REAL                                     -- Profilbreite (m)",
+            "laenge REAL                                     -- abweichende Haltungslänge (m)",
+            "aussendurchmesser REAL",
+            "sohleoben REAL                                  -- abweichende Sohlhöhe oben (m)",
+            "sohleunten REAL                                 -- abweichende Sohlhöhe unten (m)",
+            "baujahr INT",
+            "teilgebiet TEXT                                 -- join teilgebiet.tgnam",
+            "strasse TEXT                                    -- für ISYBAU benötigt",
+            "profilnam TEXT DEFAULT 'Kreisquerschnitt'       -- join profile.profilnam",
+            "entwart TEXT DEFAULT 'Regenwasser'              -- join entwaesserungsarten.bezeichnung",
+            "material TEXT",
+            "profilauskleidung TEXT",
+            "innenmaterial TEXT",
+            "ks REAL DEFAULT 1.5                             -- abs. Rauheit (Prandtl-Colebrook)",
+            "anschlusstyp TEXT",
+            "netztyp TEXT",
+            "simstatus TEXT DEFAULT 'vorhanden'              -- join simulationsstatus.bezeichnung",
+            "xschob REAL",
+            "yschob REAL",
+            "xschun REAL",
+            "yschun REAL",
+            "kommentar TEXT",
+            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
+        ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
+            "zu Tabelle 'haltungen' fehlgeschlagen"
+        )
+
+    if not load_plausisql(dbcon):
+        logger.error("Fehler in migration 0037_untersuchdat")
+        return False
+
+    if not dbcon.alter_table(
+            "schaechte",
+            [
+                "schnam TEXT",
+                "objekt_id INT",
+                "sohlhoehe REAL",
+                "deckelhoehe REAL",
+                "durchm REAL",
+                "druckdicht INTEGER",
+                "bauwerkstyp TEXT",
+                "ueberstauflaeche REAL DEFAULT 0",
+                "entwart TEXT DEFAULT 'Regenwasser' -- join entwaesserungsarten.bezeichnung",
+                "strasse TEXT",
+                "teilgebiet TEXT -- join teilgebiet.tgnam",
+                "knotentyp TEXT -- join knotentypen.knotentyp",
+                "auslasstyp TEXT -- join auslasstypen.bezeichnung",
+                "schachttyp TEXT DEFAULT 'Schacht' -- join schachttypen.schachttyp",
+                "netztyp TEXT",
+                "simstatus TEXT DEFAULT 'vorhanden' -- join simulationsstatus.bezeichnung",
+                "material TEXT",
+                "xsch REAL",
+                "ysch REAL",
+                "kommentar TEXT",
+                "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
+            ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
+            "zu Tabelle 'haltungen' fehlgeschlagen"
+        )
+
+    if not load_plausisql(dbcon):
+        logger.error("Fehler in migration 0037_untersuchdat")
+        return False
     return True

@@ -2,6 +2,7 @@ import sys
 import re
 from array import array
 import xml.etree.ElementTree as ElementTree
+from lxml import etree
 from typing import Dict, Iterator, Tuple, Union
 from fnmatch import fnmatch
 from qkan import QKan
@@ -9,7 +10,8 @@ from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsOgcUtils
+from qgis.utils import iface
 from qkan.utils import get_logger
 
 
@@ -31,6 +33,7 @@ class Schacht(ClassObject):
     schachttyp: str = ""
     simstatus: int = 0
     kommentar: str = ""
+    coord: str=""
 
 class Schacht_untersucht(ClassObject):
     schnam: str = ""
@@ -103,6 +106,7 @@ class Haltung(ClassObject):
     yschob: float = 0.0
     xschun: float = 0.0
     yschun: float = 0.0
+    coord: str=""
 
 class Haltung_untersucht(ClassObject):
     haltnam: str = ""
@@ -252,9 +256,9 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         try:
             return int(value)
         except ValueError:
-            print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
         except Exception:
-            print("_m150porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
     return default
 
 
@@ -294,6 +298,11 @@ class ImportTask:
         self.xml = ElementTree.ElementTree()
         self.xml.parse(xml_file)
 
+        # Get Namespace
+        tree = etree.parse(xml_file)
+        x = tree.xpath('namespace-uri(.)')
+        self.NS = {"d": x}
+
     def run(self) -> bool:
 
         iface = QKan.instance.iface
@@ -303,7 +312,7 @@ class ImportTask:
         self.progress_bar.setRange(0, 100)
 
         status_message = iface.messageBar().createMessage(
-            "", "Import aus M150 läuft. Bitte warten..."
+            "", "Import aus M145 läuft. Bitte warten..."
         )
         status_message.layout().addWidget(self.progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
@@ -313,16 +322,16 @@ class ImportTask:
 #        if getattr(QKan.config.xml, "import_stamm", True):
         if QKan.config.xml.import_stamm:
             self._schaechte()                               ;self.progress_bar.setValue(10)
-            self._auslaesse()                               ;self.progress_bar.setValue(20)
+            #self._auslaesse()                               ;self.progress_bar.setValue(20)
             #self._speicher()
             self._haltungen()                               ;self.progress_bar.setValue(30)
-            self._haltunggeom()                             ;self.progress_bar.setValue(35)
+            #self._haltunggeom()                             ;self.progress_bar.setValue(35)
             #self._wehre()
-            self._pumpen()                                  ;self.progress_bar.setValue(40)
+            #self._pumpen()                                  ;self.progress_bar.setValue(40)
         # if getattr(QKan.config.xml, "import_haus", True):
         if QKan.config.xml.import_haus:
             self._anschlussleitungen()                      ;self.progress_bar.setValue(50)
-            self._anschlussleitunggeom()                    ;self.progress_bar.setValue(55)
+            #self._anschlussleitunggeom()                    ;self.progress_bar.setValue(55)
         # if getattr(QKan.config.xml, "import_zustand", True):
         if QKan.config.xml.import_zustand:
             self._schaechte_untersucht()                    ;self.progress_bar.setValue(65)
@@ -331,7 +340,7 @@ class ImportTask:
             self._untersuchdat_haltung()                    ;self.progress_bar.setValue(95)
 
         self.progress_bar.setValue(100)
-        status_message.setText("Fertig! M150-Import abgeschlossen.")
+        status_message.setText("Fertig! M145-Import abgeschlossen.")
 
         return True
 
@@ -453,12 +462,12 @@ class ImportTask:
                 target[row[0]] = row[1]
 
         # Entwässerungsarten
-        blocks = self.xml.findall("RT/RT001[.='104']/..")
+        blocks = self.xml.findall("d:RT1005", self.NS)
         pattern = QKan.config.tools.Clipboard.qkan_patterns.get('entwart')
         if pattern and blocks:
             for block in blocks:
-                nr = block.findtext("RT002", None)
-                bez = block.findtext("RT004", None)
+                nr = block.findtext("RT0001", None)
+                bez = block.findtext("RT0003", None)
                 # Falls einer der beiden Einträge fehlt:
                 if nr is None or bez is None:
                     continue
@@ -530,39 +539,46 @@ class ImportTask:
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall("BW")                                           # old: KG[KG305='S']
+            blocks = self.xml.findall("d:BW", self.NS)                                           # old: KG[KG305='S']
 
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
 
             for block in blocks:
                 #name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
 
-                name = block.findtext("BW0001", None)
-                id = _strip_int(block.findtext("BW0002", 0))
-                #TODO: Netztyp ergänzen?
+                name = block.findtext("d:BW0001", None, self.NS)
+                id = _strip_int(block.findtext("d:BW0002", 0, self.NS))
+                netz_typ = block.findtext("d:BW0004", 0, self.NS)
                 #TODO: Knoten und Schachttyp raussuchen
                 knoten_typ = 'Normalschacht'
                 schachttyp = 'Schacht'
-                schacht_typ = block.findtext("KG305")
+                #schacht_typ = block.findtext("d:KG305",None, self.NS)
 
-                sohlhoehe = _strip_float(block.findtext("BW2030", 0.0))
+                sohlhoehe = _strip_float(block.findtext("d:BW2030", 0.0, self.NS))
 
-                deckelhoehe = _strip_float(block.findtext("BW2023", 0.0))
+                deckelhoehe = _strip_float(block.findtext("d:BW2023", 0.0, self.NS))
+
+                coord = block.findtext("d:BW2501/{http://www.opengis.net/gml/3.2}pos", None, self.NS)
+
+                if coord is not None:
+                    l=list(coord.split(" "))
+                    xsch=float(l[0])
+                    ysch=float(l[1])
 
 
                 yield Schacht(
                     schnam=name,
-                    xsch=xsch,
-                    ysch=ysch,
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=deckelhoehe,
-                    durchm=_strip_float(block.findtext("BW1634", 0.0)),
-                    druckdicht=_strip_int(block.findtext("KG315", 0)),
-                    entwart=block.findtext("BW1005", None),
+                    durchm=_strip_float(block.findtext("d:BW1634", None, self.NS)),
+                    entwart=block.findtext("d:BW1005", None, self.NS),
+                    netztyp = netz_typ,
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
-                    simstatus=_strip_int(block.findtext("BW1010", "0")),
-                    kommentar=block.findtext("BW8501", "-")
+                    simstatus=_strip_int(block.findtext("d:BW1010", "0", self.NS)),
+                    kommentar=block.findtext("d:BW8501", "-", self.NS),
+                    xsch=xsch,
+                    ysch=ysch,
                 )
 
 
@@ -603,7 +619,7 @@ class ImportTask:
                 """.format(
                     s=schacht.simstatus
                 )
-                simstatus = f"{schacht.simstatus}_he"
+                simstatus = f"{schacht.simstatus}"
                 self.mapper_simstatus[str(schacht.simstatus)] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
@@ -612,7 +628,8 @@ class ImportTask:
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe, 'knotentyp': schacht.knotentyp,
                       'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart, 'strasse': schacht.strasse,
-                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
+                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp,
+                      'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
             #              f'params: {params}')
@@ -631,39 +648,36 @@ class ImportTask:
     def _schaechte_untersucht(self) -> None:
         def _iter() -> Iterator[Schacht_untersucht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall("KG/KI/..")
+            blocks = self.xml.findall("d:IN", self.NS)
 
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
 
             for block in blocks:
-                name = block.findtext("KG001", None)
-                strasse = block.findtext("KG102", None)
+                name = block.findtext("d:KG001", None, self.NS)
+                strasse = block.findtext("d:KG102", None, self.NS)
 
-                smp = block.find("GO/GP")
-                if smp is None:
-                    fehlermeldung(
-                        "Fehler beim XML-Import: Schächte untersucht",
-                        f'Keine Geometrie "SMP" für Schacht {name}',
-                    )
-                    xsch, ysch, sohlhoehe = (0.0,) * 3
-                else:
-                    wert = smp.findtext("GP003")
-                    if wert is None:
-                        wert = smp.findtext("GP005")
-                    xsch = _strip_float(wert)
-
-                    wert = smp.findtext("GP004")
-                    if wert is None:
-                        wert = smp.findtext("GP006")
-                    ysch = _strip_float(wert)
-                    sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+                # smp = block.find("GO/GP")
+                # if smp is None:
+                #     fehlermeldung(
+                #         "Fehler beim XML-Import: Schächte untersucht",
+                #         f'Keine Geometrie "SMP" für Schacht {name}',
+                #     )
+                #     xsch, ysch, sohlhoehe = (0.0,) * 3
+                # else:
+                #     wert = smp.findtext("GP003")
+                #     if wert is None:
+                #         wert = smp.findtext("GP005")
+                #     xsch = _strip_float(wert)
+                #
+                #     wert = smp.findtext("GP004")
+                #     if wert is None:
+                #         wert = smp.findtext("GP006")
+                #     ysch = _strip_float(wert)
+                #     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 yield Schacht_untersucht(
                     schnam=name,
                     strasse=strasse,
-                    xsch=xsch,
-                    ysch=ysch,
-                    sohlhoehe=sohlhoehe,
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
                     kommentar=block.findtext("Kommentar", "-"),
                 )
@@ -671,7 +685,7 @@ class ImportTask:
 
         def _iter3() -> Iterator[Schacht_untersucht]:
             blocks = self.xml.findall(
-                "KG"
+                "d:IN", self.NS
             )
             logger.debug(f"Anzahl Schaechte: {len(blocks)}")
 
@@ -686,28 +700,25 @@ class ImportTask:
             max_ZS = 63
 
             for block in blocks:
-                name = block.findtext("KG001", None)
-                baujahr = _strip_int(block.findtext("KG303"))
+                #name = block.findtext("KG001", None)
+                objekt_id = _strip_int(block.findtext("d:IN0001"))
+                #baujahr = _strip_int(block.findtext("KG303"))
 
-                for _schacht in block.findall("KI"):
+                untersuchtag = block.findtext("d:IN0002", None)
 
-                    untersuchtag = _schacht.findtext("KI104", None)
+                untersucher = block.findtext("d:IN1001", None)
 
-                    untersucher = _schacht.findtext("KI112", None)
+                wetter = _strip_int(block.findtext("d:IN0530"))
 
-                    wetter = _strip_int(_schacht.findtext("KI106"))
+                #bewertungsart = block.findtext("KI005")
 
-                    bewertungsart = _schacht.findtext("KI005")
+                bewertungstag = block.findtext("d:IN1000", None)
 
-                    bewertungstag = _schacht.findtext("KI204", None)
-
-                    max_ZD = _strip_int(_schacht.findtext("KI206", 63))
-                    max_ZB = _strip_int(_schacht.findtext("KI208", 63))
-                    max_ZS = _strip_int(_schacht.findtext("KI207", 63))
+                max_ZD = _strip_int(block.findtext("d:IN1002", 63))
+                max_ZB = _strip_int(block.findtext("d:IN1004", 63))
+                max_ZS = _strip_int(block.findtext("d:IN1003", 63))
 
                 yield Schacht_untersucht(
-                    schnam=name,
-                    baujahr=baujahr,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
@@ -801,7 +812,7 @@ class ImportTask:
 
     def _untersuchdat_schaechte(self) -> None:
         def _iter() -> Iterator[Untersuchdat_schacht]:
-            blocks = self.xml.findall("KG/KI/..")
+            blocks = self.xml.findall("d:IN/d:FS/..", self.NS)
 
             ordner = self.ordner_bild
 
@@ -831,31 +842,32 @@ class ImportTask:
 
             for block in blocks:
 
-                name = block.findtext("KG001", None)
-                untersuchtag = block.findtext("KI/KI104")
+                #name = block.findtext("KG001", None)
+                objekt_id = _strip_int(block.findtext("d:IN0001"))
+                untersuchtag = block.findtext("d:IN0002", None)
+                inspektionslaenge = _strip_float(block.findtext("IN0535", 0.0))
 
-                for _untersuchdat_schacht in block.findall("KI/KZ"):
+                for _untersuchdat_schacht in block.findall("FS"):
 
-                    #id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
-                    inspektionslaenge = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
-                    videozaehler = _untersuchdat_schacht.findtext("KZ008")
+                    id = _strip_int(_untersuchdat_schacht.findtext("d:FS0001", "0", self.NS))
+                    videozaehler = _untersuchdat_schacht.findtext("d:FS0016")
                     #timecode = _strip_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
-                    kuerzel = _untersuchdat_schacht.findtext("KZ002", None)
-                    charakt1 = _untersuchdat_schacht.findtext("KZ014", None)
-                    charakt2 = _untersuchdat_schacht.findtext("KZ015", None)
-                    quantnr1 = _strip_float(_untersuchdat_schacht.findtext("KZ003", 0.0))
-                    quantnr2 = _strip_float(_untersuchdat_schacht.findtext("KZ004", 0.0))
-                    streckenschaden = _untersuchdat_schacht.findtext("KZ005", None)
-                    #streckenschaden_lfdnr = _strip_int(_untersuchdat_schacht.findtext("KZ005", "0"))
-                    pos_von = _strip_int(_untersuchdat_schacht.findtext("KZ006", 0))
-                    pos_bis = _strip_int(_untersuchdat_schacht.findtext("KZ007", 0))
-                    vertikale_lage = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
-                    bereich = _untersuchdat_schacht.findtext("KZ013", None)
-                    foto_dateiname = _untersuchdat_schacht.findtext("KZ009", None)
+                    kuerzel = _untersuchdat_schacht.findtext("d:FS0003", None)
+                    charakt1 = _untersuchdat_schacht.findtext("d:FS0004", None)
+                    charakt2 = _untersuchdat_schacht.findtext("d:FS0005", None)
+                    quantnr1 = _strip_float(_untersuchdat_schacht.findtext("d:FS0007", 0.0))
+                    quantnr2 = _strip_float(_untersuchdat_schacht.findtext("d:FS0008", 0.0))
+                    streckenschaden = _untersuchdat_schacht.findtext("d:FS0014", None)
+                    streckenschaden_lfdnr = _strip_int(_untersuchdat_schacht.findtext("d:FS0015", "0"))
+                    pos_von = _strip_int(_untersuchdat_schacht.findtext("d:FS0009", 0))
+                    pos_bis = _strip_int(_untersuchdat_schacht.findtext("d:FS0010", 0))
+                    #vertikale_lage = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
+                    bereich = _untersuchdat_schacht.findtext("d:FS0012", None)
+                    foto_dateiname = _untersuchdat_schacht.findtext("d:FO/FO0001", None)
 
-                    ZD = _strip_int(_untersuchdat_schacht.findtext("KZ206", 63))
-                    ZB = _strip_int(_untersuchdat_schacht.findtext("KZ208", 63))
-                    ZS = _strip_int(_untersuchdat_schacht.findtext("KZ207", 63))
+                    ZD = _strip_int(_untersuchdat_schacht.findtext("d:FS1002", 63))
+                    ZB = _strip_int(_untersuchdat_schacht.findtext("d:FS1004", 63))
+                    ZS = _strip_int(_untersuchdat_schacht.findtext("d:FS1003", 63))
 
 
                     yield Untersuchdat_schacht(
@@ -873,7 +885,6 @@ class ImportTask:
                     streckenschaden_lfdnr = streckenschaden_lfdnr,
                     pos_von = pos_von,
                     pos_bis = pos_bis,
-                    vertikale_lage = vertikale_lage,
                     inspektionslaenge = inspektionslaenge,
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
@@ -910,125 +921,125 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _auslaesse(self) -> None:
-        def _iter() -> Iterator[Schacht]:
-            # .//Auslaufbauwerk/../../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall("KG[KG305='A']")
-
-            logger.debug(f"Anzahl Ausläufe: {len(blocks)}")
-
-            for block in blocks:
-                #name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
-
-                name = block.findtext("KG001", None)
-                knoten_typ = 0
-
-                knoten_typ = block.findtext("KG305", -1)
-
-                smp = block.find("GO[GO002='G']/GP")
-                if smp is None:
-                    smp = block.find("GO[GO002='B']/GP")
-
-                if smp is None:
-                    fehlermeldung(
-                        "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP[GO002=\'G\']" oder "SMP[GO002=\'B\']" für Auslass {name}',
-                    )
-                    xsch, ysch, sohlhoehe = (0.0,) * 3
-                else:
-                    xsch = _strip_float(smp.findtext("GP003", 0.0))
-                    if xsch == 0.0:
-                        xsch = _strip_float(smp.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    ysch = _strip_float(smp.findtext("GP004", 0.0))
-                    if ysch == 0.0:
-                        ysch = _strip_float(smp.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
-
-                smpD = block.find("GO[GO002='D']/GP")
-
-                if smpD == None:
-                    deckelhoehe = 0.0
-
-                else:
-                    deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
-
-
-                yield Schacht(
-                    schnam=name,
-                    xsch=xsch,
-                    ysch=ysch,
-                    sohlhoehe=sohlhoehe,
-                    deckelhoehe=deckelhoehe,
-                    durchm=_strip_float(block.findtext("KG309", 0.0)),
-                    entwart=block.findtext("KG302", None),
-                    strasse=block.findtext("KG102", None),
-                    knotentyp=knoten_typ,
-                    simstatus=_strip_int(block.findtext("KG407", None)),
-                    kommentar=block.findtext("KG999", "-")
-                )
-
-        for auslass in _iter():
-            # Simstatus-Nr aus HE ersetzten
-            if str(auslass.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(auslass.simstatus)]
-            else:
-                sql = """
-                INSERT INTO simulationsstatus (he_nr, bezeichnung)
-                VALUES ({s}, '{s}')
-                """.format(
-                    s=auslass.simstatus
-                )
-                simstatus = f"{auslass.simstatus}_he"
-                self.mapper_simstatus[str(auslass.simstatus)] = simstatus
-                if not self.db_qkan.sql(sql, "xml_import Auslässe [1]"):
-                    return None
-
-            # sql = f"""
-            # INSERT INTO schaechte (
-            #     schnam, xsch, ysch,
-            #     sohlhoehe, deckelhoehe, durchm, entwart,
-            #     schachttyp, simstatus, kommentar, geop)
-            # VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?, MakePoint(?, ?, ?))
-            # """
-            # if not self.db_qkan.sql(
-            #     sql,
-            #     "xml_import Auslässe [2]",
-            #     parameters=(
-            #         auslass.schnam,
-            #         auslass.xsch,
-            #         auslass.ysch,
-            #         auslass.sohlhoehe,
-            #         auslass.deckelhoehe,
-            #         auslass.durchm,
-            #         auslass.entwart,
-            #         simstatus,
-            #         auslass.kommentar,
-            #         auslass.xsch, auslass.ysch, QKan.config.epsg,
-            #     ),
-            # ):
-            #     return None
-
-            params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
-                      'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe,
-                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
-                      'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
-
-            # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
-            #              f'params: {params}')
-
-            if not self.db_qkan.insertdata(
-                    tabnam="schaechte",
-                    stmt_category='m150-import auslaesse',
-                    mute_logger=False,
-                    **params
-            ):
-                return
-
-        self.db_qkan.commit()
+    # def _auslaesse(self) -> None:
+    #     def _iter() -> Iterator[Schacht]:
+    #         # .//Auslaufbauwerk/../../.. nimmt AbwassertechnischeAnlage
+    #         blocks = self.xml.findall("KG[KG305='A']")
+    #
+    #         logger.debug(f"Anzahl Ausläufe: {len(blocks)}")
+    #
+    #         for block in blocks:
+    #             #name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+    #
+    #             name = block.findtext("KG001", None)
+    #             knoten_typ = 0
+    #
+    #             knoten_typ = block.findtext("KG305", -1)
+    #
+    #             smp = block.find("GO[GO002='G']/GP")
+    #             if smp is None:
+    #                 smp = block.find("GO[GO002='B']/GP")
+    #
+    #             if smp is None:
+    #                 fehlermeldung(
+    #                     "Fehler beim XML-Import: Schächte",
+    #                     f'Keine Geometrie "SMP[GO002=\'G\']" oder "SMP[GO002=\'B\']" für Auslass {name}',
+    #                 )
+    #                 xsch, ysch, sohlhoehe = (0.0,) * 3
+    #             else:
+    #                 xsch = _strip_float(smp.findtext("GP003", 0.0))
+    #                 if xsch == 0.0:
+    #                     xsch = _strip_float(smp.findtext("GP005", 0.0))
+    #                 else:
+    #                     pass
+    #                 ysch = _strip_float(smp.findtext("GP004", 0.0))
+    #                 if ysch == 0.0:
+    #                     ysch = _strip_float(smp.findtext("GP006", 0.0))
+    #                 else:
+    #                     pass
+    #                 sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+    #
+    #             smpD = block.find("GO[GO002='D']/GP")
+    #
+    #             if smpD == None:
+    #                 deckelhoehe = 0.0
+    #
+    #             else:
+    #                 deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
+    #
+    #
+    #             yield Schacht(
+    #                 schnam=name,
+    #                 xsch=xsch,
+    #                 ysch=ysch,
+    #                 sohlhoehe=sohlhoehe,
+    #                 deckelhoehe=deckelhoehe,
+    #                 durchm=_strip_float(block.findtext("KG309", 0.0)),
+    #                 entwart=block.findtext("KG302", None),
+    #                 strasse=block.findtext("KG102", None),
+    #                 knotentyp=knoten_typ,
+    #                 simstatus=_strip_int(block.findtext("KG407", None)),
+    #                 kommentar=block.findtext("KG999", "-")
+    #             )
+    #
+    #     for auslass in _iter():
+    #         # Simstatus-Nr aus HE ersetzten
+    #         if str(auslass.simstatus) in self.mapper_simstatus:
+    #             simstatus = self.mapper_simstatus[str(auslass.simstatus)]
+    #         else:
+    #             sql = """
+    #             INSERT INTO simulationsstatus (he_nr, bezeichnung)
+    #             VALUES ({s}, '{s}')
+    #             """.format(
+    #                 s=auslass.simstatus
+    #             )
+    #             simstatus = f"{auslass.simstatus}"
+    #             self.mapper_simstatus[str(auslass.simstatus)] = simstatus
+    #             if not self.db_qkan.sql(sql, "xml_import Auslässe [1]"):
+    #                 return None
+    #
+    #         # sql = f"""
+    #         # INSERT INTO schaechte (
+    #         #     schnam, xsch, ysch,
+    #         #     sohlhoehe, deckelhoehe, durchm, entwart,
+    #         #     schachttyp, simstatus, kommentar, geop)
+    #         # VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?, MakePoint(?, ?, ?))
+    #         # """
+    #         # if not self.db_qkan.sql(
+    #         #     sql,
+    #         #     "xml_import Auslässe [2]",
+    #         #     parameters=(
+    #         #         auslass.schnam,
+    #         #         auslass.xsch,
+    #         #         auslass.ysch,
+    #         #         auslass.sohlhoehe,
+    #         #         auslass.deckelhoehe,
+    #         #         auslass.durchm,
+    #         #         auslass.entwart,
+    #         #         simstatus,
+    #         #         auslass.kommentar,
+    #         #         auslass.xsch, auslass.ysch, QKan.config.epsg,
+    #         #     ),
+    #         # ):
+    #         #     return None
+    #
+    #         params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
+    #                   'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe,
+    #                   'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
+    #                   'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
+    #
+    #         # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
+    #         #              f'params: {params}')
+    #
+    #         if not self.db_qkan.insertdata(
+    #                 tabnam="schaechte",
+    #                 stmt_category='m150-import auslaesse',
+    #                 mute_logger=False,
+    #                 **params
+    #         ):
+    #             return
+    #
+    #     self.db_qkan.commit()
 
     # def _speicher(self) -> None:
     #     def _iter() -> Iterator[Schacht]:
@@ -1134,7 +1145,7 @@ class ImportTask:
 
     def _haltungen(self) -> None:
         def _iter() -> Iterator[Haltung]:
-            blocks = self.xml.findall("HG")
+            blocks = self.xml.findall("d:HG", self.NS)
 
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
@@ -1153,62 +1164,34 @@ class ImportTask:
                 #     #continue
                 # else:
 
-                name = block.findtext("HG0001")
-                id = block.findtext("HG0002")
+                name = block.findtext("d:HG0001", self.NS)
+                objekt_id = block.findtext("d:HG0002", self.NS)
 
-                schoben = block.findtext("HG0030", None)
-                schunten = block.findtext("HG0032", None)
+                schoben = block.findtext("d:HG0030", None, self.NS)
+                schunten = block.findtext("d:HG0032", None, self.NS)
 
-                laenge = _strip_float(block.findtext("HG2002", 0.0))
+                sohleoben = _strip_float(block.findtext("d:HG2024", 0.0, self.NS))
+                sohleunten = _strip_float(block.findtext("d:HG2030", 0.0, self.NS))
 
-                material = block.findtext("HG3501", None)
+                laenge = _strip_float(block.findtext("d:HG2002", 0.0, self.NS))
 
-                profilauskleidung = block.findtext("HG3505", None)
-                innenmaterial = block.findtext("HG3506", None)
+                material = block.findtext("d:HG3501", None, self.NS)
+
+                profilauskleidung = block.findtext("d:HG3505", None, self.NS)
+                innenmaterial = block.findtext("d:HG3506", None, self.NS)
 
 
-                profilnam = block.findtext("HG2005", None)
+                profilnam = block.findtext("d:HG2005", None, self.NS)
                 hoehe = (
-                    _strip_float(block.findtext("HG2008", 0.0))
+                    _strip_float(block.findtext("d:HG2008", 0.0, self.NS))
                     / 1000
                 )
                 breite = (
-                    _strip_float(block.findtext("HG2007", 0.0))
+                    _strip_float(block.findtext("d:HG2007", 0.0, self.NS))
                     / 1000
                 )
 
-                xschob = 0.0
-                yschob = 0.0
-                xschun = 0.0
-                yschun = 0.0
-
-                #TODO: Geometrien anpassen
-                if block.findall("GO[GO002='H']") is not None:
-                    _gp = block.find("GO[GO002='H']/GP[1]")
-
-                    wert = _gp.findtext("GP003")
-                    if wert is None:
-                        wert = _gp.findtext("GP005")
-                    xschob = _strip_float(wert)
-
-                    wert = _gp.findtext("GP004")
-                    if wert is None:
-                        wert = _gp.findtext("GP006")
-                    yschob = _strip_float(wert)
-                    sohleoben = _strip_float(_gp.findtext("GP007", 0.0))
-
-                    _gp = block.find("GO[GO002='H']/GP[last()]")
-
-                    wert = _gp.findtext("GP003")
-                    if wert is None:
-                        wert = _gp.findtext("GP005")
-                    xschun = _strip_float(wert)
-
-                    wert = _gp.findtext("GP004")
-                    if wert is None:
-                        wert = _gp.findtext("GP006")
-                    yschun = _strip_float(wert)
-                    sohleunten = _strip_float(_gp.findtext("GP007", 0.0))
+                coord = block.findtext("d:HG2503", None, self.NS)
 
                 yield Haltung(
                     haltnam=name,
@@ -1221,17 +1204,14 @@ class ImportTask:
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     profilnam=profilnam,
-                    entwart=block.findtext("HG302", None),
-                    strasse=block.findtext("HG102", None),
+                    entwart=block.findtext("d:HG1005", None, self.NS),
+                    strasse=block.findtext("d:HG0510", None, self.NS),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=_strip_int(block.findtext("HG407", 0)),
-                    kommentar=block.findtext("HG999", "-"),
+                    simstatus=_strip_int(block.findtext("d:HG1010", 0, self.NS)),
+                    kommentar=block.findtext("d:HG8501", "-", self.NS),
                     profilauskleidung=profilauskleidung,
                     innenmaterial=innenmaterial,
-                    xschob=xschob,
-                    yschob=yschob,
-                    xschun=xschun,
-                    yschun=yschun,
+                    coord=coord
                 )
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
@@ -1239,7 +1219,7 @@ class ImportTask:
             if str(haltung.simstatus) in self.mapper_simstatus:
                 simstatus = self.mapper_simstatus[str(haltung.simstatus)]
             else:
-                simstatus = f"{haltung.simstatus}_he"
+                simstatus = f"{haltung.simstatus}"
                 self.mapper_simstatus[str(haltung.simstatus)] = simstatus
                 if not self.db_qkan.sql(
                     "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
@@ -1257,7 +1237,7 @@ class ImportTask:
                                  'Schmutzwasser': ['Sc*']}
                 for x in entwaesserung.keys():
                     for patt in entwaesserung[x]:
-                        if fnmatch(haltung.entwart, patt):
+                        if fnmatch(str(haltung.entwart), patt):
                             key = [i for i, x in entwaesserung.items() if str(patt) in x][0]
                             bez = key
 
@@ -1292,138 +1272,145 @@ class ImportTask:
             ):
                 return
 
-            #TODO: Alternative einfügen, damit ausgewählt werden kann, dass die Geoobjekte anhand der Koordinaten gewählt werden
+            # sql = f"""
+            #                         UPDATE haltung SET geom = GeomFromGML(?)
+            #                         WHERE haltnam = ?
+            #                      """
+            #
+            # paralist = [haltung.coord, haltung.haltnam]
+            #
+            # if not self.db_qkan.sql(
+            #         sql, parameters=paralist
+            # ):
+            #     return False
+
             #'xschob': haltung.xschob, 'xschun': haltung.xschun, 'yschob': haltung.yschob, 'yschun': haltung.yschun
 
 
         self.db_qkan.commit()
 
-    def _haltunggeom(self):
-        #TODO: Anpassen!
-        blocks = self.xml.findall("HG")
-
-        x_start = 0
-        y_start = 0
-        x_end = 0
-        y_end = 0
-
-        list = []
-        for block in blocks:
-            x_liste=[]
-            y_liste=[]
-            name = block.findtext("HG001", None)
-            if name == None:
-                name = block.findtext("HG002", None)
-            if name == None:
-                continue
-
-            if block.findall("GO[GO002='H']") is not None:
-                if len(block.findall("GO[GO002='H']/GP")) > 2:
-                    for _gp in block.findall("GO[GO002='H']/GP"):
-
-                        xsch = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xsch == 0.0:
-                            xsch = _strip_float(_gp.findtext("GP005", 0.0))
-                        ysch = _strip_float(_gp.findtext("GP004", 0.0))
-                        if ysch == 0.0:
-                            ysch = _strip_float(_gp.findtext("GP006", 0.0))
-
-                        x_liste.append(xsch)
-                        y_liste.append(ysch)
-
-                    text = str(name), x_liste, y_liste
-                    list.append(text)
-
-        list.append('Ende')
-
-        for line in list:
-            #line_tokens = line.split(',')
-            name = line[0]
-            if line != "Ende":
-                x_liste = line[1]   # xsch
-                x_liste.pop(0)
-                x_liste.pop(-1)
-                y_liste = line[2]   # ysch
-                y_liste.pop(0)
-                y_liste.pop(-1)
-
-            npt=1
-
-            for xsch, ysch in zip(x_liste, y_liste):
-                if npt == 1:
-                    # Start und Endpunkt der Haltung ausgeben
-                    sql = f"""Select 
-                                ST_X(StartPoint(geom)) AS xanf,
-                                ST_Y(StartPoint(geom)) AS yanf,
-                                ST_X(EndPoint(geom))   AS xend,
-                                ST_Y(EndPoint(geom))   AS yend
-                            FROM haltungen
-                            WHERE haltnam =?"""
-
-                    self.db_qkan.sql(sql, parameters=(name,))
-                    for attr in self.db_qkan.fetchall():
-                        x_start, y_start, x_end, y_end = attr
-
-                    # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
-                    sql = f"""
-                                                 UPDATE haltungen SET geom = NULL
-                                                 WHERE haltnam = ?
-                                                 """
-
-                    if not self.db_qkan.sql(
-                            sql, parameters=(name,)
-                    ):
-                        return False
-
-                    sql = f"""
-                                    UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
-                                                    MakePoint(?, ?, ?), ?)
-                                    WHERE haltnam = ?
-                                 """
-
-                    paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
-                                QKan.config.epsg, npt, name]
-
-                    if not self.db_qkan.sql(
-                            sql, parameters=paralist
-                    ):
-                        return False
-
-                if npt > 1:
-                    # weitere punkte ergänzen
-                    sql = f"""
-                                        UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
-                                        WHERE haltnam = ?
-                                     """
-
-                    paralist = [xsch, ysch, QKan.config.epsg, npt, name]
-
-                    if not self.db_qkan.sql(
-                            sql, parameters=paralist
-                    ):
-                        return False
-
-                npt+=1
-            self.db_qkan.commit()
-
-
-
-
-        # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
-        # for haltung in _iter2():
-        #     if not self.db_qkan.sql(
-        #         "UPDATE haltungen SET ks = ?, laenge = ? WHERE haltnam = ?",
-        #         "xml_import Haltung [4]",
-        #         parameters=(haltung.ks, haltung.laenge, haltung.haltnam),
-        #     ):
-        #         return None
-        #
-        # self.db_qkan.commit()
+    # def _haltunggeom(self):
+    #     #TODO: Anpassen!
+    #     blocks = self.xml.findall("HG")
+    #
+    #     x_start = 0
+    #     y_start = 0
+    #     x_end = 0
+    #     y_end = 0
+    #
+    #     list = []
+    #     for block in blocks:
+    #         x_liste=[]
+    #         y_liste=[]
+    #         name = block.findtext("HG001", None)
+    #
+    #         if block.findall("GO[GO002='H']") is not None:
+    #             if len(block.findall("GO[GO002='H']/GP")) > 2:
+    #                 for _gp in block.findall("GO[GO002='H']/GP"):
+    #
+    #                     xsch = _strip_float(_gp.findtext("GP003", 0.0))
+    #                     if xsch == 0.0:
+    #                         xsch = _strip_float(_gp.findtext("GP005", 0.0))
+    #                     ysch = _strip_float(_gp.findtext("GP004", 0.0))
+    #                     if ysch == 0.0:
+    #                         ysch = _strip_float(_gp.findtext("GP006", 0.0))
+    #
+    #                     x_liste.append(xsch)
+    #                     y_liste.append(ysch)
+    #
+    #                 text = str(name), x_liste, y_liste
+    #                 list.append(text)
+    #
+    #     list.append('Ende')
+    #
+    #     for line in list:
+    #         #line_tokens = line.split(',')
+    #         name = line[0]
+    #         if line != "Ende":
+    #             x_liste = line[1]   # xsch
+    #             x_liste.pop(0)
+    #             x_liste.pop(-1)
+    #             y_liste = line[2]   # ysch
+    #             y_liste.pop(0)
+    #             y_liste.pop(-1)
+    #
+    #         npt=1
+    #
+    #         for xsch, ysch in zip(x_liste, y_liste):
+    #             if npt == 1:
+    #                 # Start und Endpunkt der Haltung ausgeben
+    #                 sql = f"""Select
+    #                             ST_X(StartPoint(geom)) AS xanf,
+    #                             ST_Y(StartPoint(geom)) AS yanf,
+    #                             ST_X(EndPoint(geom))   AS xend,
+    #                             ST_Y(EndPoint(geom))   AS yend
+    #                         FROM haltungen
+    #                         WHERE haltnam =?"""
+    #
+    #                 self.db_qkan.sql(sql, parameters=(name,))
+    #                 for attr in self.db_qkan.fetchall():
+    #                     x_start, y_start, x_end, y_end = attr
+    #
+    #                 # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+    #                 sql = f"""
+    #                                              UPDATE haltungen SET geom = NULL
+    #                                              WHERE haltnam = ?
+    #                                              """
+    #
+    #                 if not self.db_qkan.sql(
+    #                         sql, parameters=(name,)
+    #                 ):
+    #                     return False
+    #
+    #                 sql = f"""
+    #                                 UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+    #                                                 MakePoint(?, ?, ?), ?)
+    #                                 WHERE haltnam = ?
+    #                              """
+    #
+    #                 paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
+    #                             QKan.config.epsg, npt, name]
+    #
+    #                 if not self.db_qkan.sql(
+    #                         sql, parameters=paralist
+    #                 ):
+    #                     return False
+    #
+    #             if npt > 1:
+    #                 # weitere punkte ergänzen
+    #                 sql = f"""
+    #                                     UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
+    #                                     WHERE haltnam = ?
+    #                                  """
+    #
+    #                 paralist = [xsch, ysch, QKan.config.epsg, npt, name]
+    #
+    #                 if not self.db_qkan.sql(
+    #                         sql, parameters=paralist
+    #                 ):
+    #                     return False
+    #
+    #             npt+=1
+    #         self.db_qkan.commit()
+    #
+    #
+    #
+    #
+    #     # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
+    #     # for haltung in _iter2():
+    #     #     if not self.db_qkan.sql(
+    #     #         "UPDATE haltungen SET ks = ?, laenge = ? WHERE haltnam = ?",
+    #     #         "xml_import Haltung [4]",
+    #     #         parameters=(haltung.ks, haltung.laenge, haltung.haltnam),
+    #     #     ):
+    #     #         return None
+    #     #
+    #     # self.db_qkan.commit()
 
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
-            blocks = self.xml.findall("IN")
+            blocks = self.xml.findall("d:IN", self.NS)
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
             untersuchtag = ""
@@ -1451,23 +1438,23 @@ class ImportTask:
 
             for block in blocks:
                 #name = block.findtext("HG0001", None)
-                id = block.findtext("IN0001", None)
+                id = block.findtext("d:IN0001", None)
 
-                untersuchtag = blocks.findtext("IN0002", None)
+                untersuchtag = _strip_int(block.findtext("d:IN0002", None))
 
-                untersucher = blocks.findtext("IN1001", None)
+                untersucher = block.findtext("d:IN1001", None)
 
-                wetter = _strip_int(blocks.findtext("IN0530", 0))
+                wetter = _strip_int(block.findtext("d:IN0530", 0))
 
-                bewertungsart = blocks.findtext("HI005")
+                #bewertungsart = blocks.findtext("HI005")
 
-                bewertungstag = blocks.findtext("IN1000", None)
+                bewertungstag = block.findtext("d:IN1000", None)
 
-                max_ZD = _strip_int(blocks.findtext("IN1002", 63))
-                max_ZB = _strip_int(blocks.findtext("IN1003", 63))
-                max_ZS = _strip_int(blocks.findtext("IN1004", 63))
+                max_ZD = _strip_int(block.findtext("d:IN1002", 63))
+                max_ZB = _strip_int(block.findtext("d:IN1003", 63))
+                max_ZS = _strip_int(block.findtext("d:IN1004", 63))
 
-                laenge = _strip_float(block.findtext("IN0535", 0.0))
+                laenge = _strip_float(block.findtext("d:IN0535", 0.0))
 
 
                 yield Haltung_untersucht(
@@ -1478,7 +1465,7 @@ class ImportTask:
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
-                    kommentar=block.findtext("IN0534", "-"),
+                    kommentar=block.findtext("d:IN0534", "-"),
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
@@ -1524,20 +1511,33 @@ class ImportTask:
             # ):
             #     return None
 
+            if haltung_untersucht.wetter in self.mapper_wetter:
+                wetter = self.mapper_wetter[haltung_untersucht.wetter]
+            else:
+                sql = """
+                INSERT INTO wetter (kuerzel, bezeichnung)
+                VALUES ('{e}', '{e}')
+                """.format(
+                    e=haltung_untersucht.wetter
+                )
+                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
+                wetter = haltung_untersucht.wetter
+
+                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
+                    return None
+
             params = {'haltnam': haltung_untersucht.haltnam, 'schoben': haltung_untersucht.schoben,
                       'schunten': haltung_untersucht.schunten, 'hoehe': haltung_untersucht.hoehe,
                       'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
                       'kommentar': haltung_untersucht.kommentar, 'baujahr': haltung_untersucht.baujahr,
-                      'strasse': haltung_untersucht.strasse, 'xschob': haltung_untersucht.xschob,
-                      'yschob': haltung_untersucht.yschob, 'xschub': haltung_untersucht.xschun,
-                      'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg}
+                      'strasse': haltung_untersucht.strasse, 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
             #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
-                    stmt_category='m150-import haltungen_untersucht',
+                    stmt_category='m145-import haltungen_untersucht',
                     mute_logger=False,
                     **params
             ):
@@ -1556,52 +1556,52 @@ class ImportTask:
         #
         # self.db_qkan.commit()
 
-        for haltung_untersucht in _iter3():
-            if haltung_untersucht.wetter in self.mapper_wetter:
-                wetter = self.mapper_wetter[haltung_untersucht.wetter]
-            else:
-                sql = """
-                INSERT INTO wetter (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=haltung_untersucht.wetter
-                )
-                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
-                wetter = haltung_untersucht.wetter
-
-                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
-                    return None
-
-            # if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
-            #     bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
-            # else:
-            #     sql = """
-            #                INSERT INTO bewertungsart (kuerzel, bezeichnung)
-            #                VALUES ('{e}', '{e}')
-            #                """.format(
-            #         e=haltung_untersucht.bewertungsart
-            #     )
-            #     self.mapper_bewertungsart[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
-            bewertungsart = haltung_untersucht.bewertungsart
-            #
-            #     if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
-            #         return None
-
-            if not self.db_qkan.sql(
-                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE haltnam = ?",
-                "xml_import Haltungen_untersucht [5]",
-                parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
-                            haltung_untersucht.datenart,haltung_untersucht.max_ZD, haltung_untersucht.max_ZB, haltung_untersucht.max_ZS, haltung_untersucht.haltnam),
-            ):
-                return None
+        # for haltung_untersucht in _iter3():
+        #     if haltung_untersucht.wetter in self.mapper_wetter:
+        #         wetter = self.mapper_wetter[haltung_untersucht.wetter]
+        #     else:
+        #         sql = """
+        #         INSERT INTO wetter (kuerzel, bezeichnung)
+        #         VALUES ('{e}', '{e}')
+        #         """.format(
+        #             e=haltung_untersucht.wetter
+        #         )
+        #         self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
+        #         wetter = haltung_untersucht.wetter
+        #
+        #         if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
+        #             return None
+        #
+        #     # if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
+        #     #     bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
+        #     # else:
+        #     #     sql = """
+        #     #                INSERT INTO bewertungsart (kuerzel, bezeichnung)
+        #     #                VALUES ('{e}', '{e}')
+        #     #                """.format(
+        #     #         e=haltung_untersucht.bewertungsart
+        #     #     )
+        #     #     self.mapper_bewertungsart[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
+        #     bewertungsart = haltung_untersucht.bewertungsart
+        #     #
+        #     #     if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
+        #     #         return None
+        #
+        #     if not self.db_qkan.sql(
+        #         "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?,"
+        #         "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE haltnam = ?",
+        #         "xml_import Haltungen_untersucht [5]",
+        #         parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
+        #                     haltung_untersucht.datenart,haltung_untersucht.max_ZD, haltung_untersucht.max_ZB, haltung_untersucht.max_ZS, haltung_untersucht.haltnam),
+        #     ):
+        #         return None
 
         self.db_qkan.commit()
 
     def _untersuchdat_haltung(self) -> None:
         def _iter() -> Iterator[Untersuchdat_haltung]:
             blocks = self.xml.findall(
-                "IN/FS/..",
+                "d:IN/d:FS/..", self.NS
             )
 
             logger.debug(f"Anzahl Untersuchungsdaten Haltung: {len(blocks)}")
@@ -1638,37 +1638,37 @@ class ImportTask:
 
             for block in blocks:
 
-                id = block.findtext("IN0001", None)
+                id = block.findtext("d:IN0001", None)
 
-                untersuchrichtung = block.findtext("IN0005", None)
-                if untersuchrichtung == "I":
+                untersuchrichtung = block.findtext("d:IN0005", None)
+                if untersuchrichtung == "1":
                     untersuchrichtung = "in Fließrichtung"
 
-                if untersuchrichtung == "G":
+                if untersuchrichtung == "2":
                     untersuchrichtung = "gegen Fließrichtung"
 
-                untersuchtag = block.findtext("IN0002")
+                untersuchtag = block.findtext("d:IN0002")
 
-                for _untersuchdat in block.findall("FS"):
+                for _untersuchdat in block.findall("d:FS"):
 
-                    #id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
-                    videozaehler = _untersuchdat.findtext("HZ008")
-                    station = _strip_float(_untersuchdat.findtext("FS0002", 0.0))
+                    id = _strip_int(_untersuchdat.findtext("d:FS0001", "0", self.NS))
+                    videozaehler = _untersuchdat.findtext("d:FS0016")
+                    station = _strip_float(_untersuchdat.findtext("d:FS0002", 0.0))
                     #timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
-                    kuerzel = _untersuchdat.findtext("FS0003", None)
-                    charakt1 = _untersuchdat.findtext("FS0004", None)
-                    charakt2 = _untersuchdat.findtext("FS0005", None)
-                    quantnr1 = _strip_float(_untersuchdat.findtext("FS0007", 0.0))
-                    quantnr2 = _strip_float(_untersuchdat.findtext("FS0008", 0.0))
+                    kuerzel = _untersuchdat.findtext("d:FS0003", None)
+                    charakt1 = _untersuchdat.findtext("d:FS0004", None)
+                    charakt2 = _untersuchdat.findtext("d:FS0005", None)
+                    quantnr1 = _strip_float(_untersuchdat.findtext("d:FS0007", 0.0))
+                    quantnr2 = _strip_float(_untersuchdat.findtext("d:FS0008", 0.0))
                     streckenschaden = _untersuchdat.findtext("FS0014", None)
-                    streckenschaden_lfdnr = _strip_float(_untersuchdat.findtext("FS0015", 0.0))
+                    streckenschaden_lfdnr = _strip_float(_untersuchdat.findtext("d:FS0015", 0.0))
 
-                    pos_von = _strip_int(_untersuchdat.findtext("FS0009", 0))
-                    pos_bis = _strip_int(_untersuchdat.findtext("FS0010", 0))
-                    foto_dateiname = _untersuchdat.findtext("FS0017", None)
-                    ZD = _strip_int(_untersuchdat.findtext("FS1002", 63))
-                    ZB = _strip_int(_untersuchdat.findtext("FS1003", 63))
-                    ZS = _strip_int(_untersuchdat.findtext("FS1004", 63))
+                    pos_von = _strip_int(_untersuchdat.findtext("d:FS0009", 0))
+                    pos_bis = _strip_int(_untersuchdat.findtext("d:FS0010", 0))
+                    foto_dateiname = _untersuchdat.findtext("d:FS0017", None)
+                    ZD = _strip_int(_untersuchdat.findtext("d:FS1002", 63))
+                    ZB = _strip_int(_untersuchdat.findtext("d:FS1003", 63))
+                    ZS = _strip_int(_untersuchdat.findtext("d:FS1004", 63))
 
 
                     yield Untersuchdat_haltung(
@@ -1773,7 +1773,7 @@ class ImportTask:
         logger.debug(f'Anzahl Datensätze in calctextpositions: {len(data)}')
         # logger.debug(f'{data[1]=}')
         # logger.debug(f'{[type(el) for el in data[1]]}')
-        self.db_qkan.calctextpositions(data, 0.50, 0.15)
+        #self.db_qkan.calctextpositions(data, 0.5, 0.25)
 
         params = ()
         for ds in data:
@@ -1820,7 +1820,7 @@ class ImportTask:
     def _anschlussleitungen(self) -> None:
         def _iter() -> Iterator[Anschlussleitung]:
             blocks = self.xml.findall(
-                "HG[HG006='L']",
+                "d:AN",
             )
             logger.debug(f"Anzahl Anschlussleitungen: {len(blocks)}")
 
@@ -1835,52 +1835,34 @@ class ImportTask:
                 deckelunten,
             ) = (0.0,) * 7
             for block in blocks:
-                name = block.findtext("HG001", None)
 
-                schoben = block.findtext("HG003", None)
-                schunten = block.findtext("HG004", None)
+                #TODO: Laenge, Sohlhoehe und Anschlusspunkt Adresse ergänzen
 
-                laenge = _strip_float(block.findtext("HG310", 0.0))
+                name = block.findtext("d:AN0001", None)
+                objekt_id = _strip_int(block.findtext("d:AN0002", None))
+                haltnam = block.findtext("d:AN0035", None)
 
-                material = block.findtext("HG304", None)
+                schoben = block.findtext("d:AN0036", None)
+                #schunten = block.findtext("HG004", None)
 
-                profilnam = block.findtext("HG305", None)
+                #laenge = _strip_float(block.findtext("HG310", 0.0))
+
+                #material = block.findtext("HG304", None)
+
+                profilnam = block.findtext("d:AN2005", None)
                 hoehe = (
-                        _strip_float(block.findtext("HG307", 0.0))
+                        _strip_float(block.findtext("d:AN2008", 0.0))
                         / 1000
                 )
                 breite = (
-                        _strip_float(block.findtext("HG306", 0.0))
+                        _strip_float(block.findtext("d:AN2007", 0.0))
                         / 1000
                 )
 
-                if block.findall("GO[GO002='L']") is not None:
+                sohleoben = _strip_float(block.findtext("GP007", 0.0))
+                sohleunten = _strip_float(block.findtext("GP007", 0.0))
 
-                    _gp = block.find("GO[GO002='L']/GP[1]")
 
-                    wert = _gp.findtext("GP003")
-                    if wert is None:
-                        wert = _gp.findtext("GP005")
-                    xschob = _strip_float(wert)
-
-                    wert = _gp.findtext("GP004")
-                    if wert is None:
-                        wert = _gp.findtext("GP006")
-                    yschob = _strip_float(wert)
-                    sohleoben = _strip_float(_gp.findtext("GP007", 0.0))
-
-                    _gp = block.find("GO[GO002='L']/GP[last()]")
-
-                    wert = _gp.findtext("GP003")
-                    if wert is None:
-                        wert = _gp.findtext("GP005")
-                    xschun = _strip_float(wert)
-
-                    wert = _gp.findtext("GP004")
-                    if wert is None:
-                        wert = _gp.findtext("GP006")
-                    yschun = _strip_float(wert)
-                    sohleunten = _strip_float(_gp.findtext("GP007", 0.0))
 
                 yield Anschlussleitung(
                     leitnam=name,
@@ -1889,7 +1871,6 @@ class ImportTask:
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
-                    material=material,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     deckeloben=deckeloben,
@@ -1899,10 +1880,6 @@ class ImportTask:
                     ks=1.5,  # in Hydraulikdaten enthalten.
                     simstatus=_strip_int(block.findtext("HG407", 0)),
                     kommentar=block.findtext("HG999", "-"),
-                    xschob=xschob,
-                    yschob=yschob,
-                    xschun=xschun,
-                    yschun=yschun,
                 )
 
 
@@ -1911,7 +1888,7 @@ class ImportTask:
             if str(anschlussleitung.simstatus) in self.mapper_simstatus:
                 simstatus = self.mapper_simstatus[str(anschlussleitung.simstatus)]
             else:
-                simstatus = f"{anschlussleitung.simstatus}_he"
+                simstatus = f"{anschlussleitung.simstatus}"
                 self.mapper_simstatus[str(anschlussleitung.simstatus)] = simstatus
                 if not self.db_qkan.sql(
                     "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
@@ -1974,21 +1951,19 @@ class ImportTask:
             params = {'leitnam': anschlussleitung.leitnam,
                       'schoben': anschlussleitung.schoben, 'schunten': anschlussleitung.schunten,
                       'hoehe': anschlussleitung.hoehe, 'breite': anschlussleitung.breite,
-                      'laenge': anschlussleitung.laenge, 'material': anschlussleitung.material,
+                      'laenge': anschlussleitung.laenge,
                       'sohleoben': anschlussleitung.sohleoben, 'sohleunten': anschlussleitung.sohleunten,
                       'deckeloben': anschlussleitung.deckeloben, 'deckelunten': anschlussleitung.deckelunten,
                       'profilnam': anschlussleitung.profilnam, 'entwart': entwart,
                       'ks': anschlussleitung.ks, 'simstatus': anschlussleitung.simstatus,
-                      'kommentar': anschlussleitung.kommentar, 'xschob': anschlussleitung.xschob,
-                      'xschun': anschlussleitung.xschun, 'yschob': anschlussleitung.yschob,
-                      'yschun': anschlussleitung.yschun, 'epsg': QKan.config.epsg}
+                      'kommentar': anschlussleitung.kommentar, 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: anschlussleitungen\n'
             #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
                     tabnam="anschlussleitungen",
-                    stmt_category='m150-import anschlussleitung',
+                    stmt_category='m145-import anschlussleitung',
                     mute_logger=False,
                     **params
             ):
@@ -2251,7 +2226,7 @@ class ImportTask:
             if str(pumpe.pumpentyp) in self.mapper_pump:
                 pumpentyp = self.mapper_pump[str(pumpe.pumpentyp)]
             else:
-                pumpentyp = "{}_he".format(pumpe.pumpentyp)
+                pumpentyp = "{}".format(pumpe.pumpentyp)
                 self.mapper_pump[str(pumpe.pumpentyp)] = pumpentyp
                 if not self.db_qkan.sql(
                     "INSERT INTO pumpentypen (bezeichnung) Values (?)",
