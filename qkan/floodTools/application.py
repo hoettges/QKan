@@ -1,5 +1,4 @@
 import os
-import logging
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
@@ -7,13 +6,13 @@ from qgis.gui import QgisInterface
 from qkan import QKan, get_default_dir
 from qkan.plugin import QKanPlugin
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from ._animation import FloodanimationTask
 from .application_dialog import AnimationDialog
+from ..utils import get_logger
 
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
-
-logger = logging.getLogger("QKan.floodTools.application_dialog")
+logger = get_logger("QKan.floodTools.application_dialog")
 
 
 class FloodTools(QKanPlugin):
@@ -119,36 +118,3 @@ class FloodTools(QKanPlugin):
 
         help_file = "https://qkan.eu/Qkan_allgemein.html?highlight=strakat"
         os.startfile(help_file)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

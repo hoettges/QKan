@@ -1,21 +1,17 @@
-# -*- coding: utf-8 -*-
-
 import os
-import logging
-from qgis.PyQt import uic
-from qgis.PyQt import QtWidgets
-from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsDataSourceUri, QgsPrintLayout, QgsReadWriteContext
-from qgis.PyQt.QtXml import QDomDocument
-from qgis.PyQt import Qt
-from qgis.utils import iface, spatialite_connect
-import xml.etree.ElementTree as ElementTree
-from typing import Dict, Iterator, Tuple, Union
-from lxml import etree
-import sqlite3
-
 from datetime import datetime
 
-logger = logging.getLogger("QKan.zustand.import")
+from qgis.core import (
+    Qgis,
+    QgsProject,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+)
+from qgis.utils import iface, spatialite_connect
+
+from qkan.utils import get_logger
+
+logger = get_logger("QKan.zustand.import")
 
 
 class Zustandsklassen_funkt:

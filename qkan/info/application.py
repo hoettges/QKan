@@ -12,7 +12,7 @@ from ._info import Info
 from .application_dialog import InfoDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
 import pandas as pd
 import os
 

@@ -1,16 +1,17 @@
 import os
-import logging
 
 from qgis.core import Qgis
-from qgis.PyQt.QtWidgets import QApplication, QDialog, QTableWidgetItem
+from qgis.PyQt.QtWidgets import QDialog, QTableWidgetItem
 from qgis.PyQt.uic import loadUiType
 from qkan.database.dbfunc import DBConnection
 from qkan import QKan
+from qkan.utils import get_logger
+
 from qkan.database.qkan_utils import get_database_QKan
 
 form_class, _ = loadUiType(os.path.join(os.path.dirname(__file__), 'res/qkan_schadensliste.ui'))
 
-logger = logging.getLogger("QKan.tools.zeige_schaeden")
+logger = get_logger("QKan.tools.zeige_schaeden")
 
 class ShowHaltungsschaeden(QDialog, form_class):
     def __init__(self, haltnam: str, schoben: str, schunten: str):

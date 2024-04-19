@@ -1,9 +1,6 @@
-import logging
 import os
 from typing import Callable, List, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -17,12 +14,15 @@ from qgis.PyQt.QtWidgets import (
     QDialogButtonBox,
     QWidget,
 )
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionWidget
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.he8.application_dialog")
+logger = get_logger("QKan.he8.application_dialog")
 
 
 class _Dialog(QDialog):

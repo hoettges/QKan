@@ -1,4 +1,3 @@
-import logging
 import sys
 import re
 from array import array
@@ -11,8 +10,10 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.xml.import")
+
+logger = get_logger("QKan.m145porter.import")
 
 
 # region objects

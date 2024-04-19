@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 # noinspection PyUnresolvedReferences
@@ -6,14 +5,15 @@ from typing import Dict, List, Optional, Union
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.xml.export")
+logger = get_logger("QKan.xml.export")
 
 
 def _create_children(parent: Element, names: List[str]) -> None:

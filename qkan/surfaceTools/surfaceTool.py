@@ -1,19 +1,18 @@
-# -*- coding: utf-8 -*-
-
 __author__ = "Joerg Hoettges"
 __date__ = "Mai 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
-import logging
-from typing import Any, List
+from typing import List
+
+from qgis import processing
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
-from qgis import processing
-from qgis.core import Qgis
-from qgis.PyQt.QtWidgets import QProgressBar
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.surfaceTools.surface_tools")
+logger = get_logger("QKan.surfaceTools.surface_tools")
 
 
 class SurfaceTask:

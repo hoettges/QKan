@@ -1,22 +1,18 @@
-from pathlib import Path
-
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung
 from qkan.plugin import QKanPlugin
-from qkan.tools.k_qgsadapt import qgsadapt
-
-from .subkans_funkt import Subkans_funkt
-from .application_dialog import SubkansDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
+from .application_dialog import SubkansDialog
+from .subkans_funkt import Subkans_funkt
 
 
-class subkans(QKanPlugin):
+class Substanzklasse(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 

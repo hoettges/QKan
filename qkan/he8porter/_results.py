@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   Results from HE
@@ -29,8 +27,6 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 
 __revision__ = ":%H$"
 
-# import tempfile
-import logging
 import os
 
 from qgis.core import QgsDataSourceUri, QgsProject, QgsVectorLayer
@@ -39,8 +35,9 @@ from qgis.utils import pluginDirectory
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan")
+logger = get_logger("QKan")
 
 
 class ResultsTask:
@@ -58,7 +55,7 @@ class ResultsTask:
             if not db_qkan.connected:
                 return False
 
-        if dbQK is None:
+        if database_QKan is None:
             fehlermeldung(
                 "Fehler in QKan_Import_from_HE",
                 "QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(
@@ -67,7 +64,7 @@ class ResultsTask:
             )
             return None
 
-        if not dbQK.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
+        if not database_QKan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
             logger.error(
                 f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.results_file}"
             )
@@ -100,7 +97,7 @@ class ResultsTask:
         # '''DELETE FROM ResultsHal''']
 
         for sql in sqllist:
-            if not dbQK.sql(sql, "QKan_Import_Results (1)"):
+            if not database_QKan.sql(sql, "QKan_Import_Results (1)"):
                 return False
 
         # Die folgende Abfrage gilt sowohl bei Einzel- als auch bei Seriensimulationen:
@@ -116,10 +113,10 @@ class ResultsTask:
                 ON SC.schnam = MR.KNOTEN
                 """
 
-        if not dbQK.sql(sql, stmt_category="QKan_Import_Results (4)"):
+        if not database_QKan.sql(sql, stmt_category="QKan_Import_Results (4)"):
             return False
 
-        dbQK.commit()
+        database_QKan.commit()
 
         # Einfügen der Ergebnistabelle in die Layerliste, wenn nicht schon geladen
         project = QgsProject.instance()
@@ -140,7 +137,7 @@ class ResultsTask:
             # Stilvorlage nach Benutzerwahl laden
             templatepath = os.path.join(pluginDirectory("qkan"), "templates")
             if QKan.config.he8.qml_choice == "uebh":
-                template = os.path.join(templatepath, 'qml', "ueberstauhaeufigkeit.qml")
+                template = os.path.join(templatepath, "qml", "ueberstauhaeufigkeit.qml")
                 try:
                     vlayer.loadNamedStyle(template)
                 except:
@@ -149,7 +146,7 @@ class ResultsTask:
                         'Stildatei "Überstauhäufigkeit.qml" wurde nicht gefunden!\nAbbruch!',
                     )
             elif QKan.config.he8.qml_choice == "uebvol":
-                template = os.path.join(templatepath, 'qml', "ueberstauvolumen.qml")
+                template = os.path.join(templatepath, "qml", "ueberstauvolumen.qml")
                 try:
                     vlayer.loadNamedStyle(template)
                 except:
@@ -167,4 +164,4 @@ class ResultsTask:
                         "wurde nicht gefunden!\nAbbruch!",
                     )
 
-        del dbQK
+        del database_QKan

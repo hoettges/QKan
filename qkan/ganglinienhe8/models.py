@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys
 from typing import Dict, List, Union
 
@@ -41,7 +40,6 @@ if sys.version_info >= (3, 8):
         schaechte: List[str]
         schachtinfo: Dict[str, SchachtInfo]
         haltunginfo: Dict[str, HaltungInfo]
-
 
 else:
     HaltungenStruct = Dict[str, Union[List[str], Dict[str, Union[str, float]]]]

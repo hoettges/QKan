@@ -1,17 +1,8 @@
 import os
-import logging
-import sys
 from typing import Callable, Optional
-from qkan import QKan
-from qkan.database.qkan_utils import get_qkanlayer_attributes
-from qgis.core import QgsCoordinateReferenceSystem
-from qgis.gui import QgsProjectionSelectionWidget
-from qgis.utils import iface
-from qgis.core import Qgis
-from qgis.utils import pluginDirectory,iface
-from qgis.PyQt import uic
+
 from PyQt5 import QtCore
-from qgis.PyQt.QtCore import QEvent
+from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -20,16 +11,17 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QWidget,
     QComboBox,
-    QToolButton,
-    QMessageBox,
     QDialogButtonBox,
     QLabel,
     QSlider,
-
 )
+from qgis.core import Qgis
+from qgis.utils import iface
 
+from qkan.database.qkan_utils import get_qkanlayer_attributes
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.laengs.application_dialog")
+logger = get_logger("QKan.laengs.application_dialog")
 
 
 LAENGS_CLASS, _ = uic.loadUiType(
@@ -53,7 +45,6 @@ class _Dialog(QDialog):
             f"\nself.default_dir: {self.default_dir}"
         )
         self.tr = tr
-
 
 
 class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore

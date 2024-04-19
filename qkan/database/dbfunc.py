@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
-
 """
 Datenbankmanagement
 
 Definition einer Klasse mit Methoden fuer den Zugriff auf
 eine SpatiaLite-Datenbank.
 """
+
 import datetime
-import logging
 import os
 import shutil
 import sqlite3
@@ -21,7 +19,6 @@ from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import spatialite_connect
 
 from qkan import QKan
-
 from .qkan_database import createdbtables, db_version
 from .qkan_utils import fehlermeldung, warnung, meldung, get_database_QKan
 
@@ -29,7 +26,9 @@ __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
-logger = logging.getLogger("QKan.database.dbfunc")
+from ..utils import get_logger
+
+logger = get_logger("QKan.database.dbfunc")
 
 
 # Pruefung, ob in Tabellen oder Spalten unerlaubte Zeichen enthalten sind

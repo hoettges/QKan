@@ -1,12 +1,13 @@
-import logging
 import os
 
-from qkan.database.dbfunc import DBConnection
 from qgis.utils import pluginDirectory
 
-VERSION = "3.2.37"              # must be higher than previous one
+from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.database.migrations")
+VERSION = "3.2.37"  # must be higher than previous one
+
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:

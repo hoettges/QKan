@@ -1,22 +1,18 @@
-from pathlib import Path
-
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung
 from qkan.plugin import QKanPlugin
-from qkan.tools.k_qgsadapt import qgsadapt
-
-from .sanierungsbedarfszahl_funkt import sanierungsbedarfszahl_funkt
-from .application_dialog import SanierungDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
+from .application_dialog import SanierungDialog
+from .sanierungsbedarfszahl_funkt import SanierungsbedarfszahlFunkt
 
 
-class sanierungsbedarfszahl(QKanPlugin):
+class Sanierungsbedarfszahl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
@@ -34,7 +30,6 @@ class sanierungsbedarfszahl(QKanPlugin):
 
     def unload(self) -> None:
         self.import_dlg.close()
-
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars Sanierungsbedarfszahl und anschließender Start der Ermittlung der Sanierungsbedarfszahl"""
@@ -151,7 +146,7 @@ class sanierungsbedarfszahl(QKanPlugin):
                 return False
 
             self.log.info("DB creation finished, starting Zustandsklassen")
-            zustand = sanierungsbedarfszahl_funkt(
+            zustand = SanierungsbedarfszahlFunkt(
                 check_cb,
                 QKan.config.database.qkan,
                 QKan.config.sanierung.date,

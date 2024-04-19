@@ -1,9 +1,6 @@
-import logging
 import os
 from typing import Callable, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -13,11 +10,13 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QWidget,
 )
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionWidget
 
 from qkan import QKan
-from .flood_db import FloodDB
+from ..utils import get_logger
 
-logger = logging.getLogger("QKan.floodTools.application_dialog")
+logger = get_logger("QKan.floodTools.application_dialog")
 
 
 class _Dialog(QDialog):

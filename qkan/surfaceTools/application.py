@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   QGIS-Plugin
@@ -30,7 +28,7 @@ from .application_dialog import SurfaceToolDialog, VoronoiDialog
 from .surfaceTool import SurfaceTask
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
 
 
 class SurfaceTools(QKanPlugin):

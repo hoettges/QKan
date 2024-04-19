@@ -1,5 +1,1 @@
-# -*- coding: utf-8 -*-
-
-from .application import sanierungsbedarfszahl
-
-
+from .application import Sanierungsbedarfszahl

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   Datenbankmanagement der QKan-Datenbank
@@ -25,21 +23,20 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 __dbVersion__ = "3.3.8"  # Version der QKan-Datenbank
 __qgsVersion__ = "3.3.8"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
-
-import logging
 import os
 import traceback
 from sqlite3.dbapi2 import Connection, Cursor
 
-from qgis.core import Qgis, QgsProject
 from qgis.PyQt import Qt
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis, QgsProject
 from qgis.utils import spatialite_connect, pluginDirectory
 
-from .qkan_utils import fehlermeldung, fortschritt, meldung
 from qkan import QKan
+from .qkan_utils import fehlermeldung, fortschritt, meldung
+from ..utils import get_logger
 
-logger = logging.getLogger("QKan.database.qkan_database")
+logger = get_logger("QKan.database.qkan_database")
 
 
 def db_version() -> str:
