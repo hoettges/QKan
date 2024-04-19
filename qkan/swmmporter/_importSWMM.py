@@ -1,21 +1,15 @@
-# -*- coding: utf-8 -*-
-
 __author__ = "Joerg Hoettges"
 __date__ = "März 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
-import logging
 from pathlib import Path
 from typing import Dict, List, cast
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.utils import pluginDirectory
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
-from qkan.tools.k_qgsadapt import qgsadapt
-from qkan.plugin import QKanPlugin
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.importswmm")
+logger = get_logger("QKan.importswmm")
 
 # Hilfsfunktionen, werden wenn Sie in QKan integriert sind importiert
 # from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl

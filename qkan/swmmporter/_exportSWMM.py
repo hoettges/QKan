@@ -1,22 +1,15 @@
-# -*- coding: utf-8 -*-
-
 import os
-import logging
-import xml.etree.ElementTree as ET
-from pathlib import Path
-from typing import Dict, List, cast
-from lxml import etree
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject, Qgis
-from qgis.utils import pluginDirectory, iface
+from typing import Dict, List
+
 from qgis.PyQt.QtWidgets import QProgressBar
-from qkan import QKan, enums
-from qkan.config import ClassObject
+from qgis.utils import iface
+
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
-from qkan.tools.k_qgsadapt import qgsadapt
-import math
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.exportswmm")
+logger = get_logger("QKan.exportswmm")
 
 
 progress_bar = None

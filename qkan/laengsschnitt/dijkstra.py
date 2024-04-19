@@ -1,16 +1,14 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import logging
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Dict, List, Optional
 
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
 MAX_WEIGHT = 999999.0  # Defaultwert für Schacht ohne Verbindung
 
-logger = logging.getLogger("QKan")
+logger = get_logger("QKan.dijkstra")
 
 
+# todo: duplicate class?
 class Netz:
     """Erzeugt ein Netz aus einer Liste mit Haltungen"""
 

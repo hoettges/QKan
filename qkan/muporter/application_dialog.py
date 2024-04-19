@@ -1,10 +1,7 @@
-import logging
 import os
 from pathlib import Path
 from typing import Callable, List, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -18,13 +15,16 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
     QDialogButtonBox,
 )
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionWidget
 from qgis.utils import pluginDirectory
 
 from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.mu.application_dialog")
+logger = get_logger("QKan.mu.application_dialog")
 
 EXPORT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "mu_export_dialog_base.ui")

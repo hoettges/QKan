@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-import datetime
 import json
-import logging
 import os
-import tempfile
 from pathlib import Path
 from typing import Callable, List, Optional, cast
+
 import qgis
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
 from qgis.PyQt.QtGui import QIcon
@@ -15,7 +12,7 @@ from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 
 from .config import Config
-from .utils import QgisPanelLogger
+from .utils import setup_logging
 
 # Toggle in DEV to log to console
 LOG_TO_CONSOLE = False
@@ -54,35 +51,7 @@ class QKan:
         QKan.instance = self
 
         # Init logging
-        self.logger = logging.getLogger("QKan")
-        formatter = logging.Formatter(
-            fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
-        self.log_path = Path(tempfile.gettempdir()) / "QKan_{}.log".format(
-            datetime.datetime.today().strftime("%Y-%m-%d")
-        )
-        file_handler = logging.FileHandler(self.log_path)
-        file_handler.setFormatter(formatter)
-        file_handler.setLevel(logging.DEBUG)
-
-        qgis_handler = QgisPanelLogger()
-        qgis_handler.setFormatter(
-            logging.Formatter(
-                fmt="%(name)s - %(message)s",
-            )
-        )
-        qgis_handler.setLevel(logging.INFO)
-
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.addHandler(file_handler)
-        self.logger.addHandler(qgis_handler)
-
-        if LOG_TO_CONSOLE:
-            stream_handler = logging.StreamHandler()
-            stream_handler.setFormatter(formatter)
-            stream_handler.setLevel(logging.DEBUG)
-            self.logger.addHandler(stream_handler)
+        self.logger, self.log_path = setup_logging(LOG_TO_CONSOLE)
 
         # Init config
         try:
@@ -129,11 +98,12 @@ class QKan:
         from .surfaceTools import SurfaceTools
         from .isyporter import IsyPorter
         from .m150porter import M150Porter
+
         # from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
-        from .zustandsklassen import zustandsklassen
-        from .subkans import subkans
-        from .sanierungsbedarfszahl import sanierungsbedarfszahl
+        from .zustandsklassen import Zustandsklassen
+        from .subkans import Substanzklasse
+        from .sanierungsbedarfszahl import Sanierungsbedarfszahl
         from .laengsschnitt import Laengsschnitt
         from .floodTools import FloodTools
         from .tools import QKanTools
@@ -152,9 +122,9 @@ class QKan:
             M150Porter(iface),
             # GanglinienHE8(iface),
             Plausi(iface),
-            zustandsklassen(iface),
-            subkans(iface),
-            sanierungsbedarfszahl(iface),
+            Zustandsklassen(iface),
+            Substanzklasse(iface),
+            Sanierungsbedarfszahl(iface),
             Laengsschnitt(iface),
             FloodTools(iface),
             QKanTools(iface),
@@ -170,7 +140,7 @@ class QKan:
                 self.menu_action = menu
                 break
 
-        #mnuSub1 = self.menu.addMenu('Sub-menu')
+        # mnuSub1 = self.menu.addMenu('Sub-menu')
 
         self.toolbar = self.iface.addToolBar("QKan")
         self.toolbar.setObjectName("QKan")

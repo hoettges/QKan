@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Referenzlisten zum Export in die verschiedenen Simulationsprogramme
    Bisher definiert:
     - HYSTEM-EXTRAN (he)
@@ -32,6 +31,6 @@ def abflusstypen(simprog: str) -> Optional[Dict[str, int]]:
         return typen[simprog]
     else:
         fehlermeldung(
-            "Fehler in Modul reflist", u"simprog nicht definiert: {}".format(simprog)
+            "Fehler in Modul reflist", "simprog nicht definiert: {}".format(simprog)
         )
         return None

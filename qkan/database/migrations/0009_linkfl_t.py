@@ -1,10 +1,9 @@
-import logging
-
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
 VERSION = "2.5.7"
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:
@@ -76,9 +75,7 @@ def run(dbcon: DBConnection) -> bool:
     ]
 
     for sql in sqllis:
-        if not dbcon.sql(
-            sql, "dbfunc.DBConnection.version (2.5.7-1)"
-        ):
+        if not dbcon.sql(sql, "dbfunc.DBConnection.version (2.5.7-1)"):
             return False
 
     # 3. Schritt: Trigger wieder herstellen
@@ -178,9 +175,7 @@ def run(dbcon: DBConnection) -> bool:
     ]
 
     for sql in sqllis:
-        if not dbcon.sql(
-            sql, "dbfunc.DBConnection.version (2.5.7-3)"
-        ):
+        if not dbcon.sql(sql, "dbfunc.DBConnection.version (2.5.7-3)"):
             return False
 
     # 3. Schritt: Trigger wieder herstellen

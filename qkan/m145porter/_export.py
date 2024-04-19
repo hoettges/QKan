@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 # noinspection PyUnresolvedReferences
@@ -12,8 +11,9 @@ from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.xml.export")
+logger = get_logger("QKan.m145porter.export")
 
 
 def _create_children(parent: Element, names: List[str]) -> None:

@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-
-import logging
-
 from qgis.PyQt.QtCore import QPoint, Qt
 from qgis.PyQt.QtGui import QFont, QFontMetrics, QPainter, QPaintEvent
 from qgis.PyQt.QtWidgets import QSlider, QStyle, QStyleOptionSlider
 
 from .models import SliderMode
-
-main_logger = logging.getLogger("QKan.ganglinienhe8.slider")
+from ..utils import get_logger
 
 
 class Slider(QSlider):
@@ -21,7 +16,7 @@ class Slider(QSlider):
         * Pausiert den Slider zu beginn und definiert die Vorwärts-Bewegung als letzten Modus.
         """
         super(self.__class__, self).__init__(Qt.Horizontal)
-        self.__log = logging.getLogger("QKan.slider.Slider")
+        self.__log = get_logger("QKan.slider.Slider")
         self.setRange(0, 50)
         self.setSingleStep(1)
         self.setPageStep(5)

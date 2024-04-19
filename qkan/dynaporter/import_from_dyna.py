@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
   Import from HE
 
@@ -9,25 +7,23 @@
   der Schachttypen.
 """
 
-
 __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
-import logging
-from typing import Tuple, cast, Callable, List
 from pathlib import Path
+from typing import Tuple, cast, Callable, List
 
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-
-from qkan.database.qkan_utils import read_qml, eval_node_types, fehlermeldung, fzahl
+from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl
 from qkan.tools.k_qgsadapt import qgsadapt
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.dynaporter.import_from_dyna")
+logger = get_logger("QKan.dynaporter.import_from_dyna")
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------

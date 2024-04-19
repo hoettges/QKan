@@ -1,6 +1,5 @@
 import enum
 import json
-import logging
 import os
 import site
 import warnings
@@ -8,8 +7,9 @@ from pathlib import Path
 from typing import Any, Dict
 
 from qkan import enums
+from qkan.utils import get_logger
 
-log = logging.getLogger("QKan.config")
+log = get_logger("QKan.config")
 
 
 class ConfigEncoder(json.JSONEncoder):

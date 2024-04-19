@@ -1,15 +1,11 @@
-from typing import Optional
-
 from qgis.gui import QgisInterface
 
 from qkan import QKan
-from qkan.database.dbfunc import DBConnection
 from qkan.plugin import QKanPlugin
 
-from .dialogs import ExportDialog, ImportDialog
-
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
+from .dialogs import ExportDialog, ImportDialog
 
 
 class DynaPorter(QKanPlugin):

@@ -1,11 +1,13 @@
-# -*- coding: utf-8 -*-
-__author__ = 'Jörg Höttges'
+__author__ = "Jörg Höttges"
+
+import os.path
 
 from qgis.utils import spatialite_connect
-import os.path
-import logging
 
-class FloodDB():
+from qkan.utils import get_logger
+
+
+class FloodDB:
     """Zugriff auf eine SQLite Datenbank"""
 
     def __init__(self, dbname):
@@ -25,7 +27,7 @@ class FloodDB():
             self.conn.execute("SELECT InitSpatialMetaData()")
 
         # Init logging
-        self.logger = logging.getLogger("QKan.floodTools.application_dialog")
+        self.logger = get_logger("QKan.floodTools.application_dialog")
 
     def __del__(self):
         self.logger.debug('FloodDB.__del__')

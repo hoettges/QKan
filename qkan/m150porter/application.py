@@ -14,7 +14,7 @@ from ._import import ImportTask
 from .application_dialog import ExportDialog, ImportDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
 
 
 class M150Porter(QKanPlugin):

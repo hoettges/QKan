@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 import datetime
-import logging
 
 import matplotlib.animation as animation
 import matplotlib.lines as lines
@@ -13,11 +10,10 @@ from matplotlib.lines import Line2D
 from qgis.PyQt.QtWidgets import QWidget
 
 from qkan.database.sbfunc import SBConnection
-
 from .models import LayerType, SliderMode
+from ..utils import get_logger
 
-main_logger = logging.getLogger("QKan.ganglinienhe8/plotter")
-main_logger.info("Plotter-Modul gestartet")
+logger = get_logger("QKan.plotter.Laengsschnitt")
 plots = dict(surface=None, max=None, waterlevel=None)
 
 
@@ -30,7 +26,7 @@ class Laengsschnitt:
         selektierten Elemente verfügt.
         :type _route: dict
         """
-        self.__log = logging.getLogger("QKan.plotter.Laengsschnitt")
+        self.__log = get_logger("QKan.plotter.Laengsschnitt")
         self.__route = _route
         self.__fig = plt.figure(0)
         self.__ax = None
@@ -41,6 +37,8 @@ class Laengsschnitt:
         self.__objects = {"haltungen": {}, "schaechte": {}}
         plt.gcf().clear()
         self.__draw()
+
+        self.__log.info("Plotter-Modul gestartet")
 
     def __del__(self):
         """
@@ -246,7 +244,7 @@ class Maximizer:
         :param _dbname: Entspricht dem Datenbank-Pfad der Ereignis-Datenbank
         :type _dbname: str
         """
-        self.__log = logging.getLogger("QKan.plotter.Maximizer")
+        self.__log = get_logger("QKan.plotter.Maximizer")
         self.__db = SBConnection(_dbname)
         self.__route = _route
         self.__fig = plt.figure(0)
@@ -388,7 +386,7 @@ class Animator:
         :param _backward: Entspricht einer Referenz auf den "Zurück"-Button innerhalb der GUI.
         :type _backward: QPushButton
         """
-        self.__log = logging.getLogger("QKan.plotter.Animator")
+        self.__log = get_logger("QKan.plotter.Animator")
         self.__db = SBConnection(_dbname)
         self.__label = _label
         self.__ganglinie = None
@@ -481,7 +479,7 @@ class Animator:
                         # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
                     # )
                 except BaseException as err:
-                    main_logger.error(
+                    self.__log.error(
                         f"qkan.ganglinienhe8.plotter (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
                     )
                 if haltungen.get(zeitpunkt) is None:
@@ -509,7 +507,7 @@ class Animator:
                             zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
                         )
                 except BaseException as err:
-                    main_logger.error(
+                    self.__log.error(
                         f"qkan.ganglinienhe8.plotter (2): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
                     )
                 if schaechte.get(zeitpunkt) is None:
@@ -775,8 +773,8 @@ def set_ax_labels(x, y):
     plt.figure(0)
     plt.xlabel(x)
     plt.ylabel(y)
-    main_logger.info("Plot-Achsen wurden beschriftet")
-    main_logger.debug("X:\t{}\nY:\t{}".format(x, y))
+    logger.info("Plot-Achsen wurden beschriftet")
+    logger.debug("X:\t{}\nY:\t{}".format(x, y))
 
 
 def set_legend():
@@ -795,7 +793,7 @@ def set_legend():
         legend_plots.append(_max)
     plt.figure(0)
     plt.legend(handles=legend_plots)
-    main_logger.info("Legende wurde gesetzt")
+    logger.info("Legende wurde gesetzt")
 
 
 class ILines(lines.Line2D):

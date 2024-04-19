@@ -1,14 +1,14 @@
 import dataclasses
 import importlib
-import logging
 import pkgutil
 from distutils.version import LooseVersion
 from types import ModuleType
 from typing import Callable, List, Optional
 
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 @dataclasses.dataclass(init=True)

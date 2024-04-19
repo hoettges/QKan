@@ -1,15 +1,18 @@
-import logging, os
+import os
 import re
 from struct import unpack
-from qgis.core import Qgis
+from typing import Iterator
+
 from qgis.PyQt.QtWidgets import QProgressBar
-from typing import Dict, Iterator, Tuple, Union
+from qgis.core import Qgis
 
 from qkan import QKan
-from qkan.database.dbfunc import DBConnection
 from qkan.config import ClassObject
+from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.strakat.import")
+logger = get_logger("QKan.strakat.import")
+
 
 class Bericht_STRAKAT(ClassObject):
     datum: str = ""

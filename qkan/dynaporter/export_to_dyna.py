@@ -1,24 +1,22 @@
-# -*- coding: utf-8 -*-
-
 """
   Export Kanaldaten in eine DYNA-Datei (*.ein)
   Transfer von Kanaldaten aus einer QKan-Datenbank nach HYSTEM EXTRAN 7.6
 """
 
-import logging
 import os
 from typing import List, Optional, TextIO, Union, cast
 
+from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtWidgets import QProgressBar
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, formf, fortschritt, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.dynaporter.export_to_dyna")
+logger = get_logger("QKan.dynaporter.export_to_dyna")
 
 progress_bar: Optional[QProgressBar] = None
 

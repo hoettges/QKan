@@ -1,11 +1,10 @@
-import logging
-
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qkan.utils import get_logger
 
 VERSION = "2.1.2"
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:

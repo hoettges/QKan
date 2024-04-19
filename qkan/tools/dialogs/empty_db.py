@@ -1,17 +1,16 @@
-import logging
 import os
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.gui import QgsProjectionSelectionWidget
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qkan.tools.k_qgsadapt import qgsadapt
-
+from qkan.utils import get_logger
 from . import QKanDBDialog, QKanProjectDialog
 
 if TYPE_CHECKING:
@@ -21,7 +20,7 @@ FORM_CLASS_empty_db, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "..", "res", "application_emptyDB.ui")
 )
 
-logger = logging.getLogger("QKan.tools.dialogs.empty_db")
+logger = get_logger("QKan.tools.dialogs.empty_db")
 
 
 class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # type: ignore

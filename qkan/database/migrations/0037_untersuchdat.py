@@ -1,11 +1,10 @@
-import logging
-
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.k_layersadapt import load_plausisql
+from qkan.utils import get_logger
 
-VERSION = "3.3.8"              # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
+VERSION = "3.3.8"  # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:

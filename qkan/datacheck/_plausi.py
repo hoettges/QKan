@@ -1,10 +1,9 @@
-import logging
-
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.plugin import QKanPlugin
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.mu.import")
+logger = get_logger("mu.import")
 
 
 class PlausiTask(QKanPlugin):

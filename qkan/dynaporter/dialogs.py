@@ -1,9 +1,6 @@
-import logging
 import os
 from typing import TYPE_CHECKING, List, Optional, cast, Union
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -16,6 +13,8 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionWidget
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
@@ -25,14 +24,14 @@ from qkan.database.qkan_utils import (
     get_editable_layers,
 )
 from qkan.tools.dialogs import QKanDBDialog
-
 from .export_to_dyna import export_kanaldaten
 from .import_from_dyna import import_kanaldaten
+from ..utils import get_logger
 
 if TYPE_CHECKING:
     from qkan.dynaporter import DynaPorter
 
-logger = logging.getLogger("QKan.dynaporter.dialogs")
+logger = get_logger("QKan.dynaporter.dialogs")
 EXPORT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "export.ui")
 )

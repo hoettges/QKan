@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   Qgsadapt
@@ -25,19 +23,23 @@ __author__ = "Joerg Hoettges"
 __date__ = "November 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
-import logging
 import os
 from pathlib import Path, PurePath
 from xml.etree import ElementTree as ET
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem
 from qgis.utils import pluginDirectory
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, list_qkan_layers, get_qkanlayer_attributes, read_qml
+from qkan.database.qkan_utils import (
+    fehlermeldung,
+    list_qkan_layers,
+    get_qkanlayer_attributes,
+)
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.tools.k_qgsadapt")
+logger = get_logger("QKan.tools.k_qgsadapt")
 
 progress_bar = None
 

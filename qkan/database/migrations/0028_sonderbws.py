@@ -1,15 +1,13 @@
-import logging
-
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
 VERSION = "3.2.29"
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:
-    """Ergänze verschiedene Haltungstypen, die alle in der Tabelle haltungen gespeichert werden.
-    """
+    """Ergänze verschiedene Haltungstypen, die alle in der Tabelle haltungen gespeichert werden."""
 
     # Alle Tabellen erneuern, in denen createdat vorkommt
     # "tezg_data" aus Liste entfernt, jh, 18.01.2023

@@ -1,9 +1,8 @@
-import logging
-
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.he8._import")
+logger = get_logger("QKan.he8._import")
 
 
 class ImportTask:

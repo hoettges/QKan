@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 import datetime
-import logging
 
 import matplotlib.dates as mdates
 from matplotlib import pyplot as plt
@@ -10,12 +7,9 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from qgis.PyQt.QtWidgets import QWidget
 
 from qkan.database.sbfunc import SBConnection
-
-from .models import LayerType
 from .ganglinie_dialog import GanglinieDialog
-
-main_logger = logging.getLogger("QKan")
-main_logger.info("Ganglinien-Modul gestartet")
+from .models import LayerType
+from ..utils import get_logger
 
 
 class Ganglinie8:
@@ -27,7 +21,7 @@ class Ganglinie8:
          Ganglinien haben.
         :type t: int
         """
-        self.__log = logging.getLogger("QKan.gangliniehe8.Ganglinie8")
+        self.__log = get_logger("QKan.gangliniehe8.Ganglinie8")
         self.__t = t
         self.__dialog = GanglinieDialog()
         self.__laengsschnitt = None
@@ -45,6 +39,8 @@ class Ganglinie8:
         self.__time_axes = None
         self.__dialog.combo_type.currentIndexChanged.connect(self.__type_changed)
         self.__dialog.combo_method.currentIndexChanged.connect(self.draw)
+
+        self.__log.info("Ganglinien-Modul gestartet")
 
     def get_dialog(self):
         """
@@ -107,7 +103,7 @@ class Ganglinie8:
                         # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
                     # )
                 except BaseException as err:
-                    main_logger.error(
+                    self.__log.error(
                         f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
                     )
                 if _haltungen.get(zeitpunkt) is None:
@@ -152,7 +148,7 @@ class Ganglinie8:
                         # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
                     # )
                 except BaseException as err:
-                    main_logger.error(
+                    self.__log.error(
                         f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
                     )
                 if _schaechte.get(zeitpunkt) is None:

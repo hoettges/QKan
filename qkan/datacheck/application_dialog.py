@@ -1,27 +1,21 @@
-import logging
 import os
-import webbrowser
-from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
-from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
-    QDialogButtonBox,
     QDialog,
     QWidget,
     QLineEdit,
     QListWidget,
     QListWidgetItem,
-    QCheckBox
 )
-from qgis.utils import pluginDirectory
 
 from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qkan.utils import get_logger
 
-logger = logging.getLogger("QKan.datacheck.application_dialog")
+logger = get_logger("QKan.datacheck.application_dialog")
 
 
 class _Dialog(QDialog):

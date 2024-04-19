@@ -1,22 +1,18 @@
-from pathlib import Path
-
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung
 from qkan.plugin import QKanPlugin
-from qkan.tools.k_qgsadapt import qgsadapt
-
-from .zustandsklassen_funkt import Zustandsklassen_funkt
-from .application_dialog import ZustandDialog
 
 # noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
+from . import resources  # noqa: F401
+from .application_dialog import ZustandDialog
+from .zustandsklassen_funkt import Zustandsklassen_funkt
 
 
-class zustandsklassen(QKanPlugin):
+class Zustandsklassen(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
@@ -34,7 +30,6 @@ class zustandsklassen(QKanPlugin):
 
     def unload(self) -> None:
         self.import_dlg.close()
-
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars Zustandsklassen und anschließender Start der Ermittlung der Zustandsklassen"""
@@ -105,7 +100,6 @@ class zustandsklassen(QKanPlugin):
 
                     self._doimport()
 
-
     def _doimport(self) -> bool:
         """Start der Zustandsklassenbewertung
 
@@ -151,7 +145,12 @@ class zustandsklassen(QKanPlugin):
                 return False
 
         self.log.info("DB creation finished, starting Zustandsklassen")
-        zustand = Zustandsklassen_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg)
+        zustand = Zustandsklassen_funkt(
+            check_cb,
+            QKan.config.database.qkan,
+            QKan.config.zustand.date,
+            QKan.config.epsg,
+        )
         zustand.run()
         del zustand
 

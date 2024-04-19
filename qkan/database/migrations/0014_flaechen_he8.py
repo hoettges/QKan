@@ -1,11 +1,11 @@
-import logging
 from distutils.version import LooseVersion
 
 from qkan.database.dbfunc import DBConnection
+from qkan.utils import get_logger
 
 VERSION = "3.0.2"
 
-logger = logging.getLogger("QKan.database.migrations")
+logger = get_logger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:

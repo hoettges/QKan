@@ -8,19 +8,16 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, get_default_dir
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import read_qml, eval_node_types, fehlermeldung
+from qkan.database.qkan_utils import eval_node_types, fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
+# noinspection PyUnresolvedReferences
+from . import resources  # noqa: F401
 from ._export import ExportTask
 from ._import import ImportTask
 from ._results import ResultsTask
 from .application_dialog import ExportDialog, ImportDialog, ResultsDialog
-
-# noinspection PyUnresolvedReferences
-from . import resources  # isort:skip
-
-# logger = logging.getLogger("QKan.he8.application")
 
 
 class He8Porter(QKanPlugin):
@@ -33,7 +30,6 @@ class He8Porter(QKanPlugin):
         self.export_dlg = ExportDialog(default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
         self.results_dlg = ResultsDialog(default_dir, tr=self.tr)
-
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:

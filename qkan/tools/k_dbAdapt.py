@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
   k_dbAdapt.py
@@ -24,14 +22,13 @@ __author__ = "Joerg Hoettges"
 __date__ = "Juli 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
-import logging
-
 from qgis.core import QgsProject
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qkan.utils import get_logger
 
-logger = logging.getLogger(u"QKan.tools.k_dbAdapt")
+logger = get_logger("QKan.tools.k_dbAdapt")
 
 progress_bar = None
 
@@ -63,8 +60,8 @@ def dbAdapt(
 
     if not dbQK.connected:
         fehlermeldung(
-            u"Fehler in k_qgsadapt:\n",
-            u"QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+            "Fehler in k_qgsadapt:\n",
+            "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
                 qkanDB
             ),
         )

@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-import logging
 import os
-import webbrowser
-from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
-from qgis.core import Qgis
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -23,17 +18,18 @@ from qgis.PyQt.QtWidgets import (
     QTextEdit,
     QWidget,
 )
+from qgis.core import Qgis
 
 from qkan import list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.dialogs import QKanDialog
-
 from .k_link import reload_group, store_group
+from ..utils import get_logger
 
 if TYPE_CHECKING:
     from .application import LinkFl
 
-logger = logging.getLogger("QKan.linkflaechen.application_dialog")
+logger = get_logger("QKan.linkflaechen.application_dialog")
 
 FORM_CLASS_assigntgeb, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "application_assigntgeb.ui")
