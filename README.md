@@ -55,7 +55,7 @@ des Landes NRW von folgenden Ingenieurbüros finanziert:
 - Ingenieurgesellschaft Dr. Ing. Nacken mbH, Aachen (2): https://www.nacken-ingenieure.de/
 - Fischer Teamplan Ingenieurbüro GmbH (2): https://www.fischer-teamplan.de/
 - blue-ing, Düsseldorf (3): www.blue-ing.de
-- Ingenieurbüro Reinhard Beck, Wuppertal (3): www.ibbeck.de
+- Ingenieurbüro Reinhard Beck, Wuppertal (3)
 
 Projektförderung durch das Ministerium für Innovation, Wissenschaft und Forschung des Landes Nordrhein-Westfalen während des Zeitraums
 1) Nov. 2020 - Dez. 2021
