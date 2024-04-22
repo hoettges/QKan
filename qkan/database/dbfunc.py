@@ -859,6 +859,9 @@ class DBConnection:
 
         result = self.sql(sql, stmt_category, parameters, mute_logger, ignore)
 
+        if tabnam == "untersuchdat_haltung":
+            self.setschadenstexte()
+
         return result
 
     def calctextpositions(self, data_hu, data_uh, tdist: float = 0.50, bdist: float = 0.15,
@@ -980,9 +983,117 @@ class DBConnection:
 
         self.commit()
 
+    def setschadenstexte(self):
+        """Textpositionen für Schadenstexte berechnen"""
+
+        sql = """SELECT
+            hu.pk AS id,
+            st_x(pointn(hu.geom, 1))                AS xanf,
+            st_y(pointn(hu.geom, 1))                AS yanf,
+            st_x(pointn(hu.geom, -1))               AS xend,
+            st_y(pointn(hu.geom, -1))               AS yend
+            FROM haltungen_untersucht AS hu
+            WHERE hu.haltnam IS NOT NULL AND
+                  hu.untersuchtag IS NOT NULL AND
+                  coalesce(hu.laenge, 0) > 0.05
+            ORDER BY id"""
+
+        if not self.sql(
+            sql, "read haltungen_untersucht"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen (1)")
+        data = self.fetchall()
+
+        data_hu = {}
+        for vals in data:
+            data_hu[vals[0]] = vals[1:]
+
+        sql = """SELECT
+            uh.pk, hu.pk AS id,
+            CASE untersuchrichtung
+                WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
+                WHEN 'in Fließrichtung'    THEN uh.station
+                                           ELSE uh.station END        AS station
+            FROM untersuchdat_haltung AS uh
+            JOIN haltungen_untersucht AS hu
+            ON hu.haltnam = uh.untersuchhal AND
+               hu.schoben = uh.schoben AND
+               hu.schunten = uh.schunten AND
+               hu.untersuchtag = uh.untersuchtag
+            WHERE hu.haltnam IS NOT NULL AND
+                  hu.untersuchtag IS NOT NULL AND
+                  coalesce(laenge, 0) > 0.05 AND
+                  uh.station IS NOT NULL AND
+                  abs(uh.station) < 10000 AND
+                  untersuchrichtung IS NOT NULL
+            GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
+            ORDER BY id, station;"""
+
+        if not self.sql(
+            sql, "read untersuchdat_haltungen"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen (2)")
+
+        data_uh = self.fetchall()
+
+        richtung = 'Anzeigen in Fließrichtung rechts der Haltung'
+
+        self.calctextpositions(data_hu, data_uh, 0.50, 0.15, richtung, self.epsg)
+
+        # Nummerieren der Untersuchungen an der selben Haltung "haltungen_untersucht"
+
+        sql = """
+            UPDATE haltungen_untersucht
+            SET id = unum.row_number
+            FROM (
+                SELECT
+                    hu.pk AS pk, hu.haltnam, 
+                    row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
+                FROM haltungen_untersucht AS hu
+                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
+            ) AS unum
+            WHERE haltungen_untersucht.pk = unum.pk
+        """
+
+        if not self.sql(
+            sql, "num haltungen_untersucht"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler in num haltungen_untersucht")
+
+        # Nummerieren der Untersuchungsdaten "untersuchdat_haltung"
+
+        sql = """
+            WITH num AS (
+                SELECT
+                    hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, 
+                    row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
+                FROM haltungen_untersucht AS hu
+                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
+            )
+            UPDATE untersuchdat_haltung
+            SET id = uid.id
+            FROM (
+                SELECT uh.pk AS pk, num.row_number AS id
+                FROM untersuchdat_haltung AS uh
+                JOIN num
+                ON	uh.untersuchhal = num.haltnam AND
+                    uh.schoben = num.schoben AND
+                    uh.schunten = num.schunten AND
+                    uh.untersuchtag = num.untersuchtag
+            ) AS uid
+            WHERE untersuchdat_haltung.pk = uid.pk
+        """
+
+        if not self.sql(
+            sql, "num untersuchdat_haltung"
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler in num untersuchdat_haltung")
+
+        return True
+
     def numuntersuchdat(self, data):
         """Vergibt fortlaufende Nummern für die untersuchten Haltungen und die Untersuchungsdaten der Haltungen"""
-
+        pass
 
     def executefile(self, filenam):
         """Liest eine Datei aus dem template-Verzeichnis und führt sie als SQL-Befehle aus"""
