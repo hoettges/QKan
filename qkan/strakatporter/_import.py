@@ -1425,7 +1425,7 @@ class ImportTask:
 
         sql = """
             WITH
-            t_strakatkanal_oberhalb AS (
+            sto AS (
                 SELECT nummer, schacht_unten
                 FROM t_strakatkanal
                 WHERE schachtnummer <> 0
@@ -1452,20 +1452,20 @@ class ImportTask:
                 profilnam, entwart, material, strasse, 
                 haltungstyp, simstatus, kommentar, geom)
             SELECT
-                Trim(t_strakatkanal.haltungsname)       AS haltnam,
+                Trim(stk.haltungsname)       AS haltnam,
                 Trim(Coalesce(
-                    t_strakatkanal_oberhalb.schacht_unten,t_strakatkanal.schacht_oben
+                    sto.schacht_unten,stk.schacht_oben
                     ))                                  AS schoben,
-                Trim(t_strakatkanal.schacht_unten)      AS schunten,
-                t_strakatkanal.laenge                   AS laenge,
-                t_strakatkanal.rw_gerinne_o             AS xschob,
-                t_strakatkanal.hw_gerinne_o             AS yschob,
-                t_strakatkanal.rw_gerinne_u             AS xschun,
-                t_strakatkanal.hw_gerinne_u             AS yschun,
-                t_strakatkanal.rohrbreite_v/1000.       AS breite,
-                t_strakatkanal.rohrhoehe___v/1000.      AS hoehe,
-                t_strakatkanal.sohle_oben___v           AS sohleoben,
-                t_strakatkanal.sohle_unten__v           AS sohleunten,
+                Trim(stk.schacht_unten)      AS schunten,
+                stk.laenge                   AS laenge,
+                stk.rw_gerinne_o             AS xschob,
+                stk.hw_gerinne_o             AS yschob,
+                stk.rw_gerinne_u             AS xschun,
+                stk.hw_gerinne_u             AS yschun,
+                stk.rohrbreite_v/1000.       AS breite,
+                stk.rohrhoehe___v/1000.      AS hoehe,
+                stk.sohle_oben___v           AS sohleoben,
+                stk.sohle_unten__v           AS sohleunten,
                 profilarten.text                        AS profilnam,
                 k2e.entwart                             AS entwart,
                 rohrmaterialien.text                    AS material,
@@ -1476,26 +1476,26 @@ class ImportTask:
                 Coalesce(s2h.haltungstyp ,'Haltung')    AS haltungstyp,
                 Coalesce(s2h.simstatus, 'vorhanden')    AS simstatus,
                 'QKan-STRAKAT-Import'                   AS kommentar,
-                MakeLine(MakePoint(t_strakatkanal.rw_gerinne_o,
-                                   t_strakatkanal.hw_gerinne_o, :epsg),
-                         MakePoint(t_strakatkanal.rw_gerinne_u,
-                                   t_strakatkanal.hw_gerinne_u, :epsg)) AS geom
+                MakeLine(MakePoint(stk.rw_gerinne_o,
+                                   stk.hw_gerinne_o, :epsg),
+                         MakePoint(stk.rw_gerinne_u,
+                                   stk.hw_gerinne_u, :epsg)) AS geom
             FROM
-                t_strakatkanal
+                t_strakatkanal AS stk
                 LEFT JOIN profilarten
-                ON t_strakatkanal.profilart_v = profilarten.id
+                ON stk.profilart_v = profilarten.id
                 LEFT JOIN rohrmaterialien
-                ON t_strakatkanal.Material_v = rohrmaterialien.ID
+                ON stk.Material_v = rohrmaterialien.ID
                 LEFT JOIN Strassen
-                ON t_strakatkanal.strassennummer = Strassen.ID
+                ON stk.strassennummer = Strassen.ID
                 LEFT JOIN t_mapper_schart2haltyp AS s2h
-                ON t_strakatkanal.schachtart = s2h.id
+                ON stk.schachtart = s2h.id
                 LEFT JOIN t_mapper_kanalarten2entwart AS k2e
-                ON t_strakatkanal.kanalart = k2e.id
-                LEFT JOIN t_strakatkanal_oberhalb
-                ON t_strakatkanal.Zuflussnummer1 = t_strakatkanal_oberhalb.Nummer
-            WHERE t_strakatkanal.laenge > 0.04 AND
-                   t_strakatkanal.schachtnummer <> 0"""
+                ON stk.kanalart = k2e.id
+                LEFT JOIN sto
+                ON stk.Zuflussnummer1 = sto.Nummer
+            WHERE stk.laenge > 0.04 AND
+                   stk.schachtnummer <> 0"""
 
         params = {"epsg": self.epsg}
 
@@ -1776,109 +1776,5 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        # Textpositionen für Schadenstexte berechnen
+        self.db_qkan.setschadenstexte()
 
-        sql = """SELECT
-            hu.pk AS id,
-            st_x(pointn(hu.geom, 1))                AS xanf,
-            st_y(pointn(hu.geom, 1))                AS yanf,
-            st_x(pointn(hu.geom, -1))               AS xend,
-            st_y(pointn(hu.geom, -1))               AS yend
-            FROM haltungen_untersucht AS hu
-            WHERE hu.haltnam IS NOT NULL AND
-                  hu.untersuchtag IS NOT NULL AND
-                  coalesce(hu.laenge, 0) > 0.05
-            ORDER BY id"""
-
-        if not self.db_qkan.sql(
-            sql, "read haltungen_untersucht"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen (1)")
-        data = self.db_qkan.fetchall()
-
-        data_hu = {}
-        for vals in data:
-            data_hu[vals[0]] = vals[1:]
-
-        sql = """SELECT
-            uh.pk, hu.pk AS id,
-            CASE untersuchrichtung
-                WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
-                WHEN 'in Fließrichtung'    THEN uh.station
-                                           ELSE uh.station END        AS station
-            FROM untersuchdat_haltung AS uh
-            JOIN haltungen_untersucht AS hu
-            ON hu.haltnam = uh.untersuchhal AND
-               hu.schoben = uh.schoben AND
-               hu.schunten = uh.schunten AND
-               hu.untersuchtag = uh.untersuchtag
-            WHERE hu.haltnam IS NOT NULL AND
-                  hu.untersuchtag IS NOT NULL AND
-                  coalesce(laenge, 0) > 0.05 AND
-                  uh.station IS NOT NULL AND
-                  abs(uh.station) < 10000 AND
-                  untersuchrichtung IS NOT NULL
-            GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
-            ORDER BY id, station;"""
-
-        if not self.db_qkan.sql(
-            sql, "read untersuchdat_haltungen"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen (2)")
-
-        data_uh = self.db_qkan.fetchall()
-
-        richtung = 'Anzeigen in Fließrichtung rechts der Haltung'
-
-        self.db_qkan.calctextpositions(data_hu, data_uh, 0.50, 0.15, richtung, self.epsg)
-
-        # Nummerieren der Untersuchungen an der selben Haltung "haltungen_untersucht"
-
-        sql = """
-            UPDATE haltungen_untersucht
-            SET id = unum.row_number
-            FROM (
-                SELECT
-                    hu.pk AS pk, hu.haltnam, 
-                    row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
-                FROM haltungen_untersucht AS hu
-                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
-            ) AS unum
-            WHERE haltungen_untersucht.pk = unum.pk
-        """
-
-        if not self.db_qkan.sql(
-            sql, "num haltungen_untersucht"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler in num haltungen_untersucht")
-
-        # Nummerieren der Untersuchungsdaten "untersuchdat_haltung"
-
-        sql = """
-            WITH num AS (
-                SELECT
-                    hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, 
-                    row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
-                FROM haltungen_untersucht AS hu
-                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag
-            )
-            UPDATE untersuchdat_haltung
-            SET id = uid.id
-            FROM (
-                SELECT uh.pk AS pk, num.row_number AS id
-                FROM untersuchdat_haltung AS uh
-                JOIN num
-                ON	uh.untersuchhal = num.haltnam AND
-                    uh.schoben = num.schoben AND
-                    uh.schunten = num.schunten AND
-                    uh.untersuchtag = num.untersuchtag
-            ) AS uid
-            WHERE untersuchdat_haltung.pk = uid.pk
-        """
-
-        if not self.db_qkan.sql(
-            sql, "num untersuchdat_haltung"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler in num untersuchdat_haltung")
-
-        return True

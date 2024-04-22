@@ -120,7 +120,30 @@ class ShowHaltungsschaeden(QDialog, form_class):
                 self.tw_schadenstabelle.setColumnWidth(i,70)
 
             sql = """
-                WITH hs AS (
+                WITH ud AS (
+                    SELECT
+                        hu.untersuchtag,
+                        hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.laenge
+                    FROM untersuchdat_haltung AS uh
+                    JOIN haltungen_untersucht AS hu
+                    ON hu.haltnam = uh.untersuchhal AND
+                       hu.schoben = uh.schoben AND
+                       hu.schunten = uh.schunten AND
+                       hu.untersuchtag = uh.untersuchtag
+                    WHERE hu.haltnam IS NOT NULL AND
+                          hu.untersuchtag IS NOT NULL AND
+                          coalesce(hu.laenge, 0) > 0.05 AND
+                          uh.station IS NOT NULL AND
+                          abs(uh.station) < 10000 AND
+                          untersuchrichtung IS NOT NULL AND
+                          hu.haltnam = :haltnam AND
+                          hu.schoben = :schoben AND
+                          hu.schunten = :schunten
+                    GROUP BY hu.untersuchtag
+                    ORDER BY hu.untersuchtag DESC
+                    LIMIT :anzahl
+                ),
+                hs AS (
                     SELECT
                         hu.haltnam, hu.schoben, hu.schunten,
                         CASE untersuchrichtung
@@ -129,35 +152,21 @@ class ShowHaltungsschaeden(QDialog, form_class):
                                                        ELSE round(uh.station, 2) END        AS station,
                         uh.kuerzel
                         FROM untersuchdat_haltung AS uh
-                        JOIN haltungen_untersucht AS hu
+                        JOIN ud AS hu
                         ON hu.haltnam = uh.untersuchhal AND
                            hu.schoben = uh.schoben AND
                            hu.schunten = uh.schunten AND
                            hu.untersuchtag = uh.untersuchtag
                         WHERE hu.haltnam IS NOT NULL AND
                               hu.untersuchtag IS NOT NULL AND
-                              coalesce(laenge, 0) > 0.05 AND
+                              coalesce(hu.laenge, 0) > 0.05 AND
                               uh.station IS NOT NULL AND
                               abs(uh.station) < 10000 AND
                               untersuchrichtung IS NOT NULL AND
                               hu.haltnam = :haltnam AND
                               hu.schoben = :schoben AND
                               hu.schunten = :schunten
-                        GROUP BY hu.haltnam, hu.schoben, hu.schunten, station, uh.kuerzel
-                ),
-                ud AS (
-                    SELECT
-                        hu.untersuchtag
-                    FROM haltungen_untersucht AS hu
-                    WHERE hu.haltnam IS NOT NULL AND
-                          hu.untersuchtag IS NOT NULL AND
-                          coalesce(hu.laenge, 0) > 0.05 AND
-                          hu.haltnam = :haltnam AND
-                          hu.schoben = :schoben AND
-                          hu.schunten = :schunten
-                    GROUP BY hu.untersuchtag
-                    ORDER BY hu.untersuchtag DESC
-                    LIMIT :anzahl
+                        GROUP BY station, uh.kuerzel
                 ),
                 zd AS (
                 SELECT
@@ -171,8 +180,8 @@ class ShowHaltungsschaeden(QDialog, form_class):
                         CASE  WHEN substr(uh.kuerzel, 1, 1) IN ('A', 'B', 'C', 'D') AND 
                                    substr(uh.kuerzel, 2, 1) IN ('A', 'B', 'C', 'D')
                         THEN
-                            substr('  ' || printf('%i', uh.charakt1), 2) ||
-                            substr('  ' || printf('%i', uh.charakt2), 2)
+                            substr('  ' || printf('%s', uh.charakt1), 2) ||
+                            substr('  ' || printf('%s', uh.charakt2), 2)
                         ELSE '' END                                                     AS text,
                     CASE untersuchrichtung
                         WHEN 'gegen Fließrichtung' THEN round(hu.laenge - uh.station, 2)
@@ -186,14 +195,14 @@ class ShowHaltungsschaeden(QDialog, form_class):
                        hu.untersuchtag = uh.untersuchtag
                     WHERE hu.haltnam IS NOT NULL AND
                           hu.untersuchtag IS NOT NULL AND
-                          coalesce(laenge, 0) > 0.05 AND
+                          coalesce(hu.laenge, 0) > 0.05 AND
                           uh.station IS NOT NULL AND
                           abs(uh.station) < 10000 AND
                           untersuchrichtung IS NOT NULL AND
                           hu.haltnam = :haltnam AND
                           hu.schoben = :schoben AND
                           hu.schunten = :schunten
-                    GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, round(station, 3), uh.kuerzel
+                    GROUP BY hu.untersuchtag, round(station, 3), uh.kuerzel
                 )
                 SELECT
                     hs.station,

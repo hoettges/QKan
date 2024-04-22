@@ -441,7 +441,9 @@ def layersadapt(
         # Schachttypen auswerten
         eval_node_types(dbQK)  # in qkan.database.qkan_utils
 
-    project.setTitle("QKan Version {}".format(qgs_version()))
+    # Wenn noch kein Titel vergeben, dann QKan mit Versionsnummer setzen
+    if not project.title():
+        project.setTitle("QKan Version {}".format(qgs_version()))
 
     # if status_neustart:
     # meldung("Achtung! Benutzerhinweis!", "Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
