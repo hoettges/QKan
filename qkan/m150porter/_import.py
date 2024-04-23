@@ -674,7 +674,7 @@ class ImportTask:
                     tabnam="schaechte",
                     stmt_category='m150-import schaechte',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -801,7 +801,7 @@ class ImportTask:
                     tabnam="schaechte_untersucht",
                     stmt_category='m150-import schachte_untersucht',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -957,7 +957,7 @@ class ImportTask:
                     tabnam="untersuchdat_schacht",
                     stmt_category='m150-import untersuchdat_schacht',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -1077,7 +1077,7 @@ class ImportTask:
                     tabnam="schaechte",
                     stmt_category='m150-import auslaesse',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -1404,7 +1404,7 @@ class ImportTask:
                     tabnam="haltungen",
                     stmt_category='m150-import haltungen',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -1731,7 +1731,7 @@ class ImportTask:
                     tabnam="haltungen_untersucht",
                     stmt_category='m150-import haltungen_untersucht',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -1946,7 +1946,7 @@ class ImportTask:
                     tabnam="untersuchdat_haltung",
                     stmt_category='m150-import untersuchdat_haltung',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -2212,7 +2212,7 @@ class ImportTask:
                     tabnam="anschlussleitungen",
                     stmt_category='m150-import anschlussleitung',
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -2508,7 +2508,7 @@ class ImportTask:
                 tabnam="haltungen",
                 stmt_category='m150-import pumpen',
                 mute_logger=False,
-                **params
+                params=params,
             ):
                 return
 

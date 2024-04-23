@@ -152,7 +152,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return False
 
@@ -189,7 +189,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -216,7 +216,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -244,7 +244,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -296,7 +296,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                      tabnam="tezg",
                      mute_logger=False,
-                     **params
+                     params=params,
             ):
                 return False
 
@@ -381,7 +381,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -424,7 +424,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -464,7 +464,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -489,7 +489,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 
@@ -515,7 +515,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 return
 

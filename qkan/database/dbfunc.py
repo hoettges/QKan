@@ -390,9 +390,14 @@ class DBConnection:
             stmt_category: str = "allgemein",
             mute_logger: bool = False,
             ignore: bool = False,  # ignore error and continue
-            **parameters: dict              # [str, str] not yet allowed for QGIS = 3.16
+            parameters: [dict, tuple] = None
     ) -> bool:
         """Fügt einen Datensatz mit Geo-Objekt hinzu"""
+
+        if isinstance(parameters, tuple):
+            param1 = parameters[0]
+        else:
+            param1 = parameters
 
         if tabnam == "schaechte":
             parlis = [
@@ -419,8 +424,12 @@ class DBConnection:
                 "epsg",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
 
             sql = """
                 INSERT INTO schaechte (
@@ -479,8 +488,13 @@ class DBConnection:
                 "epsg",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
             sql = """
                 INSERT INTO haltungen
                   (haltnam, schoben, schunten,
@@ -545,8 +559,13 @@ class DBConnection:
                 "epsg",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
             sql = f"""
                 INSERT INTO haltungen_untersucht
                   (haltnam, schoben, schunten,
@@ -562,17 +581,21 @@ class DBConnection:
                   MakeLine(
                     coalesce(
                       MakePoint(:xschob, :yschob, :epsg),
-                      schob.geop
+                      suo.geop,
+                      so.geop
                     ), 
                     coalesce(
                       MakePoint(:xschun, :yschun, :epsg),
-                      schun.geop
+                      suu.geop,
+                      su.geop
                     )
                   ), :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart, :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
                 FROM
-                  schaechte AS schob,
-                  schaechte AS schun
-                WHERE schob.schnam = :schoben AND schun.schnam = :schunten;"""
+                  (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
+                  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+                  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+                  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+                  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"""
 
         elif tabnam == "untersuchdat_haltung":
             parlis = [
@@ -607,8 +630,13 @@ class DBConnection:
                 "createdat",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
             sql = f"""  
                 INSERT INTO untersuchdat_haltung
                   (untersuchhal, untersuchrichtung, schoben, schunten, id, untersuchtag, videozaehler, 
@@ -667,8 +695,13 @@ class DBConnection:
                 "epsg",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
             sql = """
                 INSERT INTO anschlussleitungen
                   (leitnam, schoben, schunten,
@@ -697,13 +730,15 @@ class DBConnection:
                 );"""
 
             logger.debug(
-                f"insert anschlussleitung - sql: {sql}\n" f"parameter: {parameters}"
+                f"insert anschlussleitung - sql: {sql}\n" f"parameter: {param1}"
             )
 
         elif tabnam == "schaechte_untersucht":
             parlis = [
                 "schnam",
                 "durchm",
+                "xsch",
+                "ysch",
                 "kommentar",
                 "createdat",
                 "baujahr",
@@ -719,8 +754,13 @@ class DBConnection:
                 "max_ZS",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
             sql = f"""
                 INSERT INTO schaechte_untersucht
                   (schnam, durchm,  
@@ -733,13 +773,17 @@ class DBConnection:
                   CASE WHEN :durchm > 200 THEN :durchm/1000 ELSE :durchm END, 
                   :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
                   sch.geop,
+                  coalesce(
+                    MakePoint(:xschob, :yschob, :epsg),
+                    sch.geop
+                  )
                   :untersuchtag, :untersucher, 
                   :wetter, :strasse, :bewertungsart, 
                   :bewertungstag, :datenart, 
                   coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
                 FROM
-                  schaechte AS sch
-                  WHERE sch.schnam = :schnam;"""
+                  (SELECT :schnam AS schnam) AS val
+                  LEFT JOIN schaechte AS sch ON val.schnam = sch.schnam;"""
 
         elif tabnam == "untersuchdat_schacht":
             parlis = [
@@ -768,8 +812,13 @@ class DBConnection:
                 "createdat",
             ]
             for el in parlis:
-                if parameters.get(el, None) is None:
-                    parameters[el] = None
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
             sql = """
                 INSERT INTO untersuchdat_schacht
                   (untersuchsch, id, untersuchtag, videozaehler, timecode, kuerzel, 
@@ -796,9 +845,14 @@ class DBConnection:
                        'createdat', 'haltnam', 'neigkl', 'schwerpunktlaufzeit', 'teilgebiet', 'abflussparameter',
                       'kommentar', 'geom', 'epsg']
             for el in parlis:
-                if not parameters.get(el, None):
-                    parameters[el] = None
-            # wkt_geom = parameters.get("geom")
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
+            # wkt_geom = param1.get("geom")
             sql = """
                     INSERT INTO tezg
                       (flnam, regenschreiber, schnam, befgrad, neigung, 
@@ -817,9 +871,14 @@ class DBConnection:
                       'aufteilen', 'kommentar', 'createdat',
                       'geom', 'epsg']
             for el in parlis:
-                if not parameters.get(el, None):
-                    parameters[el] = None
-            # wkt_geom = parameters.get("geom")
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
+            # wkt_geom = param1.get("geom")
             sql = """
                     INSERT INTO flaechen
                       (flnam, haltnam, schnam, neigkl, neigung, 
@@ -837,9 +896,14 @@ class DBConnection:
         elif tabnam == "teilgebiete":
             parlis = ["tgnam", "kommentar", "createdat", "geom", "epsg"]
             for el in parlis:
-                if not parameters.get(el, None):
-                    parameters[el] = None
-            # wkt_geom = parameters.get("geom")
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
+            # wkt_geom = param1.get("geom")
             sql = """
                 INSERT INTO teilgebiete
                   (tgnam, kommentar, createdat, geom)
@@ -857,7 +921,24 @@ class DBConnection:
             )
             return False
 
-        result = self.sql(sql, stmt_category, parameters, mute_logger, ignore)
+        if isinstance(parameters, dict):
+            logger.debug(f'read_data.insertdata: einzelner Datensatz')
+            result = self.sql(
+                sql,
+                stmt_category,
+                parameters=parameters,
+                many=False,
+                mute_logger=mute_logger,
+                ignore=ignore)
+        else:
+            logger.debug(f'read_data.insertdata: Tuple von Datensaetzen')
+            result = self.sql(
+                sql,
+                stmt_category,
+                parameters=parameters,
+                many=True,
+                mute_logger=mute_logger,
+                ignore=ignore)
 
         if tabnam == "untersuchdat_haltung":
             self.setschadenstexte()
@@ -971,7 +1052,7 @@ class DBConnection:
                     y4 = ya + yu * st1 + yv * abst[3]
                     geoobj = QgsGeometry.asWkb(
                         QgsGeometry.fromPolyline([QgsPoint(x1, y1), QgsPoint(x2, y2), QgsPoint(x3, y3), QgsPoint(x4, y4)]))
-                    sql = "UPDATE untersuchdat_haltung SET geom = GeomFromWKB(?, ?) WHERE pk = ?"
+                    sql = "UPDATE untersuchdat_haltung SET geom = GeomFromWKB(?, ?) WHERE pk = ? AND geom IS NULL"
 
                     if not self.sql(sql, 'set_objekt', parameters=(geoobj, epsg, id,)):
                         logger.error(f"Fehler in {sql}")

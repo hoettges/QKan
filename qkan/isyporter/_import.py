@@ -579,7 +579,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -695,7 +695,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte_untersucht",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -897,7 +897,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_schacht",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -1002,7 +1002,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -1123,7 +1123,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -1386,7 +1386,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -1761,7 +1761,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -2031,7 +2031,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_haltung",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -2308,7 +2308,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="anschlussleitungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -2534,7 +2534,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return
@@ -2634,7 +2634,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    **params
+                    params=params,
             ):
                 del self.db_qkan
                 return

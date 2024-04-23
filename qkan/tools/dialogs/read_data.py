@@ -11,6 +11,7 @@ from qkan.database.qkan_utils import (
     fehlermeldung,
     get_qkanlayer_attributes,
 )
+from datetime import datetime
 from qkan.utils import get_logger
 
 if TYPE_CHECKING:
@@ -370,6 +371,7 @@ class ReadData:  # type: ignore
             tabnam_db: str
     ) -> None:
         with DBConnection(self.db_name) as db_qkan:
+            params = ()
             for nrow, line in enumerate(lines[1:]):
                 parsed_dataset = {}
                 values = line.split(clip_sep)
@@ -380,6 +382,10 @@ class ReadData:  # type: ignore
                         f"Datenzeile: {line}",
                     )
                     continue
+
+                ti = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+                logger.debug(f"{ti}, vor der Schleife")
+
                 for column in qkan_colnames:
                     if (
                             (column == "schachttyp" and schtyp_added)
@@ -403,9 +409,11 @@ class ReadData:  # type: ignore
                         column, None
                     )  # Typ aus DB-Tabelle
 
-                    logger.debug(f"column: {column}" f"\n_value: {_value}")
+                    ti = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+                    logger.debug(f"{ti}, " f"Datensatz nr. {nrow}" f", {column=}" f", {_value=}")
 
                     if not _type:
+                        logger.error(f'read_data._parsed_dataset, {column=}')
                         continue
 
                     if _type.lower() == "integer":
@@ -438,6 +446,9 @@ class ReadData:  # type: ignore
 
                     parsed_dataset[column] = field
 
+                ti = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+                logger.debug(f"{ti}, nach der Schleife")
+
                 # Falls Spalte 'schachttyp' oder 'haltungstyp' ergänzt wurde (s.o.)
                 if schtyp_added:
                     parsed_dataset["schachttyp"] = self.schacht_types[
@@ -454,11 +465,16 @@ class ReadData:  # type: ignore
                     f"parsed_dataset: {parsed_dataset}"
                 )
 
-                if not db_qkan.insertdata(
-                        tabnam_db,
-                        mute_logger=False,
-                        **parsed_dataset
-                ):
-                    return
+                params += (parsed_dataset,)
+
+            if not db_qkan.insertdata(
+                    tabnam_db,
+                    mute_logger=False,
+                    parameters=params
+            ):
+                return
+
+            ti = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            logger.debug(f"{ti}, Nach insertdata")
 
             db_qkan.commit()
