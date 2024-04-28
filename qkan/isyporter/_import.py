@@ -2053,6 +2053,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        self.db_qkan.setschadenstexte()
+
 
     def _anschlussleitungen(self) -> None:
         def _iter() -> Iterator[Anschlussleitung]:

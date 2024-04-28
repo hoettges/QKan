@@ -574,7 +574,6 @@ class ImportTask:
                 else:
                     deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
 
-
                 yield Schacht(
                     schnam=name,
                     xsch=xsch,
@@ -590,7 +589,6 @@ class ImportTask:
                     simstatus=_strip_int(block.findtext("KG407", "0")),
                     kommentar=block.findtext("KG999", "-")
                 )
-
 
         for schacht in _iter():
             # Entwässerungsarten
@@ -1959,84 +1957,11 @@ class ImportTask:
             #):
              #   return None
 
+        self.db_qkan.commit()
+
         # Textpositionen für Schadenstexte berechnen
 
-        sql = """SELECT
-            uh.pk, hu.pk AS id,
-            CASE untersuchrichtung
-                WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
-                WHEN 'in Fließrichtung'    THEN uh.station
-                                           ELSE uh.station END        AS station,
-            GLength(hu.geom)                                     AS laenge
-            FROM untersuchdat_haltung AS uh
-            JOIN haltungen_untersucht AS hu
-            ON hu.haltnam = uh.untersuchhal AND
-               hu.schoben = uh.schoben AND
-               hu.schunten = uh.schunten AND
-               hu.untersuchtag = uh.untersuchtag
-            WHERE hu.haltnam IS NOT NULL AND
-                  hu.untersuchtag IS NOT NULL AND
-                  coalesce(laenge, 0) > 0.05 AND
-                  uh.station IS NOT NULL AND
-                  abs(uh.station) < 10000 AND
-                  untersuchrichtung IS NOT NULL
-            GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
-            ORDER BY id, station;"""
-
-        if not self.db_qkan.sql(
-            sql, "untersuchdat_haltung.station read"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Lesen der Stationen")
-        data = self.db_qkan.fetchall()
-        logger.debug(f'Anzahl Datensätze in calctextpositions: {len(data)}')
-        # logger.debug(f'{data[1]=}')
-        # logger.debug(f'{[type(el) for el in data[1]]}')
-        self.db_qkan.calctextpositions(data, 0.50, 0.15)
-
-        params = ()
-        for ds in data:
-            params += ([ds[2], ds[0]],)
-
-        sql = """UPDATE untersuchdat_haltung
-            SET stationtext = round(?, 3)
-            WHERE pk = ?"""
-        if not self.db_qkan.sql(
-                sql=sql,
-                stmt_category="untersuchdat_haltung.station write",
-                parameters=params,
-                many=True
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Schreiben der Stationen")
-
-        # Erzeugen der Polylinien für die Schadenstexte
-        sql = """
-            WITH dist AS (
-                SELECT column1 AS d, column2 AS stat, column3 AS tpos 
-                FROM (VALUES (0.0000000001, 1.0, 0.0), (1.0, 1.0, 0.0), (1.5, 0.0, 1.0), (4.0, 0.0, 1.0))
-            )
-            UPDATE untersuchdat_haltung SET geom = (
-                SELECT MakeLine(Line_Interpolate_Point(OffsetCurve(hu.geom, di.d), 
-                    (
-                    CASE untersuchrichtung
-                        WHEN 'gegen Fließrichtung' THEN ST_Length(hu.geom) - uh.station
-                        WHEN 'in Fließrichtung'    THEN uh.station
-                                                   ELSE ST_Length(hu.geom) - uh.station END * di.stat +  
-                    uh.stationtext * di.tpos) / ST_Length(hu.geom))) AS textline
-                FROM dist AS di, untersuchdat_haltung AS uh
-                JOIN haltungen_untersucht AS hu
-                ON hu.haltnam = uh.untersuchhal AND
-                   hu.schoben = uh.schoben AND
-                   hu.schunten = uh.schunten AND
-                   hu.untersuchtag = uh.untersuchtag
-                WHERE uh.pk = untersuchdat_haltung.pk
-                GROUP BY uh.pk)"""
-        if not self.db_qkan.sql(
-                sql=sql,
-                stmt_category="untersuchdat_haltung.geom SET"
-        ):
-            raise Exception(f"{self.__class__.__name__}: Fehler beim Erzeugen der Schadenspolylinien")
-
-        self.db_qkan.commit()
+        self.db_qkan.setschadenstexte()
 
 
     def _anschlussleitungen(self) -> None:

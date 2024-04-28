@@ -967,6 +967,11 @@ class DBConnection:
         abst = [0., 1.0, 1.5, 4.0]  # Abstände der Knickpunkte von der Haltung
 
         si = len(data_uh)  # Anzahl Untersuchungen
+        if si == 0:
+            logger.error_user(
+                "Es konnten keine Schadenstexte erzeugt werden. Wahrscheinlich ist ein notwendiges Attribut noch leer",
+            )
+            return
 
         id = data_uh[0][1]
         ianf = 0
@@ -1067,6 +1072,8 @@ class DBConnection:
     def setschadenstexte(self):
         """Textpositionen für Schadenstexte berechnen"""
 
+        logger.notice("Schadenstext werden neu arrangiert ...")
+
         sql = """SELECT
             hu.pk AS id,
             st_x(pointn(hu.geom, 1))                AS xanf,
@@ -1091,7 +1098,7 @@ class DBConnection:
 
         sql = """SELECT
             uh.pk, hu.pk AS id,
-            CASE untersuchrichtung
+            CASE uh.untersuchrichtung
                 WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'in Fließrichtung'    THEN uh.station
                                            ELSE uh.station END        AS station
@@ -1106,7 +1113,7 @@ class DBConnection:
                   coalesce(laenge, 0) > 0.05 AND
                   uh.station IS NOT NULL AND
                   abs(uh.station) < 10000 AND
-                  untersuchrichtung IS NOT NULL
+                  uh.untersuchrichtung IS NOT NULL
             GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station;"""
 
@@ -1169,6 +1176,8 @@ class DBConnection:
             sql, "num untersuchdat_haltung"
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler in num untersuchdat_haltung")
+
+        self.commit()
 
         return True
 
