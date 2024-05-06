@@ -191,7 +191,7 @@ class ImportTask:
                     SetSrid(sh.Geometry, :epsg) AS geop,
                     CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
                                                               y(sh.Geometry),
-                                                              coalesce(sh.Durchmesser, 1.0),
+                                                              coalesce(sh.Durchmesser/1000.0, 1.0),
                                                               :epsg)
                                        )
                     ) AS geom

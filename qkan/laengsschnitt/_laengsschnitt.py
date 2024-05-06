@@ -528,6 +528,8 @@ class LaengsTask:
 
 
         route = find_route(self.db_qkan, liste)
+        if route is None:
+            return 'nicht erstellt, weniger als 2 Elemente ausgewählt'
         logger.debug(f'LaengsTask.zeichnen() - Ergebnis von find_route(liste):\n{liste=}\n{liste2=}\n{route=}')
 
         # if route is None:
@@ -589,7 +591,7 @@ class LaengsTask:
                 schun.sohlhoehe,
                 h.entwart,
                 h.haltnam,
-                h.breite,
+                coalesce(h.breite, h.hoehe) AS breite,
                 h.material,
                 h.strasse,
                 h.haltungstyp,
@@ -620,9 +622,9 @@ class LaengsTask:
             hschoben = sohleoben
             hschunten = sohleunten
 
-            if int(haltung_sohle_o) == 0:
+            if haltung_sohle_o is None or int(haltung_sohle_o) == 0:
                 haltung_sohle_o = sohleoben
-            if int(haltung_sohle_u) == 0:
+            if haltung_sohle_u is None or int(haltung_sohle_u) == 0:
                 haltung_sohle_u = sohleunten
 
             y_sohle.append(sohleoben)

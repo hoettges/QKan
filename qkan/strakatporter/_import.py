@@ -1429,6 +1429,7 @@ class ImportTask:
                 SELECT nummer, schacht_unten
                 FROM t_strakatkanal
                 WHERE schachtnummer <> 0
+                GROUP BY schacht_unten
             ),
             profilarten AS (
                 SELECT n1 AS id, kurz, text
@@ -1486,8 +1487,8 @@ class ImportTask:
                 ON stk.profilart_v = profilarten.id
                 LEFT JOIN rohrmaterialien
                 ON stk.Material_v = rohrmaterialien.ID
-                LEFT JOIN Strassen
-                ON stk.strassennummer = Strassen.ID
+                LEFT JOIN strassen
+                ON stk.strassennummer = strassen.ID
                 LEFT JOIN t_mapper_schart2haltyp AS s2h
                 ON stk.schachtart = s2h.id
                 LEFT JOIN t_mapper_kanalarten2entwart AS k2e

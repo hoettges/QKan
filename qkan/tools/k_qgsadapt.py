@@ -315,7 +315,7 @@ def qgsadapt(
 
         # writing modified project file
         try:
-            qgsxml.write(projectfile)
+            qgsxml.write(projectfile, encoding='UTF-8')
         except BaseException as e:
             fehlermeldung('\nFehler beim Schreiben der Projektdatei"', str(e))
 

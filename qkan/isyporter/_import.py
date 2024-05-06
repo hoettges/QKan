@@ -60,7 +60,7 @@ class Untersuchdat_schacht(ClassObject):
     id: int = 0
     bandnr: int = 0
     videozaehler: int = 0
-    timecode: int = 0
+    timecode: str = ""
     kuerzel: str = ""
     charakt1: str = ""
     charakt2: str = ""
@@ -141,7 +141,7 @@ class Untersuchdat_haltung(ClassObject):
     inspektionslaenge: float = 0.0
     videozaehler: int = 0
     station: float = 0.0
-    timecode: int = 0
+    timecode: str = ""
     kuerzel: str = ""
     charakt1: str = ""
     charakt2: str = ""

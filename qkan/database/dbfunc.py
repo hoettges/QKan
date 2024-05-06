@@ -1098,7 +1098,7 @@ class DBConnection:
 
         sql = """SELECT
             uh.pk, hu.pk AS id,
-            CASE uh.untersuchrichtung
+            CASE coalesce(uh.untersuchrichtung, hu.untersuchrichtung)
                 WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'in Fließrichtung'    THEN uh.station
                                            ELSE uh.station END        AS station
@@ -1112,6 +1112,7 @@ class DBConnection:
                   hu.untersuchtag IS NOT NULL AND
                   coalesce(laenge, 0) > 0.05 AND
                   uh.station IS NOT NULL AND
+				  hu.geom IS NOT NULL AND
                   abs(uh.station) < 10000 AND
                   uh.untersuchrichtung IS NOT NULL
             GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel

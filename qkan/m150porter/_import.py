@@ -62,7 +62,7 @@ class Untersuchdat_schacht(ClassObject):
     untersuchtag: str = ""
     #TODO: videozaehler = Uhrzeit hh:mm
     videozaehler: str = ""
-    timecode: int = 0
+    timecode: str = ""
     kuerzel: str = ""
     charakt1: str = ""
     charakt2: str = ""
@@ -139,7 +139,7 @@ class Untersuchdat_haltung(ClassObject):
     inspektionslaenge: float = 0.0
     videozaehler: str = ""
     station: float = 0.0
-    timecode: int = 0
+    timecode: str = ""
     kuerzel: str = ""
     charakt1: str = ""
     charakt2: str = ""
@@ -862,7 +862,7 @@ class ImportTask:
             inspektionslaenge = 0.0
             id = 0
             videozaehler = ""
-            timecode = 0
+            timecode = ""
             kuerzel = ""
             charakt1 = ""
             charakt2 = ""
