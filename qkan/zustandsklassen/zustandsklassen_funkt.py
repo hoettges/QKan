@@ -2782,7 +2782,9 @@ class Zustandsklassen_funkt:
                 pass
 
             if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG"]:
+                            "SZB", "ZG", "Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                            "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                            "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -2797,7 +2799,10 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST"]:
+            if attr1[1] in ["CN", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST",
+                            "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                            "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                            "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -2811,7 +2816,9 @@ class Zustandsklassen_funkt:
                     curs1.execute(sql, data)
                 except:
                     pass
-            db1.commit()
+            else:
+                continue
+        db1.commit()
 
 
         db = spatialite_connect(db_x)
@@ -5565,7 +5572,9 @@ class Zustandsklassen_funkt:
                 pass
 
             if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG"]:
+                            "SZB", "ZG","Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -5580,7 +5589,9 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST"]:
+            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST","Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -5594,7 +5605,7 @@ class Zustandsklassen_funkt:
                     curs1.execute(sql, data)
                 except:
                     pass
-            db1.commit()
+        db1.commit()
 
         db = spatialite_connect(db_x)
         curs = db.cursor()
@@ -8870,7 +8881,9 @@ class Zustandsklassen_funkt:
                 pass
 
             if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG"]:
+                            "SZB", "ZG","Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -8885,7 +8898,9 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST"]:
+            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST", "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -8899,7 +8914,7 @@ class Zustandsklassen_funkt:
                     curs1.execute(sql, data)
                 except:
                     pass
-            db1.commit()
+        db1.commit()
 
         data = db
         db = spatialite_connect(data)
@@ -11330,7 +11345,9 @@ class Zustandsklassen_funkt:
                 pass
 
             if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG"]:
+                            "SZB", "ZG", "Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -11345,7 +11362,9 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST"]:
+            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST","Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -11359,7 +11378,7 @@ class Zustandsklassen_funkt:
                     curs1.execute(sql, data)
                 except:
                     pass
-            db1.commit()
+        db1.commit()
 
         data = db
         db = spatialite_connect(data)

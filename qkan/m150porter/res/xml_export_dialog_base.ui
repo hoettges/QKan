@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Export nach ISYBAU-XML</string>
+   <string>Export nach DWA-150-XML</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
@@ -215,7 +215,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ISYBAU-XML-Datei (*.xml):</string>
+     <string>DWA-150-XML-Datei (*.xml):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

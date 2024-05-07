@@ -29,8 +29,16 @@ class M150Porter(QKanPlugin):
         icon_import = ":/plugins/qkan/m150porter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import aus DWA-XML"),
+            text=self.tr("Import aus DWA-150-XML"),
             callback=self.run_import,
+            parent=self.iface.mainWindow(),
+        )
+
+        icon_export = ":/plugins/qkan/m150porter/res/icon_export.png"
+        QKan.instance.add_action(
+            icon_export,
+            text=self.tr("Export nach DWA-150-XML"),
+            callback=self.run_export,
             parent=self.iface.mainWindow(),
         )
 
@@ -103,7 +111,7 @@ class M150Porter(QKanPlugin):
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
-            QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+            #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
             QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
             QKan.config.xml.ordner_bild = self.import_dlg.tf_import_2.text()
             QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
@@ -164,7 +172,7 @@ class M150Porter(QKanPlugin):
 
         Einspringpunkt für Test
         """
-        QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+        #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
         QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
         QKan.config.xml.ordner_bild = self.import_dlg.tf_import_2.text()
         QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
@@ -189,7 +197,6 @@ class M150Porter(QKanPlugin):
             imp = ImportTask(
                 db_qkan,
                 QKan.config.xml.import_file,
-                QKan.config.xml.richt_choice,
                 QKan.config.xml.data_choice,
                 QKan.config.xml.ordner_bild,
                 QKan.config.xml.ordner_video
