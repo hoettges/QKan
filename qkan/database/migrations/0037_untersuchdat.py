@@ -126,7 +126,7 @@ def run(dbcon: DBConnection) -> bool:
     ):
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
-            "Hinzufügen von untersuchtag "
+            "Hinzufügen von untersuchtag und Viedeodaten"
             "zu Tabelle 'schaechte_untersucht' fehlgeschlagen"
         )
 
@@ -154,6 +154,8 @@ def run(dbcon: DBConnection) -> bool:
             "bereich TEXT",
             "foto_dateiname TEXT",
             "ordner TEXT",
+            "film_dateiname TEXT",
+            "ordner_video TEXT",
             "ZD INTEGER",
             "ZB INTEGER",
             "ZS INTEGER",
@@ -250,7 +252,7 @@ def run(dbcon: DBConnection) -> bool:
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
             "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
-            "zu Tabelle 'haltungen' fehlgeschlagen"
+            "zu Tabelle 'anschlussleitungen' fehlgeschlagen"
         )
 
     if not load_plausisql(dbcon):
@@ -270,6 +272,7 @@ def run(dbcon: DBConnection) -> bool:
                 "ueberstauflaeche REAL DEFAULT 0",
                 "entwart TEXT DEFAULT 'Regenwasser' -- join entwaesserungsarten.bezeichnung",
                 "strasse TEXT",
+                "baujahr INT",
                 "teilgebiet TEXT -- join teilgebiet.tgnam",
                 "knotentyp TEXT -- join knotentypen.knotentyp",
                 "auslasstyp TEXT -- join auslasstypen.bezeichnung",
@@ -286,10 +289,134 @@ def run(dbcon: DBConnection) -> bool:
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
             "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
-            "zu Tabelle 'haltungen' fehlgeschlagen"
+            "zu Tabelle 'schaechte' fehlgeschlagen"
         )
 
     if not load_plausisql(dbcon):
         logger.error("Fehler in migration 0037_untersuchdat")
         return False
+
+    #Löschen der Spalte richtung
+    if not dbcon.alter_table(
+            "untersuchdat_haltung",[],
+            [
+                "richtung TEXT",
+
+            ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Löschen der Spalte richtung in der Tabelle untersuchdat_haltung fehlgeschlagen"
+        )
+
+    # Löschen der Spalte deckeloben, deckelunten
+    if not dbcon.alter_table(
+            "anschlussleitungen", [],
+            [
+                "deckeloben REAL",
+                "deckelunten REAL",
+
+            ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Löschen der Spalte deckeloben, deckelunten in der Tabelle anschlussleitungen fehlgeschlagen"
+        )
+
+    if not load_plausisql(dbcon):
+        logger.error("Fehler in migration 0037_untersuchdat")
+        return False
+
+
+    if not dbcon.alter_table(
+            "anschlussleitungen_untersucht",
+            [
+            "leitnam TEXT",
+            "bezugspunkt TEXT",
+            "schoben TEXT                                   -- join schaechte.schnam",
+            "schunten TEXT                                  -- join schaechte.schnam",
+            "hoehe REAL                                     -- Profilhoehe (m)",
+            "breite REAL                                    -- Profilbreite (m)",
+            "laenge REAL                                    -- abweichende Haltungslänge (m)",
+            "baujahr INTEGER",
+            "id INTEGER                                     -- absolute Nummer der Inspektion",
+            "objekt_id INTEGER",
+            "untersuchtag TEXT",
+            "untersucher TEXT",
+            "wetter INTEGER DEFAULT 0",
+            "bewertungsart TEXT",
+            "bewertungstag TEXT",
+            "strasse TEXT",
+            "datenart TEXT",
+            "auftragsbezeichnung TEXT",
+            "max_ZD INTEGER",
+            "max_ZB INTEGER",
+            "max_ZS INTEGER",
+            "xschob REAL",
+            "yschob REAL",
+            "xschun REAL",
+            "yschun REAL",
+            "kommentar TEXT",
+            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
+            ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von Tabelle anschlussleitungen_untersucht fehlgeschlagen"
+        )
+
+    if not load_plausisql(dbcon):
+        logger.error("Fehler in migration 0037_untersuchdat")
+        return False
+
+    if not dbcon.alter_table(
+            "untersuchdat_anschlussleitung",
+            [
+            "untersuchleit TEXT",
+            "untersuchrichtung TEXT",
+            "schoben TEXT                                   -- join schaechte.schnam ",
+            "schunten TEXT                                  -- join schaechte.schnam",
+            "id INTEGER                                     -- absolute Nummer der Inspektion",
+            "objekt_id INTEGER",
+            "untersuchtag TEXT",
+            "bandnr INTEGER",
+            "videozaehler TEXT",
+            "inspektionslaenge REAL",
+            "station REAL",
+            "stationtext REAL",
+            "timecode INTEGER",
+            "video_offset REAL",
+            "kuerzel TEXT",
+            "charakt1 TEXT",
+            "charakt2 TEXT",
+            "quantnr1 REAL",
+            "quantnr2 REAL",
+            "streckenschaden TEXT",
+            "streckenschaden_lfdnr INTEGER",
+            "pos_von INTEGER",
+            "pos_bis INTEGER",
+            "foto_dateiname TEXT",
+            "film_dateiname TEXT",
+            "ordner_bild TEXT",
+            "ordner_video TEXT",
+            "richtung TEXT",
+            "filmtyp INTEGER",
+            "video_start INTEGER",
+            "video_ende INTEGER",
+            "ZD INTEGER",
+            "ZB INTEGER",
+            "ZS INTEGER",
+            "kommentar TEXT",
+            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
+            ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von Tabelle untersuchdat_anschlussleitung fehlgesfchlagen"
+        )
+
+    if not load_plausisql(dbcon):
+        logger.error("Fehler in migration 0037_untersuchdat")
+        return False
+
     return True

@@ -189,7 +189,8 @@ class ExportTask:
             ea.m150,
             schaechte.entwart,
             schaechte.strasse,
-            schaechte.knotentyp
+            schaechte.knotentyp,
+            schaechte.baujahr
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -209,6 +210,7 @@ class ExportTask:
                     "Objektart": str(2),
                     "KG211": attr[1] - attr[2],
                     "KG302": attr[5],
+                    "KG303": attr[12],
                     "KG305": "A",
                     "KG309": attr[3],
                     "KG999": attr[9],
@@ -256,7 +258,8 @@ class ExportTask:
             schaechte.kommentar,
             schaechte.simstatus,
             x(schaechte.geop) AS xsch,
-            y(schaechte.geop) AS ysch
+            y(schaechte.geop) AS ysch,
+            schaechte.baujahr
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -275,6 +278,7 @@ class ExportTask:
                     "Objektart": str(2),
                     "KG211": attr[1]-attr[2],
                     "KG302": attr[5],
+                    "KG303": attr[13],
                     "KG305": "S",
                     "KG309": attr[3],
                     "KG999": attr[9],
@@ -389,7 +393,8 @@ class ExportTask:
             y(schaechte.geop) AS ysch,
             schaechte.kommentar,
             schaechte.simstatus,
-            schaechte.knotentyp
+            schaechte.knotentyp,
+            schaechte.baujahr
         FROM schaechte
         left join Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -409,6 +414,7 @@ class ExportTask:
                     "Objektart": str(2),
                     "KG211": attr[1]-attr[2],
                     "KG302": attr[5],
+                    "KG303": attr[12],
                     "KG305": "B",
                     "KG309": attr[3],
                     "KG999": attr[9],
@@ -464,7 +470,11 @@ class ExportTask:
             x(PointN(haltungen.geom, 1)) AS xschob,
             y(PointN(haltungen.geom, 1)) AS yschob,
             x(PointN(haltungen.geom, -1)) AS xschun,
-            y(PointN(haltungen.geom, -1)) AS yschun
+            y(PointN(haltungen.geom, -1)) AS yschun,
+            haltungen.baujahr,
+            haltungen.aussendurchmesser,
+            haltungen.profilauskleidung,
+            haltungen.innenmaterial
         FROM haltungen
         LEFT JOIN Entwaesserungsarten AS ea 
         ON haltungen.entwart = ea.bezeichnung
@@ -487,10 +497,13 @@ class ExportTask:
                     "HG102": attr[9],
                     "HG301": 'K',
                     "HG302": attr[11],
+                    "HG303": attr[20],
                     "HG304": attr[10],
                     "HG305": attr[8],
                     "HG306": attr[4],
                     "HG307": attr[3],
+                    "HG308": attr[22],
+                    "HG309": attr[23],
                     "HG310": attr[5],
                     "Status": attr[14],
                     "HG999": attr[15],
@@ -657,7 +670,11 @@ class ExportTask:
                     x(PointN(anschlussleitungen.geom, 1)) AS xschob,
                     y(PointN(anschlussleitungen.geom, 1)) AS yschob,
                     x(PointN(anschlussleitungen.geom, -1)) AS xschun,
-                    y(PointN(anschlussleitungen.geom, -1)) AS yschun
+                    y(PointN(anschlussleitungen.geom, -1)) AS yschun,
+                    anschlussleitungen.baujahr,
+                    anschlussleitungen.aussendurchmesser,
+                    anschlussleitungen.profilauskleidung,
+                    anschlussleitungen.innenmaterial
                 FROM anschlussleitungen
                 LEFT JOIN Entwaesserungsarten AS ea 
                 ON anschlussleitungen.entwart = ea.bezeichnung
@@ -679,10 +696,13 @@ class ExportTask:
                     "HG102": attr[9],
                     "HG301": 'L',
                     "HG302": attr[11],
+                    "HG303": attr[21],
                     "HG304": attr[10],
                     "HG305": attr[8],
                     "HG306": attr[4],
                     "HG307": attr[3],
+                    "HG308": attr[23],
+                    "HG309": attr[24],
                     "HG310": attr[5],
                     "Status": attr[14],
                     "HG999": attr[15],

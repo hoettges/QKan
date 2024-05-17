@@ -24,6 +24,7 @@ class Schacht(ClassObject):
     deckelhoehe: float = 0.0
     durchm: float = 0.0
     druckdicht: int = 0
+    baujahr: int = 0
     entwart: str = ""
     strasse: str = ""
     knotentyp: str = ""
@@ -76,6 +77,8 @@ class Untersuchdat_schacht(ClassObject):
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
     ordner: str = ""
+    film_dateiname: str = ""
+    ordner_video: str = ""
     ZD: int = 63
     ZB: int = 63
     ZS: int = 63
@@ -92,6 +95,7 @@ class Haltung(ClassObject):
     sohleunten: float = 0.0
     deckeloben: float = 0.0
     deckelunten: float = 0.0
+    baujahr: int = 0
     profilnam: str = ""
     entwart: str = ""
     material: str = ""
@@ -179,6 +183,7 @@ class Anschlussleitung(ClassObject):
     profilnam: str = ""
     entwart: str = ""
     material: str = ""
+    baujahr: int = 0
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
@@ -479,6 +484,7 @@ class ImportTask:
                     schachttyp = 'Anschlussschacht'
 
                 knoten_typ = 'Normalschacht'
+                baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
 
                 yield Schacht(
                     schnam=name,
@@ -496,6 +502,7 @@ class ImportTask:
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
                     entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
+                    baujahr=baujahr,
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
@@ -620,7 +627,7 @@ class ImportTask:
 
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
-                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart,
+                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'baujahr': schacht.baujahr, 'entwart': entwart,
                       'strasse': schacht.strasse, 'knotentyp': schacht.knotentyp,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
@@ -630,7 +637,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -746,7 +753,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte_untersucht",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -790,7 +797,8 @@ class ImportTask:
                 "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, baujahr=?, strasse=?, bewertungsart=?," 
                 "bewertungstag=?, datenart=? WHERE schnam = ?",
                 "xml_import Schächte_untersucht [4]",
-                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, schacht_untersucht.baujahr, schacht_untersucht.strasse, bewertungsart, schacht_untersucht.bewertungstag,
+                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter,
+                            schacht_untersucht.baujahr, schacht_untersucht.strasse, bewertungsart, schacht_untersucht.bewertungstag,
                             schacht_untersucht.datenart, schacht_untersucht.schnam),
             ):
                 return None
@@ -883,6 +891,29 @@ class ImportTask:
                         ZB=ZB,
                     )
 
+        def _iter2() -> Iterator[Untersuchdat_schacht]:
+                blocks = self.xml.findall(
+                    "d:Datenkollektive/d:Zustandsdatenkollektiv/d:Filme/d:Film/d:Filmname/../..",
+                    self.NS,
+                )
+                logger.debug(f"Anzahl Untersuchdat_schacht: {len(blocks)}")
+
+                film_dateiname = ""
+                for block in blocks:
+                    for _untersuchdat_schacht in block.findall("d:Film/d:FilmObjekte/..", self.NS):
+
+                        name = _untersuchdat_schacht.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
+
+                        film_dateiname = _untersuchdat_schacht.findtext("d:Filmname", None, self.NS)
+
+                        bandnr = _strip_int(_untersuchdat_schacht.findtext("d:Videoablagereferenz", 0, self.NS))
+
+                        yield Untersuchdat_schacht(
+                            untersuchsch=name,
+                            film_dateiname=film_dateiname,
+                            bandnr=bandnr
+                        )
+
         for untersuchdat_schacht in _iter():
 
             # sql = f"""
@@ -948,10 +979,21 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_schacht",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
+
+        self.db_qkan.commit()
+
+        for untersuchdat_schacht in _iter2():
+            if not self.db_qkan.sql(
+                "UPDATE untersuchdat_schacht SET film_dateiname=?, bandnr=?" 
+                " WHERE  untersuchsch= ?",
+                "xml_import untersuchsch [2a]",
+                parameters=(untersuchdat_schacht.film_dateiname,untersuchdat_schacht.bandnr, untersuchdat_schacht.untersuchsch),
+            ):
+                return None
 
         self.db_qkan.commit()
 
@@ -969,6 +1011,8 @@ class ImportTask:
             for block in blocks:
                 name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
 
+                baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
+
                 yield Schacht(
                     schnam=name,
                     xsch=xsch,
@@ -982,6 +1026,7 @@ class ImportTask:
                             self.NS,
                         )
                     ),
+                    baujahr=baujahr,
                     durchm=0.5,
                     entwart="",
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
@@ -1043,7 +1088,7 @@ class ImportTask:
             #     return None
 
             params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
-                      'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe,
+                      'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe, 'baujahr': auslass.baujahr,
                       'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse': auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
@@ -1053,7 +1098,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -1075,6 +1120,7 @@ class ImportTask:
             knoten = 0
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", None, self.NS)
+                baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
 
                 for _schacht in block.findall("d:Knoten", self.NS):
                     knoten = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
@@ -1116,6 +1162,7 @@ class ImportTask:
                             self.NS,
                         )
                     ),
+                    baujahr=baujahr,
                     durchm=0.5,
                     entwart="",
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
@@ -1164,7 +1211,7 @@ class ImportTask:
             #     return None
 
             params = {'schnam': speicher.schnam, 'xsch': speicher.xsch, 'ysch': speicher.ysch,
-                      'sohlhoehe': speicher.sohlhoehe, 'deckelhoehe': speicher.deckelhoehe,
+                      'sohlhoehe': speicher.sohlhoehe, 'deckelhoehe': speicher.deckelhoehe, 'baujahr': speicher.baujahr,
                       'durchm': speicher.durchm, 'strasse': speicher.strasse,  'entwart': speicher.entwart, 'simstatus': simstatus,
                       'kommentar': speicher.kommentar, 'schachttyp': 'Speicher', 'epsg': QKan.config.epsg}
 
@@ -1174,7 +1221,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -1211,6 +1258,7 @@ class ImportTask:
                 if found_leitung == '':
 
                     name = block.findtext("d:Objektbezeichnung", None, self.NS)
+                    baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
                     schoben = block.findtext("d:Kante/d:KnotenZulauf", None, self.NS)
                     schunten = block.findtext("d:Kante/d:KnotenAblauf", None, self.NS)
                     sohleoben = _strip_float(block.findtext("d:Kante/d:SohlhoeheZulauf", 0.0, self.NS))
@@ -1280,6 +1328,7 @@ class ImportTask:
                         deckeloben=deckeloben,
                         deckelunten=deckelunten,
                         profilnam=profilnam,
+                        baujahr=baujahr,
                         entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                         strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                         ks=1.5,  # in Hydraulikdaten enthalten.
@@ -1425,7 +1474,7 @@ class ImportTask:
             params = {'haltnam': haltung.haltnam, 'schoben': haltung.schoben, 'schunten': haltung.schunten,
                       'hoehe': haltung.hoehe,
                       'breite': haltung.breite, 'laenge': haltung.laenge,
-                      'sohleoben': haltung.sohleoben, 'sohleunten': haltung.sohleunten,
+                      'sohleoben': haltung.sohleoben, 'sohleunten': haltung.sohleunten, 'baujahr': haltung.baujahr,
                       'material': haltung.material, 'aussendurchmesser': haltung.aussendurchmesser, 'profilauskleidung': haltung.profilauskleidung,
                       'innenmaterial': haltung.innenmaterial, 'profilnam': haltung.profilnam, 'entwart': entwart,
                       'strasse': haltung.strasse,
@@ -1437,7 +1486,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -1814,7 +1863,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -2083,7 +2132,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_haltung",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -2129,6 +2178,7 @@ class ImportTask:
                 found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
                 if found_leitung != '':
                     name = block.findtext("d:Objektbezeichnung", None, self.NS)
+                    baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
 
                     # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
                     for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
@@ -2216,6 +2266,7 @@ class ImportTask:
                         breite=breite,
                         laenge=laenge,
                         material=material,
+                        baujahr=baujahr,
                         sohleoben=sohleoben,
                         sohleunten=sohleunten,
                         deckeloben=deckeloben,
@@ -2345,7 +2396,7 @@ class ImportTask:
             params = {'leitnam': anschlussleitung.leitnam,
                       'schoben': anschlussleitung.schoben, 'schunten': anschlussleitung.schunten,
                       'hoehe': anschlussleitung.hoehe, 'breite': anschlussleitung.breite,
-                      'laenge': anschlussleitung.laenge, 'material': anschlussleitung.material,
+                      'laenge': anschlussleitung.laenge, 'material': anschlussleitung.material, 'baujahr': anschlussleitung.baujahr,
                       'sohleoben': anschlussleitung.sohleoben, 'sohleunten': anschlussleitung.sohleunten,
                       'deckeloben': anschlussleitung.deckeloben, 'deckelunten': anschlussleitung.deckelunten,
                       'profilnam': anschlussleitung.profilnam, 'entwart': entwart,
@@ -2360,7 +2411,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="anschlussleitungen",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -2705,7 +2756,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -2935,7 +2986,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="untersuchdat_anschlussleitung",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -3033,7 +3084,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return
@@ -3133,7 +3184,7 @@ class ImportTask:
             if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 del self.db_qkan
                 return

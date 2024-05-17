@@ -58,6 +58,7 @@ class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
     tableWidget: QTableWidget
     tableWidget_2: QTableWidget
     pushButton: QPushButton
+    pushButton_2: QPushButton
     date: QLineEdit
 
 
@@ -70,6 +71,7 @@ class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
         super().__init__(default_dir, tr, parent)
 
         self.pushButton.clicked.connect(self.export)
+        self.pushButton_2.clicked.connect(self.export_xml)
 
         self.filename = ''
 
@@ -144,6 +146,18 @@ class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
         if self.filename:
             #self.tf_import.setText(filename)
             self.default_dir = os.path.dirname(self.filename)
+
+    def export_xml(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        self.filename_xml, _ = QFileDialog.getSaveFileName(
+            self,
+            self.tr("Zu erstellende Excel-Datei"),
+            self.default_dir,
+            "*.xml",
+        )
+        if self.filename_xml:
+            #self.tf_import.setText(filename)
+            self.default_dir = os.path.dirname(self.filename_xml)
 
 
 

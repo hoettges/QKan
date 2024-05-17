@@ -52,7 +52,7 @@ class Zustandsklassen_funkt:
         if check_cb['cb10']:
             self.leitung = True
             self.haltung = False
-            self.bewertungstexte_haltung()
+            self.bewertungstexte_leitung()
 
         if check_cb['cb3'] and check_cb['cb1']:
             self.haltung = True
@@ -79,15 +79,15 @@ class Zustandsklassen_funkt:
         if check_cb['cb15']:
             self.leitung = True
             self.haltung = False
-            self.bewertung_dwa_neu_haltung()
+            self.bewertung_dwa_neu_leitung()
 
         if check_cb['cb11'] and check_cb['cb12']:
             self.leitung = True
             self.haltung = False
-            self.bewertung_dwa_haltung()
+            self.bewertung_dwa_leitung()
 
         if check_cb['cb11'] and check_cb['cb13']:
-            self.bewertung_isy_haltung()
+            self.bewertung_isy_leitung()
 
         if check_cb['cb16']:
             self.einzelfallbetrachtung_haltung()
@@ -98,8 +98,8 @@ class Zustandsklassen_funkt:
             self.bewertung_dwa_neu_schaechte()
 
         if check_cb['cb18']:
-            self.einzelfallbetrachtung_haltung()
-            self.bewertung_dwa_neu_haltung()
+            self.einzelfallbetrachtung_leitung()
+            self.bewertung_dwa_neu_leitung()
 
     def bewertungstexte_haltung(self):
         date = self.date
@@ -1256,6 +1256,1133 @@ class Zustandsklassen_funkt:
         x = QgsProject.instance()
         try:
             x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/untersuchdat_haltung_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+    def bewertungstexte_leitung(self):
+        date = self.date
+        db = self.db
+        data = db
+        crs = self.crs
+        leitung = self.leitung
+        haltung = self.haltung
+        db_x = self.db
+        db = spatialite_connect(data)
+        curs = db.cursor()
+
+        logger.debug(f'Start_Haltungstexte.liste: {datetime.now()}')
+
+        sql = """CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung_bewertung AS SELECT * FROM untersuchdat_anschlussleitung"""
+        curs.execute(sql)
+
+        if leitung == True:
+
+            sql = """
+                    SELECT
+                        untersuchdat_anschlussleitung_bewertung.pk,
+                        untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        untersuchdat_anschlussleitung_bewertung.schoben,
+                        untersuchdat_anschlussleitung_bewertung.schunten,
+                        untersuchdat_anschlussleitung_bewertung.id,
+                        untersuchdat_anschlussleitung_bewertung.videozaehler,
+                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                        untersuchdat_anschlussleitung_bewertung.station,
+                        untersuchdat_anschlussleitung_bewertung.timecode,
+                        untersuchdat_anschlussleitung_bewertung.kuerzel,
+                        untersuchdat_anschlussleitung_bewertung.charakt1,
+                        untersuchdat_anschlussleitung_bewertung.charakt2,
+                        untersuchdat_anschlussleitung_bewertung.quantnr1,
+                        untersuchdat_anschlussleitung_bewertung.quantnr2,
+                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                        untersuchdat_anschlussleitung_bewertung.pos_von,
+                        untersuchdat_anschlussleitung_bewertung.pos_bis,
+                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.richtung,
+                        untersuchdat_anschlussleitung_bewertung.createdat,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        anschlussleitungen.createdat
+                    FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
+                """
+            data = (date,)
+
+        try:
+            curs.execute(sql, data)
+        except:
+            iface.messageBar().pushMessage("Error",
+                                           "Die Bewertungstexte der Haltungen/Leitungen konnten nicht ermittelt werden",
+                                           level=Qgis.Critical)
+
+        for attr in curs.fetchall():
+            sql = ""
+            data = ()
+            try:
+                curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Beschreibung TEXT ;""")
+            except:
+                pass
+
+            # Tab A.2
+            if attr[10] == "BAA":
+                z = 'Verformung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            # Tab A.3
+            if attr[10] == "BAB":
+                z = 'Rissbildung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            if attr[10] == "BAC":
+                z = 'Rohrbruch/Einsturz'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            if attr[10] == "BAD":
+                z = 'Defektes Mauerwerk'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            if attr[10] == "BAE":
+                z = 'Fehlender Mörtel'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                #     db.commit()
+                    continue
+                except:
+                     pass
+
+            if attr[10] == "BAF":
+                z = 'Oberflächenschäden'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            if attr[10] == "BAG":
+                z = 'Einragender Anschluss'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            if attr[10] == "BAH":
+                z = 'Schadhafter Anschluss'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+
+            if attr[10] == "BAI":
+                z = 'Einragendes Dichtungsmaterial'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Beschreibung = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ":
+                z = 'Verschobene Verbindung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "A":
+                z = 'Feststellung der Innenauskleidung: Innenauskleidung abgelöst'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "B":
+                z = 'Feststellung der Innenauskleidung: Innenauskleidung verfärbt'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "C":
+                z = 'Feststellung der Innenauskleidung: Endstelle der Auskleidung schadhaft'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "D":
+                z = 'Feststellung der Innenauskleidung: Faten in der Auskleidung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "E":
+                z = 'Feststellung der Innenauskleidung: Blasen oder Beulen in der Auskleidung nach innen'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "F":
+                z = 'Feststellung der Innenauskleidung: Beulen aussen'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "G":
+                z = 'Feststellung der Innenauskleidung: Ablösen der Innenhaut/Beschichtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "H":
+                z = 'Feststellung der Innenauskleidung: Ablösen der Abdeckung der Verbindungsnaht'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "I":
+                z = 'Feststellung der Innenauskleidung: Riss oder Spalt (einschließlich schadhafter Schweissnaht)'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "J":
+                z = 'Feststellung der Innenauskleidung: Loch in der Auskleidung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "K":
+                z = 'Feststellung der Innenauskleidung: Auskleidungsverbindung defekt'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "L":
+                z = 'Feststellung der Innenauskleidung: Auskleidungswerkstoff erscheint weich'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "M":
+                z = 'Feststellung der Innenauskleidung: Harz fehlt im Laminat'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "N":
+                z = 'Feststellung der Innenauskleidung: Ende der Auskleidung ist nicht abgedichtet, um das Rohr oder den Schacht aufzunehmen.'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "Z":
+                z = 'Feststellung der Innenauskleidung: Anderer Auskleidungsschaden'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "A":
+                z = 'Schadhafte Reperatur: Wand fehlt teilweise'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "B":
+                z = 'Schadhafte Reperatur: Reperatur zur Abdichtung eines Lochs ist schadhaft'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "C":
+                z = 'Schadhafte Reperatur: Ablösen des Reperaturwerkstofes vom Basisrohr'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "D":
+                z = 'Schadhafte Reperatur: fehlender Reperaturwerkstoff an der Kontaktfläche'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "E":
+                z = 'Schadhafte Reperatur: überschüssiger Reperaturwerkstoff, der ein Hindernis darstellt'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "P":
+                z = 'Schadhafte Reperatur: Loch im Reperaturwerkstoff'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "G":
+                z = 'Schadhafte Reperatur: Riss im Reperaturwerkstoff'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "Z":
+                z = 'Schadhafte Reperatur: Andere'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM":
+                z = 'Schadhafte Schweissnaht'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAN":
+                z = 'Poroeses Rohr'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAO":
+                z = 'Boden sichtbar'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAP":
+                z = 'Hohlraum sichtbar'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBA":
+                z = 'Wurzeln'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBB":
+                z = 'Anhaftende Stoffe'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBC":
+                z = 'Ablagerungen'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBD":
+                z = 'Eindringen von Bodenmaterial'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE":
+                z = 'Andere Hindernisse'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF":
+                z = 'Infiltration'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBG":
+                z = 'Exfiltration'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBH":
+                z = 'Ungeziefer'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCA":
+                z = 'Anschluss'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "A":
+                z = 'Punktuelle Reperatur: Reperatur mit Injektionstechnik'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "B":
+                z = 'Punktuelle Reperatur: Reperatur mit Roboter'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "C":
+                z = 'Punktuelle Reperatur: Reperatur mit partieller Auskleidungs-/Manchettentechnik'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "D":
+                z = 'Punktuelle Reperatur: Zulaufeinbindung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "E":
+                z = 'Punktuelle Reperatur: Reperatur Rohrwand manuell'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "F":
+                z = 'Punktuelle Reperatur: Reperatur Rohrverbindung manuell'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "G":
+                z = 'Punktuelle Reperatur: Ringspalt-/-raumdichtung (der Auskleidung) zum Anschluss an Schacht/Inspektionsöffnung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "H":
+                z = 'Punktuelle Reperatur: Zulauföffnung ohne Einbindung (Auskleidung)'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "I":
+                z = 'Punktuelle Reperatur: Rohr ausgetauscht'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCB" and attr[11] == "Z":
+                z = 'Punktuelle Reperatur: sonstige Technink'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCC":
+                z = 'Krümmung der Leitung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCD":
+                z = 'Anfangsknoten'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BCE":
+                z = 'Endknoten'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDA":
+                z = 'Allgemeines Foto'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "AA":
+                z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, eingesteckt, gerade'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "AB":
+                z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, uebergestuelpt, gerade'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "AC":
+                z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, eingesteckt, abgewinkelt'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "AD":
+                z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, uebergestuelpt, abgewinkelt'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "AE":
+                z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, stumpf aneinandergestossen'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "BA":
+                z = 'Allgemeine Anmerkung: Verschluss eines Rohrs durch Abmauerung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "BB":
+                z = 'Allgemeine Anmerkung: Verschluss eines Rohrs durch Moertel'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "BC":
+                z = 'Allgemeine Anmerkung: Verschluss eines Rohrs durch Deckel (Muffenstopfen)'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDC":
+                z = 'Inspektion endet vor dem Endknoten'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDD":
+                z = 'Wasserspiegel'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE":
+                z = 'Zufluss aus einem Anschluss'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDF":
+                z = 'Atmosphäre in der Leitung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDG":
+                z = 'Keine Sicht'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Beschreibung = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #     db.commit()
+                continue
+            except:
+                pass
+
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        logger.debug(f'Ende_Haltungstexte.liste: {datetime.now()}')
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'untersuchdat_anschlussleitung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        untersuchdat_anschlussleitung_bewertung = 'untersuchdat_anschlussleitung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_anschlussleitung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_anschlussleitung_bewertung)[0].id())
         except:
             pass
 
@@ -2564,6 +3691,181 @@ class Zustandsklassen_funkt:
         vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_dwa.qml')
         QgsProject.instance().addMapLayer(vlayer)
 
+    def bewertung_dwa_neu_leitung(self):
+        date = self.date
+        db_x = self.db
+        crs = self.crs
+        leitung = self.leitung
+        haltung = self.haltung
+
+        data = db_x
+        db = spatialite_connect(db_x)
+        curs = db.cursor()
+
+
+        if leitung == True:
+            sql = """
+                        SELECT
+                            untersuchdat_anschlussleitung_bewertung.pk,
+                            untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            untersuchdat_anschlussleitung_bewertung.schoben,
+                            untersuchdat_anschlussleitung_bewertung.schunten,
+                            untersuchdat_anschlussleitung_bewertung.id,
+                            untersuchdat_anschlussleitung_bewertung.videozaehler,
+                            untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                            untersuchdat_anschlussleitung_bewertung.station,
+                            untersuchdat_anschlussleitung_bewertung.timecode,
+                            untersuchdat_anschlussleitung_bewertung.kuerzel,
+                            untersuchdat_anschlussleitung_bewertung.charakt1,
+                            untersuchdat_anschlussleitung_bewertung.charakt2,
+                            untersuchdat_anschlussleitung_bewertung.quantnr1,
+                            untersuchdat_anschlussleitung_bewertung.quantnr2,
+                            untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                            untersuchdat_anschlussleitung_bewertung.pos_von,
+                            untersuchdat_anschlussleitung_bewertung.pos_bis,
+                            untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.richtung,
+                            untersuchdat_anschlussleitung_bewertung.bw_bs,
+                            untersuchdat_anschlussleitung_bewertung.createdat,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat
+                        FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                        WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
+                    """
+            data = (date, )
+
+            curs.execute(sql, data)
+
+
+        try:
+            curs.execute("""UPDATE anschlussleitungen_untersucht_bewertung 
+                                SET objektklasse_dichtheit =
+                                (SELECT min(Zustandsklasse_D) 
+                                FROM untersuchdat_anschlussleitung_bewertung
+                                WHERE untersuchdat_anschlussleitung_bewertung.untersuchleit = anschlussleitungen_untersucht_bewertung.leitnam AND Zustandsklasse_D <> '-'
+                                GROUP BY untersuchdat_anschlussleitung_bewertung.untersuchleit);""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""UPDATE anschlussleitungen_untersucht_bewertung 
+                                SET objektklasse_standsicherheit =
+                                (SELECT min(Zustandsklasse_S) 
+                                FROM untersuchdat_anschlussleitung_bewertung
+                                WHERE untersuchdat_anschlussleitung_bewertung.untersuchleit = anschlussleitungen_untersucht_bewertung.leitnam AND Zustandsklasse_S <> '-'
+                                GROUP BY untersuchdat_anschlussleitung_bewertung.untersuchleit);""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""UPDATE anschlussleitungen_untersucht_bewertung 
+                                SET objektklasse_betriebssicherheit =
+                                (SELECT min(Zustandsklasse_B) 
+                                FROM untersuchdat_anschlussleitung_bewertung
+                                WHERE untersuchdat_anschlussleitung_bewertung.untersuchleit = anschlussleitungen_untersucht_bewertung.leitnam AND Zustandsklasse_B <> '-'
+                                GROUP BY untersuchdat_anschlussleitung_bewertung.untersuchleit);""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""update anschlussleitungen_untersucht_bewertung 
+                                set objektklasse_standsicherheit = '-'
+                                WHERE objektklasse_betriebssicherheit IS NULL;""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""update anschlussleitungen_untersucht_bewertung 
+                                set objektklasse_dichtheit = '-'
+                                WHERE objektklasse_betriebssicherheit IS NULL;""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""update anschlussleitungen_untersucht_bewertung 
+                                set objektklasse_betriebssicherheit = '-'
+                                WHERE objektklasse_betriebssicherheit IS NULL;""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""Update
+                                anschlussleitungen_untersucht_bewertung
+                                SET
+                                objektklasse_gesamt =
+                                (Case
+                                 When objektklasse_dichtheit <= objektklasse_standsicherheit And objektklasse_dichtheit <= objektklasse_betriebssicherheit Then objektklasse_dichtheit
+                                 When objektklasse_standsicherheit <= objektklasse_dichtheit And objektklasse_standsicherheit <= objektklasse_betriebssicherheit Then objektklasse_standsicherheit
+                                 When objektklasse_betriebssicherheit <= objektklasse_dichtheit And objektklasse_betriebssicherheit <= objektklasse_standsicherheit Then objektklasse_betriebssicherheit
+                                 Else NULL
+                                 END
+                                 );""")
+            db.commit()
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'untersuchdat_anschlussleitung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        untersuchdat_anschlussleitung_bewertung = 'untersuchdat_anschlussleitung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_anschlussleitung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_anschlussleitung_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/untersuchdat_haltung_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'anschlussleitungen_untersucht_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        anschlussleitungen_untersucht_bewertung = 'anschlussleitungen_untersucht_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), anschlussleitungen_untersucht_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(anschlussleitungen_untersucht_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
     def bewertung_dwa_neu_schaechte(self):
         date = self.date
         db_x = self.db
@@ -2724,8 +4026,6 @@ class Zustandsklassen_funkt:
         vlayer.loadNamedStyle(x + '/schaechte_untersucht_bewertung_dwa.qml')
         QgsProject.instance().addMapLayer(vlayer)
 
-
-
     def bewertung_dwa_haltung(self):
         date = self.date+'%'
         db_x = self.db
@@ -2775,7 +4075,7 @@ class Zustandsklassen_funkt:
 
         for attr1 in curs1.fetchall():
 
-            untersuchhalt = attr1[0]
+            untersuchleit = attr1[0]
             try:
                 curs1.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
             except:
@@ -5524,6 +6824,2764 @@ class Zustandsklassen_funkt:
         x = QgsProject.instance()
         try:
             x.removeMapLayer(x.mapLayersByName(haltungen_untersucht_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+
+    def bewertung_dwa_leitung(self):
+        date = self.date+'%'
+        db_x = self.db
+        crs = self.crs
+        leitung = self.leitung
+        haltung = self.haltung
+
+        data = db_x
+
+        db1 = spatialite_connect(data)
+        curs1 = db1.cursor()
+
+        logger.debug(f'Start_Bewertung_Haltungen.liste: {datetime.now()}')
+        # nach DWA
+
+        sql = """CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung_bewertung AS SELECT * FROM untersuchdat_anschlussleitung"""
+        curs1.execute(sql)
+
+        if leitung == True:
+            sql = """
+                    SELECT
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        untersuchdat_anschlussleitung_bewertung.untersuchleit
+                    FROM anschlussleitungen
+                    INNER JOIN untersuchdat_anschlussleitung_bewertung ON anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit
+                """
+
+        try:
+            curs1.execute(sql)
+        except:
+            iface.messageBar().pushMessage("Error",
+                                           "Die Klassifizierung der Haltungen/Leitungen konnte nicht ermittelt werden",
+                                           level=Qgis.Critical)
+
+        for attr1 in curs1.fetchall():
+
+            untersuchleit = attr1[0]
+            try:
+                curs1.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN bw_bs TEXT;""")
+            except:
+                pass
+
+            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
+                            "SZB", "ZG", "Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                            "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                            "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+                bw_bs = "biegesteif"
+                x = attr1[0]
+
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET bw_bs = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.untersuchhal = ?
+                        """
+                data = (bw_bs, x)
+                try:
+                    curs1.execute(sql, data)
+                except:
+                    pass
+
+            if attr1[1] in ["CN", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST",
+                            "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                            "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                            "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+                bw_bs = 'biegeweich'
+                x = attr1[0]
+
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET bw_bs = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.untersuchhal = ?
+                        """
+                data = (bw_bs, x)
+                try:
+                    curs1.execute(sql, data)
+                except:
+                    pass
+            else:
+                continue
+        db1.commit()
+
+
+        db = spatialite_connect(db_x)
+        curs = db.cursor()
+
+        if leitung == True:
+            sql = """
+                SELECT
+                    untersuchdat_anschlussleitung_bewertung.pk,
+                    untersuchdat_anschlussleitung_bewertung.untersuchhal,
+                    untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                    untersuchdat_anschlussleitung_bewertung.schoben,
+                    untersuchdat_anschlussleitung_bewertung.schunten,
+                    untersuchdat_anschlussleitung_bewertung.id,
+                    untersuchdat_anschlussleitung_bewertung.videozaehler,
+                    untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                    untersuchdat_anschlussleitung_bewertung.station,
+                    untersuchdat_anschlussleitung_bewertung.timecode,
+                    untersuchdat_anschlussleitung_bewertung.kuerzel,
+                    untersuchdat_anschlussleitung_bewertung.charakt1,
+                    untersuchdat_anschlussleitung_bewertung.charakt2,
+                    untersuchdat_anschlussleitung_bewertung.quantnr1,
+                    untersuchdat_anschlussleitung_bewertung.quantnr2,
+                    untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                    untersuchdat_anschlussleitung_bewertung.pos_von,
+                    untersuchdat_anschlussleitung_bewertung.pos_bis,
+                    untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                    untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                    untersuchdat_anschlussleitung_bewertung.richtung,
+                    untersuchdat_anschlussleitung_bewertung.bw_bs,
+                    untersuchdat_anschlussleitung_bewertung.createdat,
+                    anschlussleitungen.leitnam,
+                    anschlussleitungen.material,
+                    anschlussleitungen.hoehe,
+                    anschlussleitungen.createdat
+                FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchhal AND untersuchdat_anschlussleitung_bewertung.createdat , 0, 15 like ? 
+            """
+            data = (date, )
+
+            curs.execute(sql, data)
+
+        logger.debug(f'Start_forloop_Bewertung_Haltungen.liste: {datetime.now()}')
+
+        for attr in curs.fetchall():
+            try:
+                curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Zustandsklasse_D TEXT ;""")
+            except:
+                pass
+            try:
+               curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Zustandsklasse_S TEXT ;""")
+            except:
+               pass
+            try:
+               curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Zustandsklasse_B TEXT ;""")
+            except:
+               pass
+
+            # Tab A.2
+            if (attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "A") or (
+                    attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "B"):
+                if attr[13] >= 7:
+                    z = '0'
+                elif 4 <= attr[13] < 7:
+                    z = '1'
+                elif 3 <= attr[13] < 4:
+                    z = '2'
+                elif 1 <= attr[13] < 3:
+                    z = '3'
+                elif attr[13] < 1:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '0'
+                elif 40 <= attr[13] < 50:
+                    z = '1'
+                elif 25 <= attr[13] < 40:
+                    z = '2'
+                elif 10 <= attr[13] < 25:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    db.commit()
+                    continue
+                except:
+                    pass
+            if (attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "A") or (
+                    attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "B"):
+                if attr[13] >= 15:
+                    z = '0'
+                elif 10 <= attr[13] < 15:
+                    z = '1'
+                elif 6 <= attr[13] < 10:
+                    z = '2'
+                elif 2 <= attr[13] < 6:
+                    z = '3'
+                elif attr[13] < 2:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '0'
+                elif 40 <= attr[13] < 50:
+                    z = '1'
+                elif 25 <= attr[13] < 40:
+                    z = '2'
+                elif 10 <= attr[13] < 25:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    db.commit()
+                    continue
+                except:
+                    pass
+
+            sql = ""
+            data = ()
+
+            # Tab A.3
+            if attr[10] == "BAB" and attr[11] == "A" and (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                if attr[13] >= 3:
+                    z = '1'
+                elif 3 > attr[13] >= 2:
+                    z = '2'
+                elif attr[13] < 2:
+                    z = '3'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #     db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] in ["", "not found"]:
+                if attr[13] >= 8:
+                    z = '0'
+                elif 8 > attr[13] >= 5:
+                    z = '1'
+                elif 5 > attr[13] >= 3:
+                    z = '2'
+                elif 3 > attr[13] >= 1:
+                    z = '3'
+                elif attr[13] < 1:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] <= 0.3:
+                if attr[13] >= 3:
+                    z = '0'
+                elif 3 > attr[13] >= 2:
+                    z = '1'
+                elif 2 > attr[13] >= 1:
+                    z = '2'
+                elif 1 > attr[13] >= 0.5:
+                    z = '3'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.5 >= attr[25] > 0.3:
+                if attr[13] >= 5:
+                    z = '0'
+                elif 5 > attr[13] >= 3:
+                    z = '1'
+                elif 3 > attr[13] >= 2:
+                    z = '2'
+                elif 2 > attr[13] >= 1:
+                    z = '3'
+                elif attr[13] < 1:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.7 >= attr[25] > 0.5:
+                if attr[13] >= 8:
+                    z = '0'
+                elif 8 > attr[13] >= 4:
+                    z = '1'
+                elif 4 > attr[13] >= 3:
+                    z = '2'
+                elif 3 > attr[13] >= 2:
+                    z = '3'
+                elif attr[13] < 2:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and (attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAC" and attr[11] == "A":
+                z = '1'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0]);
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAC" and attr[11] == "B":
+                z = '1'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAC" and attr[11] == "C":
+                z = '0'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAD" and attr[11] == "A":
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAD" and attr[11] == "B" and attr[12] == "A":
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAD" and attr[11] == "B" and attr[12] == "B":
+                z = '1'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAD" and attr[11] == "C":
+                z = '0'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAD" and attr[11] == "D":
+                z = '0'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAE":
+                if attr[13] >= 100:
+                    z = '2'
+                if attr[13] < 100:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 100:
+                    z = '2'
+                elif 100 > attr[13] > 10:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "A" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "B" and (attr[12] == "A" or attr[12] == "E" or attr[12] == "Z"):
+                z = '3'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "C" and (
+                    attr[12] == "A"  or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '3'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "D" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "E" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '1'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "F" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '3'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "G" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "H" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '1'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "I" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '1'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "J" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "K" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = '3'
+                sql = f"""
+                                      UPDATE untersuchdat_anschlussleitung_bewertung
+                                        SET Zustandsklasse_B = ?
+                                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF" and attr[11] == "Z" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAG":
+                if attr[25] <= 0.25:
+                    if attr[13] >= 50:
+                        z = '0'
+                    elif 50 > attr[13] >= 30:
+                        z = '1'
+                    elif 30 > attr[13] >= 20:
+                        z = '2'
+                    elif 20 > attr[13] >= 10:
+                        z = '3'
+                    elif attr[13] < 10:
+                        z = '4'
+                    else:
+                        z = '5'
+                if 0.25 < attr[25] <= 0.5:
+                    if attr[13] >= 80:
+                        z = '0'
+                    elif 80 > attr[13] >= 60:
+                        z = '1'
+                    elif 60 > attr[13] >= 40:
+                        z = '2'
+                    elif 40 > attr[13] >= 10:
+                        z = '3'
+                    elif attr[13] < 10:
+                        z = '4'
+                    else:
+                        z = '5'
+                if 0.5 < attr[25] <= 0.8:
+                    if attr[13] >= 70:
+                        z = '2'
+                    elif 70 > attr[13] >= 10:
+                        z = '3'
+                    elif attr[13] < 10:
+                        z = '4'
+                    else:
+                        z = '5'
+                if attr[25] > 0.8:
+                    if attr[13] >= 30:
+                        z = '3'
+                    elif attr[13] < 30:
+                        z = '4'
+                    else:
+                        z = '5'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAH" and (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAH" and attr[11] == "E":
+                z = '-'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAH" and attr[11] == "Z":
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAI" and attr[11] == "A" and attr[12] == "A":
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAI" and attr[11] == "A" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '2'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '3'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAI" and attr[11] == "Z" and attr[12] == "Y":
+                if attr[13] >= 50:
+                    z = '0'
+                elif 50 > attr[13] >= 35:
+                    z = '1'
+                elif 35 > attr[13] >= 20:
+                    z = '2'
+                elif 20 > attr[13] >= 5:
+                    z = '3'
+                elif attr[13] < 5:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "A":
+                if attr[25] <= 0.4:
+                    if attr[13] >= 70:
+                        z = '0'
+                    elif 70 > attr[13] >= 50:
+                        z = '1'
+                    elif 50 > attr[13] >= 30:
+                        z = '2'
+                    elif 30 > attr[13] >= 20:
+                        z = '3'
+                    elif attr[13] < 20:
+                        z = '4'
+                    else:
+                        z = '5'
+                    sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if 0.4 < attr[25] <= 0.8:
+                    if attr[13] >= 80:
+                        z = '0'
+                    elif 80 > attr[13] >= 60:
+                        z = '1'
+                    elif 60 > attr[13] >= 40:
+                        z = '2'
+                    elif 40 > attr[13] >= 20:
+                        z = '3'
+                    elif attr[13] < 20:
+                        z = '4'
+                    else:
+                        z = '5'
+                    sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if attr[25] > 0.8:
+                    if attr[13] >= 90:
+                        z = '0'
+                    elif 90 > attr[13] >= 65:
+                        z = '1'
+                    elif 65 > attr[13] >= 40:
+                        z = '2'
+                    elif 40 > attr[13] >= 20:
+                        z = '3'
+                    elif attr[13] < 20:
+                        z = '4'
+                    else:
+                        z = '5'
+                    sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                z = '4'
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "B":
+                if attr[13] >= 30:
+                    z = '0'
+                elif 30 > attr[13] >= 20:
+                    z = '1'
+                elif 20 > attr[13] >= 15:
+                    z = '2'
+                elif 15 > attr[13] >= 10:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "C":
+                if attr[25] <= 0.2:
+                    if attr[13] >= 12:
+                        z = '0'
+                    elif 12 > attr[13] >= 9:
+                        z = '1'
+                    elif 9 > attr[13] >= 7:
+                        z = '2'
+                    elif 7 > attr[13] >= 5:
+                        z = '3'
+                    elif attr[13] < 5:
+                        z = '4'
+                    else:
+                        z = '5'
+                    sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if 0.2 < attr[25] <= 0.5:
+                    if attr[13] >= 6:
+                        z = '0'
+                    elif 6 > attr[13] >= 4:
+                        z = '1'
+                    elif 4 > attr[13] >= 3:
+                        z = '2'
+                    elif 3 > attr[13] >= 2:
+                        z = '3'
+                    elif attr[13] < 2:
+                        z = '4'
+                    else:
+                        z = '5'
+                    sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if attr[25] > 0.5:
+                    if attr[13] >= 6:
+                        z = '0'
+                    elif 6 > attr[13] >= 4:
+                        z = '1'
+                    elif 4 > attr[13] >= 3:
+                        z = '2'
+                    elif 3 > attr[13] >= 1:
+                        z = '3'
+                    elif attr[13] < 1:
+                        z = '4'
+                    else:
+                        z = '5'
+                    sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "A":
+                if attr[13] >= 50:
+                    z = '0'
+                elif 50 > attr[13] >= 35:
+                    z = '1'
+                elif 35 > attr[13] >= 20:
+                    z = '2'
+                elif 20 > attr[13] >= 5:
+                    z = '3'
+                elif attr[13] < 5:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "B":
+                z = '4'
+                sql = f"""
+                                    UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and (attr[11] == "C"):
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "D" and (attr[12] == "A" or attr[12] == "B" or attr[12] == "D"):
+                z = 'Einzelfalletrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "D" and (attr[12] == "C"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Zustandsklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "E":
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '0'
+                elif 50 > attr[13] >= 35:
+                    z = '1'
+                elif 35 > attr[13] >= 20:
+                    z = '2'
+                elif 20 > attr[13] >= 5:
+                    z = '3'
+                elif attr[13] < 5:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "F":
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "G":
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "H":
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "I":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "J":
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "K":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "L":
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                                    UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "M":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "N":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "Z":
+                z = 'Einzelfalletrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "A" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "B" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "C" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "D" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "E" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                if attr[13] >= 50:
+                    z = '0'
+                elif 50 > attr[13] >= 35:
+                    z = '1'
+                elif 35 > attr[13] >= 20:
+                    z = '2'
+                elif 20 > attr[13] >= 5:
+                    z = '3'
+                elif attr[13] < 5:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "F" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "G" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "Z" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "C"):
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM" and attr[11] == "B":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAN":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAO":
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAP":
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '0'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBA" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 30:
+                    z = '0'
+                elif 30 > attr[13] >= 20:
+                    z = '1'
+                elif 20 > attr[13] >= 10:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '3'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBB" and attr[11] == "A":
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBB" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
+                if attr[13] >= 30:
+                    z = '0'
+                elif 30 > attr[13] >= 20:
+                    z = '1'
+                elif 20 > attr[13] >= 10:
+                    z = '2'
+                elif 10 > attr[13] >= 5:
+                    z = '3'
+                elif attr[13] < 5:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBC" and (attr[11] == "A" or attr[11] == "B"):
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBC" and (attr[11] == "C" or attr[11] == "Z"):
+                if attr[13] >= 50:
+                    z = '0'
+                elif 50 > attr[13] >= 40:
+                    z = '1'
+                elif 40 > attr[13] >= 25:
+                    z = '2'
+                elif 25 > attr[13] >= 10:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBD" and (
+                    attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "Z"):
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '0'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 30:
+                    z = '0'
+                elif 30 > attr[13] >= 20:
+                    z = '1'
+                elif 20 > attr[13] >= 10:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '3'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE" and (attr[11] == "D" or attr[11] == "G"):
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE" and (
+                    attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E" or attr[
+                11] == "F" or attr[11] == "G" or attr[11] == "H" or attr[11] == "Z"):
+                if attr[13] >= 50:
+                    z = '0'
+                elif 50 > attr[13] >= 35:
+                    z = '1'
+                elif 35 > attr[13] >= 20:
+                    z = '2'
+                elif 20 > attr[13] >= 5:
+                    z = '3'
+                elif attr[13] < 5:
+                    z = '4'
+                else:
+                    z = '5'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and attr[11] == "A":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '4'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "B" or attr[11] == "C"):
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and attr[11] == "D":
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '3'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBG":
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBH" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "Z") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "Z"):
+                z = '-'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and (attr[11] == "AA" or attr[11] == "AB" or attr[11] == "AC" or attr[11] == "AD" or attr[11] == "AE"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                                    UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and (attr[11] == "BA" or attr[11] == "BB" or attr[11] == "BC"):
+                z = 'Einzelfallbetrachtung'
+                sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE" and (attr[11] == "A" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E") and attr[12] == "A":
+                z = '1'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE" and (attr[11] == "A" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E") and attr[12] == "B":
+                z = '2'
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+
+            #if für alle übrigen sachen Haltungsanfang ende usw.
+            if attr[10] in ["BCD", "BDD", "BCE", "BDC", "BCA", "BCB", "BCC", "BDA", "BDF", "BDG", "BDB", "AEC", "AED"]:
+                z = '-'
+                sql = f"""
+                               UPDATE untersuchdat_anschlussleitung_bewertung
+                               SET Zustandsklasse_D = ?
+                               WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE untersuchdat_anschlussleitung_bewertung
+                               SET Zustandsklasse_B = ?
+                               WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                               UPDATE untersuchdat_anschlussleitung_bewertung
+                               SET Zustandsklasse_S = ?
+                               WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                               """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
+            try:
+                db.commit()
+            except:
+                pass
+
+            z = 'Bitte pruefen!'
+            sql = f"""
+                UPDATE untersuchdat_anschlussleitung_bewertung
+                SET Zustandsklasse_D = ?
+                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                UPDATE untersuchdat_anschlussleitung_bewertung
+                SET Zustandsklasse_B = ?
+                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                UPDATE untersuchdat_anschlussleitung_bewertung
+                SET Zustandsklasse_S = ?
+                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            z = '5'
+            sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_D = ?
+                    WHERE Zustandsklasse_D is Null;
+                    """
+            data = (z, )
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_B = ?
+                    WHERE Zustandsklasse_B is Null;
+                    """
+            data = (z, )
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Zustandsklasse_S = ?
+                    WHERE Zustandsklasse_S is Null;
+                    """
+            data = (z, )
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+
+            try:
+                db.commit()
+            except:
+                pass
+
+
+        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        curs.execute(sql)
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN objektklasse_dichtheit INTEGER ;""")
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN objektklasse_standsicherheit INTEGER ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN objektklasse_betriebssicherheit INTEGER ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN objektklasse_gesamt INTEGER ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN hydraulische_auslastung TEXT ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN lage_grundwasser TEXT;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN bodengruppe TEXT ;""")
+            #db.commit()
+        except:
+            pass
+
+
+        #Objektklasse berechnen für jede Haltung dafür abfragen
+
+        try:
+            curs.execute("""UPDATE anschlussleitungen_untersucht_bewertung 
+                            SET objektklasse_dichtheit =
+                            (SELECT min(Zustandsklasse_D) 
+                            FROM untersuchdat_anschlussleitung_bewertung
+                            WHERE untersuchdat_anschlussleitung_bewertung.untersuchhal = anschlussleitungen_untersucht_bewertung.leitnam AND Zustandsklasse_D <> '-'
+                            GROUP BY untersuchdat_anschlussleitung_bewertung.untersuchhal);""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""UPDATE anschlussleitungen_untersucht_bewertung 
+                            SET objektklasse_standsicherheit =
+                            (SELECT min(Zustandsklasse_S) 
+                            FROM untersuchdat_anschlussleitung_bewertung
+                            WHERE untersuchdat_anschlussleitung_bewertung.untersuchhal = anschlussleitungen_untersucht_bewertung.leitnam AND Zustandsklasse_S <> '-'
+                            GROUP BY untersuchdat_anschlussleitung_bewertung.untersuchhal);""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""UPDATE anschlussleitungen_untersucht_bewertung 
+                            SET objektklasse_betriebssicherheit =
+                            (SELECT min(Zustandsklasse_B) 
+                            FROM untersuchdat_anschlussleitung_bewertung
+                            WHERE untersuchdat_anschlussleitung_bewertung.untersuchhal = anschlussleitungen_untersucht_bewertung.leitnam AND Zustandsklasse_B <> '-'
+                            GROUP BY untersuchdat_anschlussleitung_bewertung.untersuchhal);""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""update anschlussleitungen_untersucht_bewertung 
+                            set objektklasse_standsicherheit = '-'
+                            WHERE objektklasse_betriebssicherheit IS NULL;""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""update anschlussleitungen_untersucht_bewertung 
+                            set objektklasse_dichtheit = '-'
+                            WHERE objektklasse_betriebssicherheit IS NULL;""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""update anschlussleitungen_untersucht_bewertung 
+                            set objektklasse_betriebssicherheit = '-'
+                            WHERE objektklasse_betriebssicherheit IS NULL;""")
+            #db.commit()
+        except:
+            pass
+
+        try:
+            curs.execute("""Update
+                            anschlussleitungen_untersucht_bewertung
+                            SET
+                            objektklasse_gesamt =
+                            (Case
+                             When objektklasse_dichtheit <= objektklasse_standsicherheit And objektklasse_dichtheit <= objektklasse_betriebssicherheit Then objektklasse_dichtheit
+                             When objektklasse_standsicherheit <= objektklasse_dichtheit And objektklasse_standsicherheit <= objektklasse_betriebssicherheit Then objektklasse_standsicherheit
+                             When objektklasse_betriebssicherheit <= objektklasse_dichtheit And objektklasse_betriebssicherheit <= objektklasse_standsicherheit Then objektklasse_betriebssicherheit
+                             Else NULL
+                             END
+                             );""")
+            db.commit()
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        logger.debug(f'Ende_Bewertung_Haltungen.liste: {datetime.now()}')
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'untersuchdat_anschlussleitung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        untersuchdat_anschlussleitung_bewertung = 'untersuchdat_anschlussleitung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_anschlussleitung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_anschlussleitung_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/untersuchdat_haltung_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'anschlussleitungen_untersucht_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        anschlussleitungen_untersucht_bewertung = 'anschlussleitungen_untersucht_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), anschlussleitungen_untersucht_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(anschlussleitungen_untersucht_bewertung)[0].id())
         except:
             pass
 
@@ -11307,6 +15365,2440 @@ class Zustandsklassen_funkt:
         vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_isy.qml')
         QgsProject.instance().addMapLayer(vlayer)
 
+    def bewertung_isy_leitung(self):
+        date = self.date+'%'
+        db = self.db
+        db_x = db
+        data = db
+        leitung = self.leitung
+        haltung = self.haltung
+        crs = self.crs
+
+        db1 = spatialite_connect(data)
+        curs1 = db1.cursor()
+
+        # nach Isybau
+
+        sql = """CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung_bewertung AS SELECT * FROM untersuchdat_anschlussleitung"""
+        curs1.execute(sql)
+
+        if leitung == True:
+            sql = """
+                SELECT
+                    anschlussleitungen.leitnam,
+                    anschlussleitungen.material,
+                    anschlussleitungen.hoehe,
+                    untersuchdat_anschlussleitung_bewertung.untersuchleit
+                FROM anschlussleitungen
+                INNER JOIN untersuchdat_anschlussleitung_bewertung  ON anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit
+            """
+
+        try:
+            curs1.execute(sql)
+        except:
+            iface.messageBar().pushMessage("Error",
+                                           "Die Klassifizierung der Haltungen/Leitungen konnte nicht ermittelt werden",
+                                           level=Qgis.Critical)
+
+        for attr1 in curs1.fetchall():
+            untersuchleitt = attr1[0]
+            try:
+                curs1.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN bw_bs TEXT;""")
+            except:
+                pass
+
+            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
+                            "SZB", "ZG","Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+                bw_bs = "biegesteif"
+                x = attr1[0]
+
+                sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET bw_bs = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.untersuchleit = ?
+                        """
+                data = (bw_bs, x)
+                try:
+                    curs1.execute(sql, data)
+                except:
+                    pass
+
+            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST", "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+                bw_bs = 'biegeweich'
+                x = attr1[0]
+
+                sql = f"""
+                      UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET bw_bs = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.untersuchleit = ?
+                        """
+                data = (bw_bs, x)
+                try:
+                    curs1.execute(sql, data)
+                except:
+                    pass
+        db1.commit()
+
+        data = db
+        db = spatialite_connect(data)
+        curs = db.cursor()
+
+
+        if leitung == True:
+            sql = """
+                SELECT
+                    untersuchdat_anschlussleitung_bewertung.pk,
+                    untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                    untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                    untersuchdat_anschlussleitung_bewertung.schoben,
+                    untersuchdat_anschlussleitung_bewertung.schunten,
+                    untersuchdat_anschlussleitung_bewertung.id,
+                    untersuchdat_anschlussleitung_bewertung.videozaehler,
+                    untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                    untersuchdat_anschlussleitung_bewertung.station,
+                    untersuchdat_anschlussleitung_bewertung.timecode,
+                    untersuchdat_anschlussleitung_bewertung.kuerzel,
+                    untersuchdat_anschlussleitung_bewertung.charakt1,
+                    untersuchdat_anschlussleitung_bewertung.charakt2,
+                    untersuchdat_anschlussleitung_bewertung.quantnr1,
+                    untersuchdat_anschlussleitung_bewertung.quantnr2,
+                    untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                    untersuchdat_anschlussleitung_bewertung.pos_von,
+                    untersuchdat_anschlussleitung_bewertung.pos_bis,
+                    untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                    untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                    untersuchdat_anschlussleitung_bewertung.richtung,
+                    untersuchdat_anschlussleitung_bewertung.bw_bs,
+                    untersuchdat_anschlussleitung_bewertung.createdat,
+                    anschlussleitungen.leitnam,
+                    anschlussleitungen.material,
+                    anschlussleitungen.hoehe,
+                    anschlussleitungen.createdat
+                FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
+            """
+            data = (date, )
+            curs.execute(sql, data)
+
+
+        for attr in curs.fetchall():
+            try:
+                curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Schadensklasse_D TEXT ;""")
+            except:
+                pass
+            try:
+                curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Schadensklasse_S TEXT ;""")
+            except:
+                pass
+            try:
+                curs.execute("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Schadensklasse_B TEXT ;""")
+            except:
+                pass
+
+            if (attr[21] == "biegessteif" and attr[10] == "BAA" and (attr[11] == "A")) or (
+                    attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "B"):
+                if attr[13] < 6:
+                    z = '3'
+                elif 6 <= attr[13] < 15:
+                    z = '4'
+                elif attr[13] >= 15:
+                    z = '5'
+                else:
+                    z = '0'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '5'
+                elif 40 <= attr[13] < 50:
+                    z = '4'
+                elif 25 <= attr[13] < 40:
+                    z = '3'
+                elif 10 <= attr[13] < 25:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if (attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "A") or (
+                    attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "B"):
+                if attr[13] >= 15:
+                    z = '5'
+                elif 10 <= attr[13] < 15:
+                    z = '4'
+                elif 6 <= attr[13] < 10:
+                    z = '3'
+                elif 2 <= attr[13] < 6:
+                    z = '2'
+                elif attr[13] < 2:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '5'
+                elif 40 <= attr[13] < 50:
+                    z = '4'
+                elif 25 <= attr[13] < 40:
+                    z = '3'
+                elif 10 <= attr[13] < 25:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+
+            # Tab A.3
+            if attr[10] == "BAB":
+                if attr[11] == "A" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if (attr[11] == "B") and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if (attr[11] == "B" or attr[11] == "C") and (
+                        attr[12] == "A" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                    if attr[13] >= 10:
+                        z = '5'
+                    elif 10 > attr[13] >= 5:
+                        z = '4'
+                    elif 5 > attr[13] >= 2:
+                        z = '3'
+                    elif 2 > attr[13] >= 0.5:
+                        z = '2'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if (attr[11] == "C") and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                    z = '4'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                continue
+            if attr[10] == "BAC":
+                if attr[11] == "A":
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if (attr[11] == "A" or attr[11] == "B"):
+                    z = '4'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        db.commit()
+                    except:
+                        pass
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "C":
+                    z = '5'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAD":
+                if attr[11] == "A":
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "B" and (attr[12] == "A" or attr[12] == "B"):
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "C":
+                    z = '5'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "D":
+                    z = '5'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+
+            if attr[10] == "BAE":
+                if attr[13] >= 100:
+                    z = '3'
+                elif attr[13] < 100:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 100:
+                    z = '3'
+                elif 100 > attr[13] >= 10:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF":
+                if attr[11] == "A" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "B" and (attr[12] == "A" or attr[12] == "E" or attr[12] == "Z"):
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "C" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "D" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "E" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '4'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "F" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "G" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "H" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '4'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "I" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '5'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '4'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "J" and (
+                        attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "K" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "Z" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
+                        attr[12] == "Z"):
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAG":
+                if attr[13] >= 75:
+                    z = '5'
+                elif 75 > attr[13] >= 60:
+                    z = '4'
+                elif 60 > attr[13] >= 40:
+                    z = '3'
+                elif 40 > attr[13] >= 15:
+                    z = '2'
+                elif attr[13] < 15:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAH":
+                if (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "Z":
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAI":
+                if attr[11] == "A" and attr[12] == "A":
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '1'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "A" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                    z = '3'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                    z = '2'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "Z":
+                    if attr[13] >= 50:
+                        z = '5'
+                    elif 50 > attr[13] >= 35:
+                        z = '4'
+                    elif 35 > attr[13] >= 20:
+                        z = '3'
+                    elif 20 > attr[13] >= 5:
+                        z = '2'
+                    elif attr[13] < 5:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAJ" and attr[11] == "A":
+                if attr[25] <= 0.4:
+                    if attr[13] >= 70:
+                        z = '5'
+                    elif 70 > attr[13] >= 50:
+                        z = '4'
+                    elif 50 > attr[13] >= 30:
+                        z = '3'
+                    elif 30 > attr[13] >= 20:
+                        z = '2'
+                    elif attr[13] < 20:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if 0.4 < attr[25] <= 0.8:
+                    if attr[13] >= 80:
+                        z = '5'
+                    elif 80 > attr[13] >= 60:
+                        z = '4'
+                    elif 60 > attr[13] >= 40:
+                        z = '3'
+                    elif 40 > attr[13] >= 20:
+                        z = '2'
+                    elif attr[13] < 20:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if attr[25] > 0.8:
+                    if attr[13] >= 90:
+                        z = '5'
+                    elif 90 > attr[13] >= 65:
+                        z = '4'
+                    elif 65 > attr[13] >= 40:
+                        z = '3'
+                    elif 40 > attr[13] >= 20:
+                        z = '2'
+                    elif attr[13] < 20:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                z = '1'
+                sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "B":
+                if attr[13] >= 30:
+                    z = '5'
+                elif 30 > attr[13] >= 20:
+                    z = '4'
+                elif 20 > attr[13] >= 15:
+                    z = '3'
+                elif 15 > attr[13] >= 10:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] < 10:
+                    z = '1'
+                elif attr[13] >= 10:
+                    z = '2'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "C":
+                if attr[25] <= 0.2:
+                    if attr[13] >= 12:
+                        z = '5'
+                    elif 12 > attr[13] >= 9:
+                        z = '4'
+                    elif 9 > attr[13] >= 7:
+                        z = '3'
+                    elif 7 > attr[13] >= 5:
+                        z = '2'
+                    elif attr[13] < 5:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if 0.2 < attr[25] <= 0.5:
+                    if attr[13] >= 6:
+                        z = '5'
+                    elif 6 > attr[13] >= 4:
+                        z = '4'
+                    elif 4 > attr[13] >= 3:
+                        z = '3'
+                    elif 3 > attr[13] >= 2:
+                        z = '2'
+                    elif attr[13] < 2:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if attr[25] > 0.5:
+                    if attr[13] >= 6:
+                        z = '5'
+                    elif 6 > attr[13] >= 4:
+                        z = '4'
+                    elif 4 > attr[13] >= 3:
+                        z = '3'
+                    elif 3 > attr[13] >= 1:
+                        z = '2'
+                    elif attr[13] < 1:
+                        z = '1'
+                    else:
+                        z = '0'
+                    sql = f"""
+                          UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "A":
+                if attr[13] >= 50:
+                    z = '5'
+                elif 50 > attr[13] >= 35:
+                    z = '4'
+                elif 35 > attr[13] >= 20:
+                    z = '3'
+                elif 20 > attr[13] >= 5:
+                    z = '2'
+                elif attr[13] < 5:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "B":
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "C":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "D":
+                if (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                    z = '2'
+                    sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                    except:
+                        pass
+                if attr[12] == "C":
+                    z = '3'
+                    sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Schadensklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
+                continue
+            if attr[10] == "BAK" and attr[11] == "E":
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '5'
+                elif 50 > attr[13] >= 35:
+                    z = '4'
+                elif 35 > attr[13] >= 20:
+                    z = '3'
+                elif 20 > attr[13] >= 5:
+                    z = '2'
+                elif attr[13] < 5:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "F":
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "G":
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "H":
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "I":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "J":
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "K":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "L":
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "M":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "N":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "Z":
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and (attr[11] == "A" or attr[11] == "B") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and (attr[11] == "C" or attr[11] == "D") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "E" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                if attr[13] >= 50:
+                    z = '5'
+                elif 50 > attr[13] >= 35:
+                    z = '4'
+                elif 35 > attr[13] >= 20:
+                    z = '3'
+                elif 20 > attr[13] >= 5:
+                    z = '2'
+                elif attr[13] < 5:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "F" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and (attr[11] == "G") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "Z" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+            if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "C"):
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM" and attr[11] == "B":
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAN":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAO":
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAP":
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '5'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBA" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 30:
+                    z = '5'
+                elif 30 > attr[13] >= 20:
+                    z = '4'
+                elif 20 > attr[13] >= 10:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '2'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBB" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
+                if attr[13] >= 30:
+                    z = '5'
+                elif 30 > attr[13] >= 20:
+                    z = '4'
+                elif 20 > attr[13] >= 10:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '2'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBC" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
+                if attr[13] >= 50:
+                    z = '5'
+                elif 50 > attr[13] >= 40:
+                    z = '4'
+                elif 40 > attr[13] >= 25:
+                    z = '3'
+                elif 25 > attr[13] >= 10:
+                    z = '2'
+                elif attr[13] < 10:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBD" and (
+                    attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "Z"):
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '5'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                if attr[13] >= 30:
+                    z = '5'
+                elif 30 > attr[13] >= 20:
+                    z = '4'
+                elif 20 > attr[13] >= 10:
+                    z = '3'
+                elif attr[13] < 10:
+                    z = '2'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE" and (attr[11] == "D" or attr[11] == "G"):
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE" and (
+                    attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E" or attr[
+                11] == "F" or attr[11] == "G" or attr[11] == "H" or attr[11] == "Z"):
+                if attr[13] >= 50:
+                    z = '5'
+                elif 50 > attr[13] >= 35:
+                    z = '4'
+                elif 35 > attr[13] >= 20:
+                    z = '3'
+                elif 20 > attr[13] >= 5:
+                    z = '2'
+                elif attr[13] < 5:
+                    z = '1'
+                else:
+                    z = '0'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "A" or attr[11] == "B"):
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '1'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "C"):
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "D"):
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "C" or attr[11] == "D"):
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBG":
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBH" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "Z") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "Z"):
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "A":
+                z = '2'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                except:
+                    pass
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE" and (attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
+                    attr[12] == "A":
+                z = '4'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE" and (attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
+                    attr[12] == "B":
+                z = '3'
+                sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
+
+            # if für alle übrigen sachen Haltungsanfang ende usw.
+            if attr[10] in ["BCD", "BDD", "BCE", "BDC", "BCA", "BCB", "BCC", "BDA", "BDF", "BDG", "BDB", "AEC", "AED"]:
+                z = '-'
+                sql = f"""
+                                   UPDATE untersuchdat_anschlussleitung_bewertung
+                                   SET Zustandsklasse_D = ?
+                                   WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                   """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                   UPDATE untersuchdat_anschlussleitung_bewertung
+                                   SET Zustandsklasse_B = ?
+                                   WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                   """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                   UPDATE untersuchdat_anschlussleitung_bewertung
+                                   SET Zustandsklasse_S = ?
+                                   WHERE untersuchdat_anschlussleitung_bewertung.pk = ?;
+                                   """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
+            try:
+                db.commit()
+            except:
+                pass
+
+            z = 'Bitte pruefen!'
+            sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Schadensklasse_D = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                    """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Schadensklasse_B = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                    """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                    UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET Schadensklasse_S = ?
+                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                    """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            z = '-'
+            sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_D = ?
+                        WHERE Schadensklasse_D is Null
+                        """
+            data = (z,)
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_B = ?
+                        WHERE Schadensklasse_B is Null
+                        """
+            data = (z,)
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+            sql = f"""
+                        UPDATE untersuchdat_anschlussleitung_bewertung
+                        SET Schadensklasse_S = ?
+                        WHERE Schadensklasse_S is Null
+                        """
+            data = (z,)
+            try:
+                curs.execute(sql, data)
+                #db.commit()
+            except:
+                pass
+
+        try:
+            curs.execute(
+                """ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN vorlaufige_Schadenszahl_D INTEGER ;""")
+        except:
+            pass
+
+        try:
+            curs.execute(
+                """ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN vorlaufige_Schadenszahl_B INTEGER ;""")
+        except:
+            pass
+
+        try:
+            curs.execute(
+                """ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN vorlaufige_Schadenszahl_S INTEGER ;""")
+        except:
+            pass
+
+        try:
+            curs.execute(
+                """UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET vorlaufige_Schadenszahl_D = (Case 
+                    WHEN Schadensklasse_D = 1  THEN 10
+                    WHEN Schadensklasse_D = 2  THEN 100
+                    WHEN Schadensklasse_D = 3  THEN 200
+                    WHEN Schadensklasse_D = 4  THEN 300
+                    WHEN Schadensklasse_D = 5  THEN 400
+                    ELSE NULL
+                    END
+                    ) ;""")
+        except:
+            pass
+
+        try:
+            curs.execute(
+                """UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET vorlaufige_Schadenszahl_B = (Case 
+                    WHEN Schadensklasse_B = 1  THEN 10
+                    WHEN Schadensklasse_B = 2  THEN 100
+                    WHEN Schadensklasse_B = 3  THEN 200
+                    WHEN Schadensklasse_B = 4  THEN 300
+                    WHEN Schadensklasse_B = 5  THEN 400
+                    ELSE NULL
+                    END
+                    ) ;""")
+        except:
+            pass
+
+        try:
+            curs.execute(
+                """UPDATE untersuchdat_anschlussleitung_bewertung
+                    SET vorlaufige_Schadenszahl_S = (Case 
+                    WHEN Schadensklasse_S = 1  THEN 10
+                    WHEN Schadensklasse_S = 2  THEN 100
+                    WHEN Schadensklasse_S = 3  THEN 200
+                    WHEN Schadensklasse_S = 4  THEN 300
+                    WHEN Schadensklasse_S = 5  THEN 400
+                    ELSE NULL
+                    END
+                    ) ;""")
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'untersuchdat_anschlussleitung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        untersuchdat_anschlussleitung_bewertung = 'untersuchdat_anschlussleitung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_anschlussleitung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_anschlussleitung_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/untersuchdat_anschlussleitung_bewertung_isy.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        curs.execute(sql)
+
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Entwaesserungssystem TEXT ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Abwasserart TEXT ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Wasserschutzzone TEXT ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Bodenart TEXT ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Lage_am_Umfang TEXT ;""")
+            #db.commit()
+        except:
+            pass
+        try:
+            curs.execute("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Lage_an_Bauteilverbindung TEXT ;""")
+            #db.commit()
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'anschlussleitungen_untersucht_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        anschlussleitungen_untersucht_bewertung = 'anschlussleitungen_untersucht_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), anschlussleitungen_untersucht_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(anschlussleitungen_untersucht_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_isy.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
     def bewertung_isy_schacht(self):
         date = self.date+'%'
         db = self.db
@@ -14408,7 +20900,7 @@ class Zustandsklassen_funkt:
                         FROM
                         untersuchdat_haltung_bewertung, haltungen
                         WHERE
-                        anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal
+                        anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchleit
                         AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
                         OR
                         untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
@@ -16643,6 +23135,2303 @@ class Zustandsklassen_funkt:
         x = QgsProject.instance()
         try:
             x.removeMapLayer(x.mapLayersByName(haltungen_untersucht_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+    def einzelfallbetrachtung_leitung(self):
+
+        date = self.date+'%'
+        db = self.db
+        db_x = db
+        data = db
+        leitung = self.leitung
+        haltung = self.haltung
+        crs = self.crs
+        liste_pk =[]
+        db1 = spatialite_connect(data)
+        curs1 = db1.cursor()
+
+        # nach Isybau
+
+        data = db
+        db = spatialite_connect(data)
+        curs = db.cursor()
+
+
+        if self.check_cb['cb18']:
+            sql = """SELECT
+                        untersuchdat_anschlussleitung_bewertung.pk,
+                        untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        untersuchdat_anschlussleitung_bewertung.schoben,
+                        untersuchdat_anschlussleitung_bewertung.schunten,
+                        untersuchdat_anschlussleitung_bewertung.id,
+                        untersuchdat_anschlussleitung_bewertung.videozaehler,
+                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                        untersuchdat_anschlussleitung_bewertung.station,
+                        untersuchdat_anschlussleitung_bewertung.timecode,
+                        untersuchdat_anschlussleitung_bewertung.kuerzel,
+                        untersuchdat_anschlussleitung_bewertung.charakt1,
+                        untersuchdat_anschlussleitung_bewertung.charakt2,
+                        untersuchdat_anschlussleitung_bewertung.quantnr1,
+                        untersuchdat_anschlussleitung_bewertung.quantnr2,
+                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                        untersuchdat_anschlussleitung_bewertung.pos_von,
+                        untersuchdat_anschlussleitung_bewertung.pos_bis,
+                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.richtung,
+                        untersuchdat_anschlussleitung_bewertung.bw_bs,
+                        untersuchdat_anschlussleitung_bewertung.createdat,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        anschlussleitungen.createdat,
+                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D,
+                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S,
+                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B
+                        FROM
+                        untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                        WHERE
+                        anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit
+                        AND(untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                        OR
+                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                        OR
+                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_anschlussleitung_bewertung.createdat like ? """
+            data = (date,)
+            curs.execute(sql, data)
+
+        for attr in curs.fetchall():
+            liste_pk.append(attr[0])
+
+            if (attr[21] == "biegessteif" and attr[10] == "BAA" and (attr[11] == "A")) or (
+                    attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "B"):
+                if attr[13] < 6:
+                    z = '3_isy'
+                elif 6 <= attr[13] < 15:
+                    z = '4_isy'
+                elif attr[13] >= 15:
+                    z = '5_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 40 <= attr[13] < 50:
+                    z = '4_isy'
+                elif 25 <= attr[13] < 40:
+                    z = '3_isy'
+                elif 10 <= attr[13] < 25:
+                    z = '2_isy'
+                elif attr[13] < 10:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if (attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "A") or (
+                    attr[21] == "biegeweich" and attr[10] == "BAA" and attr[11] == "B"):
+                if attr[13] >= 15:
+                    z = '5_isy'
+                elif 10 <= attr[13] < 15:
+                    z = '4_isy'
+                elif 6 <= attr[13] < 10:
+                    z = '3_isy'
+                elif 2 <= attr[13] < 6:
+                    z = '2_isy'
+                elif attr[13] < 2:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 40 <= attr[13] < 50:
+                    z = '4_isy'
+                elif 25 <= attr[13] < 40:
+                    z = '3_isy'
+                elif 10 <= attr[13] < 25:
+                    z = '2_isy'
+                elif attr[13] < 10:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ? 
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
+            # Tab A.3
+            if attr[10] == "BAB":
+                if attr[11] == "A" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E"):
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if (attr[11] == "B") and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E"):
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if (attr[11] == "B" or attr[11] == "C") and (
+                        attr[12] == "A" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+                    if attr[13] >= 10:
+                        z = '5_isy'
+                    elif 10 > attr[13] >= 5:
+                        z = '4_isy'
+                    elif 5 > attr[13] >= 2:
+                        z = '3_isy'
+                    elif 2 > attr[13] >= 0.5:
+                        z = '2_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if (attr[11] == "C") and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E"):
+                    z = '4_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                continue
+            if attr[10] == "BAC":
+                if attr[11] == "A":
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if (attr[11] == "A" or attr[11] == "B"):
+                    z = '4_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        db.commit()
+                    except:
+                        pass
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "C":
+                    z = '5_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAD":
+                if attr[11] == "A":
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "B" and (attr[12] == "A" or attr[12] == "B"):
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "C":
+                    z = '5_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "D":
+                    z = '5_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+
+            if attr[10] == "BAE":
+                if attr[13] >= 100:
+                    z = '3_isy'
+                elif attr[13] < 100:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                if attr[13] >= 100:
+                    z = '3_isy'
+                elif 100 > attr[13] >= 10:
+                    z = '2_isy'
+                elif attr[13] < 10:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAF":
+                if attr[11] == "A" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "B" and (attr[12] == "A" or attr[12] == "E" or attr[12] == "Z"):
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "C" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "D" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "E" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '4_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "F" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "G" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "H" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '4_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "I" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '5_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '4_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "J" and (
+                        attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[
+                    12] == "Z"):
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "K" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "Z" and (
+                        attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[
+                    12] == "E" or
+                        attr[12] == "Z"):
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAG":
+                if attr[13] >= 75:
+                    z = '5_isy'
+                elif 75 > attr[13] >= 60:
+                    z = '4_isy'
+                elif 60 > attr[13] >= 40:
+                    z = '3_isy'
+                elif 40 > attr[13] >= 15:
+                    z = '2_isy'
+                elif attr[13] < 15:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                    UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAH":
+                if (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "Z":
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAI":
+                if attr[11] == "A" and attr[12] == "A":
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '1_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "A" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                    z = '3_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                    z = '2_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                if attr[11] == "Z":
+                    if attr[13] >= 50:
+                        z = '5_isy'
+                    elif 50 > attr[13] >= 35:
+                        z = '4_isy'
+                    elif 35 > attr[13] >= 20:
+                        z = '3_isy'
+                    elif 20 > attr[13] >= 5:
+                        z = '2_isy'
+                    elif attr[13] < 5:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+            if attr[10] == "BAJ" and attr[11] == "A":
+                if attr[25] <= 0.4:
+                    if attr[13] >= 70:
+                        z = '5_isy'
+                    elif 70 > attr[13] >= 50:
+                        z = '4_isy'
+                    elif 50 > attr[13] >= 30:
+                        z = '3_isy'
+                    elif 30 > attr[13] >= 20:
+                        z = '2_isy'
+                    elif attr[13] < 20:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if 0.4 < attr[25] <= 0.8:
+                    if attr[13] >= 80:
+                        z = '5_isy'
+                    elif 80 > attr[13] >= 60:
+                        z = '4_isy'
+                    elif 60 > attr[13] >= 40:
+                        z = '3_isy'
+                    elif 40 > attr[13] >= 20:
+                        z = '2_isy'
+                    elif attr[13] < 20:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if attr[25] > 0.8:
+                    if attr[13] >= 90:
+                        z = '5_isy'
+                    elif 90 > attr[13] >= 65:
+                        z = '4_isy'
+                    elif 65 > attr[13] >= 40:
+                        z = '3_isy'
+                    elif 40 > attr[13] >= 20:
+                        z = '2_isy'
+                    elif attr[13] < 20:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                z = '1_isy'
+                sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "B":
+                if attr[13] >= 30:
+                    z = '5_isy'
+                elif 30 > attr[13] >= 20:
+                    z = '4_isy'
+                elif 20 > attr[13] >= 15:
+                    z = '3_isy'
+                elif 15 > attr[13] >= 10:
+                    z = '2_isy'
+                elif attr[13] < 10:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                if attr[13] < 10:
+                    z = '1_isy'
+                elif attr[13] >= 10:
+                    z = '2_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAJ" and attr[11] == "C":
+                if attr[25] <= 0.2:
+                    if attr[13] >= 12:
+                        z = '5_isy'
+                    elif 12 > attr[13] >= 9:
+                        z = '4_isy'
+                    elif 9 > attr[13] >= 7:
+                        z = '3_isy'
+                    elif 7 > attr[13] >= 5:
+                        z = '2_isy'
+                    elif attr[13] < 5:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if 0.2 < attr[25] <= 0.5:
+                    if attr[13] >= 6:
+                        z = '5_isy'
+                    elif 6 > attr[13] >= 4:
+                        z = '4_isy'
+                    elif 4 > attr[13] >= 3:
+                        z = '3_isy'
+                    elif 3 > attr[13] >= 2:
+                        z = '2_isy'
+                    elif attr[13] < 2:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if attr[25] > 0.5:
+                    if attr[13] >= 6:
+                        z = '5_isy'
+                    elif 6 > attr[13] >= 4:
+                        z = '4_isy'
+                    elif 4 > attr[13] >= 3:
+                        z = '3_isy'
+                    elif 3 > attr[13] >= 1:
+                        z = '2_isy'
+                    elif attr[13] < 1:
+                        z = '1_isy'
+                    else:
+                        z = '0_isy'
+                    sql = f"""
+                                  UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_D = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "A":
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 50 > attr[13] >= 35:
+                    z = '4_isy'
+                elif 35 > attr[13] >= 20:
+                    z = '3_isy'
+                elif 20 > attr[13] >= 5:
+                    z = '2_isy'
+                elif attr[13] < 5:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "B":
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "C":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "D":
+                if (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                    z = '2_isy'
+                    sql = f"""
+                                    UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_B = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                    except:
+                        pass
+                if attr[12] == "C":
+                    z = '3_isy'
+                    sql = f"""
+                                    UPDATE untersuchdat_anschlussleitung_bewertung
+                                    SET Zustandsklasse_S = ?
+                                    WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                    """
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        # db.commit()
+                        continue
+                    except:
+                        pass
+                continue
+            if attr[10] == "BAK" and attr[11] == "E":
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 50 > attr[13] >= 35:
+                    z = '4_isy'
+                elif 35 > attr[13] >= 20:
+                    z = '3_isy'
+                elif 20 > attr[13] >= 5:
+                    z = '2_isy'
+                elif attr[13] < 5:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "F":
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "G":
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "H":
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "I":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "J":
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "K":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "L":
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "M":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "N":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAK" and attr[11] == "Z":
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and (attr[11] == "A" or attr[11] == "B") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and (attr[11] == "C" or attr[11] == "D") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "E" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 50 > attr[13] >= 35:
+                    z = '4_isy'
+                elif 35 > attr[13] >= 20:
+                    z = '3_isy'
+                elif 20 > attr[13] >= 5:
+                    z = '2_isy'
+                elif attr[13] < 5:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "F" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and (attr[11] == "G") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAL" and attr[11] == "Z" and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+            if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "C"):
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAM" and attr[11] == "B":
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAN":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAO":
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BAP":
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '5_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBA" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                if attr[13] >= 30:
+                    z = '5_isy'
+                elif 30 > attr[13] >= 20:
+                    z = '4_isy'
+                elif 20 > attr[13] >= 10:
+                    z = '3_isy'
+                elif attr[13] < 10:
+                    z = '2_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBB" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
+                if attr[13] >= 30:
+                    z = '5_isy'
+                elif 30 > attr[13] >= 20:
+                    z = '4_isy'
+                elif 20 > attr[13] >= 10:
+                    z = '3_isy'
+                elif attr[13] < 10:
+                    z = '2_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBC" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "Z"):
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 50 > attr[13] >= 40:
+                    z = '4_isy'
+                elif 40 > attr[13] >= 25:
+                    z = '3_isy'
+                elif 25 > attr[13] >= 10:
+                    z = '2_isy'
+                elif attr[13] < 10:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBD" and (
+                    attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "Z"):
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '5_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                if attr[13] >= 30:
+                    z = '5_isy'
+                elif 30 > attr[13] >= 20:
+                    z = '4_isy'
+                elif 20 > attr[13] >= 10:
+                    z = '3_isy'
+                elif attr[13] < 10:
+                    z = '2_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE" and (attr[11] == "D" or attr[11] == "G"):
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBE" and (
+                    attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E" or
+                    attr[
+                        11] == "F" or attr[11] == "G" or attr[11] == "H" or attr[11] == "Z"):
+                if attr[13] >= 50:
+                    z = '5_isy'
+                elif 50 > attr[13] >= 35:
+                    z = '4_isy'
+                elif 35 > attr[13] >= 20:
+                    z = '3_isy'
+                elif 20 > attr[13] >= 5:
+                    z = '2_isy'
+                elif attr[13] < 5:
+                    z = '1_isy'
+                else:
+                    z = '0_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "A" or attr[11] == "B"):
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '1_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "C"):
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "D"):
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+            if attr[10] == "BBF" and (attr[11] == "C" or attr[11] == "D"):
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBG":
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_S = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BBH" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "Z") and (
+                    attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "Z"):
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDB" and attr[11] == "A":
+                z = '2_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_D = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                except:
+                    pass
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE" and (
+                    attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
+                    attr[12] == "A":
+                z = '4_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+            if attr[10] == "BDE" and (
+                    attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
+                    attr[12] == "B":
+                z = '3_isy'
+                sql = f"""
+                                UPDATE untersuchdat_anschlussleitung_bewertung
+                                SET Zustandsklasse_B = ?
+                                WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                                """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    # db.commit()
+                    continue
+                except:
+                    pass
+
+            try:
+                db.commit()
+            except:
+                pass
+
+            z = '-'
+            sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_D = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
+            sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_B = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
+            sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_S = ?
+                            WHERE untersuchdat_anschlussleitung_bewertung.pk = ?
+                            """
+            data = (z, attr[0])
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
+        z = '5'
+        sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_D = ?
+                            WHERE Zustandsklasse_D is Null
+                            """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+        sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_B = ?
+                            WHERE Zustandsklasse_B is Null
+                            """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+        sql = f"""
+                            UPDATE untersuchdat_anschlussleitung_bewertung
+                            SET Zustandsklasse_S = ?
+                            WHERE Zustandsklasse_S is Null
+                            """
+        data = (z,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        for i in liste_pk:
+            # die nummerierung muss für dwa umgekehrt werden 5 wird zu 0, 4 wird zu 1, 3 wird zu 2, 2 wird zu 3, 1 wird zu 4, 0 wird zu 5 !
+            data = (i,)
+            sql = """UPDATE untersuchdat_anschlussleitung_bewertung
+                       SET Zustandsklasse_S = (Case 
+                       WHEN Zustandsklasse_S = '5_isy'  THEN 0
+                       WHEN Zustandsklasse_S = '4_isy'  THEN 1
+                       WHEN Zustandsklasse_S = '3_isy'  THEN 2
+                       WHEN Zustandsklasse_S = '2_isy'  THEN 3
+                       WHEN Zustandsklasse_S = '1_isy'  THEN 4
+                       WHEN Zustandsklasse_S = '0_isy'  THEN 5
+                       ELSE Zustandsklasse_S
+                       END)
+                       WHERE untersuchdat_anschlussleitung_bewertung.pk = ? ;"""
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
+            sql = """UPDATE untersuchdat_anschlussleitung_bewertung
+                                   SET Zustandsklasse_B = (Case 
+                                   WHEN Zustandsklasse_B = '5_isy'  THEN 0
+                                   WHEN Zustandsklasse_B = '4_isy'  THEN 1
+                                   WHEN Zustandsklasse_B = '3_isy'  THEN 2
+                                   WHEN Zustandsklasse_B = '2_isy'  THEN 3
+                                   WHEN Zustandsklasse_B = '1_isy'  THEN 4
+                                   WHEN Zustandsklasse_B = '0_isy'  THEN 5
+                                   ELSE Zustandsklasse_B
+                                   END)
+                                   WHERE untersuchdat_anschlussleitung_bewertung.pk = ? ;"""
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
+            sql = """UPDATE untersuchdat_anschlussleitung_bewertung
+                                               SET Zustandsklasse_D = (Case 
+                                               WHEN Zustandsklasse_D = '5_isy'  THEN 0
+                                               WHEN Zustandsklasse_D = '4_isy'  THEN 1
+                                               WHEN Zustandsklasse_D = '3_isy'  THEN 2
+                                               WHEN Zustandsklasse_D = '2_isy'  THEN 3
+                                               WHEN Zustandsklasse_D = '1_isy'  THEN 4
+                                               WHEN Zustandsklasse_D = '0_isy'  THEN 5
+                                               ELSE Zustandsklasse_D
+                                               END)
+                                               WHERE untersuchdat_anschlussleitung_bewertung.pk = ? ;"""
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
+
+
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        data = (crs,)
+        try:
+            curs.execute(sql, data)
+            db.commit()
+        except:
+            pass
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'untersuchdat_anschlussleitung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        untersuchdat_anschlussleitung_bewertung = 'untersuchdat_anschlussleitung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_anschlussleitung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_anschlussleitung_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/untersuchdat_haltung_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db_x)
+        schema = ''
+        table = 'anschlussleitungen_untersucht_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        anschlussleitungen_untersucht_bewertung = 'anschlussleitungen_untersucht_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), anschlussleitungen_untersucht_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(anschlussleitungen_untersucht_bewertung)[0].id())
         except:
             pass
 
@@ -19504,4 +28293,3 @@ class Zustandsklassen_funkt:
         x = os.path.dirname(os.path.abspath(__file__))
         vlayer.loadNamedStyle(x + '/schaechte_untersucht_bewertung_dwa.qml')
         QgsProject.instance().addMapLayer(vlayer)
-

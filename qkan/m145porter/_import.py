@@ -28,6 +28,7 @@ class Schacht(ClassObject):
     deckelhoehe: float = 0.0
     durchm: float = 0.0
     druckdicht: int = 0
+    baujahr: int = 0
     entwart: str = ""
     strasse: str = ""
     knotentyp: str = ""
@@ -81,6 +82,8 @@ class Untersuchdat_schacht(ClassObject):
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
     ordner: str = ""
+    film_dateiname: str = ""
+    ordner_video: str = ""
     ZD: int = 63
     ZB: int = 63
     ZS: int = 63
@@ -97,6 +100,7 @@ class Haltung(ClassObject):
     profilnam: str = ""
     entwart: str = ""
     material: str = ""
+    baujahr: int = 0
     strasse: str = ""
     ks: float = 1.5
     simstatus: int = 0
@@ -181,6 +185,7 @@ class Anschlussleitung(ClassObject):
     profilnam: str = ""
     entwart: str = ""
     material: str = ""
+    baujahr: int = 0
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
@@ -585,6 +590,7 @@ class ImportTask:
                 #TODO: Knoten und Schachttyp raussuchen
                 knoten_typ = 'Normalschacht'
                 schachttyp = 'Schacht'
+                baujahr = _strip_int(block.findtext("d:BW3502", 0, self.NS))
                 #schacht_typ = block.findtext("d:KG305",None, self.NS)
 
                 material = _strip_int(block.findtext("d:BW1631", 0, self.NS))
@@ -613,6 +619,7 @@ class ImportTask:
                     simstatus=_strip_int(block.findtext("d:BW1010", "0", self.NS)),
                     kommentar=block.findtext("d:BW8501", "-", self.NS),
                     material = material,
+                    baujahr=baujahr,
                     xsch=xsch,
                     ysch=ysch,
                 )
@@ -663,7 +670,7 @@ class ImportTask:
 
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe, 'knotentyp': schacht.knotentyp,
-                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart, 'strasse': schacht.strasse,
+                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': entwart, 'strasse': schacht.strasse, 'baujahr': schacht.baujahr,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'material': schacht.material, 'schachttyp': schacht.schachttyp,
                       'epsg': QKan.config.epsg}
 
@@ -858,6 +865,7 @@ class ImportTask:
             blocks = self.xml.findall("d:BW/d:IN/d:FS/..", self.NS)
 
             ordner = self.ordner_bild
+            ordner_video = self.ordner_video
 
             logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(blocks)}")
 
@@ -907,6 +915,7 @@ class ImportTask:
                     #vertikale_lage = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
                     bereich = _untersuchdat_schacht.findtext("d:FS0012", None, self.NS)
                     foto_dateiname = _untersuchdat_schacht.findtext("d:FO/FO0001", None, self.NS)
+                    film_datainame = _untersuchdat_schacht.findtext("d:FI/FI0001", None, self.NS)
 
                     ZD = _strip_int(_untersuchdat_schacht.findtext("d:FS1002", 63, self.NS))
                     ZB = _strip_int(_untersuchdat_schacht.findtext("d:FS1004", 63, self.NS))
@@ -932,6 +941,8 @@ class ImportTask:
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
                     ordner = ordner,
+                    film_datainame=film_datainame,
+                    ordner_video = ordner_video,
                     ZD=ZD,
                     ZB=ZB,
                     ZS=ZS,
@@ -949,6 +960,7 @@ class ImportTask:
                       'pos_bis': untersuchdat_schacht.pos_bis, 'vertikale_lage': untersuchdat_schacht.vertikale_lage,
                       'inspektionslage': untersuchdat_schacht.inspektionslaenge, 'bereich': untersuchdat_schacht.bereich,
                       'foto_dateiname': untersuchdat_schacht.foto_dateiname, 'ordner': untersuchdat_schacht.ordner,
+                      'film_dateiname': untersuchdat_schacht.film_dateiname, 'ordner_video': untersuchdat_schacht.ordner_video,
                       'ZD': untersuchdat_schacht.ZD, 'ZB': untersuchdat_schacht.ZB, 'ZS': untersuchdat_schacht.ZS, 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
@@ -1219,6 +1231,7 @@ class ImportTask:
                 laenge = _strip_float(block.findtext("d:HG2002", 0.0, self.NS))
 
                 material = block.findtext("d:HG3501", None, self.NS)
+                baujahr = _strip_int(block.findtext("d:HG3502", None, self.NS))
 
                 profilauskleidung = block.findtext("d:HG3505", None, self.NS)
                 innenmaterial = block.findtext("d:HG3506", None, self.NS)
@@ -1244,6 +1257,7 @@ class ImportTask:
                     breite=breite,
                     laenge=laenge,
                     material=material,
+                    baujahr=baujahr,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     profilnam=profilnam,
@@ -1299,7 +1313,7 @@ class ImportTask:
 
             params = {'haltnam': haltung.haltnam, 'schoben': haltung.schoben, 'schunten': haltung.schunten, 'hoehe': haltung.hoehe,
                       'breite': haltung.breite, 'laenge': haltung.laenge, 'material': haltung.material, 'profilauskleidung': haltung.profilauskleidung,
-                      'innenmaterial': haltung.innenmaterial, 'sohleoben': haltung.sohleoben,
+                      'innenmaterial': haltung.innenmaterial, 'sohleoben': haltung.sohleoben, 'baujahr': haltung.baujahr,
                       'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 
@@ -1799,6 +1813,8 @@ class ImportTask:
                 schoben = block.findtext("d:AN0036", None, self.NS)
                 #schunten = block.findtext("HG004", None)
 
+                baujahr = _strip_int(block.findtext("d:AN3502", 0))
+
                 #laenge = _strip_float(block.findtext("HG310", 0.0))
 
                 #material = block.findtext("HG304", None)
@@ -1825,6 +1841,7 @@ class ImportTask:
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
+                    baujahr=baujahr,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     deckeloben=deckeloben,
@@ -1864,48 +1881,10 @@ class ImportTask:
                 ):
                     return None
 
-            # sql = f"""
-            #     INSERT INTO anschlussleitungen
-            #         (leitnam, schoben, schunten,
-            #         hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten,
-            #         profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
-            #     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
-            #     """
-            #
-            # if not self.db_qkan.sql(
-            #     sql,
-            #     "xml_import anschlussleitung [3]",
-            #     parameters=(
-            #         anschlussleitung.leitnam,
-            #         anschlussleitung.schoben,
-            #         anschlussleitung.schunten,
-            #         anschlussleitung.hoehe,
-            #         anschlussleitung.breite,
-            #         anschlussleitung.laenge,
-            #         anschlussleitung.material,
-            #         anschlussleitung.sohleoben,
-            #         anschlussleitung.sohleunten,
-            #         anschlussleitung.deckeloben,
-            #         anschlussleitung.deckelunten,
-            #         anschlussleitung.profilnam,
-            #         entwart,
-            #         anschlussleitung.ks,
-            #         simstatus,
-            #         anschlussleitung.kommentar,
-            #         anschlussleitung.xschob,
-            #         anschlussleitung.xschun,
-            #         anschlussleitung.yschob,
-            #         anschlussleitung.yschun,
-            #         anschlussleitung.xschob, anschlussleitung.yschob, QKan.config.epsg,
-            #         anschlussleitung.xschun, anschlussleitung.yschun, QKan.config.epsg,
-            #     ),
-            # ):
-            #     return None
-
             params = {'leitnam': anschlussleitung.leitnam,
                       'schoben': anschlussleitung.schoben, 'schunten': anschlussleitung.schunten,
                       'hoehe': anschlussleitung.hoehe, 'breite': anschlussleitung.breite,
-                      'laenge': anschlussleitung.laenge,
+                      'laenge': anschlussleitung.laenge, 'baujahr': anschlussleitung.baujahr,
                       'sohleoben': anschlussleitung.sohleoben, 'sohleunten': anschlussleitung.sohleunten,
                       'deckeloben': anschlussleitung.deckeloben, 'deckelunten': anschlussleitung.deckelunten,
                       'profilnam': anschlussleitung.profilnam, 'entwart': entwart,
@@ -2032,6 +2011,8 @@ class ImportTask:
 
                 npt+=1
             self.db_qkan.commit()
+
+    #TODO: Inspektionsdaten der Anschlussleitungen ergänzen
 
     def _pumpen(self) -> None:
 

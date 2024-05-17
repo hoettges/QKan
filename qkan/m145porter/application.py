@@ -29,7 +29,7 @@ class M145Porter(QKanPlugin):
         icon_import = ":/plugins/qkan/m145porter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import aus DWA-XML"),
+            text=self.tr("Import aus DWA-145-XML"),
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )

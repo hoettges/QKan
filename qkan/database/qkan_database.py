@@ -151,6 +151,7 @@ def createdbtables(
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
             objekt_id INTEGER,
+            baujahr INT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (m)
@@ -279,7 +280,6 @@ def createdbtables(
             film_dateiname TEXT,
             ordner_bild TEXT,
             ordner_video TEXT,
-            richtung TEXT,
             filmtyp INTEGER,
             video_start INTEGER,
             video_ende INTEGER,
@@ -316,10 +316,9 @@ def createdbtables(
             hoehe REAL,                                     -- Profilhoehe (m)
             breite REAL,                                    -- Profilbreite (m)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
+            aussendurchmesser REAL,
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
-            deckeloben REAL,
-            deckelunten REAL,
             baujahr INTEGER,
             haltnam TEXT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
@@ -474,6 +473,7 @@ def createdbtables(
             ueberstauflaeche REAL DEFAULT 0,
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
+            baujahr INTEGER,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             knotentyp TEXT,                                 -- join knotentypen.knotentyp
             auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
@@ -595,6 +595,8 @@ def createdbtables(
             bereich TEXT,
             foto_dateiname TEXT,
             ordner TEXT,
+            film_dateiname TEXT,
+            ordner_video TEXT,
             ZD INTEGER,
             ZB INTEGER,
             ZS INTEGER,
