@@ -771,12 +771,13 @@ class DBConnection:
                 SELECT
                   :schnam,
                   CASE WHEN :durchm > 200 THEN :durchm/1000 ELSE :durchm END, 
-                  :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
-                  sch.geop,
+                  :kommentar,
+                  coalesce(:createdat, CURRENT_TIMESTAMP),
+                  :baujahr,
                   coalesce(
-                    MakePoint(:xschob, :yschob, :epsg),
+                    MakePoint(:xsch, :ysch, :epsg),
                     sch.geop
-                  )
+                  ),
                   :untersuchtag, :untersucher, 
                   :wetter, :strasse, :bewertungsart, 
                   :bewertungstag, :datenart, 

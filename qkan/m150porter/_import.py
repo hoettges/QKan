@@ -672,7 +672,7 @@ class ImportTask:
                     tabnam="schaechte",
                     stmt_category='m150-import schaechte',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -772,23 +772,6 @@ class ImportTask:
 
         for schacht_untersucht in _iter():
 
-            # sql = f"""
-            # INSERT INTO schaechte_untersucht (schnam, strasse, durchm, kommentar, geop)
-            # VALUES (?, ?, ?, ?, MakePoint(?, ?, ?))
-            # """
-            # if not self.db_qkan.sql(
-            #     sql,
-            #     "xml_import Schächte_untersucht [1]",
-            #     parameters=(
-            #         schacht_untersucht.schnam,
-            #         schacht_untersucht.strasse,
-            #         schacht_untersucht.durchm,
-            #         schacht_untersucht.kommentar,
-            #         schacht_untersucht.xsch, schacht_untersucht.ysch, QKan.config.epsg,
-            #     ),
-            # ):
-            #     return None
-
             params = {'schnam': schacht_untersucht.schnam, 'xsch': schacht_untersucht.xsch, 'ysch': schacht_untersucht.ysch,
                       'durchm': schacht_untersucht.durchm, 'kommentar': schacht_untersucht.kommentar, 'epsg': QKan.config.epsg}
 
@@ -799,7 +782,7 @@ class ImportTask:
                     tabnam="schaechte_untersucht",
                     stmt_category='m150-import schachte_untersucht',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -955,7 +938,7 @@ class ImportTask:
                     tabnam="untersuchdat_schacht",
                     stmt_category='m150-import untersuchdat_schacht',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -1075,7 +1058,7 @@ class ImportTask:
                     tabnam="schaechte",
                     stmt_category='m150-import auslaesse',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -1402,7 +1385,7 @@ class ImportTask:
                     tabnam="haltungen",
                     stmt_category='m150-import haltungen',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -1539,18 +1522,6 @@ class ImportTask:
             blocks = self.xml.findall("HG/HI/..")
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
-
-            schoben, schunten, profilnam = ("",) * 3
-            (
-                sohleoben,
-                sohleunten,
-                laenge,
-                hoehe,
-                breite,
-                deckeloben,
-                deckelunten,
-            ) = (0.0,) * 7
-
             for block in blocks:
                 name = block.findtext("HG001", None)
                 baujahr = _strip_int(block.findtext("HG303", 0))
@@ -1568,6 +1539,9 @@ class ImportTask:
                     _strip_float(block.findtext("HG306", 0.0))
                     / 1000
                 )
+
+                strasse = block.findtext("HG102", None)
+                kommentar = block.findtext("HG999", "-")
 
                 _gp = block.find("GO/GP[1]")
                 wert = _gp.findtext("GP003")
@@ -1593,83 +1567,41 @@ class ImportTask:
                 yschun = _strip_float(wert)
                 deckelunten = _strip_float(_gp.findtext("GP007", 0.0))
 
+                _haltung = block.find("HI")
+                if _haltung:
+                    untersuchtag = _haltung.findtext("HI104", None)
+                    untersucher = _haltung.findtext("HI112", None)
+                    wetter = _strip_int(_haltung.findtext("HI106", 0))
+                    bewertungsart = _haltung.findtext("HI005")
+                    bewertungstag = _haltung.findtext("HI204", None)
+                    max_ZD = _strip_int(_haltung.findtext("HI206", 63))
+                    max_ZB = _strip_int(_haltung.findtext("HI208", 63))
+                    max_ZS = _strip_int(_haltung.findtext("HI207", 63))
+                else:
+                    untersuchtag = None
+                    untersucher = None
+                    wetter = 0
+                    bewertungsart = None
+                    bewertungstag = None
+                    max_ZD = 63
+                    max_ZB = 63
+                    max_ZS = 63
+                datenart = self.datenart
+
                 yield Haltung_untersucht(
                     haltnam=name,
-                    strasse=block.findtext("HG102", None),
+                    strasse=strasse,
                     schoben=schoben,
                     schunten=schunten,
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
-                    kommentar=block.findtext("HG999", "-"),
+                    kommentar=kommentar,
                     baujahr=baujahr,
                     xschob=xschob,
                     yschob=yschob,
                     xschun=xschun,
                     yschun=yschun,
-                )
-
-        # def _iter2() -> Iterator[Haltung_untersucht]:
-        #     blocks = self.xml.findall(
-        #         "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-        #         "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
-        #         self.NS,
-        #     )
-        #     logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
-        #
-        #     laenge = 0.0
-        #     for block in blocks:
-        #         name = block.findtext("HG001", None)
-        #
-        #         # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
-        #         # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
-        #         for _haltung in block.findall("d:Haltung", self.NS):
-        #
-        #             laenge = _strip_float(
-        #                 _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
-        #             )
-        #
-        #         yield Haltung_untersucht(
-        #             haltnam=name,
-        #             laenge=laenge,
-        #         )
-
-        def _iter3() -> Iterator[Haltung_untersucht]:
-            blocks = self.xml.findall("HG/HI/..")
-            logger.debug(f"Anzahl Haltungen: {len(blocks)}")
-
-            untersuchtag = ""
-            untersucher = ""
-            wetter = 0
-            bewertungsart = ""
-            bewertungstag = ""
-            datenart = self.datenart
-            max_ZD = 63
-            max_ZB = 63
-            max_ZS = 63
-
-
-            for block in blocks:
-                name = block.findtext("HG001", None)
-
-                for _haltung in block.findall("HI"):
-
-                    untersuchtag = _haltung.findtext("HI104", None)
-
-                    untersucher = _haltung.findtext("HI112", None)
-
-                    wetter = _strip_int(_haltung.findtext("HI106", 0))
-
-                    bewertungsart = _haltung.findtext("HI005")
-
-                    bewertungstag = _haltung.findtext("HI204", None)
-
-                    max_ZD = _strip_int(_haltung.findtext("HI206", 63))
-                    max_ZB = _strip_int(_haltung.findtext("HI208", 63))
-                    max_ZS = _strip_int(_haltung.findtext("HI207", 63))
-
-                yield Haltung_untersucht(
-                    haltnam=name,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
@@ -1681,72 +1613,25 @@ class ImportTask:
                     max_ZS=max_ZS,
                 )
 
-        # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
         for haltung_untersucht in _iter():
-
-            # sql = f"""
-            #     INSERT INTO haltungen_untersucht
-            #         (haltnam, schoben, schunten,
-            #         hoehe, breite, laenge, kommentar,baujahr, strasse, xschob, yschob, xschun, yschun, geom)
-            #     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
-            #     """
-            #
-            # if not self.db_qkan.sql(
-            #     sql,
-            #     "xml_import Haltungen_untersucht [1]",
-            #     parameters=(
-            #         haltung_untersucht.haltnam,
-            #         haltung_untersucht.schoben,
-            #         haltung_untersucht.schunten,
-            #         haltung_untersucht.hoehe,
-            #         haltung_untersucht.breite,
-            #         haltung_untersucht.laenge,
-            #         haltung_untersucht.kommentar,
-            #         haltung_untersucht.baujahr,
-            #         haltung_untersucht.strasse,
-            #         haltung_untersucht.xschob,
-            #         haltung_untersucht.yschob,
-            #         haltung_untersucht.xschun,
-            #         haltung_untersucht.yschun,
-            #         haltung_untersucht.xschob, haltung_untersucht.yschob, QKan.config.epsg,
-            #         haltung_untersucht.xschun, haltung_untersucht.yschun, QKan.config.epsg,
-            #     ),
-            # ):
-            #     return None
 
             params = {'haltnam': haltung_untersucht.haltnam, 'schoben': haltung_untersucht.schoben,
                       'schunten': haltung_untersucht.schunten, 'hoehe': haltung_untersucht.hoehe,
                       'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
                       'kommentar': haltung_untersucht.kommentar, 'baujahr': haltung_untersucht.baujahr,
                       'strasse': haltung_untersucht.strasse, 'xschob': haltung_untersucht.xschob,
-                      'yschob': haltung_untersucht.yschob, 'xschub': haltung_untersucht.xschun,
-                      'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg}
+                      'yschob': haltung_untersucht.yschob, 'xschun': haltung_untersucht.xschun,
+                      'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg,
+                      'untersuchtag': haltung_untersucht.untersuchtag,
+                      'untersucher': haltung_untersucht.untersucher, 'wetter': haltung_untersucht.wetter,
+                      'bewertungsart': haltung_untersucht.bewertungsart, 'bewertungstag': haltung_untersucht.bewertungstag,
+                      'datenart': haltung_untersucht.datenart, 'max_ZD': haltung_untersucht.max_ZD,
+                      'max_ZB': haltung_untersucht.max_ZB, 'max_ZS': haltung_untersucht.max_ZS,
+            }
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
             #              f'params: {params}')
 
-            if not self.db_qkan.insertdata(
-                    tabnam="haltungen_untersucht",
-                    stmt_category='m150-import haltungen_untersucht',
-                    mute_logger=False,
-                    params=params,
-            ):
-                return
-
-        self.db_qkan.commit()
-
-        # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
-        # for haltung_untersucht in _iter2():
-        #     if not self.db_qkan.sql(
-        #         "UPDATE haltungen_untersucht SET laenge = ? WHERE haltnam = ?",
-        #         "xml_import Haltungen_untersucht [2]",
-        #         parameters=( haltung_untersucht.laenge, haltung_untersucht.haltnam),
-        #     ):
-        #         return None
-        #
-        # self.db_qkan.commit()
-
-        for haltung_untersucht in _iter3():
             if haltung_untersucht.wetter in self.mapper_wetter:
                 wetter = self.mapper_wetter[haltung_untersucht.wetter]
             else:
@@ -1762,31 +1647,16 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
                     return None
 
-            # if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
-            #     bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
-            # else:
-            #     sql = """
-            #                INSERT INTO bewertungsart (kuerzel, bezeichnung)
-            #                VALUES ('{e}', '{e}')
-            #                """.format(
-            #         e=haltung_untersucht.bewertungsart
-            #     )
-            #     self.mapper_bewertungsart[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
-            bewertungsart = haltung_untersucht.bewertungsart
-            #
-            #     if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
-            #         return None
-
-            if not self.db_qkan.sql(
-                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE haltnam = ?",
-                "xml_import Haltungen_untersucht [5]",
-                parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
-                            haltung_untersucht.datenart,haltung_untersucht.max_ZD, haltung_untersucht.max_ZB, haltung_untersucht.max_ZS, haltung_untersucht.haltnam),
+            if not self.db_qkan.insertdata(
+                    tabnam="haltungen_untersucht",
+                    stmt_category='m150-import haltungen_untersucht',
+                    mute_logger=False,
+                    parameters=params,
             ):
-                return None
+                return
 
         self.db_qkan.commit()
+
 
     def _untersuchdat_haltung(self) -> None:
         def _iter() -> Iterator[Untersuchdat_haltung]:
@@ -1944,7 +1814,7 @@ class ImportTask:
                     tabnam="untersuchdat_haltung",
                     stmt_category='m150-import untersuchdat_haltung',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -2137,7 +2007,7 @@ class ImportTask:
                     tabnam="anschlussleitungen",
                     stmt_category='m150-import anschlussleitung',
                     mute_logger=False,
-                    params=params,
+                    parameters=params,
             ):
                 return
 
@@ -2433,7 +2303,7 @@ class ImportTask:
                 tabnam="haltungen",
                 stmt_category='m150-import pumpen',
                 mute_logger=False,
-                params=params,
+                parameters=params,
             ):
                 return
 
