@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Import aus DWA-XML</string>
+   <string>Import aus DWA-145-XML</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -160,7 +160,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QgsProjectionSelectionWidget" name="epsg"/>
+            <widget class="QgsProjectionSelectionWidget" name="epsg" native="true"/>
            </item>
           </layout>
          </widget>

@@ -47,6 +47,11 @@ class SubkansDialog(_Dialog, SUBKANS_CLASS):  # type: ignore
     checkBox_3: QCheckBox
     checkBox_4: QCheckBox
     checkBox_5: QCheckBox
+    checkBox: QCheckBox
+    checkBox_6: QCheckBox
+    checkBox_7: QCheckBox
+    checkBox_8: QCheckBox
+    checkBox_9: QCheckBox
 
 
     def __init__(

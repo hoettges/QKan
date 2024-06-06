@@ -141,7 +141,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_haltung_bewertung.pos_bis,
                     untersuchdat_haltung_bewertung.foto_dateiname,
                     untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.objekt_id,
                     untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
                     haltungen.material,
@@ -176,7 +176,7 @@ class Zustandsklassen_funkt:
                         untersuchdat_haltung_bewertung.pos_bis,
                         untersuchdat_haltung_bewertung.foto_dateiname,
                         untersuchdat_haltung_bewertung.film_dateiname,
-                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.objekt_id,
                         untersuchdat_haltung_bewertung.createdat,
                         anschlussleitungen.leitnam,
                         anschlussleitungen.material,
@@ -1303,7 +1303,7 @@ class Zustandsklassen_funkt:
                         untersuchdat_anschlussleitung_bewertung.pos_bis,
                         untersuchdat_anschlussleitung_bewertung.foto_dateiname,
                         untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                        untersuchdat_anschlussleitung_bewertung.richtung,
+                        untersuchdat_anschlussleitung_bewertung.baujahr,
                         untersuchdat_anschlussleitung_bewertung.createdat,
                         anschlussleitungen.leitnam,
                         anschlussleitungen.material,
@@ -3514,7 +3514,7 @@ class Zustandsklassen_funkt:
                             untersuchdat_haltung_bewertung.pos_bis,
                             untersuchdat_haltung_bewertung.foto_dateiname,
                             untersuchdat_haltung_bewertung.film_dateiname,
-                            untersuchdat_haltung_bewertung.richtung,
+                            untersuchdat_haltung_bewertung.objekt_id,
                             untersuchdat_haltung_bewertung.bw_bs,
                             untersuchdat_haltung_bewertung.createdat,
                             haltungen.haltnam,
@@ -3551,7 +3551,7 @@ class Zustandsklassen_funkt:
                             untersuchdat_haltung_bewertung.pos_bis,
                             untersuchdat_haltung_bewertung.foto_dateiname,
                             untersuchdat_haltung_bewertung.film_dateiname,
-                            untersuchdat_haltung_bewertung.richtung,
+                            untersuchdat_haltung_bewertung.objekt_id,
                             untersuchdat_haltung_bewertung.bw_bs,
                             untersuchdat_haltung_bewertung.createdat,
                             anschlussleitungen.leitnam,
@@ -3726,7 +3726,7 @@ class Zustandsklassen_funkt:
                             untersuchdat_anschlussleitung_bewertung.pos_bis,
                             untersuchdat_anschlussleitung_bewertung.foto_dateiname,
                             untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                            untersuchdat_anschlussleitung_bewertung.richtung,
+                            untersuchdat_anschlussleitung_bewertung.baujahr,
                             untersuchdat_anschlussleitung_bewertung.bw_bs,
                             untersuchdat_anschlussleitung_bewertung.createdat,
                             anschlussleitungen.leitnam,
@@ -4147,7 +4147,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_haltung_bewertung.pos_bis,
                     untersuchdat_haltung_bewertung.foto_dateiname,
                     untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.objekt_id,
                     untersuchdat_haltung_bewertung.bw_bs,
                     untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
@@ -4184,7 +4184,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_haltung_bewertung.pos_bis,
                     untersuchdat_haltung_bewertung.foto_dateiname,
                     untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.objekt_id,
                     untersuchdat_haltung_bewertung.bw_bs,
                     untersuchdat_haltung_bewertung.createdat,
                     anschlussleitungen.leitnam,
@@ -4379,7 +4379,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] <= 0.3:
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25]/1000 <= 0.3:
                 if attr[13] >= 3:
                     z = '0'
                 elif 3 > attr[13] >= 2:
@@ -4402,7 +4402,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.5 >= attr[25] > 0.3:
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.5 >= attr[25]/1000 > 0.3:
                 if attr[13] >= 5:
                     z = '0'
                 elif 5 > attr[13] >= 3:
@@ -4427,7 +4427,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.7 >= attr[25] > 0.5:
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.7 >= attr[25]/1000 > 0.5:
                 if attr[13] >= 8:
                     z = '0'
                 elif 8 > attr[13] >= 4:
@@ -5112,7 +5112,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAG":
-                if attr[25] <= 0.25:
+                if attr[25]/1000 <= 0.25:
                     if attr[13] >= 50:
                         z = '0'
                     elif 50 > attr[13] >= 30:
@@ -5125,7 +5125,7 @@ class Zustandsklassen_funkt:
                         z = '4'
                     else:
                         z = '5'
-                if 0.25 < attr[25] <= 0.5:
+                if 0.25 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 80:
                         z = '0'
                     elif 80 > attr[13] >= 60:
@@ -5138,7 +5138,7 @@ class Zustandsklassen_funkt:
                         z = '4'
                     else:
                         z = '5'
-                if 0.5 < attr[25] <= 0.8:
+                if 0.5 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 70:
                         z = '2'
                     elif 70 > attr[13] >= 10:
@@ -5147,7 +5147,7 @@ class Zustandsklassen_funkt:
                         z = '4'
                     else:
                         z = '5'
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 30:
                         z = '3'
                     elif attr[13] < 30:
@@ -5297,7 +5297,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "A":
-                if attr[25] <= 0.4:
+                if attr[25]/1000 <= 0.4:
                     if attr[13] >= 70:
                         z = '0'
                     elif 70 > attr[13] >= 50:
@@ -5321,7 +5321,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.4 < attr[25] <= 0.8:
+                if 0.4 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 80:
                         z = '0'
                     elif 80 > attr[13] >= 60:
@@ -5345,7 +5345,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 90:
                         z = '0'
                     elif 90 > attr[13] >= 65:
@@ -5432,7 +5432,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "C":
-                if attr[25] <= 0.2:
+                if attr[25]/1000 <= 0.2:
                     if attr[13] >= 12:
                         z = '0'
                     elif 12 > attr[13] >= 9:
@@ -5456,7 +5456,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.2 < attr[25] <= 0.5:
+                if 0.2 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 6:
                         z = '0'
                     elif 6 > attr[13] >= 4:
@@ -5480,7 +5480,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.5:
+                if attr[25]/1000 > 0.5:
                     if attr[13] >= 6:
                         z = '0'
                     elif 6 > attr[13] >= 4:
@@ -6942,7 +6942,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_anschlussleitung_bewertung.pos_bis,
                     untersuchdat_anschlussleitung_bewertung.foto_dateiname,
                     untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                    untersuchdat_anschlussleitung_bewertung.richtung,
+                    untersuchdat_anschlussleitung_bewertung.baujahr,
                     untersuchdat_anschlussleitung_bewertung.bw_bs,
                     untersuchdat_anschlussleitung_bewertung.createdat,
                     anschlussleitungen.leitnam,
@@ -7137,7 +7137,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25] <= 0.3:
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and attr[25]/1000 <= 0.3:
                 if attr[13] >= 3:
                     z = '0'
                 elif 3 > attr[13] >= 2:
@@ -7160,7 +7160,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.5 >= attr[25] > 0.3:
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.5 >= attr[25]/1000 > 0.3:
                 if attr[13] >= 5:
                     z = '0'
                 elif 5 > attr[13] >= 3:
@@ -7185,7 +7185,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.7 >= attr[25] > 0.5:
+            if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "A" and 0.7 >= attr[25]/1000 > 0.5:
                 if attr[13] >= 8:
                     z = '0'
                 elif 8 > attr[13] >= 4:
@@ -7870,7 +7870,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAG":
-                if attr[25] <= 0.25:
+                if attr[25]/1000 <= 0.25:
                     if attr[13] >= 50:
                         z = '0'
                     elif 50 > attr[13] >= 30:
@@ -7883,7 +7883,7 @@ class Zustandsklassen_funkt:
                         z = '4'
                     else:
                         z = '5'
-                if 0.25 < attr[25] <= 0.5:
+                if 0.25 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 80:
                         z = '0'
                     elif 80 > attr[13] >= 60:
@@ -7896,7 +7896,7 @@ class Zustandsklassen_funkt:
                         z = '4'
                     else:
                         z = '5'
-                if 0.5 < attr[25] <= 0.8:
+                if 0.5 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 70:
                         z = '2'
                     elif 70 > attr[13] >= 10:
@@ -7905,7 +7905,7 @@ class Zustandsklassen_funkt:
                         z = '4'
                     else:
                         z = '5'
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 30:
                         z = '3'
                     elif attr[13] < 30:
@@ -8055,7 +8055,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "A":
-                if attr[25] <= 0.4:
+                if attr[25]/1000 <= 0.4:
                     if attr[13] >= 70:
                         z = '0'
                     elif 70 > attr[13] >= 50:
@@ -8079,7 +8079,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.4 < attr[25] <= 0.8:
+                if 0.4 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 80:
                         z = '0'
                     elif 80 > attr[13] >= 60:
@@ -8103,7 +8103,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 90:
                         z = '0'
                     elif 90 > attr[13] >= 65:
@@ -8190,7 +8190,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "C":
-                if attr[25] <= 0.2:
+                if attr[25]/1000 <= 0.2:
                     if attr[13] >= 12:
                         z = '0'
                     elif 12 > attr[13] >= 9:
@@ -8214,7 +8214,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.2 < attr[25] <= 0.5:
+                if 0.2 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 6:
                         z = '0'
                     elif 6 > attr[13] >= 4:
@@ -8238,7 +8238,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.5:
+                if attr[25]/1000 > 0.5:
                     if attr[13] >= 6:
                         z = '0'
                     elif 6 > attr[13] >= 4:
@@ -13001,7 +13001,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_haltung_bewertung.pos_bis,
                     untersuchdat_haltung_bewertung.foto_dateiname,
                     untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.objekt_id,
                     untersuchdat_haltung_bewertung.bw_bs,
                     untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
@@ -13037,7 +13037,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_haltung_bewertung.pos_bis,
                     untersuchdat_haltung_bewertung.foto_dateiname,
                     untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.objekt_id,
                     untersuchdat_haltung_bewertung.bw_bs,
                     untersuchdat_haltung_bewertung.createdat,
                     anschlussleitungen.leitnam,
@@ -13982,7 +13982,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[10] == "BAJ" and attr[11] == "A":
-                if attr[25] <= 0.4:
+                if attr[25]/1000 <= 0.4:
                     if attr[13] >= 70:
                         z = '5'
                     elif 70 > attr[13] >= 50:
@@ -14006,7 +14006,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.4 < attr[25] <= 0.8:
+                if 0.4 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 80:
                         z = '5'
                     elif 80 > attr[13] >= 60:
@@ -14030,7 +14030,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 90:
                         z = '5'
                     elif 90 > attr[13] >= 65:
@@ -14122,7 +14122,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "C":
-                if attr[25] <= 0.2:
+                if attr[25]/1000 <= 0.2:
                     if attr[13] >= 12:
                         z = '5'
                     elif 12 > attr[13] >= 9:
@@ -14146,7 +14146,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.2 < attr[25] <= 0.5:
+                if 0.2 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 6:
                         z = '5'
                     elif 6 > attr[13] >= 4:
@@ -14170,7 +14170,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.5:
+                if attr[25]/1000 > 0.5:
                     if attr[13] >= 6:
                         z = '5'
                     elif 6 > attr[13] >= 4:
@@ -15471,7 +15471,7 @@ class Zustandsklassen_funkt:
                     untersuchdat_anschlussleitung_bewertung.pos_bis,
                     untersuchdat_anschlussleitung_bewertung.foto_dateiname,
                     untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                    untersuchdat_anschlussleitung_bewertung.richtung,
+                    untersuchdat_anschlussleitung_bewertung.baujahr,
                     untersuchdat_anschlussleitung_bewertung.bw_bs,
                     untersuchdat_anschlussleitung_bewertung.createdat,
                     anschlussleitungen.leitnam,
@@ -16416,7 +16416,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[10] == "BAJ" and attr[11] == "A":
-                if attr[25] <= 0.4:
+                if attr[25]/1000 <= 0.4:
                     if attr[13] >= 70:
                         z = '5'
                     elif 70 > attr[13] >= 50:
@@ -16440,7 +16440,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.4 < attr[25] <= 0.8:
+                if 0.4 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 80:
                         z = '5'
                     elif 80 > attr[13] >= 60:
@@ -16464,7 +16464,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 90:
                         z = '5'
                     elif 90 > attr[13] >= 65:
@@ -16556,7 +16556,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "C":
-                if attr[25] <= 0.2:
+                if attr[25]/1000 <= 0.2:
                     if attr[13] >= 12:
                         z = '5'
                     elif 12 > attr[13] >= 9:
@@ -16580,7 +16580,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if 0.2 < attr[25] <= 0.5:
+                if 0.2 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 6:
                         z = '5'
                     elif 6 > attr[13] >= 4:
@@ -16604,7 +16604,7 @@ class Zustandsklassen_funkt:
                         #db.commit()
                     except:
                         pass
-                if attr[25] > 0.5:
+                if attr[25]/1000 > 0.5:
                     if attr[13] >= 6:
                         z = '5'
                     elif 6 > attr[13] >= 4:
@@ -20843,7 +20843,7 @@ class Zustandsklassen_funkt:
                         untersuchdat_haltung_bewertung.pos_bis,
                         untersuchdat_haltung_bewertung.foto_dateiname,
                         untersuchdat_haltung_bewertung.film_dateiname,
-                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.objekt_id,
                         untersuchdat_haltung_bewertung.bw_bs,
                         untersuchdat_haltung_bewertung.createdat,
                         haltungen.haltnam,
@@ -20887,7 +20887,7 @@ class Zustandsklassen_funkt:
                         untersuchdat_haltung_bewertung.pos_bis,
                         untersuchdat_haltung_bewertung.foto_dateiname,
                         untersuchdat_haltung_bewertung.film_dateiname,
-                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.objekt_id,
                         untersuchdat_haltung_bewertung.bw_bs,
                         untersuchdat_haltung_bewertung.createdat,
                         anschlussleitungen.leitnam,
@@ -21843,7 +21843,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[10] == "BAJ" and attr[11] == "A":
-                if attr[25] <= 0.4:
+                if attr[25]/1000 <= 0.4:
                     if attr[13] >= 70:
                         z = '5_isy'
                     elif 70 > attr[13] >= 50:
@@ -21867,7 +21867,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if 0.4 < attr[25] <= 0.8:
+                if 0.4 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 80:
                         z = '5_isy'
                     elif 80 > attr[13] >= 60:
@@ -21891,7 +21891,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 90:
                         z = '5_isy'
                     elif 90 > attr[13] >= 65:
@@ -21983,7 +21983,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "C":
-                if attr[25] <= 0.2:
+                if attr[25]/1000 <= 0.2:
                     if attr[13] >= 12:
                         z = '5_isy'
                     elif 12 > attr[13] >= 9:
@@ -22007,7 +22007,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if 0.2 < attr[25] <= 0.5:
+                if 0.2 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 6:
                         z = '5_isy'
                     elif 6 > attr[13] >= 4:
@@ -22031,7 +22031,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if attr[25] > 0.5:
+                if attr[25]/1000 > 0.5:
                     if attr[13] >= 6:
                         z = '5_isy'
                     elif 6 > attr[13] >= 4:
@@ -23184,7 +23184,7 @@ class Zustandsklassen_funkt:
                         untersuchdat_anschlussleitung_bewertung.pos_bis,
                         untersuchdat_anschlussleitung_bewertung.foto_dateiname,
                         untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                        untersuchdat_anschlussleitung_bewertung.richtung,
+                        untersuchdat_anschlussleitung_bewertung.baujahr,
                         untersuchdat_anschlussleitung_bewertung.bw_bs,
                         untersuchdat_anschlussleitung_bewertung.createdat,
                         anschlussleitungen.leitnam,
@@ -24140,7 +24140,7 @@ class Zustandsklassen_funkt:
                     except:
                         pass
             if attr[10] == "BAJ" and attr[11] == "A":
-                if attr[25] <= 0.4:
+                if attr[25]/1000 <= 0.4:
                     if attr[13] >= 70:
                         z = '5_isy'
                     elif 70 > attr[13] >= 50:
@@ -24164,7 +24164,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if 0.4 < attr[25] <= 0.8:
+                if 0.4 < attr[25]/1000 <= 0.8:
                     if attr[13] >= 80:
                         z = '5_isy'
                     elif 80 > attr[13] >= 60:
@@ -24188,7 +24188,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if attr[25] > 0.8:
+                if attr[25]/1000 > 0.8:
                     if attr[13] >= 90:
                         z = '5_isy'
                     elif 90 > attr[13] >= 65:
@@ -24280,7 +24280,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BAJ" and attr[11] == "C":
-                if attr[25] <= 0.2:
+                if attr[25]/1000 <= 0.2:
                     if attr[13] >= 12:
                         z = '5_isy'
                     elif 12 > attr[13] >= 9:
@@ -24304,7 +24304,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if 0.2 < attr[25] <= 0.5:
+                if 0.2 < attr[25]/1000 <= 0.5:
                     if attr[13] >= 6:
                         z = '5_isy'
                     elif 6 > attr[13] >= 4:
@@ -24328,7 +24328,7 @@ class Zustandsklassen_funkt:
                         # db.commit()
                     except:
                         pass
-                if attr[25] > 0.5:
+                if attr[25]/1000 > 0.5:
                     if attr[13] >= 6:
                         z = '5_isy'
                     elif 6 > attr[13] >= 4:
