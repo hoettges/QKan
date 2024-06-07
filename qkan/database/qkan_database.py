@@ -150,7 +150,6 @@ def createdbtables(
         """ CREATE TABLE haltungen (
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
-            objekt_id INTEGER,
             baujahr INT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
@@ -169,7 +168,6 @@ def createdbtables(
             innenmaterial TEXT,
             ks REAL DEFAULT 1.5,                            -- abs. Rauheit (Prandtl-Colebrook)
             haltungstyp TEXT DEFAULT 'Haltung',             -- join haltungstypen.bezeichnung
-            netztyp TEXT,
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             transport INTEGER DEFAULT 0,                    -- Transporthaltung?
             druckdicht INTEGER DEFAULT 0,                   -- Druckleitung?
@@ -331,7 +329,6 @@ def createdbtables(
             innenmaterial TEXT,
             ks REAL DEFAULT 1.5,
             anschlusstyp TEXT,
-            netztyp TEXT,
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             xschob REAL,
             yschob REAL,
@@ -470,7 +467,6 @@ def createdbtables(
             deckelhoehe REAL,
             durchm REAL,
             druckdicht INTEGER, 
-            bauwerkstyp TEXT,
             ueberstauflaeche REAL DEFAULT 0,
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
@@ -479,7 +475,6 @@ def createdbtables(
             knotentyp TEXT,                                 -- join knotentypen.knotentyp
             auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
             schachttyp TEXT DEFAULT 'Schacht',              -- join schachttypen.schachttyp
-            netztyp TEXT,
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             material TEXT,
             xsch REAL, 

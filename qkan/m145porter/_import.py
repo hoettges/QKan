@@ -33,7 +33,7 @@ class Schacht(ClassObject):
     strasse: str = ""
     knotentyp: str = ""
     schachttyp: str = ""
-    simstatus: int = 0
+    simstatus: str = ""
     kommentar: str = ""
     material: str= ""
     coord: str=""
@@ -46,7 +46,7 @@ class Schacht_untersucht(ClassObject):
     entwart: str = ""
     strasse: str = ""
     knotentyp: str = ""
-    simstatus: int = 0
+    simstatus: str = ""
     kommentar: str = ""
     baujahr: int = 0
     untersuchtag: str = ""
@@ -103,7 +103,7 @@ class Haltung(ClassObject):
     baujahr: int = 0
     strasse: str = ""
     ks: float = 1.5
-    simstatus: int = 0
+    simstatus: str = ""
     kommentar: str = ""
     aussendurchmesser: float = 0.0
     profilauskleidung: str = ""
@@ -187,7 +187,7 @@ class Anschlussleitung(ClassObject):
     material: str = ""
     baujahr: int = 0
     ks: float = 1.5
-    simstatus: int = 0
+    simstatus: str = ""
     kommentar: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
@@ -219,7 +219,7 @@ class Pumpe(ClassObject):
     steuersch: str = ""  # //HydraulikObjekt/Pumpe/Steuerschacht
     einschalthoehe: float = 0.0  # Nicht in ISYBAU gefunden, TODO: XSD prüfen
     ausschalthoehe: float = 0.0  # Nicht in ISYBAU gefunden, TODO: XSD prüfen
-    simstatus: int = 0
+    simstatus: str = ""
     kommentar: str = ""
     xsch: float = 0.0
     ysch: float = 0.0
@@ -243,7 +243,7 @@ def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
     else:
         return float(zahl) / 10.0 ** n
 
-def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
+def _get_float(value: Union[str, float], default: float = 0.0) -> float:
      if isinstance(value, float):
          return value
 
@@ -255,7 +255,7 @@ def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
 
      return default
 
-def _strip_int(value: Union[str, int], default: int = 0) -> int:
+def _get_int(value: Union[str, int], default: int = 0) -> int:
     if isinstance(value, int):
         return value
 
@@ -263,9 +263,9 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         try:
             return int(value)
         except ValueError:
-            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("_m145porter._import.py._get_int: %s" % sys.exc_info()[1])
         except Exception:
-            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            print("_m145porter._import.py._get_int: %s" % sys.exc_info()[1])
     return default
 
 
@@ -585,19 +585,20 @@ class ImportTask:
                 #name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
 
                 name = block.findtext("d:BW0001", None, self.NS)
-                id = _strip_int(block.findtext("d:BW0002", 0, self.NS))
+                id = _get_int(block.findtext("d:BW0002", 0, self.NS))
+                #TODO: netztyp in teilgebiet schreiben!
                 netz_typ = block.findtext("d:BW0004", 0, self.NS)
                 #TODO: Knoten und Schachttyp raussuchen
                 knoten_typ = 'Normalschacht'
                 schachttyp = 'Schacht'
-                baujahr = _strip_int(block.findtext("d:BW3502", 0, self.NS))
+                baujahr = _get_int(block.findtext("d:BW3502", 0, self.NS))
                 #schacht_typ = block.findtext("d:KG305",None, self.NS)
 
-                material = _strip_int(block.findtext("d:BW1631", 0, self.NS))
+                material = _get_int(block.findtext("d:BW1631", 0, self.NS))
 
-                sohlhoehe = _strip_float(block.findtext("d:BW2030", 0.0, self.NS))
+                sohlhoehe = _get_float(block.findtext("d:BW2030", 0.0, self.NS))
 
-                deckelhoehe = _strip_float(block.findtext("d:BW2023", 0.0, self.NS))
+                deckelhoehe = _get_float(block.findtext("d:BW2023", 0.0, self.NS))
 
                 coord = block.findtext("d:BW2501/{http://www.opengis.net/gml/3.2}pos", None, self.NS)
 
@@ -611,12 +612,11 @@ class ImportTask:
                     schnam=name,
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=deckelhoehe,
-                    durchm=_strip_float(block.findtext("d:BW1634", None, self.NS)),
+                    durchm=_get_float(block.findtext("d:BW1634", None, self.NS)),
                     entwart=block.findtext("d:BW1005", None, self.NS),
-                    netztyp = netz_typ,
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
-                    simstatus=_strip_int(block.findtext("d:BW1010", "0", self.NS)),
+                    simstatus=block.findtext("d:BW1010", None, self.NS),
                     kommentar=block.findtext("d:BW8501", "-", self.NS),
                     material = material,
                     baujahr=baujahr,
@@ -700,7 +700,7 @@ class ImportTask:
 
                 for _in in block.findall("d:IN/", self.NS):
 
-                    id = _strip_int(_in.findtext("d:IN0001", None, self.NS))
+                    id = _get_int(_in.findtext("d:IN0001", None, self.NS))
 
 
                     strasse = _in.findtext("d:KG102", None, self.NS)
@@ -716,13 +716,13 @@ class ImportTask:
                 #     wert = smp.findtext("GP003")
                 #     if wert is None:
                 #         wert = smp.findtext("GP005")
-                #     xsch = _strip_float(wert)
+                #     xsch = _get_float(wert)
                 #
                 #     wert = smp.findtext("GP004")
                 #     if wert is None:
                 #         wert = smp.findtext("GP006")
-                #     ysch = _strip_float(wert)
-                #     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+                #     ysch = _get_float(wert)
+                #     sohlhoehe = _get_float(smp.findtext("GP007", 0.0))
 
                 yield Schacht_untersucht(
                     name=name,
@@ -751,22 +751,22 @@ class ImportTask:
 
             for block in blocks:
                 #name = block.findtext("KG001", None)
-                objekt_id = _strip_int(block.findtext("d:IN0001", self.NS))
-                #baujahr = _strip_int(block.findtext("KG303"))
+
+                #baujahr = _get_int(block.findtext("KG303"))
 
                 untersuchtag = block.findtext("d:IN0002", None, self.NS)
 
                 untersucher = block.findtext("d:IN1001", None, self.NS)
 
-                wetter = _strip_int(block.findtext("d:IN0530", self.NS))
+                wetter = _get_int(block.findtext("d:IN0530", self.NS))
 
                 #bewertungsart = block.findtext("KI005")
 
                 bewertungstag = block.findtext("d:IN1000", None, self.NS)
 
-                max_ZD = _strip_int(block.findtext("d:IN1002", 63, self.NS))
-                max_ZB = _strip_int(block.findtext("d:IN1004", 63, self.NS))
-                max_ZS = _strip_int(block.findtext("d:IN1003", 63, self.NS))
+                max_ZD = _get_int(block.findtext("d:IN1002", 63, self.NS))
+                max_ZB = _get_int(block.findtext("d:IN1004", 63, self.NS))
+                max_ZS = _get_int(block.findtext("d:IN1003", 63, self.NS))
 
                 yield Schacht_untersucht(
                     untersuchtag=untersuchtag,
@@ -894,32 +894,32 @@ class ImportTask:
             for block in blocks:
 
                 #name = block.findtext("KG001", None)
-                objekt_id = _strip_int(block.findtext("d:IN0001", None, self.NS))
+
                 untersuchtag = block.findtext("d:IN0002", None, self.NS)
-                inspektionslaenge = _strip_float(block.findtext("d:IN0535", 0.0, self.NS))
+                inspektionslaenge = _get_float(block.findtext("d:IN0535", 0.0, self.NS))
 
                 for _untersuchdat_schacht in block.findall("FS"):
 
-                    id = _strip_int(_untersuchdat_schacht.findtext("d:FS0001", "0", self.NS))
+                    id = _get_int(_untersuchdat_schacht.findtext("d:FS0001", "0", self.NS))
                     videozaehler = _untersuchdat_schacht.findtext("d:FS0016", None, self.NS)
-                    #timecode = _strip_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
+                    #timecode = _get_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
                     kuerzel = _untersuchdat_schacht.findtext("d:FS0003", None, self.NS)
                     charakt1 = _untersuchdat_schacht.findtext("d:FS0004", None, self.NS)
                     charakt2 = _untersuchdat_schacht.findtext("d:FS0005", None, self.NS)
-                    quantnr1 = _strip_float(_untersuchdat_schacht.findtext("d:FS0007", 0.0, self.NS))
-                    quantnr2 = _strip_float(_untersuchdat_schacht.findtext("d:FS0008", 0.0, self.NS))
+                    quantnr1 = _get_float(_untersuchdat_schacht.findtext("d:FS0007", 0.0, self.NS))
+                    quantnr2 = _get_float(_untersuchdat_schacht.findtext("d:FS0008", 0.0, self.NS))
                     streckenschaden = _untersuchdat_schacht.findtext("d:FS0014", None, self.NS)
-                    streckenschaden_lfdnr = _strip_int(_untersuchdat_schacht.findtext("d:FS0015", "0", self.NS))
-                    pos_von = _strip_int(_untersuchdat_schacht.findtext("d:FS0009", 0, self.NS))
-                    pos_bis = _strip_int(_untersuchdat_schacht.findtext("d:FS0010", 0, self.NS))
-                    #vertikale_lage = _strip_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
+                    streckenschaden_lfdnr = _get_int(_untersuchdat_schacht.findtext("d:FS0015", "0", self.NS))
+                    pos_von = _get_int(_untersuchdat_schacht.findtext("d:FS0009", 0, self.NS))
+                    pos_bis = _get_int(_untersuchdat_schacht.findtext("d:FS0010", 0, self.NS))
+                    #vertikale_lage = _get_float(_untersuchdat_schacht.findtext("KZ001", 0.0))
                     bereich = _untersuchdat_schacht.findtext("d:FS0012", None, self.NS)
                     foto_dateiname = _untersuchdat_schacht.findtext("d:FO/FO0001", None, self.NS)
                     film_datainame = _untersuchdat_schacht.findtext("d:FI/FI0001", None, self.NS)
 
-                    ZD = _strip_int(_untersuchdat_schacht.findtext("d:FS1002", 63, self.NS))
-                    ZB = _strip_int(_untersuchdat_schacht.findtext("d:FS1004", 63, self.NS))
-                    ZS = _strip_int(_untersuchdat_schacht.findtext("d:FS1003", 63, self.NS))
+                    ZD = _get_int(_untersuchdat_schacht.findtext("d:FS1002", 63, self.NS))
+                    ZB = _get_int(_untersuchdat_schacht.findtext("d:FS1004", 63, self.NS))
+                    ZS = _get_int(_untersuchdat_schacht.findtext("d:FS1003", 63, self.NS))
 
 
                     yield Untersuchdat_schacht(
@@ -1002,17 +1002,17 @@ class ImportTask:
     #                 )
     #                 xsch, ysch, sohlhoehe = (0.0,) * 3
     #             else:
-    #                 xsch = _strip_float(smp.findtext("GP003", 0.0))
+    #                 xsch = _get_float(smp.findtext("GP003", 0.0))
     #                 if xsch == 0.0:
-    #                     xsch = _strip_float(smp.findtext("GP005", 0.0))
+    #                     xsch = _get_float(smp.findtext("GP005", 0.0))
     #                 else:
     #                     pass
-    #                 ysch = _strip_float(smp.findtext("GP004", 0.0))
+    #                 ysch = _get_float(smp.findtext("GP004", 0.0))
     #                 if ysch == 0.0:
-    #                     ysch = _strip_float(smp.findtext("GP006", 0.0))
+    #                     ysch = _get_float(smp.findtext("GP006", 0.0))
     #                 else:
     #                     pass
-    #                 sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+    #                 sohlhoehe = _get_float(smp.findtext("GP007", 0.0))
     #
     #             smpD = block.find("GO[GO002='D']/GP")
     #
@@ -1020,7 +1020,7 @@ class ImportTask:
     #                 deckelhoehe = 0.0
     #
     #             else:
-    #                 deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
+    #                 deckelhoehe = _get_float(smpD.findtext("GP007", 0.0))
     #
     #
     #             yield Schacht(
@@ -1029,11 +1029,11 @@ class ImportTask:
     #                 ysch=ysch,
     #                 sohlhoehe=sohlhoehe,
     #                 deckelhoehe=deckelhoehe,
-    #                 durchm=_strip_float(block.findtext("KG309", 0.0)),
+    #                 durchm=_get_float(block.findtext("KG309", 0.0)),
     #                 entwart=block.findtext("KG302", None),
     #                 strasse=block.findtext("KG102", None),
     #                 knotentyp=knoten_typ,
-    #                 simstatus=_strip_int(block.findtext("KG407", None)),
+    #                 simstatus=_get_int(block.findtext("KG407", None)),
     #                 kommentar=block.findtext("KG999", "-")
     #             )
     #
@@ -1112,7 +1112,7 @@ class ImportTask:
     #             name = block.findtext("d:Objektbezeichnung", None, self.NS)
     #
     #             for _schacht in block.findall("d:Knoten", self.NS):
-    #                 knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+    #                 knoten_typ = _get_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
     #
     #             smp = block.find(
     #                 "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
@@ -1126,11 +1126,11 @@ class ImportTask:
     #                 )
     #                 xsch, ysch, sohlhoehe = (0.0,) * 3
     #             else:
-    #                 xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
-    #                 ysch = _strip_float(
+    #                 xsch = _get_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
+    #                 ysch = _get_float(
     #                     smp.findtext("d:Hochwert", 0.0, self.NS),
     #                 )
-    #                 sohlhoehe = _strip_float(smp.findtext("d:Punkthoehe", 0.0, self.NS))
+    #                 sohlhoehe = _get_float(smp.findtext("d:Punkthoehe", 0.0, self.NS))
     #
     #             yield Schacht(
     #                 schnam=name,
@@ -1148,7 +1148,7 @@ class ImportTask:
     #                 durchm=0.5,
     #                 entwart="",
     #                 knotentyp=knoten_typ,
-    #                 simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+    #                 simstatus=_get_int(block.findtext("d:Status", 0, self.NS)),
     #                 kommentar=block.findtext("d:Kommentar", "-", self.NS),
     #             )
     #
@@ -1220,18 +1220,18 @@ class ImportTask:
                 # else:
 
                 name = block.findtext("d:HG0001", None, self.NS)
-                objekt_id = block.findtext("d:HG0002", None, self.NS)
+                #objekt_id = block.findtext("d:HG0002", None, self.NS)
 
                 schoben = block.findtext("d:HG0030", None, self.NS)
                 schunten = block.findtext("d:HG0032", None, self.NS)
 
-                sohleoben = _strip_float(block.findtext("d:HG2024", 0.0, self.NS))
-                sohleunten = _strip_float(block.findtext("d:HG2030", 0.0, self.NS))
+                sohleoben = _get_float(block.findtext("d:HG2024", 0.0, self.NS))
+                sohleunten = _get_float(block.findtext("d:HG2030", 0.0, self.NS))
 
-                laenge = _strip_float(block.findtext("d:HG2002", 0.0, self.NS))
+                laenge = _get_float(block.findtext("d:HG2002", 0.0, self.NS))
 
                 material = block.findtext("d:HG3501", None, self.NS)
-                baujahr = _strip_int(block.findtext("d:HG3502", None, self.NS))
+                baujahr = _get_int(block.findtext("d:HG3502", None, self.NS))
 
                 profilauskleidung = block.findtext("d:HG3505", None, self.NS)
                 innenmaterial = block.findtext("d:HG3506", None, self.NS)
@@ -1239,11 +1239,11 @@ class ImportTask:
 
                 profilnam = block.findtext("d:HG2005", None, self.NS)
                 hoehe = (
-                    _strip_float(block.findtext("d:HG2008", 0.0, self.NS))
+                    _get_float(block.findtext("d:HG2008", 0.0, self.NS))
                     / 1000
                 )
                 breite = (
-                    _strip_float(block.findtext("d:HG2007", 0.0, self.NS))
+                    _get_float(block.findtext("d:HG2007", 0.0, self.NS))
                     / 1000
                 )
 
@@ -1264,7 +1264,7 @@ class ImportTask:
                     entwart=block.findtext("d:HG1005", None, self.NS),
                     strasse=block.findtext("d:HG0510", None, self.NS),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=_strip_int(block.findtext("d:HG1010", 0, self.NS)),
+                    simstatus=block.findtext("d:HG1010", None, self.NS),
                     kommentar=block.findtext("d:HG8501", "-", self.NS),
                     profilauskleidung=profilauskleidung,
                     innenmaterial=innenmaterial,
@@ -1491,23 +1491,23 @@ class ImportTask:
                 #name = block.findtext("HG0001", None)
                 id = block.findtext("d:IN0001", None, self.NS)
 
-                untersuchtag = _strip_int(block.findtext("d:IN0002", None, self.NS))
+                untersuchtag = _get_int(block.findtext("d:IN0002", None, self.NS))
 
                 #strasse = block.findtext("HG102", None)
 
                 untersucher = block.findtext("d:IN1001", None, self.NS)
 
-                wetter = _strip_int(block.findtext("d:IN0530", 0, self.NS))
+                wetter = _get_int(block.findtext("d:IN0530", 0, self.NS))
 
                 #bewertungsart = blocks.findtext("HI005")
 
                 bewertungstag = block.findtext("d:IN1000", None, self.NS)
 
-                max_ZD = _strip_int(block.findtext("d:IN1002", 63, self.NS))
-                max_ZB = _strip_int(block.findtext("d:IN1003", 63, self.NS))
-                max_ZS = _strip_int(block.findtext("d:IN1004", 63, self.NS))
+                max_ZD = _get_int(block.findtext("d:IN1002", 63, self.NS))
+                max_ZB = _get_int(block.findtext("d:IN1003", 63, self.NS))
+                max_ZS = _get_int(block.findtext("d:IN1004", 63, self.NS))
 
-                laenge = _strip_float(block.findtext("d:IN0535", 0.0, self.NS))
+                laenge = _get_float(block.findtext("d:IN0535", 0.0, self.NS))
 
                 yield Haltung_untersucht(
                     id=id,
@@ -1619,24 +1619,24 @@ class ImportTask:
 
                 for _untersuchdat in block.findall("d:FS", self.NS):
 
-                    id = _strip_int(_untersuchdat.findtext("d:FS0001", "0", self.NS))
+                    id = _get_int(_untersuchdat.findtext("d:FS0001", "0", self.NS))
                     videozaehler = _untersuchdat.findtext("d:FS0016", None, self.NS)
-                    station = _strip_float(_untersuchdat.findtext("d:FS0002", 0.0, self.NS))
-                    #timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
+                    station = _get_float(_untersuchdat.findtext("d:FS0002", 0.0, self.NS))
+                    #timecode = _get_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
                     kuerzel = _untersuchdat.findtext("d:FS0003", None, self.NS)
                     charakt1 = _untersuchdat.findtext("d:FS0004", None, self.NS)
                     charakt2 = _untersuchdat.findtext("d:FS0005", None, self.NS)
-                    quantnr1 = _strip_float(_untersuchdat.findtext("d:FS0007", 0.0, self.NS))
-                    quantnr2 = _strip_float(_untersuchdat.findtext("d:FS0008", 0.0, self.NS))
+                    quantnr1 = _get_float(_untersuchdat.findtext("d:FS0007", 0.0, self.NS))
+                    quantnr2 = _get_float(_untersuchdat.findtext("d:FS0008", 0.0, self.NS))
                     streckenschaden = _untersuchdat.findtext("FS0014", None, self.NS)
-                    streckenschaden_lfdnr = _strip_float(_untersuchdat.findtext("d:FS0015", 0.0, self.NS))
+                    streckenschaden_lfdnr = _get_float(_untersuchdat.findtext("d:FS0015", 0.0, self.NS))
 
-                    pos_von = _strip_int(_untersuchdat.findtext("d:FS0009", 0, self.NS))
-                    pos_bis = _strip_int(_untersuchdat.findtext("d:FS0010", 0, self.NS))
+                    pos_von = _get_int(_untersuchdat.findtext("d:FS0009", 0, self.NS))
+                    pos_bis = _get_int(_untersuchdat.findtext("d:FS0010", 0, self.NS))
                     foto_dateiname = _untersuchdat.findtext("d:FS0017", None, self.NS)
-                    ZD = _strip_int(_untersuchdat.findtext("d:FS1002", 63, self.NS))
-                    ZB = _strip_int(_untersuchdat.findtext("d:FS1003", 63, self.NS))
-                    ZS = _strip_int(_untersuchdat.findtext("d:FS1004", 63, self.NS))
+                    ZD = _get_int(_untersuchdat.findtext("d:FS1002", 63, self.NS))
+                    ZB = _get_int(_untersuchdat.findtext("d:FS1003", 63, self.NS))
+                    ZS = _get_int(_untersuchdat.findtext("d:FS1004", 63, self.NS))
 
 
                     yield Untersuchdat_haltung(
@@ -1807,30 +1807,30 @@ class ImportTask:
                 #TODO: Laenge, Sohlhoehe und Anschlusspunkt Adresse ergänzen
 
                 name = block.findtext("d:AN0001", None, self.NS)
-                objekt_id = _strip_int(block.findtext("d:AN0002", None, self.NS))
+                #objekt_id = _get_int(block.findtext("d:AN0002", None, self.NS))
                 haltnam = block.findtext("d:AN0035", None, self.NS)
 
                 schoben = block.findtext("d:AN0036", None, self.NS)
                 #schunten = block.findtext("HG004", None)
 
-                baujahr = _strip_int(block.findtext("d:AN3502", 0))
+                baujahr = _get_int(block.findtext("d:AN3502", 0))
 
-                #laenge = _strip_float(block.findtext("HG310", 0.0))
+                #laenge = _get_float(block.findtext("HG310", 0.0))
 
                 #material = block.findtext("HG304", None)
 
                 profilnam = block.findtext("d:AN2005", None, self.NS)
                 hoehe = (
-                        _strip_float(block.findtext("d:AN2008", 0.0, self.NS))
+                        _get_float(block.findtext("d:AN2008", 0.0, self.NS))
                         / 1000
                 )
                 breite = (
-                        _strip_float(block.findtext("d:AN2007", 0.0, self.NS))
+                        _get_float(block.findtext("d:AN2007", 0.0, self.NS))
                         / 1000
                 )
 
-                sohleoben = _strip_float(block.findtext("GP007", 0.0, self.NS))
-                sohleunten = _strip_float(block.findtext("GP007", 0.0, self.NS))
+                sohleoben = _get_float(block.findtext("GP007", 0.0, self.NS))
+                sohleunten = _get_float(block.findtext("GP007", 0.0, self.NS))
 
 
 
@@ -1849,7 +1849,7 @@ class ImportTask:
                     profilnam=profilnam,
                     entwart=block.findtext("HG302", None),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=_strip_int(block.findtext("HG407", 0)),
+                    simstatus=block.findtext("HG407", None),
                     kommentar=block.findtext("HG999", "-"),
                 )
 
@@ -1927,12 +1927,12 @@ class ImportTask:
                 if len(block.findall("GO[GO002='L']/GP")) > 2:
                     for _gp in block.findall("GO[GO002='L']/GP"):
 
-                        xsch = _strip_float(_gp.findtext("GP003", 0.0))
+                        xsch = _get_float(_gp.findtext("GP003", 0.0))
                         if xsch == 0.0:
-                            xsch = _strip_float(_gp.findtext("GP005", 0.0))
-                        ysch = _strip_float(_gp.findtext("GP004", 0.0))
+                            xsch = _get_float(_gp.findtext("GP005", 0.0))
+                        ysch = _get_float(_gp.findtext("GP004", 0.0))
                         if ysch == 0.0:
-                            ysch = _strip_float(_gp.findtext("GP006", 0.0))
+                            ysch = _get_float(_gp.findtext("GP006", 0.0))
 
                         x_liste.append(xsch)
                         y_liste.append(ysch)
@@ -2034,7 +2034,7 @@ class ImportTask:
             steuersch = ""
             einschalthoehe = 0.0
             ausschalthoehe = 0.0
-            simstatus = 0
+            simstatus = ""
             kommentar = ""
             xsch = 0.0
             ysch = 0.0
@@ -2059,13 +2059,13 @@ class ImportTask:
                     wert = smp.findtext("GP003")
                     if wert is None:
                         wert = smp.findtext("GP005", 0.0)
-                    xsch = _strip_float(wert)
+                    xsch = _get_float(wert)
 
                     wert = smp.findtext("GP004")
                     if wert is None:
                         wert = smp.findtext("GP006", 0.0)
-                    ysch = _strip_float(wert)
-                    sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
+                    ysch = _get_float(wert)
+                    sohlhoehe = _get_float(smp.findtext("GP007", 0.0))
 
                 yield Pumpe(
                     pnam=pnam,

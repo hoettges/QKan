@@ -402,12 +402,10 @@ class DBConnection:
         if tabnam == "schaechte":
             parlis = [
                 "schnam",
-                "objekt_id",
                 "sohlhoehe",
                 "deckelhoehe",
                 "durchm",
                 "druckdicht",
-                "bauwerkstyp",
                 "ueberstauflaeche",
                 "entwart",
                 "strasse",
@@ -416,7 +414,6 @@ class DBConnection:
                 "knotentyp",
                 "auslasstyp",
                 "schachttyp",
-                "netztyp",
                 "simstatus",
                 "material",
                 "kommentar",
@@ -437,21 +434,21 @@ class DBConnection:
 
             sql = """
                 INSERT INTO schaechte (
-                    schnam, objekt_id, sohlhoehe, deckelhoehe, 
+                    schnam, sohlhoehe, deckelhoehe, 
                     durchm, 
-                    druckdicht, bauwerkstyp,
+                    druckdicht,
                     ueberstauflaeche, 
                     entwart, strasse, baujahr, teilgebiet, 
-                    knotentyp, auslasstyp, schachttyp, netztyp,
+                    knotentyp, auslasstyp, schachttyp,
                     simstatus, material,
                     kommentar, createdat, 
                     geop, geom)
                VALUES (
-                    :schnam, :objekt_id, :sohlhoehe, :deckelhoehe,
+                    :schnam, :sohlhoehe, :deckelhoehe,
                     CASE WHEN :durchm > 200 THEN :durchm/1000 ELSE :durchm END, 
-                    :druckdicht, :bauwerkstyp, coalesce(:ueberstauflaeche, 0), 
+                    :druckdicht, coalesce(:ueberstauflaeche, 0), 
                     coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, :teilgebiet, 
-                    :knotentyp, :auslasstyp, coalesce(:schachttyp, 'Schacht'), :netztyp, 
+                    :knotentyp, :auslasstyp, coalesce(:schachttyp, 'Schacht'), 
                     coalesce(:simstatus, 'vorhanden'), :material,
                     :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
                     CASE WHEN :geop IS NULL
@@ -467,7 +464,6 @@ class DBConnection:
         elif tabnam == "haltungen":
             parlis = [
                 "haltnam",
-                "objekt_id",
                 "baujahr",
                 "schoben",
                 "schunten",
@@ -484,7 +480,6 @@ class DBConnection:
                 "material",
                 "profilauskleidung",
                 "innenmaterial",
-                "netztyp",
                 "ks",
                 "haltungstyp",
                 "simstatus",
@@ -507,7 +502,7 @@ class DBConnection:
 
             sql = """
                 INSERT INTO haltungen
-                  (haltnam, objekt_id, baujahr, schoben, schunten,
+                  (haltnam, baujahr, schoben, schunten,
                    hoehe, breite, laenge, aussendurchmesser,
                    sohleoben, sohleunten, 
                    teilgebiet, profilnam, 
@@ -515,7 +510,7 @@ class DBConnection:
                    simstatus, kommentar, createdat,  
                    geom)
                 SELECT 
-                  :haltnam, :objekt_id, :baujahr, :schoben, :schunten,
+                  :haltnam, :baujahr, :schoben, :schunten,
                   CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END,
                   CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
                   :laenge, :aussendurchmesser,
@@ -616,7 +611,6 @@ class DBConnection:
                 "schoben",
                 "schunten",
                 "id",
-                "objekt_id",
                 "untersuchtag",
                 "bandnr",
                 "videozaehler",
@@ -652,12 +646,12 @@ class DBConnection:
 
             sql = f"""  
                 INSERT INTO untersuchdat_haltung
-                  (untersuchhal, untersuchrichtung, schoben, schunten, id, objekt_id, untersuchtag, bandnr, videozaehler, 
+                  (untersuchhal, untersuchrichtung, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
                     inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
                     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
                     film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
                 SELECT
-                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :objekt_id, :untersuchtag, :bandnr, :videozaehler, 
+                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
                   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -669,7 +663,7 @@ class DBConnection:
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
                 UNION
                 SELECT
-                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :objekt_id, :untersuchtag, :bandnr, :videozaehler, 
+                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
                   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -684,7 +678,6 @@ class DBConnection:
         elif tabnam == "anschlussleitungen":
             parlis = [
                 "leitnam",
-                "objekt_id",
                 "schoben",
                 "schunten",
                 "hoehe",
@@ -704,7 +697,6 @@ class DBConnection:
                 "innenmaterial",
                 "ks",
                 "anschlusstyp",
-                "netztyp",
                 "simstatus",
                 "kommentar",
                 "createdat",
@@ -725,22 +717,22 @@ class DBConnection:
 
             sql = """
                 INSERT INTO anschlussleitungen
-                  (leitnam, objekt_id, schoben, schunten,
+                  (leitnam, schoben, schunten,
                    hoehe, breite, laenge, aussendurchmesser,
                    sohleoben, sohleunten, baujahr, haltnam,
                    teilgebiet, qzu, profilnam, 
-                   entwart, material, profilauskleidung, innenmaterial, ks, anschlusstyp, netztyp,
+                   entwart, material, profilauskleidung, innenmaterial, ks, anschlusstyp, 
                    simstatus, kommentar, createdat,  
                    geom)
                 VALUES( 
-                  :leitnam, :objekt_id, :schoben, :schunten, 
+                  :leitnam, :schoben, :schunten, 
                   CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END, 
                   CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
                   :laenge, :aussendurchmesser,
                   :sohleoben, :sohleunten, :baujahr, :haltnam,
                   :teilgebiet, :qzu, coalesce(:profilnam, 'Kreisquerschnitt'), 
                   coalesce(:entwart, 'Regenwasser'), :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), 
-                  :anschlusstyp, :netztyp, coalesce(:simstatus, 'vorhanden'), :kommentar, 
+                  :anschlusstyp, coalesce(:simstatus, 'vorhanden'), :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), 
                   CASE WHEN :geom IS NULL
                       THEN MakeLine(
@@ -760,7 +752,6 @@ class DBConnection:
                 "durchm",
                 "bezugspunkt",
                 "id",
-                "objekt_id",
                 "xsch",
                 "ysch",
                 "kommentar",
@@ -787,14 +778,14 @@ class DBConnection:
 
             sql = f"""
                 INSERT INTO schaechte_untersucht
-                  (schnam, durchm, bezugspunkt, id, objekt_id,
+                  (schnam, durchm, bezugspunkt, id,
                    kommentar, createdat, baujahr,
                    geop, untersuchtag, untersucher, 
                    wetter, strasse, bewertungsart, 
                    bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT
                   :schnam,
-                  CASE WHEN :durchm > 200 THEN :durchm/1000 ELSE :durchm END, :bezugspunkt, :id, :objekt_id,
+                  CASE WHEN :durchm > 200 THEN :durchm/1000 ELSE :durchm END, :bezugspunkt, :id,
                   :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
                   coalesce(
                     MakePoint(:xsch, :ysch, :epsg),
