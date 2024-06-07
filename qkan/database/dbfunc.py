@@ -941,12 +941,9 @@ class DBConnection:
                 mute_logger=mute_logger,
                 ignore=ignore)
 
-        if tabnam == "untersuchdat_haltung":
-            self.setschadenstexte()
-
         return result
 
-    def calctextpositions(self, data_hu, data_uh, tdist: float = 0.50, bdist: float = 0.15,
+    def calctextpositions(self, data_hu, data_uh, tdist: float = 0.35, bdist: float = 0.10,
                           richtung: str = 'Anzeigen in Fließrichtung rechts der Haltung', epsg: int = 25832
                           ):
         """Berechnet in einer internen Tabelle die Textpositionen für die Haltungsschäden.
@@ -1073,7 +1070,7 @@ class DBConnection:
     def setschadenstexte(self):
         """Textpositionen für Schadenstexte berechnen"""
 
-        logger.notice("Schadenstext werden neu arrangiert ...")
+        logger.debug("Schadenstext werden neu arrangiert ...")
 
         sql = """SELECT
             hu.pk AS id,
@@ -1128,7 +1125,7 @@ class DBConnection:
 
         richtung = 'Anzeigen in Fließrichtung rechts der Haltung'
 
-        self.calctextpositions(data_hu, data_uh, 0.50, 0.15, richtung, self.epsg)
+        self.calctextpositions(data_hu, data_uh, 0.35, 0.10, richtung, self.epsg)
 
         # Nummerieren der Untersuchungen an der selben Haltung "haltungen_untersucht"
 
