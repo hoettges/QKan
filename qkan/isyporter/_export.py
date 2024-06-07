@@ -178,7 +178,8 @@ class ExportTask:
             ea.isybau,
             schaechte.entwart,
             schaechte.strasse,
-            schaechte.knotentyp
+            schaechte.knotentyp,
+            schaechte.baujahr
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -198,6 +199,7 @@ class ExportTask:
                     "Objektart": str(2),
                     "Kommentar": attr[6],
                     "Status": attr[7],
+                    "baujahr": attr[12],
                     "Entwaesserungsart": attr[8],
                 },
             )
@@ -268,7 +270,8 @@ class ExportTask:
             schaechte.kommentar,
             schaechte.simstatus,
             x(schaechte.geop) AS xsch,
-            y(schaechte.geop) AS ysch
+            y(schaechte.geop) AS ysch,
+            schaechte.baujahr,
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -288,6 +291,7 @@ class ExportTask:
                     "Entwaesserungsart": attr[5],
                     "Kommentar": attr[9],
                     "Status": attr[10],
+                    "Baujahr": attr[13],
                 },
             )
 
@@ -356,7 +360,8 @@ class ExportTask:
             y(schaechte.geop) AS ysch,
             schaechte.kommentar,
             schaechte.simstatus,
-            schaechte.knotentyp
+            schaechte.knotentyp,
+            schaechte.baujahr
         FROM schaechte
         left join Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -377,6 +382,7 @@ class ExportTask:
                     "Entwaesserungsart": attr[4],
                     "Kommentar": attr[9],
                     "Status": attr[10],
+                    "Baujahr": attr[12],
                 },
             )
 
@@ -449,7 +455,11 @@ class ExportTask:
             x(PointN(haltungen.geom, 1)) AS xschob,
             y(PointN(haltungen.geom, 1)) AS yschob,
             x(PointN(haltungen.geom, -1)) AS xschun,
-            y(PointN(haltungen.geom, -1)) AS yschun
+            y(PointN(haltungen.geom, -1)) AS yschun,
+            haltungen.baujahr,
+            haltungen.aussendurchmesser,
+            haltungen.profilauskleidung,
+            haltungen.innenmaterial,
         FROM haltungen
         LEFT JOIN Entwaesserungsarten AS ea 
         ON haltungen.entwart = ea.bezeichnung
@@ -476,6 +486,7 @@ class ExportTask:
                     "Objektart": str(1),
                     "Entwaesserungsart": attr[11],
                     "Status": attr[14],
+                    "Baujahr": attr[18],
                 },
             )
 
@@ -511,6 +522,9 @@ class ExportTask:
                     "Profilart": attr[8],
                     "Profilbreite": (attr[4]*1000),
                     "Profilhoehe": (attr[3]*1000),
+                    "Aussendurchmesser": attr[19],
+                    "Auskleidung": attr[20],
+                    "MaterialAuskleidung": attr[21],
                 },
             )
 

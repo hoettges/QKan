@@ -9,6 +9,16 @@ from qgis.core import (
 from qgis.utils import spatialite_connect
 
 from qkan.utils import get_logger
+from math import pi
+
+from qgis.core import (
+    Qgis,
+    QgsProject,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+)
+from qgis.utils import iface, spatialite_connect
+
 
 logger = get_logger("QKan.zustand.import")
 
@@ -75,7 +85,7 @@ class Subkans_funkt:
                             untersuchdat_haltung_bewertung.pos_bis,
                             untersuchdat_haltung_bewertung.foto_dateiname,
                             untersuchdat_haltung_bewertung.film_dateiname,
-                            untersuchdat_haltung_bewertung.richtung,
+                            untersuchdat_haltung_bewertung.objekt_id,
                             untersuchdat_haltung_bewertung.bw_bs,
                             untersuchdat_haltung_bewertung.createdat,
                             haltungen.haltnam,
@@ -256,7 +266,7 @@ class Subkans_funkt:
                         untersuchdat_haltung_bewertung.pos_bis,
                         untersuchdat_haltung_bewertung.foto_dateiname,
                         untersuchdat_haltung_bewertung.film_dateiname,
-                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.objekt_id,
                         untersuchdat_haltung_bewertung.bw_bs,
                         untersuchdat_haltung_bewertung.createdat,
                         haltungen.haltnam,
@@ -274,7 +284,13 @@ class Subkans_funkt:
                         OR
                         untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
                         OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
+                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung'
+                        OR
+                        untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Bitte pruefen!'
+                        OR
+                        untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Bitte pruefen!'
+                        OR
+                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Bitte pruefen!') AND untersuchdat_haltung_bewertung.createdat like ? """
             data = (date,)
             curs.execute(sql, data)
 
@@ -2697,7 +2713,7 @@ class Subkans_funkt:
                 pos_bis,
                 foto_dateiname,
                 film_dateiname,
-                richtung,
+                objekt_id,
                 bw_bs,
                 createdat,
                 Zustandsklasse_D,
@@ -3263,9 +3279,8 @@ class Subkans_funkt:
                         or (attr[10] == "BAF" and attr[11] == "G") or (attr[10] == "BAF" and attr[11] == "H") or (
                         attr[10] == "BAF" and attr[11] == "J") \
                         or (attr[10] == "BAF" and attr[11] == "K") or (attr[10] == "BAF" and attr[11] == "Z"):
-                    iface.messageBar().pushMessage("Error",
-                                                   str(attr[15]),
-                                                   level=Qgis.Critical)
+
+
                     if attr[15] in ["", None, "not found"]:
                         z = 'PktS'
                         sql = f"""
@@ -4746,13 +4761,13 @@ class Subkans_funkt:
         except:
             pass
 
-        curs1.execute("""SELECT s.untersuchhal, (t.station-s.station) as length from substanz_haltung_bewertung AS s INNER JOIN substanz_haltung_bewertung AS t ON s.untersuchhal = t.untersuchhal
+        curs1.execute("""SELECT s.untersuchhal, s.pk, (t.station-s.station) as length from substanz_haltung_bewertung AS s INNER JOIN substanz_haltung_bewertung AS t ON s.untersuchhal = t.untersuchhal
                 WHERE s.streckenschaden='A' AND t.streckenschaden ='B' AND s.streckenschaden_lfdnr = t.streckenschaden_lfdnr""")
         db1.commit()
 
         for attr in curs1.fetchall():
-            sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.untersuchhal = ?"""
-            data = (attr[1], attr[0])
+            sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+            data = (attr[2], attr[1])
 
             curs1.execute(sql, data)
 
@@ -4789,7 +4804,7 @@ class Subkans_funkt:
                            substanz_haltung_bewertung.pos_bis,
                            substanz_haltung_bewertung.foto_dateiname,
                            substanz_haltung_bewertung.film_dateiname,
-                           substanz_haltung_bewertung.richtung,
+                           substanz_haltung_bewertung.objekt_id,
                            substanz_haltung_bewertung.bw_bs,
                            substanz_haltung_bewertung.Zustandsklasse_D,
                            substanz_haltung_bewertung.Zustandsklasse_S,
@@ -4803,7 +4818,7 @@ class Subkans_funkt:
                            haltungen.createdat
                        FROM substanz_haltung_bewertung, haltungen
                        WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                       AND (substanz_haltung_bewertung.Schadensart = 'StrS') 
+                       AND (substanz_haltung_bewertung.Schadensart = 'StrS' AND streckenschaden ='A') 
                        AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS')
                        AND Zustandsklasse_ges IN (0,1,2,3,4)
                    """
@@ -4813,7 +4828,8 @@ class Subkans_funkt:
 
             dictionary = {}
             entf_list = []
-            for attr in curs.fetchall():
+            dat = curs.fetchall()
+            for attr in dat:
                 #testen, ob die streckenschaden sich überlagern
                 stg = 1
                 # Klassengewichte
@@ -4837,13 +4853,14 @@ class Subkans_funkt:
 
                 #wenn attr[0] zwischen station und station+schadenslänge
 
-                if attr[0] in dictionary:
+                if attr[1] in dictionary:
                     continue
                 new_list = []
-                for x in curs.fetchall():
-                    if x[0] == attr[0]:
+                for x in dat:
+                    if x[1] == attr[1]:
                         new_list.append(x)
-                dictionary[attr[0]] = new_list
+                dictionary[attr[1]] = new_list
+
 
             for values in dictionary.values():
                 new_items = []
@@ -4852,24 +4869,39 @@ class Subkans_funkt:
                 for i in values:
                     if i[8] not in new_items:
                         # i[8] ist die Stationierung
-                        x = i[8]
+                        x = float(i[8])
+                        x2 = float(i[8]) + float(i[28])
                         new_items.append(i[8])
-                    else:
-                        for i in values:
-                            if i[8] == x or x<i[8]<x+i[28]:
-                                vergl.append(i)
+
+                    for y in values:
+                        if x <= float(y[8]) + float(y[28]) <= x2 or x <= float(y[8]) <= x2:
+                            vergl.append(y)
+
 
                 zustand = []
                 for i in vergl:
                     # i[27] Zustandsbewertung
                     zustand.append(kg)
 
-                if len(zustand) > 0:
-                    entf = min(zustand)
-                    entf_index = zustand.index(entf)
+                # if len(zustand) > 0:
+                #     # TODO: alle löchen die größer sind als min
+                #     entf = min(zustand)
+                #     entf_index = zustand.index(entf)
+                #
+                #     # pk von dem element welches entfernt werden soll
+                #     entf_list.append(vergl[entf_index][0])
 
-                    # pk von dem element welches entfernt werden soll
-                    entf_list.append(vergl[entf_index][0])
+                if len(zustand) > 0:
+                    for i in zustand:
+                        if i >= min(zustand):
+                            # TODO: alle löchen die größer sind als min
+                            entf = i
+                            entf_index = zustand.index(entf)
+
+                            # pk von dem element welches entfernt werden soll
+                            entf_list.append(vergl[entf_index][0])
+
+
 
             # Datenbank anweisung um die Elemente zu löschen
             for i in entf_list:
@@ -4906,7 +4938,7 @@ class Subkans_funkt:
                                        substanz_haltung_bewertung.pos_bis,
                                        substanz_haltung_bewertung.foto_dateiname,
                                        substanz_haltung_bewertung.film_dateiname,
-                                       substanz_haltung_bewertung.richtung,
+                                       substanz_haltung_bewertung.objekt_id,
                                        substanz_haltung_bewertung.bw_bs,
                                        substanz_haltung_bewertung.Zustandsklasse_D,
                                        substanz_haltung_bewertung.Zustandsklasse_S,
@@ -4920,7 +4952,7 @@ class Subkans_funkt:
                                        haltungen.createdat
                                    FROM substanz_haltung_bewertung, haltungen
                                    WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                                   AND (substanz_haltung_bewertung.Schadensart = 'StrS') 
+                                   AND (substanz_haltung_bewertung.Schadensart = 'StrS' AND streckenschaden ='A') 
                                    AND (substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
                                    AND Zustandsklasse_ges IN (0,1,2,3,4)
                                """
@@ -4930,9 +4962,9 @@ class Subkans_funkt:
 
             dictionary = {}
             entf_list = []
-            for attr in curs.fetchall():
+            dat = curs.fetchall()
+            for attr in dat:
                 # testen, ob die streckenschaden sich überlagern
-                #Schadensüberlagerung nur OFS mit OFS und Dds mit Dds überlagern!
                 stg = 1
                 # Klassengewichte
                 if int(attr[27]) == 0:
@@ -4955,13 +4987,13 @@ class Subkans_funkt:
 
                 # wenn attr[0] zwischen station und station+schadenslänge
 
-                if attr[0] in dictionary:
+                if attr[1] in dictionary:
                     continue
                 new_list = []
-                for x in curs.fetchall():
-                    if x[0] == attr[0]:
+                for x in dat:
+                    if x[1] == attr[1]:
                         new_list.append(x)
-                dictionary[attr[0]] = new_list
+                dictionary[attr[1]] = new_list
 
             for values in dictionary.values():
                 new_items = []
@@ -4970,24 +5002,39 @@ class Subkans_funkt:
                 for i in values:
                     if i[8] not in new_items:
                         # i[8] ist die Stationierung
-                        x = i[8]
+                        x = float(i[8])
+                        x2 = float(i[8]) + float(i[28])
                         new_items.append(i[8])
-                    else:
-                        for i in values:
-                            if i[8] == x or x < i[8] < x+i[28]:
-                                vergl.append(i)
+
+                    for y in values:
+                        if x <= float(y[8]) + float(y[28]) <= x2 or x <= float(y[8]) <= x2:
+                            vergl.append(y)
+
 
                 zustand = []
                 for i in vergl:
                     # i[27] Zustandsbewertung
                     zustand.append(kg)
 
-                if len(zustand) > 0:
-                    entf = min(zustand)
-                    entf_index = zustand.index(entf)
+                # if len(zustand) > 0:
+                #     # TODO: alle löchen die größer sind als min
+                #     entf = min(zustand)
+                #     entf_index = zustand.index(entf)
+                #
+                #     # pk von dem element welches entfernt werden soll
+                #     entf_list.append(vergl[entf_index][0])
 
-                    # pk von dem element welches entfernt werden soll
-                    entf_list.append(vergl[entf_index][0])
+                if len(zustand) > 0:
+                    for i in zustand:
+                        if i >= min(zustand):
+                            # TODO: alle löchen die größer sind als min
+                            entf = i
+                            entf_index = zustand.index(entf)
+
+                            # pk von dem element welches entfernt werden soll
+                            entf_list.append(vergl[entf_index][0])
+
+
 
             # Datenbank anweisung um die Elemente zu löschen
             for i in entf_list:
@@ -4999,6 +5046,84 @@ class Subkans_funkt:
                 db.commit()
             except:
                 pass
+
+            sql = """
+                                                   SELECT
+                                                       substanz_haltung_bewertung.pk,
+                                                       substanz_haltung_bewertung.untersuchhal,
+                                                       substanz_haltung_bewertung.untersuchrichtung,
+                                                       substanz_haltung_bewertung.schoben,
+                                                       substanz_haltung_bewertung.schunten,
+                                                       substanz_haltung_bewertung.id,
+                                                       substanz_haltung_bewertung.videozaehler,
+                                                       substanz_haltung_bewertung.inspektionslaenge,
+                                                       substanz_haltung_bewertung.station,
+                                                       substanz_haltung_bewertung.timecode,
+                                                       substanz_haltung_bewertung.kuerzel,
+                                                       substanz_haltung_bewertung.charakt1,
+                                                       substanz_haltung_bewertung.charakt2,
+                                                       substanz_haltung_bewertung.quantnr1,
+                                                       substanz_haltung_bewertung.quantnr2,
+                                                       substanz_haltung_bewertung.Schadensart,
+                                                       substanz_haltung_bewertung.Schadensauspraegung,
+                                                       substanz_haltung_bewertung.streckenschaden,
+                                                       substanz_haltung_bewertung.pos_von,
+                                                       substanz_haltung_bewertung.pos_bis,
+                                                       substanz_haltung_bewertung.foto_dateiname,
+                                                       substanz_haltung_bewertung.film_dateiname,
+                                                       substanz_haltung_bewertung.objekt_id,
+                                                       substanz_haltung_bewertung.bw_bs,
+                                                       substanz_haltung_bewertung.Zustandsklasse_D,
+                                                       substanz_haltung_bewertung.Zustandsklasse_S,
+                                                       substanz_haltung_bewertung.Zustandsklasse_B,
+                                                       substanz_haltung_bewertung.Zustandsklasse_ges,
+                                                       substanz_haltung_bewertung.Schadenslaenge,
+                                                       substanz_haltung_bewertung.createdat,
+                                                       haltungen.haltnam,
+                                                       haltungen.material,
+                                                       haltungen.hoehe,
+                                                       haltungen.createdat
+                                                   FROM substanz_haltung_bewertung, haltungen
+                                                   WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                                   AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                                   AND Zustandsklasse_ges IN (0,1,2,3,4)
+                                               """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+            dictionary = {}
+            entf_list = []
+            for attr in curs.fetchall():
+
+                # schadenslänge ergänzen
+                if attr[15] == "PktS":
+                    sl = 0.3
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
+
+                if attr[15] == "UmfS":
+                    sl = attr[32] / 1000 * pi
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
+
+                if attr[15] in ["", "None"]:
+                    sl = 0
+
+                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
+                    data = (sl, attr[0])
+
+                    curs.execute(sql, data)
+                try:
+                    db.commit()
+                except:
+                    pass
 
 
             sql = """
@@ -5025,7 +5150,7 @@ class Subkans_funkt:
                                            substanz_haltung_bewertung.pos_bis,
                                            substanz_haltung_bewertung.foto_dateiname,
                                            substanz_haltung_bewertung.film_dateiname,
-                                           substanz_haltung_bewertung.richtung,
+                                           substanz_haltung_bewertung.objekt_id,
                                            substanz_haltung_bewertung.bw_bs,
                                            substanz_haltung_bewertung.Zustandsklasse_D,
                                            substanz_haltung_bewertung.Zustandsklasse_S,
@@ -5049,37 +5174,19 @@ class Subkans_funkt:
 
             dictionary = {}
             entf_list = []
-            for attr in curs.fetchall():
-
-                #schadenslänge ergänzen
-                if attr[15] == "PktS":
-                    sl = 0.3
-
-                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
-                    data = (sl, attr[0])
-
-                    curs.execute(sql, data)
-
-                if attr[15] == "UmfS":
-                    sl = attr[32]
-
-                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
-                    data = (sl, attr[0])
-
-                    curs.execute(sql, data)
-                try:
-                    db.commit()
-                except:
-                    pass
-
-
-                if attr[0] in dictionary:
+            dat = curs.fetchall()
+            for attr in dat:
+                if attr[1] in dictionary:
                     continue
                 new_list = []
-                for x in curs.fetchall():
-                    if x[0] == attr[0]:
+                for x in dat:
+                    if x[1] == attr[1]:
                         new_list.append(x)
-                dictionary[attr[0]] = new_list
+                dictionary[attr[1]] = new_list
+
+            #iface.messageBar().pushMessage("Error",
+             #                              str(dictionary),
+              #                             level=Qgis.Critical)
 
             for values in dictionary.values():
                 new_items = []
@@ -5091,30 +5198,154 @@ class Subkans_funkt:
                         x = i[8]
                         new_items.append(i[8])
                     else:
-                        for i in values:
-                            if i[8] == x:
-                                vergl.append(i)
+                        for y in values:
+                            if y[8] == x:
+                                vergl.append(y)
 
                 zustand = []
                 for i in vergl:
                     # i[3] Zustandsbewertung
                     zustand.append(i[27])
 
-                if len(zustand) > 0:
-                    entf = min(zustand)
-                    entf_index = zustand.index(entf)
 
-                    # pk von dem element welches entfernt werden soll
-                    entf_list.append(vergl[entf_index][0])
+                if len(zustand) > 0:
+                    x = 0
+                    for i in zustand:
+                        x += 1
+                        if i >= min(zustand) and x < len(zustand):
+                            # TODO: alle löchen die größer sind als min
+                            entf = x
+                            #entf_index = zustand.index(entf)
+
+                            # pk von dem element welches entfernt werden soll
+                            entf_list.append(vergl[entf][0])
+
 
             # try:
             #     db.commit()
             # except:
             #     pass
 
+
             #Datenbank anweisung um die Elemente zu löschen
             for i in entf_list:
 
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+
+            try:
+                db.commit()
+            except:
+                pass
+
+            sql = """
+                                                           SELECT
+                                                               substanz_haltung_bewertung.pk,
+                                                               substanz_haltung_bewertung.untersuchhal,
+                                                               substanz_haltung_bewertung.untersuchrichtung,
+                                                               substanz_haltung_bewertung.schoben,
+                                                               substanz_haltung_bewertung.schunten,
+                                                               substanz_haltung_bewertung.id,
+                                                               substanz_haltung_bewertung.videozaehler,
+                                                               substanz_haltung_bewertung.inspektionslaenge,
+                                                               substanz_haltung_bewertung.station,
+                                                               substanz_haltung_bewertung.timecode,
+                                                               substanz_haltung_bewertung.kuerzel,
+                                                               substanz_haltung_bewertung.charakt1,
+                                                               substanz_haltung_bewertung.charakt2,
+                                                               substanz_haltung_bewertung.quantnr1,
+                                                               substanz_haltung_bewertung.quantnr2,
+                                                               substanz_haltung_bewertung.Schadensart,
+                                                               substanz_haltung_bewertung.Schadensauspraegung,
+                                                               substanz_haltung_bewertung.streckenschaden,
+                                                               substanz_haltung_bewertung.pos_von,
+                                                               substanz_haltung_bewertung.pos_bis,
+                                                               substanz_haltung_bewertung.foto_dateiname,
+                                                               substanz_haltung_bewertung.film_dateiname,
+                                                               substanz_haltung_bewertung.objekt_id,
+                                                               substanz_haltung_bewertung.bw_bs,
+                                                               substanz_haltung_bewertung.Zustandsklasse_D,
+                                                               substanz_haltung_bewertung.Zustandsklasse_S,
+                                                               substanz_haltung_bewertung.Zustandsklasse_B,
+                                                               substanz_haltung_bewertung.Zustandsklasse_ges,
+                                                               substanz_haltung_bewertung.Schadenslaenge,
+                                                               substanz_haltung_bewertung.createdat,
+                                                               haltungen.haltnam,
+                                                               haltungen.material,
+                                                               haltungen.hoehe,
+                                                               haltungen.createdat
+                                                           FROM substanz_haltung_bewertung, haltungen
+                                                           WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                                           AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                                           AND (substanz_haltung_bewertung.Schadensauspraegung = 'SoB')
+                                                           AND Zustandsklasse_ges IN (0,1,2,3,4)
+                                                       """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+            dictionary = {}
+            entf_list = []
+            dat= curs.fetchall()
+            for attr in dat:
+
+
+                if attr[1] in dictionary:
+                    continue
+                new_list = []
+                for x in dat:
+                    if x[1] == attr[1]:
+                        new_list.append(x)
+                dictionary[attr[1]] = new_list
+
+            for values in dictionary.values():
+                new_items = []
+                vergl = []
+
+                for i in values:
+                    if i[8] not in new_items:
+                        # i[1] ist die Stationierung
+                        x = i[8]
+                        new_items.append(i[8])
+                    else:
+                        for y in values:
+                            if y[8] == x:
+                                vergl.append(y)
+
+                zustand = []
+                for i in vergl:
+                    # i[3] Zustandsbewertung
+                    zustand.append(i[27])
+
+                # if len(zustand) > 0:
+                #     # TODO: alle löchen die größer sind als min
+                #     entf = min(zustand)
+                #     entf_index = zustand.index(entf)
+                #
+                #     # pk von dem element welches entfernt werden soll
+                #     entf_list.append(vergl[entf_index][0])
+
+
+                if len(zustand) > 0:
+                    x = 0
+                    for i in zustand:
+                        x += 1
+                        if i >= min(zustand) and x < len(zustand):
+                            # TODO: alle löchen die größer sind als min
+                            entf = x
+                            #entf_index = zustand.index(entf)
+
+                            # pk von dem element welches entfernt werden soll
+                            entf_list.append(vergl[entf][0])
+
+            # try:
+            #     db.commit()
+            # except:
+            #     pass
+
+            # Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
                 sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
                 data = (i,)
                 curs.execute(sql, data)
@@ -5149,7 +5380,7 @@ class Subkans_funkt:
                                                    substanz_haltung_bewertung.pos_bis,
                                                    substanz_haltung_bewertung.foto_dateiname,
                                                    substanz_haltung_bewertung.film_dateiname,
-                                                   substanz_haltung_bewertung.richtung,
+                                                   substanz_haltung_bewertung.objekt_id,
                                                    substanz_haltung_bewertung.bw_bs,
                                                    substanz_haltung_bewertung.Zustandsklasse_D,
                                                    substanz_haltung_bewertung.Zustandsklasse_S,
@@ -5173,36 +5404,16 @@ class Subkans_funkt:
 
             dictionary = {}
             entf_list = []
-            for attr in curs.fetchall():
-
-                # schadenslänge ergänzen
-                if attr[15] == "PktS":
-                    sl = 0.3
-
-                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
-                    data = (sl, attr[0])
-
-                    curs.execute(sql, data)
-
-                if attr[15] == "UmfS":
-                    sl = attr[32]
-
-                    sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
-                    data = (sl, attr[0])
-
-                    curs.execute(sql, data)
-                try:
-                    db.commit()
-                except:
-                    pass
-
-                if attr[0] in dictionary:
+            dat = curs.fetchall()
+            for attr in dat:
+                if attr[1] in dictionary:
                     continue
                 new_list = []
-                for x in curs.fetchall():
-                    if x[0] == attr[0]:
+                for x in dat:
+                    if x[1] == attr[1]:
                         new_list.append(x)
-                dictionary[attr[0]] = new_list
+                dictionary[attr[1]] = new_list
+
 
             for values in dictionary.values():
                 new_items = []
@@ -5214,21 +5425,36 @@ class Subkans_funkt:
                         x = i[8]
                         new_items.append(i[8])
                     else:
-                        for i in values:
-                            if i[8] == x:
-                                vergl.append(i)
+                        for y in values:
+                            if y[8] == x:
+                                vergl.append(y)
 
                 zustand = []
                 for i in vergl:
                     # i[3] Zustandsbewertung
                     zustand.append(i[27])
 
-                if len(zustand) > 0:
-                    entf = min(zustand)
-                    entf_index = zustand.index(entf)
 
-                    # pk von dem element welches entfernt werden soll
-                    entf_list.append(vergl[entf_index][0])
+                #if len(zustand) > 0:
+                #     #TODO: alle löchen die größer sind als min
+                #     entf = min(zustand)
+                #     entf_index = zustand.index(entf)
+                #
+                #     # pk von dem element welches entfernt werden soll
+                #     entf_list.append(vergl[entf_index][0])
+
+
+                if len(zustand) > 0:
+                    x = 0
+                    for i in zustand:
+                        x += 1
+                        if i >= min(zustand) and x < len(zustand):
+                            # TODO: alle löchen die größer sind als min
+                            entf = x
+                            #entf_index = zustand.index(entf)
+
+                            # pk von dem element welches entfernt werden soll
+                            entf_list.append(vergl[entf][0])
 
             # try:
             #     db.commit()
@@ -5236,6 +5462,8 @@ class Subkans_funkt:
             #     pass
 
             # Datenbank anweisung um die Elemente zu löschen
+
+
             for i in entf_list:
                 sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
                 data = (i,)
@@ -5326,7 +5554,7 @@ class Subkans_funkt:
                                        substanz_haltung_bewertung.pos_bis,
                                        substanz_haltung_bewertung.foto_dateiname,
                                        substanz_haltung_bewertung.film_dateiname,
-                                       substanz_haltung_bewertung.richtung,
+                                       substanz_haltung_bewertung.objekt_id,
                                        substanz_haltung_bewertung.bw_bs,
                                        substanz_haltung_bewertung.Zustandsklasse_D,
                                        substanz_haltung_bewertung.Zustandsklasse_S,
@@ -5340,8 +5568,8 @@ class Subkans_funkt:
                                        haltungen.createdat
                                    FROM substanz_haltung_bewertung, haltungen
                                    WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                                   AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
-                                   AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS' OR substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
+                                   AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS' OR (substanz_haltung_bewertung.Schadensart = 'StrS' AND streckenschaden ='A')) 
+                                   AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS' OR substanz_haltung_bewertung.Schadensauspraegung = 'DdS' OR substanz_haltung_bewertung.Schadensauspraegung = 'SoB')
                                    AND Zustandsklasse_ges IN (0,1,2,3,4)
                                """
             data = (date,)
@@ -5350,10 +5578,10 @@ class Subkans_funkt:
 
         for attr in curs.fetchall():
 
-            sl = attr[28]
-            iface.messageBar().pushMessage("Error",
-                                           str(sl),
-                                           level=Qgis.Critical)
+            sl = float(attr[28])
+            # iface.messageBar().pushMessage("Error",
+            #                                str(sl),
+            #                                level=Qgis.Critical)
             sg=0
             kg=0
             stg=0
@@ -5393,8 +5621,6 @@ class Subkans_funkt:
                     if sg < (8*kg*0.3):
                         stg_neu = (8*kg*0.3)/sg
                         sg = sl * stg_neu * kg
-                    else:
-                        continue
 
             #sg in tabelle schreiben
             sql = """UPDATE substanz_haltung_bewertung SET Schadensgewicht = ? WHERE substanz_haltung_bewertung.pk = ?"""
@@ -5408,7 +5634,7 @@ class Subkans_funkt:
 
         # #Bruttoschadenslänge BSL und Abnutzung ABN
         #
-        # bsl= summe von allen sg
+        # TODO: bsl= summe von allen sg inkl. den gelöschten!
         sql = """SELECT
                    substanz_haltung_bewertung.pk,
                    substanz_haltung_bewertung.untersuchhal,
@@ -5444,7 +5670,9 @@ class Subkans_funkt:
                     sbk = 1
                 elif 5>=sub_ges:
                     sbk = 0
-
+            else:
+                abn = 'None'
+                sbk = 5
             # abn in tabelle schreiben
             sql = """UPDATE haltungen_substanz_bewertung SET Abnutzung = ? WHERE haltungen_substanz_bewertung.pk = ?"""
             data = (abn, attr[5])

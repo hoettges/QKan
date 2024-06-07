@@ -115,7 +115,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
     def click_help(self) -> None:
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        help_file = "https://qkan.eu/QKan_XML.html#import-aus-isybau-xml"
+        help_file = "https://qkan.eu/QKan_XML.html#import-aus-dwa-xml"
         os.startfile(help_file)
 
 

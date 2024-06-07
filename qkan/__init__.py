@@ -98,6 +98,7 @@ class QKan:
         from .surfaceTools import SurfaceTools
         from .isyporter import IsyPorter
         from .m150porter import M150Porter
+        from .m145porter import M145Porter
 
         # from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
@@ -120,6 +121,7 @@ class QKan:
             SurfaceTools(iface),
             IsyPorter(iface),
             M150Porter(iface),
+            M145Porter(iface),
             # GanglinienHE8(iface),
             Plausi(iface),
             Zustandsklassen(iface),
@@ -214,9 +216,11 @@ class QKan:
             mike.addAction(self.actions[alis['Import aus Mike+']])
             dyna.addAction(self.actions[alis['Import aus DYNA-Datei (*.EIN)']])
             dyna.addAction(self.actions[alis['Export in DYNA-Datei...']])
-            xml.addAction(self.actions[alis['Import aus DWA-XML']])
+            xml.addAction(self.actions[alis['Import aus DWA-150-XML']])
+            xml.addAction(self.actions[alis['Export nach DWA-150-XML']])
             xml.addAction(self.actions[alis['Import aus ISYBAU-XML']])
             xml.addAction(self.actions[alis['Export nach ISYBAU-XML']])
+            xml.addAction(self.actions[alis['Import aus DWA-145-XML']])
             swmm.addAction(self.actions[alis['Import aus SWMM-Datei (*.INP)']])
             swmm.addAction(self.actions[alis['Export in SWMM-Datei (*.INP)']])
             strakat.addAction(self.actions[alis['Import aus STRAKAT']])

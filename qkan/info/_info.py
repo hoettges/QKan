@@ -140,7 +140,7 @@ class Info:
                 return
             attr = self.db_qkan.fetchall()
             if attr[0][0] != None and attr != []:
-                self.laenge_haltungen_rw = round(attr[0][0], 2)
+                self.laenge_haltungen_rw = round(attr[0][0]/1000, 2)
 
             # anzahl lange haltungen SW
             sql = """
@@ -155,7 +155,7 @@ class Info:
                 return
             attr = self.db_qkan.fetchall()
             if attr[0][0] != None and attr != []:
-                self.laenge_haltungen_sw = round(attr[0][0], 2)
+                self.laenge_haltungen_sw = round(attr[0][0]/1000, 2)
 
             # anzahl lange haltungen MW
             sql = """
@@ -170,7 +170,7 @@ class Info:
                 return
             attr = self.db_qkan.fetchall()
             if attr[0][0] != None and attr != []:
-                self.laenge_haltungen_mw = round(attr[0][0], 2)
+                self.laenge_haltungen_mw = round(attr[0][0]/1000, 2)
 
             sql = """
                         SELECT * FROM
@@ -223,9 +223,9 @@ class Info:
                         if i[1] == 'Mischwasser':
                             mw += i[2]
 
-                        self.haltungen_0_rw = round(rw,2)
-                        self.haltungen_0_sw = round(sw,2)
-                        self.haltungen_0_mw = round(mw,2)
+                        self.haltungen_0_rw = round(rw/1000,2)
+                        self.haltungen_0_sw = round(sw/1000,2)
+                        self.haltungen_0_mw = round(mw/1000,2)
 
                 # laenge haltungen 1
                 sql = """
@@ -255,9 +255,9 @@ class Info:
                         if i[1] == 'Mischwasser':
                             mw += i[2]
 
-                        self.haltungen_1_rw = round(rw,2)
-                        self.haltungen_1_sw = round(sw,2)
-                        self.haltungen_1_mw = round(mw,2)
+                        self.haltungen_1_rw = round(rw/1000,2)
+                        self.haltungen_1_sw = round(sw/1000,2)
+                        self.haltungen_1_mw = round(mw/1000,2)
 
                 # laenge haltungen 2
                 sql = """
@@ -287,9 +287,9 @@ class Info:
                         if i[1] == 'Mischwasser':
                             mw += i[2]
 
-                        self.haltungen_2_rw = round(rw,2)
-                        self.haltungen_2_sw = round(sw,2)
-                        self.haltungen_2_mw = round(mw,2)
+                        self.haltungen_2_rw = round(rw/1000,2)
+                        self.haltungen_2_sw = round(sw/1000,2)
+                        self.haltungen_2_mw = round(mw/1000,2)
 
                 # laenge haltungen 3
                 sql = """
@@ -319,9 +319,9 @@ class Info:
                         if i[1] == 'Mischwasser':
                             mw += i[2]
 
-                        self.haltungen_3_rw = round(rw,2)
-                        self.haltungen_3_sw = round(sw,2)
-                        self.haltungen_3_mw = round(mw,2)
+                        self.haltungen_3_rw = round(rw/1000,2)
+                        self.haltungen_3_sw = round(sw/1000,2)
+                        self.haltungen_3_mw = round(mw/1000,2)
 
                 # laenge haltungen 4
                 sql = """
@@ -351,9 +351,9 @@ class Info:
                         if i[1] == 'Mischwasser':
                             mw += i[2]
 
-                        self.haltungen_4_rw = round(rw,2)
-                        self.haltungen_4_sw = round(sw,2)
-                        self.haltungen_4_mw = round(mw,2)
+                        self.haltungen_4_rw = round(rw/1000,2)
+                        self.haltungen_4_sw = round(sw/1000,2)
+                        self.haltungen_4_mw = round(mw/1000,2)
 
                 # laenge haltungen 5
                 sql = """
@@ -383,9 +383,9 @@ class Info:
                         if i[1] == 'Mischwasser':
                             mw += i[2]
 
-                        self.haltungen_5_rw = round(rw,2)
-                        self.haltungen_5_sw = round(sw,2)
-                        self.haltungen_5_mw = round(mw,2)
+                        self.haltungen_5_rw = round(rw/1000,2)
+                        self.haltungen_5_sw = round(sw/1000,2)
+                        self.haltungen_5_mw = round(mw/1000,2)
 
 
        #Abfragen Schaechte

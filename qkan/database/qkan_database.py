@@ -151,6 +151,7 @@ def createdbtables(
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
             objekt_id INTEGER,
+            baujahr INT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (m)
@@ -280,7 +281,6 @@ def createdbtables(
             film_dateiname TEXT,
             ordner_bild TEXT,
             ordner_video TEXT,
-            richtung TEXT,
             filmtyp INTEGER,
             video_start INTEGER,
             video_ende INTEGER,
@@ -317,10 +317,9 @@ def createdbtables(
             hoehe REAL,                                     -- Profilhoehe (m)
             breite REAL,                                    -- Profilbreite (m)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
+            aussendurchmesser REAL,
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
-            deckeloben REAL,
-            deckelunten REAL,
             baujahr INTEGER,
             haltnam TEXT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
@@ -356,6 +355,109 @@ def createdbtables(
 
     consl.commit()
 
+    # Anschlussleitungen_untersucht ----------------------------------------------------------------
+
+    sqls = [
+        """CREATE TABLE anschlussleitungen_untersucht(
+            pk INTEGER PRIMARY KEY,
+            leitnam TEXT,
+            bezugspunkt TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam
+            schunten TEXT,                                  -- join schaechte.schnam
+            hoehe REAL,                                     -- Profilhoehe (m)
+            breite REAL,                                    -- Profilbreite (m)
+            laenge REAL,                                    -- abweichende Haltungslänge (m)
+            baujahr INTEGER,
+            id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
+            untersuchtag TEXT,
+            untersucher TEXT,
+            wetter INTEGER DEFAULT 0,
+            bewertungsart TEXT,
+            bewertungstag TEXT,
+            strasse TEXT,
+            datenart TEXT,
+            auftragsbezeichnung TEXT,
+            max_ZD INTEGER,
+            max_ZB INTEGER, 
+            max_ZS INTEGER,
+            xschob REAL,
+            yschob REAL,
+            xschun REAL,
+            yschun REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+        "SELECT AddGeometryColumn('anschlussleitungen_untersucht','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('anschlussleitungen_untersucht','geom')"
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Anschlussleitungen" konnte nicht erstellt werden',
+            )
+            consl.close()
+            return False
+
+    # untersuchungsdaten Anschlussleitungen
+
+    sqls = [
+        """CREATE TABLE untersuchdat_anschlussleitung (
+            pk INTEGER PRIMARY KEY,
+            untersuchleit TEXT,
+            untersuchrichtung TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam 
+            schunten TEXT,                                  -- join schaechte.schnam
+            id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
+            untersuchtag TEXT,
+            bandnr INTEGER,
+            videozaehler TEXT,
+            inspektionslaenge REAL,
+            station REAL,
+            stationtext REAL,
+            timecode INTEGER,
+            video_offset REAL,
+            kuerzel TEXT,
+            charakt1 TEXT,
+            charakt2 TEXT,
+            quantnr1 REAL, 
+            quantnr2 REAL, 
+            streckenschaden TEXT,
+            streckenschaden_lfdnr INTEGER,
+            pos_von INTEGER, 
+            pos_bis INTEGER,
+            foto_dateiname TEXT,
+            film_dateiname TEXT,
+            ordner_bild TEXT,
+            ordner_video TEXT,
+            richtung TEXT,
+            filmtyp INTEGER,
+            video_start INTEGER,
+            video_ende INTEGER,
+            ZD INTEGER,
+            ZB INTEGER,
+            ZS INTEGER,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+        "SELECT AddGeometryColumn('untersuchdat_anschlussleitung','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('untersuchdat_anschlussleitung','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "untersuchdat_anschlussleitung" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
+
+    consl.commit()
+
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
@@ -372,6 +474,7 @@ def createdbtables(
             ueberstauflaeche REAL DEFAULT 0,
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
+            baujahr INTEGER,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             knotentyp TEXT,                                 -- join knotentypen.knotentyp
             auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
@@ -425,7 +528,6 @@ def createdbtables(
         return False
 
     consl.commit()
-
 
     # Schaechte_untersucht ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
@@ -494,6 +596,8 @@ def createdbtables(
             bereich TEXT,
             foto_dateiname TEXT,
             ordner TEXT,
+            film_dateiname TEXT,
+            ordner_video TEXT,
             ZD INTEGER,
             ZB INTEGER,
             ZS INTEGER,

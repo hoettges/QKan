@@ -90,8 +90,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
         self.button_box.helpRequested.connect(self.click_help)
-        self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
-        self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
+        #self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
+        #self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -109,7 +109,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
         self.cb_bodenklassen.setChecked(QKan.config.check_import.bodenklassen)
 
-        self.cb_testmodus.setChecked(False)         # Standard: deaktiviert, vorher QKan.config.check_import.testmodus
+        #self.cb_testmodus.setChecked(False)         # Standard: deaktiviert, vorher QKan.config.check_import.testmodus
 
         self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
 
