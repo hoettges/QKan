@@ -50,8 +50,8 @@ class Infos(QKanPlugin):
         super().__init__(iface)
 
         self.info_dlg = InfoDialog(default_dir=self.default_dir, tr=self.tr)
-        self.info_dlg.pushButton.clicked.connect(self.run_info)
-        self.info_dlg.pushButton_2.clicked.connect(self.run_info_2)
+        self.info_dlg.pb_exportExcel.clicked.connect(self.run_info)
+        self.info_dlg.pb_exportXML.clicked.connect(self.run_info_2)
 
         self.stamm: Optional[Element] = None
         self.hydraulik_objekte: Optional[Element] = None

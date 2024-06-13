@@ -57,8 +57,8 @@ class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
     textBrowser_13: QLineEdit
     tableWidget: QTableWidget
     tableWidget_2: QTableWidget
-    pushButton: QPushButton
-    pushButton_2: QPushButton
+    pb_exportExcel: QPushButton
+    pb_exportXML: QPushButton
     date: QLineEdit
 
 
@@ -70,8 +70,8 @@ class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
     ):
         super().__init__(default_dir, tr, parent)
 
-        self.pushButton.clicked.connect(self.export)
-        self.pushButton_2.clicked.connect(self.export_xml)
+        self.pb_exportExcel.clicked.connect(self.export)
+        self.pb_exportXML.clicked.connect(self.export_xml)
 
         self.filename = ''
 

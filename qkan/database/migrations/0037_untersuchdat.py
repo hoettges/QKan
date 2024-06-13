@@ -53,6 +53,7 @@ def run(dbcon: DBConnection) -> bool:
         logger.error("Fehler in migration 0036_haltung_ergaenzung")
         return False
 
+    #Ergänzungen, Löschen der Spalte richtung
     if not dbcon.alter_table(
         "untersuchdat_haltung",
         [
@@ -91,12 +92,15 @@ def run(dbcon: DBConnection) -> bool:
             "ZS INTEGER",
             "kommentar TEXT",
             "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
-        ]
+        ],
+        [
+            "richtung TEXT",
+        ],
     ):
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
-            "Hinzufügen von untersuchtag "
-            "zu Tabelle 'untersuchdat_haltung' fehlgeschlagen"
+            "Hinzufügen von untersuchtag zu Tabelle bzw. Löschen von richtung in "
+            "'untersuchdat_haltung' fehlgeschlagen"
         )
 
     if not dbcon.alter_table(
@@ -206,10 +210,7 @@ def run(dbcon: DBConnection) -> bool:
             "zu Tabelle 'haltungen' fehlgeschlagen"
         )
 
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat")
-        return False
-
+    # Ergänzungen, Löschen der Spalte deckeloben, deckelunten
     if not dbcon.alter_table(
         "anschlussleitungen",
         [
@@ -240,17 +241,19 @@ def run(dbcon: DBConnection) -> bool:
             "yschun REAL",
             "kommentar TEXT",
             "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
-        ]
+        ],
+        [
+            "deckeloben REAL",
+            "deckelunten REAL",
+
+        ],
     ):
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
             "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
-            "zu Tabelle 'anschlussleitungen' fehlgeschlagen"
+            "zu Tabelle 'anschlussleitungen' bzw. "
+            "Löschen der Spalte deckeloben, deckelunten in der Tabelle anschlussleitungen fehlgeschlagen"
         )
-
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat")
-        return False
 
     if not dbcon.alter_table(
             "schaechte",
@@ -259,7 +262,7 @@ def run(dbcon: DBConnection) -> bool:
                 "sohlhoehe REAL",
                 "deckelhoehe REAL",
                 "durchm REAL",
-                "druckdicht INTEGER",
+                "druckdicht INTEGER DEFAULT 0                    -- ist Druckleitung",
                 "ueberstauflaeche REAL DEFAULT 0",
                 "entwart TEXT DEFAULT 'Regenwasser' -- join entwaesserungsarten.bezeichnung",
                 "strasse TEXT",
@@ -281,42 +284,6 @@ def run(dbcon: DBConnection) -> bool:
             "Hinzufügen von aussendurchmesser, profilauskleidung, innenmaterial "
             "zu Tabelle 'schaechte' fehlgeschlagen"
         )
-
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat")
-        return False
-
-    #Löschen der Spalte richtung
-    if not dbcon.alter_table(
-            "untersuchdat_haltung",[],
-            [
-                "richtung TEXT",
-
-            ]
-    ):
-        logger.error(
-            f"Fehler bei Migration zu Version {VERSION}: "
-            "Löschen der Spalte richtung in der Tabelle untersuchdat_haltung fehlgeschlagen"
-        )
-
-    # Löschen der Spalte deckeloben, deckelunten
-    if not dbcon.alter_table(
-            "anschlussleitungen", [],
-            [
-                "deckeloben REAL",
-                "deckelunten REAL",
-
-            ]
-    ):
-        logger.error(
-            f"Fehler bei Migration zu Version {VERSION}: "
-            "Löschen der Spalte deckeloben, deckelunten in der Tabelle anschlussleitungen fehlgeschlagen"
-        )
-
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat")
-        return False
-
 
     if not dbcon.alter_table(
             "anschlussleitungen_untersucht",
@@ -351,12 +318,8 @@ def run(dbcon: DBConnection) -> bool:
     ):
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
-            "Hinzufügen von Tabelle anschlussleitungen_untersucht fehlgeschlagen"
+            "Hinzufügen von Attributen in Tabelle anschlussleitungen_untersucht fehlgeschlagen"
         )
-
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat")
-        return False
 
     if not dbcon.alter_table(
             "untersuchdat_anschlussleitung",
@@ -400,8 +363,48 @@ def run(dbcon: DBConnection) -> bool:
     ):
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
-            "Hinzufügen von Tabelle untersuchdat_anschlussleitung fehlgesfchlagen"
+            "Hinzufügen von Attributen in Tabelle untersuchdat_anschlussleitung fehlgeschlagen"
         )
+
+    if not dbcon.alter_table(
+        "profile",
+        [
+            "profilnam TEXT",
+            "kuerzel TEXT                       -- nur für Beschriftung",
+            "he_nr INTEGER",
+            "mu_nr INTEGER                      -- HYSTEM - EXTRAN",
+            "kp_key TEXT                        -- DYNA / Kanal + +",
+            "isybau TEXT                        -- BFR Abwasser",
+            "m150 TEXT                          -- DWA M150",
+            "m145 TEXT                          -- DWA M145",
+            "kommentar TEXT",
+        ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von Attributen in Tabelle profile fehlgeschlagen"
+        )
+
+    if not dbcon.alter_table(
+        "simulationsstatus",
+        [
+            "bezeichnung TEXT",
+            "kuerzel TEXT",
+            "he_nr INTEGER,                      -- HYSTEM-EXTRAN",
+            "mu_nr INTEGER,                      -- Mike+",
+            "kp_nr INTEGER,                      -- DYNA / Kanal++",
+            "isybau TEXT,                        -- BFR Abwasser",
+            "m150 TEXT,                          -- DWA M150",
+            "m145 TEXT,                          -- DWA M145",
+            "kommentar TEXT"
+        ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von Attributen in Tabelle profile fehlgeschlagen"
+        )
+
+
 
     if not load_plausisql(dbcon):
         logger.error("Fehler in migration 0037_untersuchdat")

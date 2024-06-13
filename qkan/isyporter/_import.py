@@ -576,8 +576,8 @@ class ImportTask:
                     return None
 
 
-            if str(schacht.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(schacht.simstatus)]
+            if schacht.simstatus in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[schacht.simstatus]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (bezeichnung)
@@ -586,7 +586,7 @@ class ImportTask:
                     s=schacht.simstatus
                 )
                 simstatus = f"{schacht.simstatus}"
-                self.mapper_simstatus[str(schacht.simstatus)] = simstatus
+                self.mapper_simstatus[schacht.simstatus] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
@@ -1035,8 +1035,8 @@ class ImportTask:
 
         for auslass in _iter():
             # Simstatus-Nr aus HE ersetzten
-            if str(auslass.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(auslass.simstatus)]
+            if auslass.simstatus in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[auslass.simstatus]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (bezeichnung)
@@ -1045,7 +1045,7 @@ class ImportTask:
                     s=auslass.simstatus
                 )
                 simstatus = f"{auslass.simstatus}"
-                self.mapper_simstatus[str(auslass.simstatus)] = simstatus
+                self.mapper_simstatus[auslass.simstatus] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
@@ -1170,8 +1170,8 @@ class ImportTask:
                 )
 
         for speicher in _iter():
-            if str(speicher.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(speicher.simstatus)]
+            if speicher.simstatus in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[speicher.simstatus]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (bezeichnung)
@@ -1180,7 +1180,7 @@ class ImportTask:
                     s=speicher.simstatus
                 )
                 simstatus = f"{speicher.simstatus}"
-                self.mapper_simstatus[str(speicher.simstatus)] = simstatus
+                self.mapper_simstatus[speicher.simstatus] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
@@ -1391,8 +1391,8 @@ class ImportTask:
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
         for haltung in _iter():
-            if str(haltung.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(haltung.simstatus)]
+            if haltung.simstatus in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[haltung.simstatus]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (bezeichnung)
@@ -1401,7 +1401,7 @@ class ImportTask:
                     s=haltung.simstatus
                 )
                 simstatus = f"{haltung.simstatus}"
-                self.mapper_simstatus[str(haltung.simstatus)] = simstatus
+                self.mapper_simstatus[haltung.simstatus] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
@@ -2333,8 +2333,8 @@ class ImportTask:
 
         # 1. Teil: Hier werden die Stammdaten zu den anschlussleitung in die Datenbank geschrieben
         for anschlussleitung in _iter():
-            if str(anschlussleitung.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(anschlussleitung.simstatus)]
+            if anschlussleitung.simstatus in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[anschlussleitung.simstatus]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (bezeichnung)
@@ -2343,7 +2343,7 @@ class ImportTask:
                     s=anschlussleitung.simstatus
                 )
                 simstatus = f"{anschlussleitung.simstatus}"
-                self.mapper_simstatus[str(anschlussleitung.simstatus)] = simstatus
+                self.mapper_simstatus[anschlussleitung.simstatus] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
@@ -3199,8 +3199,8 @@ class ImportTask:
         self.db_qkan.commit()
 
         for pumpe in _iter():
-            if str(pumpe.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(pumpe.simstatus)]
+            if pumpe.simstatus in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[pumpe.simstatus]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (bezeichnung)
@@ -3209,7 +3209,7 @@ class ImportTask:
                     s=pumpe.simstatus
                 )
                 simstatus = f"{pumpe.simstatus}"
-                self.mapper_simstatus[str(pumpe.simstatus)] = simstatus
+                self.mapper_simstatus[pumpe.simstatus] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import pumpe [3]"):
                     return None
 

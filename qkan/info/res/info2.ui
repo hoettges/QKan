@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -483,17 +483,17 @@
       <string>Betriebsbericht</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="pb_exportExcel">
      <property name="geometry">
       <rect>
-       <x>610</x>
-       <y>650</y>
+       <x>170</x>
+       <y>640</y>
        <width>201</width>
        <height>23</height>
       </rect>
      </property>
      <property name="text">
-      <string>Export in Excel</string>
+      <string>Export in Exceldatei</string>
      </property>
     </widget>
     <widget class="QTableWidget" name="tableWidget">
@@ -673,6 +673,19 @@
        <string>test</string>
       </property>
      </item>
+    </widget>
+    <widget class="QPushButton" name="pb_exportXML">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>640</y>
+       <width>201</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Export in XML-Datei</string>
+     </property>
     </widget>
    </widget>
   </widget>
