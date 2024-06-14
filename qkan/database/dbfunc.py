@@ -746,6 +746,150 @@ class DBConnection:
                 f"insert anschlussleitung - sql: {sql}\n" f"parameter: {param1}"
             )
 
+        elif tabnam == "anschlussleitungen_untersucht":
+            parlis = [
+                "leitnam",
+                "bezugspunkt",
+                "schoben",
+                "schunten",
+                "hoehe",
+                "breite",
+                "breite",
+                "laenge",
+                "kommentar",
+                "createdat",
+                "baujahr",
+                "xschob",
+                "yschob",
+                "xschun",
+                "yschun",
+                "untersuchtag",
+                "untersucher",
+                "wetter",
+                "strasse",
+                "bewertungsart",
+                "bewertungstag",
+                "datenart",
+                "max_ZD",
+                "max_ZB",
+                "max_ZS",
+                "geom",
+                "epsg",
+            ]
+            for el in parlis:
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
+            sql = """
+                INSERT INTO anschlussleitungen_untersucht
+                  (leitnam, bezugspunkt, schoben, schunten,
+                   hoehe, breite, laenge,
+                   kommentar, createdat, baujahr,  
+                   geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
+                SELECT 
+                  :leitnam, :bezugspunkt, :schoben, :schunten, 
+                  CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END, 
+                  CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
+                  :laenge, :kommentar, 
+                  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
+                  MakeLine(
+                    coalesce(
+                      MakePoint(:xschob, :yschob, :epsg),
+                      suo.geop,
+                      so.geop
+                    ), 
+                    coalesce(
+                      MakePoint(:xschun, :yschun, :epsg),
+                      suu.geop,
+                      su.geop
+                    )
+                  ), :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart, :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
+                FROM
+                  (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
+                  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+                  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+                  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+                  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"""
+
+            logger.debug(
+                f"insert anschlussleitung - sql: {sql}\n" f"parameter: {param1}"
+            )
+
+        elif tabnam == "untersuchdat_anschlussleitungen":
+            parlis = [
+                "untersuchleit",
+                "untersuchrichtung",
+                "schoben",
+                "schunten",
+                "id",
+                "untersuchtag",
+                "bandnr",
+                "videozaehler",
+                "inspektionslaenge",
+                "station",
+                "timecode",
+                "video_offset",
+                "kuerzel",
+                "charakt1",
+                "charakt2",
+                "quantnr1",
+                "quantnr2",
+                "streckenschaden",
+                "streckenschaden_lfdnr",
+                "pos_von",
+                "pos_bis",
+                "foto_dateiname",
+                "film_dateiname",
+                "ordner_bild",
+                "ordner_video",
+                "ZD",
+                "ZB",
+                "ZS",
+                "createdat",
+            ]
+            for el in parlis:
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
+            sql = f"""  
+                INSERT INTO untersuchdat_anschlussleitungen
+                  (untersuchleit, untersuchrichtung, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
+                    inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
+                    quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
+                    film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
+                SELECT
+                  :untersuchleit, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
+                  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+                  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
+                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
+                FROM
+                schaechte AS schob,
+                schaechte AS schun,
+                haltungen AS haltung
+                WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
+                UNION
+                SELECT
+                  :untersuchleit, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
+                  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+                  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
+                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
+                FROM
+                schaechte AS schob,
+                schaechte AS schun,
+                anschlussleitungen AS leitung
+                WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND leitung.leitnam = :untersuchhal;
+            """
+
         elif tabnam == "schaechte_untersucht":
             parlis = [
                 "schnam",

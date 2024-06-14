@@ -4861,27 +4861,56 @@ class Subkans_funkt:
                         new_list.append(x)
                 dictionary[attr[1]] = new_list
 
-
             for values in dictionary.values():
                 new_items = []
                 vergl = []
 
-                for i in values:
-                    if i[8] not in new_items:
-                        # i[8] ist die Stationierung
-                        x = float(i[8])
-                        x2 = float(i[8]) + float(i[28])
-                        new_items.append(i[8])
+                def check_overlap(start1, length1, start2, length2):
+                    end1 = start1 + length1
+                    end2 = start2 + length2
+                    return (start1 < end2 and end1 > start2)
 
-                    for y in values:
-                        if x <= float(y[8]) + float(y[28]) <= x2 or x <= float(y[8]) <= x2:
-                            vergl.append(y)
+                overlapping_indices = set()
 
+                for i in range(len(values)):
+                    start1 = values[i][8]
+                    length1 = float(values[i][28])
+                    for j in range(i + 1, len(values)):
+                        start2 = values[j][8]
+                        length2 = float(values[j][28])
+                        if check_overlap(start1, length1, start2, length2):
+                            overlapping_indices.add(i)
+                            overlapping_indices.add(j)
+
+                vergl = [values[index] for index in overlapping_indices]
+
+                #for i in values:
+                #    if i[8] not in new_items:
+                #        # i[8] ist die Stationierung
+                #        x = float(i[8])
+                #        x2 = float(i[8]) + float(i[28])
+                #        new_items.append(i[8])
+                #    else:
+                #        for y in values:
+                #            if x <= float(y[8]) + float(y[28]) <= x2 or x <= float(y[8]) <= x2:
+                #                vergl.append(y)
 
                 zustand = []
                 for i in vergl:
+                    if int(i[27]) == 0:
+                        kg = 1.0
+                    elif int(i[27]) == 1:
+                        kg = 0.8
+                    elif int(i[27]) == 2:
+                        kg = 0.25
+                    elif int(i[27]) == 3:
+                        kg = 0.15
+                    elif int(i[27]) == 4:
+                        kg = 0.05
+                    elif int(i[27]) == 5:
+                        kg = 0.0
                     # i[27] Zustandsbewertung
-                    zustand.append(kg)
+                    zustand.append(kg*float(i[28]))
 
                 # if len(zustand) > 0:
                 #     # TODO: alle löchen die größer sind als min
@@ -4891,16 +4920,27 @@ class Subkans_funkt:
                 #     # pk von dem element welches entfernt werden soll
                 #     entf_list.append(vergl[entf_index][0])
 
+               # if len(zustand) > 1:
+                #    for i in zustand:
+                 #       if i >= min(zustand):
+                  #          # TODO: alle löchen die größer sind als min
+                   #         entf = i
+                    #        entf_index = zustand.index(entf)
+#
+ #                           # pk von dem element welches entfernt werden soll
+  #                          entf_list.append(vergl[entf_index][0])
+
                 if len(zustand) > 0:
-                    for i in zustand:
-                        if i >= min(zustand):
-                            # TODO: alle löchen die größer sind als min
-                            entf = i
-                            entf_index = zustand.index(entf)
+                    x = 0
+                    z_min = zustand.index(max(zustand))
+                    for _ in zustand:
+                        if x != z_min:
+                            entf = x
+                            #entf_index = zustand.index(entf)
 
                             # pk von dem element welches entfernt werden soll
-                            entf_list.append(vergl[entf_index][0])
-
+                            entf_list.append(vergl[entf][0])
+                        x += 1
 
 
             # Datenbank anweisung um die Elemente zu löschen
@@ -4909,10 +4949,6 @@ class Subkans_funkt:
                 data = (i,)
                 curs.execute(sql, data)
 
-            try:
-                db.commit()
-            except:
-                pass
 
             sql = """
                                    SELECT
@@ -4999,40 +5035,77 @@ class Subkans_funkt:
                 new_items = []
                 vergl = []
 
-                for i in values:
-                    if i[8] not in new_items:
-                        # i[8] ist die Stationierung
-                        x = float(i[8])
-                        x2 = float(i[8]) + float(i[28])
-                        new_items.append(i[8])
 
-                    for y in values:
-                        if x <= float(y[8]) + float(y[28]) <= x2 or x <= float(y[8]) <= x2:
-                            vergl.append(y)
+                def check_overlap(start1, length1, start2, length2):
+                    end1 = start1 + length1
+                    end2 = start2 + length2
+                    return (start1 < end2 and end1 > start2)
+
+                overlapping_indices = set()
+
+                for i in range(len(values)):
+                    start1 = values[i][8]
+                    length1 = float(values[i][28])
+                    for j in range(i + 1, len(values)):
+                        start2 = values[j][8]
+                        length2 = float(values[j][28])
+                        if check_overlap(start1, length1, start2, length2):
+                            overlapping_indices.add(i)
+                            overlapping_indices.add(j)
+
+                vergl = [values[index] for index in overlapping_indices]
+
+                    #for i in values:
+                #    if i[8] not in new_items:
+                #        # i[8] ist die Stationierung
+                #        x = float(i[8])
+                #        x2 = float(i[8]) + float(i[28])
+                #        new_items.append(i[8])
+                #    else:
+                #        for y in values:
+                #            if x <= float(y[8]) + float(y[28]) <= x2 or x <= float(y[8]) <= x2:
+                #                vergl.append(y)
+
 
 
                 zustand = []
                 for i in vergl:
+                    if int(i[27]) == 0:
+                        kg = 1.0
+                    elif int(i[27]) == 1:
+                        kg = 0.8
+                    elif int(i[27]) == 2:
+                        kg = 0.25
+                    elif int(i[27]) == 3:
+                        kg = 0.15
+                    elif int(i[27]) == 4:
+                        kg = 0.05
+                    elif int(i[27]) == 5:
+                        kg = 0.0
                     # i[27] Zustandsbewertung
-                    zustand.append(kg)
+                    zustand.append(kg*float(i[28]))
 
-                # if len(zustand) > 0:
-                #     # TODO: alle löchen die größer sind als min
-                #     entf = min(zustand)
-                #     entf_index = zustand.index(entf)
-                #
-                #     # pk von dem element welches entfernt werden soll
-                #     entf_list.append(vergl[entf_index][0])
+
+                #if len(zustand) > 1:
+                 #   for i in zustand:
+                  #      if i >= min(zustand):
+                   #         entf = i
+                    #        entf_index = zustand.index(entf)
+#
+ #                           # pk von dem element welches entfernt werden soll
+  #                          entf_list.append(vergl[entf_index][0])
 
                 if len(zustand) > 0:
-                    for i in zustand:
-                        if i >= min(zustand):
-                            # TODO: alle löchen die größer sind als min
-                            entf = i
-                            entf_index = zustand.index(entf)
+                    x = 0
+                    z_min = zustand.index(min(zustand))
+                    for _ in zustand:
+                        if x != z_min:
+                            entf = x
+                            # entf_index = zustand.index(entf)
 
                             # pk von dem element welches entfernt werden soll
-                            entf_list.append(vergl[entf_index][0])
+                            entf_list.append(vergl[entf][0])
+                        x += 1
 
 
 
@@ -5042,10 +5115,6 @@ class Subkans_funkt:
                 data = (i,)
                 curs.execute(sql, data)
 
-            try:
-                db.commit()
-            except:
-                pass
 
             sql = """
                                                    SELECT
@@ -5164,7 +5233,7 @@ class Subkans_funkt:
                                            haltungen.createdat
                                        FROM substanz_haltung_bewertung, haltungen
                                        WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                                       AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                       AND (substanz_haltung_bewertung.Schadensart = 'PktS') 
                                        AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS')
                                        AND Zustandsklasse_ges IN (0,1,2,3,4)
                                    """
@@ -5184,48 +5253,57 @@ class Subkans_funkt:
                         new_list.append(x)
                 dictionary[attr[1]] = new_list
 
-            #iface.messageBar().pushMessage("Error",
-             #                              str(dictionary),
-              #                             level=Qgis.Critical)
 
             for values in dictionary.values():
-                new_items = []
-                vergl = []
+                entf_list = []
+                dictionary_2 = {}
 
                 for i in values:
-                    if i[8] not in new_items:
-                        # i[1] ist die Stationierung
-                        x = i[8]
-                        new_items.append(i[8])
-                    else:
-                        for y in values:
-                            if y[8] == x:
-                                vergl.append(y)
+                    if i[8] in dictionary_2:
+                        continue
+                    new_list_2 = []
+                    for x in values:
+                        if x[8] == i[8]:
+                            new_list_2.append(x)
+                    dictionary_2[i[8]] = new_list_2
 
-                zustand = []
-                for i in vergl:
-                    # i[3] Zustandsbewertung
-                    zustand.append(i[27])
+                    for z in dictionary_2.values():
+                        new_items = []
+                        vergl = []
 
+                        for i_2 in z:
+                            if i_2[8] not in new_items:
+                                # i[1] ist die Stationierung
+                                x = i_2[8]
+                                new_items.append(i_2[8])
+                            else:
+                                for y in z:
+                                    if y[8] == x:
+                                        vergl.append(y)
+                        iface.messageBar().pushMessage("Error",
+                                                       str(vergl),
+                                                       level=Qgis.Critical)
+                        zustand = []
+                        for v in vergl:
+                            # i[3] Zustandsbewertung
+                            zustand.append(v[27])
 
-                if len(zustand) > 0:
-                    x = 0
-                    for i in zustand:
-                        x += 1
-                        if i >= min(zustand) and x < len(zustand):
-                            # TODO: alle löchen die größer sind als min
-                            entf = x
-                            #entf_index = zustand.index(entf)
+                        iface.messageBar().pushMessage("Error",
+                                                       str(zustand),
+                                                       level=Qgis.Critical)
 
-                            # pk von dem element welches entfernt werden soll
-                            entf_list.append(vergl[entf][0])
+                        if len(zustand) > 0:
+                            x = 0
+                            z_min = zustand.index(min(zustand))
+                            for _ in zustand:
+                                if x != z_min:
+                                    entf = x
+                                    # entf_index = zustand.index(entf)
+                                    # pk von dem element welches entfernt werden soll
 
+                                    entf_list.append(vergl[entf][0])
 
-            # try:
-            #     db.commit()
-            # except:
-            #     pass
-
+                                x += 1
 
             #Datenbank anweisung um die Elemente zu löschen
             for i in entf_list:
@@ -5233,127 +5311,11 @@ class Subkans_funkt:
                 sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
                 data = (i,)
                 curs.execute(sql, data)
-
             try:
                 db.commit()
             except:
                 pass
 
-            sql = """
-                                                           SELECT
-                                                               substanz_haltung_bewertung.pk,
-                                                               substanz_haltung_bewertung.untersuchhal,
-                                                               substanz_haltung_bewertung.untersuchrichtung,
-                                                               substanz_haltung_bewertung.schoben,
-                                                               substanz_haltung_bewertung.schunten,
-                                                               substanz_haltung_bewertung.id,
-                                                               substanz_haltung_bewertung.videozaehler,
-                                                               substanz_haltung_bewertung.inspektionslaenge,
-                                                               substanz_haltung_bewertung.station,
-                                                               substanz_haltung_bewertung.timecode,
-                                                               substanz_haltung_bewertung.kuerzel,
-                                                               substanz_haltung_bewertung.charakt1,
-                                                               substanz_haltung_bewertung.charakt2,
-                                                               substanz_haltung_bewertung.quantnr1,
-                                                               substanz_haltung_bewertung.quantnr2,
-                                                               substanz_haltung_bewertung.Schadensart,
-                                                               substanz_haltung_bewertung.Schadensauspraegung,
-                                                               substanz_haltung_bewertung.streckenschaden,
-                                                               substanz_haltung_bewertung.pos_von,
-                                                               substanz_haltung_bewertung.pos_bis,
-                                                               substanz_haltung_bewertung.foto_dateiname,
-                                                               substanz_haltung_bewertung.film_dateiname,
-                                                               substanz_haltung_bewertung.kommentar,
-                                                               substanz_haltung_bewertung.bw_bs,
-                                                               substanz_haltung_bewertung.Zustandsklasse_D,
-                                                               substanz_haltung_bewertung.Zustandsklasse_S,
-                                                               substanz_haltung_bewertung.Zustandsklasse_B,
-                                                               substanz_haltung_bewertung.Zustandsklasse_ges,
-                                                               substanz_haltung_bewertung.Schadenslaenge,
-                                                               substanz_haltung_bewertung.createdat,
-                                                               haltungen.haltnam,
-                                                               haltungen.material,
-                                                               haltungen.hoehe,
-                                                               haltungen.createdat
-                                                           FROM substanz_haltung_bewertung, haltungen
-                                                           WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                                                           AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
-                                                           AND (substanz_haltung_bewertung.Schadensauspraegung = 'SoB')
-                                                           AND Zustandsklasse_ges IN (0,1,2,3,4)
-                                                       """
-            data = (date,)
-
-            curs.execute(sql, data)
-
-            dictionary = {}
-            entf_list = []
-            dat= curs.fetchall()
-            for attr in dat:
-
-
-                if attr[1] in dictionary:
-                    continue
-                new_list = []
-                for x in dat:
-                    if x[1] == attr[1]:
-                        new_list.append(x)
-                dictionary[attr[1]] = new_list
-
-            for values in dictionary.values():
-                new_items = []
-                vergl = []
-
-                for i in values:
-                    if i[8] not in new_items:
-                        # i[1] ist die Stationierung
-                        x = i[8]
-                        new_items.append(i[8])
-                    else:
-                        for y in values:
-                            if y[8] == x:
-                                vergl.append(y)
-
-                zustand = []
-                for i in vergl:
-                    # i[3] Zustandsbewertung
-                    zustand.append(i[27])
-
-                # if len(zustand) > 0:
-                #     # TODO: alle löchen die größer sind als min
-                #     entf = min(zustand)
-                #     entf_index = zustand.index(entf)
-                #
-                #     # pk von dem element welches entfernt werden soll
-                #     entf_list.append(vergl[entf_index][0])
-
-
-                if len(zustand) > 0:
-                    x = 0
-                    for i in zustand:
-                        x += 1
-                        if i >= min(zustand) and x < len(zustand):
-                            # TODO: alle löchen die größer sind als min
-                            entf = x
-                            #entf_index = zustand.index(entf)
-
-                            # pk von dem element welches entfernt werden soll
-                            entf_list.append(vergl[entf][0])
-
-            # try:
-            #     db.commit()
-            # except:
-            #     pass
-
-            # Datenbank anweisung um die Elemente zu löschen
-            for i in entf_list:
-                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
-                data = (i,)
-                curs.execute(sql, data)
-
-            try:
-                db.commit()
-            except:
-                pass
 
 
             sql = """
@@ -5394,7 +5356,7 @@ class Subkans_funkt:
                                                    haltungen.createdat
                                                FROM substanz_haltung_bewertung, haltungen
                                                WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
-                                               AND (substanz_haltung_bewertung.Schadensart = 'PktS' OR substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                               AND (substanz_haltung_bewertung.Schadensart = 'PktS') 
                                                AND (substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
                                                AND Zustandsklasse_ges IN (0,1,2,3,4)
                                            """
@@ -5414,56 +5376,300 @@ class Subkans_funkt:
                         new_list.append(x)
                 dictionary[attr[1]] = new_list
 
-
             for values in dictionary.values():
-                new_items = []
-                vergl = []
+                entf_list = []
+                dictionary_2 = {}
 
                 for i in values:
-                    if i[8] not in new_items:
-                        # i[1] ist die Stationierung
-                        x = i[8]
-                        new_items.append(i[8])
-                    else:
-                        for y in values:
-                            if y[8] == x:
-                                vergl.append(y)
+                    if i[8] in dictionary_2:
+                        continue
+                    new_list_2 = []
+                    for x in values:
+                        if x[8] == i[8]:
+                            new_list_2.append(x)
+                    dictionary_2[i[8]] = new_list_2
 
-                zustand = []
-                for i in vergl:
-                    # i[3] Zustandsbewertung
-                    zustand.append(i[27])
+                    for z in dictionary_2.values():
+                        new_items = []
+                        vergl = []
 
+                        for i_2 in z:
+                            if i_2[8] not in new_items:
+                                # i[1] ist die Stationierung
+                                x = i_2[8]
+                                new_items.append(i_2[8])
+                            else:
+                                for y in z:
+                                    if y[8] == x:
+                                        vergl.append(y)
+                        iface.messageBar().pushMessage("Error",
+                                                       str(vergl),
+                                                       level=Qgis.Critical)
+                        zustand = []
+                        for v in vergl:
+                            # i[3] Zustandsbewertung
+                            zustand.append(v[27])
 
-                #if len(zustand) > 0:
-                #     #TODO: alle löchen die größer sind als min
-                #     entf = min(zustand)
-                #     entf_index = zustand.index(entf)
-                #
-                #     # pk von dem element welches entfernt werden soll
-                #     entf_list.append(vergl[entf_index][0])
+                        iface.messageBar().pushMessage("Error",
+                                                       str(zustand),
+                                                       level=Qgis.Critical)
 
+                        if len(zustand) > 0:
+                            x = 0
+                            z_min = zustand.index(min(zustand))
+                            for _ in zustand:
+                                if x != z_min:
+                                    entf = x
+                                    # entf_index = zustand.index(entf)
+                                    # pk von dem element welches entfernt werden soll
 
-                if len(zustand) > 0:
-                    x = 0
-                    for i in zustand:
-                        x += 1
-                        if i >= min(zustand) and x < len(zustand):
-                            # TODO: alle löchen die größer sind als min
-                            entf = x
-                            #entf_index = zustand.index(entf)
+                                    entf_list.append(vergl[entf][0])
 
-                            # pk von dem element welches entfernt werden soll
-                            entf_list.append(vergl[entf][0])
-
-            # try:
-            #     db.commit()
-            # except:
-            #     pass
+                                x += 1
 
             # Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+            try:
+                db.commit()
+            except:
+                pass
 
 
+
+            sql = """
+                                                   SELECT
+                                                       substanz_haltung_bewertung.pk,
+                                                       substanz_haltung_bewertung.untersuchhal,
+                                                       substanz_haltung_bewertung.untersuchrichtung,
+                                                       substanz_haltung_bewertung.schoben,
+                                                       substanz_haltung_bewertung.schunten,
+                                                       substanz_haltung_bewertung.id,
+                                                       substanz_haltung_bewertung.videozaehler,
+                                                       substanz_haltung_bewertung.inspektionslaenge,
+                                                       substanz_haltung_bewertung.station,
+                                                       substanz_haltung_bewertung.timecode,
+                                                       substanz_haltung_bewertung.kuerzel,
+                                                       substanz_haltung_bewertung.charakt1,
+                                                       substanz_haltung_bewertung.charakt2,
+                                                       substanz_haltung_bewertung.quantnr1,
+                                                       substanz_haltung_bewertung.quantnr2,
+                                                       substanz_haltung_bewertung.Schadensart,
+                                                       substanz_haltung_bewertung.Schadensauspraegung,
+                                                       substanz_haltung_bewertung.streckenschaden,
+                                                       substanz_haltung_bewertung.pos_von,
+                                                       substanz_haltung_bewertung.pos_bis,
+                                                       substanz_haltung_bewertung.foto_dateiname,
+                                                       substanz_haltung_bewertung.film_dateiname,
+                                                       substanz_haltung_bewertung.kommentar,
+                                                       substanz_haltung_bewertung.bw_bs,
+                                                       substanz_haltung_bewertung.Zustandsklasse_D,
+                                                       substanz_haltung_bewertung.Zustandsklasse_S,
+                                                       substanz_haltung_bewertung.Zustandsklasse_B,
+                                                       substanz_haltung_bewertung.Zustandsklasse_ges,
+                                                       substanz_haltung_bewertung.Schadenslaenge,
+                                                       substanz_haltung_bewertung.createdat,
+                                                       haltungen.haltnam,
+                                                       haltungen.material,
+                                                       haltungen.hoehe,
+                                                       haltungen.createdat
+                                                   FROM substanz_haltung_bewertung, haltungen
+                                                   WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                                   AND (substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                                   AND (substanz_haltung_bewertung.Schadensauspraegung = 'OfS')
+                                                   AND Zustandsklasse_ges IN (0,1,2,3,4)
+                                               """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+            dictionary = {}
+            entf_list = []
+            dat = curs.fetchall()
+            for attr in dat:
+                if attr[1] in dictionary:
+                    continue
+                new_list = []
+                for x in dat:
+                    if x[1] == attr[1]:
+                        new_list.append(x)
+                dictionary[attr[1]] = new_list
+
+            for values in dictionary.values():
+                entf_list = []
+                dictionary_2 = {}
+
+                for i in values:
+                    if i[8] in dictionary_2:
+                        continue
+                    new_list_2 = []
+                    for x in values:
+                        if x[8] == i[8]:
+                            new_list_2.append(x)
+                    dictionary_2[i[8]] = new_list_2
+
+                    for z in dictionary_2.values():
+                        new_items = []
+                        vergl = []
+
+                        for i_2 in z:
+                            if i_2[8] not in new_items:
+                                # i[1] ist die Stationierung
+                                x = i_2[8]
+                                new_items.append(i_2[8])
+                            else:
+                                for y in z:
+                                    if y[8] == x:
+                                        vergl.append(y)
+                        iface.messageBar().pushMessage("Error",
+                                                       str(vergl),
+                                                       level=Qgis.Critical)
+                        zustand = []
+                        for v in vergl:
+                            # i[3] Zustandsbewertung
+                            zustand.append(v[27])
+
+                        iface.messageBar().pushMessage("Error",
+                                                       str(zustand),
+                                                       level=Qgis.Critical)
+
+                        if len(zustand) > 0:
+                            x = 0
+                            z_min = zustand.index(min(zustand))
+                            for _ in zustand:
+                                if x != z_min:
+                                    entf = x
+                                    # entf_index = zustand.index(entf)
+                                    # pk von dem element welches entfernt werden soll
+
+                                    entf_list.append(vergl[entf][0])
+
+                                x += 1
+
+            # Datenbank anweisung um die Elemente zu löschen
+            for i in entf_list:
+                sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
+                data = (i,)
+                curs.execute(sql, data)
+
+            try:
+                db.commit()
+            except:
+                pass
+
+
+            sql = """
+                                                           SELECT
+                                                               substanz_haltung_bewertung.pk,
+                                                               substanz_haltung_bewertung.untersuchhal,
+                                                               substanz_haltung_bewertung.untersuchrichtung,
+                                                               substanz_haltung_bewertung.schoben,
+                                                               substanz_haltung_bewertung.schunten,
+                                                               substanz_haltung_bewertung.id,
+                                                               substanz_haltung_bewertung.videozaehler,
+                                                               substanz_haltung_bewertung.inspektionslaenge,
+                                                               substanz_haltung_bewertung.station,
+                                                               substanz_haltung_bewertung.timecode,
+                                                               substanz_haltung_bewertung.kuerzel,
+                                                               substanz_haltung_bewertung.charakt1,
+                                                               substanz_haltung_bewertung.charakt2,
+                                                               substanz_haltung_bewertung.quantnr1,
+                                                               substanz_haltung_bewertung.quantnr2,
+                                                               substanz_haltung_bewertung.Schadensart,
+                                                               substanz_haltung_bewertung.Schadensauspraegung,
+                                                               substanz_haltung_bewertung.streckenschaden,
+                                                               substanz_haltung_bewertung.pos_von,
+                                                               substanz_haltung_bewertung.pos_bis,
+                                                               substanz_haltung_bewertung.foto_dateiname,
+                                                               substanz_haltung_bewertung.film_dateiname,
+                                                               substanz_haltung_bewertung.kommentar,
+                                                               substanz_haltung_bewertung.bw_bs,
+                                                               substanz_haltung_bewertung.Zustandsklasse_D,
+                                                               substanz_haltung_bewertung.Zustandsklasse_S,
+                                                               substanz_haltung_bewertung.Zustandsklasse_B,
+                                                               substanz_haltung_bewertung.Zustandsklasse_ges,
+                                                               substanz_haltung_bewertung.Schadenslaenge,
+                                                               substanz_haltung_bewertung.createdat,
+                                                               haltungen.haltnam,
+                                                               haltungen.material,
+                                                               haltungen.hoehe,
+                                                               haltungen.createdat
+                                                           FROM substanz_haltung_bewertung, haltungen
+                                                           WHERE haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND substanz_haltung_bewertung.createdat like ? 
+                                                           AND (substanz_haltung_bewertung.Schadensart = 'UmfS') 
+                                                           AND (substanz_haltung_bewertung.Schadensauspraegung = 'DdS')
+                                                           AND Zustandsklasse_ges IN (0,1,2,3,4)
+                                                       """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+            dictionary = {}
+            entf_list = []
+            dat = curs.fetchall()
+            for attr in dat:
+                if attr[1] in dictionary:
+                    continue
+                new_list = []
+                for x in dat:
+                    if x[1] == attr[1]:
+                        new_list.append(x)
+                dictionary[attr[1]] = new_list
+
+            for values in dictionary.values():
+                entf_list = []
+                dictionary_2 = {}
+
+                for i in values:
+                    if i[8] in dictionary_2:
+                        continue
+                    new_list_2 = []
+                    for x in values:
+                        if x[8] == i[8]:
+                            new_list_2.append(x)
+                    dictionary_2[i[8]] = new_list_2
+
+                    for z in dictionary_2.values():
+                        new_items = []
+                        vergl = []
+
+                        for i_2 in z:
+                            if i_2[8] not in new_items:
+                                # i[1] ist die Stationierung
+                                x = i_2[8]
+                                new_items.append(i_2[8])
+                            else:
+                                for y in z:
+                                    if y[8] == x:
+                                        vergl.append(y)
+                        iface.messageBar().pushMessage("Error",
+                                                       str(vergl),
+                                                       level=Qgis.Critical)
+                        zustand = []
+                        for v in vergl:
+                            # i[3] Zustandsbewertung
+                            zustand.append(v[27])
+
+                        iface.messageBar().pushMessage("Error",
+                                                       str(zustand),
+                                                       level=Qgis.Critical)
+
+                        if len(zustand) > 0:
+                            x = 0
+                            z_min = zustand.index(min(zustand))
+                            for _ in zustand:
+                                if x != z_min:
+                                    entf = x
+                                    # entf_index = zustand.index(entf)
+                                    # pk von dem element welches entfernt werden soll
+
+                                    entf_list.append(vergl[entf][0])
+
+                                x += 1
+
+            # Datenbank anweisung um die Elemente zu löschen
             for i in entf_list:
                 sql = 'DELETE FROM substanz_haltung_bewertung WHERE pk=?'
                 data = (i,)
@@ -5554,7 +5760,7 @@ class Subkans_funkt:
                                        substanz_haltung_bewertung.pos_bis,
                                        substanz_haltung_bewertung.foto_dateiname,
                                        substanz_haltung_bewertung.film_dateiname,
-                                       substanz_haltung_bewertung.objekt_id,
+                                       substanz_haltung_bewertung.kommentar,
                                        substanz_haltung_bewertung.bw_bs,
                                        substanz_haltung_bewertung.Zustandsklasse_D,
                                        substanz_haltung_bewertung.Zustandsklasse_S,
