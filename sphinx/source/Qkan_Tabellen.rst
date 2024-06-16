@@ -112,36 +112,36 @@ Layereigenschaften des Layers "Haltungen" entsprechend angepasst werden.
 
 Nachfolgend sind die in QKan implementierten Refernztabellen aufgeführt. Die Referenztabellen enthalten bis zu drei Blöcke:
 
-- interne Schlüssel, z. B. für Schachttypen
-- Schlüssel für den Datenaustausch mit Programmen zur hydrodynamsichen Simulation: HYSTEM-EXTRAN - "he", Mike+ - "mu", Kanal++ - "kp", SWMM - "sw"
-- Schlüssel für den Datenaustausch mit allgemeinen Datenaustauschformaten (ISYBAU, DWA-M 150, DWA-M 145)
+1 interne Schlüssel, z. B. für QKan-Schachttypen
+2 Schlüssel für den Datenaustausch mit Programmen zur hydrodynamischen Simulation. Dies sind aktuell: HYSTEM-EXTRAN ("he"), Mike+ ("mu"), 
+  Kanal++ ("kp"), SWMM ("sw")
+3 Schlüssel für den Datenaustausch mit allgemeinen Datenaustauschformaten (ISYBAU, DWA-M 150, DWA-M 145)
 
-In der QKan-Datenbank haben die Tabellen aus softwaretechnischen Gründen leicht vereinfachte Tabellennamen. 
-
+In der QKan-Datenbank haben die Tabellen aus softwaretechnischen Gründen leicht vereinfachte Tabellennamen (z. B. entwart für Entwässerungsarten). 
 
 
 Abflussparameter
 ++++++++++++++++
 
-Hydrologische Parameter für die hydrodynamsiche Simulation
+Hydrologische Parameter für die hydrodynamsiche Simulation (nur Schlüsseltyp 2)
 
 
 Abflusstypen
 ++++++++++++
 
-Art des hydrologischen Modells zur Beschreibung des Oberflächenabflusses
+Art des hydrologischen Modells zur Beschreibung des Oberflächenabflusses (nur Schlüsseltyp 2)
 
 
 Auslasstypen
 ++++++++++++
 
-Art des Auslasses
+Art des Auslasses (nur Schlüsseltyp 2)
 
 
 Bewertungsart
 +++++++++++++
 
-Art bzw. verwendete Richtlinie für die Zustandsbewertung
+Art bzw. verwendete Richtlinie für die Zustandsbewertung (nur Schlüsseltyp 3)
 
 
 Bodenklassen

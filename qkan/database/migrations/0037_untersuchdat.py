@@ -49,10 +49,6 @@ def run(dbcon: DBConnection) -> bool:
             "zu Tabelle 'haltungen_untersucht' fehlgeschlagen"
         )
 
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0036_haltung_ergaenzung")
-        return False
-
     #Ergänzungen, Löschen der Spalte richtung
     if not dbcon.alter_table(
         "untersuchdat_haltung",
@@ -83,7 +79,6 @@ def run(dbcon: DBConnection) -> bool:
             "film_dateiname TEXT",
             "ordner_bild TEXT",
             "ordner_video TEXT",
-            "richtung TEXT",
             "filmtyp INTEGER",
             "video_start INTEGER",
             "video_ende INTEGER",
@@ -414,9 +409,105 @@ def run(dbcon: DBConnection) -> bool:
             "m145 TEXT                           -- DWA M145",
             "bemerkung TEXT",
         ]
-    )
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von Attributen in Tabelle wetter fehlgeschlagen"
+        )
+
+    #Anschlussleitungen_untersucht
+    sql = """
+        CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht (
+            leitnam TEXT,
+            bezugspunkt TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam
+            schunten TEXT,                                  -- join schaechte.schnam
+            hoehe REAL,                                     -- Profilhoehe (m)
+            breite REAL,                                    -- Profilbreite (m)
+            laenge REAL,                                    -- abweichende Haltungslänge (m)
+            baujahr INTEGER,
+            id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
+            untersuchtag TEXT,
+            untersucher TEXT,
+            wetter INTEGER DEFAULT 0,
+            bewertungsart TEXT,
+            bewertungstag TEXT,
+            strasse TEXT,
+            datenart TEXT,
+            auftragsbezeichnung TEXT,
+            max_ZD INTEGER,
+            max_ZB INTEGER, 
+            max_ZS INTEGER,
+            xschob REAL,
+            yschob REAL,
+            xschun REAL,
+            yschun REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
+            """
+
+    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
+        return False
+
+    sql = f"""
+            SELECT AddGeometryColumn('anschlussleitungen_untersucht','geom',{dbcon.epsg},'LINESTRING',2)
+        """
+
+    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
+        return False
+
+    sql = """
+        CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung (
+            pk INTEGER PRIMARY KEY,
+            untersuchleit TEXT,
+            untersuchrichtung TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam 
+            schunten TEXT,                                  -- join schaechte.schnam
+            id INTEGER,                                     -- absolute Nummer der Inspektion
+            objekt_id INTEGER,
+            untersuchtag TEXT,
+            bandnr INTEGER,
+            videozaehler TEXT,
+            inspektionslaenge REAL,
+            station REAL,
+            stationtext REAL,
+            timecode INTEGER,
+            video_offset REAL,
+            kuerzel TEXT,
+            charakt1 TEXT,
+            charakt2 TEXT,
+            quantnr1 REAL, 
+            quantnr2 REAL, 
+            streckenschaden TEXT,
+            streckenschaden_lfdnr INTEGER,
+            pos_von INTEGER, 
+            pos_bis INTEGER,
+            foto_dateiname TEXT,
+            film_dateiname TEXT,
+            ordner_bild TEXT,
+            ordner_video TEXT,
+            richtung TEXT,
+            filmtyp INTEGER,
+            video_start INTEGER,
+            video_ende INTEGER,
+            ZD INTEGER,
+            ZB INTEGER,
+            ZS INTEGER,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
+                """
+
+    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
+        return False
+
+    sql = f"""
+            SELECT AddGeometryColumn('anschlussleitungen_untersucht','geom',{dbcon.epsg},'LINESTRING',2)
+            """
+
+    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
+        return False
 
     if not load_plausisql(dbcon):
         logger.error("Fehler in migration 0037_untersuchdat")
         return False
-
