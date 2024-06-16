@@ -110,8 +110,13 @@ QKan, die intern festgelegten Linienstile mit den Langbezeichnungen abzustimmen.
 am Attribut "Entwässerungsart" in der Tabelle "Haltungen" vorgenommen werden, müssen gegebenenfalls die Bezeichnungen in den 
 Layereigenschaften des Layers "Haltungen" entsprechend angepasst werden. 
 
-Nachfolgend sind die in QKan implementierten Refernztabellen aufgeführt. In der QKan-Datenbank haben die Tabellen aus softwaretechnischen 
-Gründen leicht vereinfachte Tabellennamen.
+Nachfolgend sind die in QKan implementierten Refernztabellen aufgeführt. Die Referenztabellen enthalten bis zu drei Blöcke:
+
+- interne Schlüssel, z. B. für Schachttypen
+- Schlüssel für den Datenaustausch mit Programmen zur hydrodynamsichen Simulation: HYSTEM-EXTRAN - "he", Mike+ - "mu", Kanal++ - "kp", SWMM - "sw"
+- Schlüssel für den Datenaustausch mit allgemeinen Datenaustauschformaten (ISYBAU, DWA-M 150, DWA-M 145)
+
+In der QKan-Datenbank haben die Tabellen aus softwaretechnischen Gründen leicht vereinfachte Tabellennamen. 
 
 
 

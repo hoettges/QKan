@@ -420,4 +420,3 @@ def run(dbcon: DBConnection) -> bool:
         logger.error("Fehler in migration 0037_untersuchdat")
         return False
 
-    return True
