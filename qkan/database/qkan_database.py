@@ -648,12 +648,12 @@ def createdbtables(
             pk INTEGER PRIMARY KEY, 
             bezeichnung TEXT,                   -- eindeutige QKan-Bezeichnung 
             kuerzel TEXT,                       -- nur für Beschriftung
-            bemerkung TEXT, 
             he_nr INTEGER,                      -- HYSTEM-EXTRAN
             kp_nr INTEGER,                      -- DYNA / Kanal++
             isybau TEXT,                        -- BFR Abwasser
             m150 TEXT,                          -- DWA M150
             m145 TEXT,                          -- DWA M145
+            bemerkung TEXT, 
             transport INTEGER,                  -- Transporthaltung? - deprecated
             druckdicht INTEGER                  -- Druckleitung? - deprecated
             )"""
@@ -687,9 +687,35 @@ def createdbtables(
         consl.close()
         return False
 
+    try:
+        daten = [
+            ('Haltung', None),
+            ('Drossel', 'HYSTEM-EXTRAN 8'),
+            ('H-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Q-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Schieber', 'HYSTEM-EXTRAN 8'),
+            ('GrundSeitenauslass', 'HYSTEM-EXTRAN 8'),
+            ('Pumpe', None),
+            ('Wehr', None),
+        ]
+
+        cursl.executemany(
+            "INSERT INTO haltungstypen (bezeichnung, bemerkung) VALUES (?, ?)",
+            daten
+        )
+
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "haltungstypen" konnten nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Untersuchungsrichtung ----------------------------------------------------
+    # Tabelle wird nur für das Nachschlagefeld benötigt
 
     sql = """CREATE TABLE untersuchrichtung (
         pk INTEGER PRIMARY KEY, 
@@ -710,8 +736,8 @@ def createdbtables(
     try:
 
         daten = [
-            ('O', 'in Fließrichtung', 'automatisch hinzugefügt'),
-            ('U', 'gegen Fließrichtung', 'automatisch hinzugefügt'),
+            (None, 'in Fließrichtung', 'automatisch hinzugefügt'),
+            (None, 'gegen Fließrichtung', 'automatisch hinzugefügt'),
         ]
 
         cursl.executemany(
@@ -734,6 +760,9 @@ def createdbtables(
             pk INTEGER PRIMARY KEY, 
             kuerzel INTEGER, 
             bezeichnung TEXT, 
+            isybau TEXT,                        -- BFR Abwasser
+            m150 TEXT,                          -- DWA M150
+            m145 TEXT,                          -- DWA M145
             bemerkung TEXT)"""
 
     try:
@@ -851,6 +880,7 @@ def createdbtables(
     # consl.commit()
 
     # Pumpentypen --------------------------------------------------------------
+    # Nur für Nachschlagefelder in Formularen etc.
 
     sql = """CREATE TABLE pumpentypen (
     pk INTEGER PRIMARY KEY, 
@@ -863,6 +893,28 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "pumpentypen" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    try:
+        daten = [
+             ('Offline', 1),
+             ('Online Schaltstufen', 2),
+             ('Online Kennlinie', 3),
+             ('Online Wasserstandsdifferenz', 4),
+             ('Ideal', 5),
+        ]
+
+        cursl.executemany(
+            "INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES (?, ?)",
+            daten
+        )
+
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "pumpendaten" konnten nicht hinzugefuegt werden.',
         )
         consl.close()
         return False

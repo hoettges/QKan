@@ -390,12 +390,12 @@ def run(dbcon: DBConnection) -> bool:
         [
             "bezeichnung TEXT",
             "kuerzel TEXT",
-            "he_nr INTEGER,                      -- HYSTEM-EXTRAN",
-            "mu_nr INTEGER,                      -- Mike+",
-            "kp_nr INTEGER,                      -- DYNA / Kanal++",
-            "isybau TEXT,                        -- BFR Abwasser",
-            "m150 TEXT,                          -- DWA M150",
-            "m145 TEXT,                          -- DWA M145",
+            "he_nr INTEGER                       -- HYSTEM-EXTRAN",
+            "mu_nr INTEGER                       -- Mike+",
+            "kp_nr INTEGER                       -- DYNA / Kanal++",
+            "isybau TEXT                         -- BFR Abwasser",
+            "m150 TEXT                           -- DWA M150",
+            "m145 TEXT                           -- DWA M145",
             "kommentar TEXT"
         ]
     ):
@@ -404,7 +404,17 @@ def run(dbcon: DBConnection) -> bool:
             "Hinzufügen von Attributen in Tabelle profile fehlgeschlagen"
         )
 
-
+    if not dbcon.alter_table(
+        "wetter",
+        [
+            "kuerzel INTEGER",
+            "bezeichnung TEXT",
+            "isybau TEXT                         -- BFR Abwasser",
+            "m150 TEXT                           -- DWA M150",
+            "m145 TEXT                           -- DWA M145",
+            "bemerkung TEXT",
+        ]
+    )
 
     if not load_plausisql(dbcon):
         logger.error("Fehler in migration 0037_untersuchdat")

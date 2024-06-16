@@ -1,8 +1,7 @@
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from fnmatch import fnmatch
-from typing import Dict, Iterator, Union
+from typing import Dict, Iterator
 
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis
@@ -30,7 +29,7 @@ class Schacht(ClassObject):
     strasse: str = ""
     knotentyp: str = ""
     schachttyp: str = ""
-    material: int = 0
+    material: str = ""
     simstatus: str = ""
     kommentar: str = ""
 
@@ -39,14 +38,14 @@ class Schacht_untersucht(ClassObject):
     durchm: float = 0.0
     sohlhoehe: float = 0.0
     druckdicht: int = 0
-    entwart: str = ""
+    # entwart: str = ""
     strasse: str = ""
     knotentyp: str = ""
     kommentar: str = ""
     baujahr: int = 0
     untersuchtag: str = ""
     untersucher: str = ""
-    wetter: int = 0
+    wetter: str = ""
     bewertungsart: str = ""
     bewertungstag: str = ""
     datenart: str = ""
@@ -119,7 +118,7 @@ class Haltung_untersucht(ClassObject):
     kommentar: str = ""
     untersuchtag: str = ""
     untersucher: str = ""
-    wetter: int = 0
+    wetter: str = ""
     strasse: str = ""
     bewertungsart: str = ""
     bewertungstag: str = ""
@@ -198,7 +197,7 @@ class Anschlussleitung_untersucht(ClassObject):
     kommentar: str = ""
     untersuchtag: str = ""
     untersucher: str = ""
-    wetter: int = 0
+    wetter: str = ""
     strasse: str = ""
     bewertungsart: int = 0
     bewertungstag: str = ""
@@ -263,7 +262,7 @@ class Pumpe(ClassObject):
     pnam: str =""
     schoben: str = ""  # //HydraulikObjekt/Pumpe/SchachtZulauf
     schunten: str = ""  # //HydraulikObjekt/Pumpe/SchachtAblauf
-    pumpentyp: int = 0  # //HydraulikObjekt/Pumpe/PumpenTyp
+    # pumpentyp: int = 0  # //HydraulikObjekt/Pumpe/PumpenTyp
     volanf: float = 0.0  # //HydraulikObjekt/Pumpe/Anfangsvolumen
     volges: float = 0.0  # //HydraulikObjekt/Pumpe/Gesamtvolumen
     sohle: float = 0.0  # //HydraulikObjekt/Pumpe/Sohlhoehe
@@ -340,7 +339,7 @@ class ImportTask:
         self.mapper_profile: Dict[str, str] = {}
         # self.mapper_outlet: Dict[str, str] = {}
         self.mapper_simstatus: Dict[str, str] = {}
-        self.mapper_untersuchrichtung: Dict[str, str] = {}
+        # self.mapper_untersuchrichtung: Dict[str, str] = {}
         self.mapper_wetter: Dict[str, str] = {}
         # self.mapper_bewertungsart: Dict[str, str] = {}
         self.mapper_druckdicht: Dict[str, str] = {}
@@ -706,94 +705,49 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "M150 Import Referenzliste Material", params, many=True):
                 return False
 
-        # Referenztabelle Haltungsarten
-
-        daten = [
-            ('Haltung', None),
-            ('Drossel', 'HYSTEM-EXTRAN 8'),
-            ('H-Regler', 'HYSTEM-EXTRAN 8'),
-            ('Q-Regler', 'HYSTEM-EXTRAN 8'),
-            ('Schieber', 'HYSTEM-EXTRAN 8'),
-            ('GrundSeitenauslass', 'HYSTEM-EXTRAN 8'),
-            ('Pumpe', None),
-            ('Wehr', None),
-        ]
-
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
-        sql = """INSERT INTO haltungstypen (bezeichnung, bemerkung)
-                    SELECT ?, ?
-                    WHERE ? NOT IN (SELECT bezeichnung FROM haltungstypen)"""
-
-        if not self.db_qkan.sql(sql, "he8_import Referenzliste haltungstypen", daten, many=True):
-            return False
-
-        daten = [
-             ('Offline', 1),
-             ('Online Schaltstufen', 2),
-             ('Online Kennlinie', 3),
-             ('Online Wasserstandsdifferenz', 4),
-             ('Ideal', 5),
-        ]
-
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
-        sql = """INSERT INTO pumpentypen (bezeichnung, he_nr)
-                    SELECT ?, ?
-                    WHERE ? NOT IN (SELECT bezeichnung FROM pumpentypen)"""
-
-        if not self.db_qkan.sql(sql, "he8_import Referenzliste pumpentypen", daten, many=True):
-            return False
-
-        self.db_qkan.commit()
-        return True
-
     def _init_mappers(self) -> None:
-        def consume(sql: str, subject: str, target: Dict[str, str]) -> None:
-            if not self.db_qkan.sql(sql, subject):
-                raise Exception(f"Failed to init {subject} mapper")
-            for row in self.db_qkan.fetchall():
-                target[row[0]] = row[1]
 
         # Entwässerungsarten
         sql = "SELECT m150, bezeichnung FROM entwaesserungsarten"
         subject = "M150 Import entwaesserungsarten"
-        consume(sql, subject, self.mapper_entwart)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_entwart)
 
         # Profilarten
         sql = "SELECT m150, profilnam FROM profile"
         subject = "xml_import profile"
-        consume(sql, subject, self.mapper_profile)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_profile)
 
-        sql = "SELECT he_nr, bezeichnung FROM pumpentypen"
-        subject = "xml_import pumpentypen"
-        consume(sql, subject, self.mapper_pump)
+        # sql = "SELECT he_nr, bezeichnung FROM pumpentypen"
+        # subject = "xml_import pumpentypen"
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_pump)
 
         sql = "SELECT m150, bezeichnung FROM material"
         subject = "xml_import material"
-        consume(sql, subject, self.mapper_material)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_material)
 
         # sql = "SELECT he_nr, bezeichnung FROM auslasstypen"
         # subject = "xml_import auslasstypen"
-        # consume(sql, subject, self.mapper_outlet)
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_outlet)
 
-        sql = "SELECT he_nr, bezeichnung FROM simulationsstatus"
+        sql = "SELECT m150, bezeichnung FROM simulationsstatus"
         subject = "xml_import simulationsstatus"
-        consume(sql, subject, self.mapper_simstatus)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_simstatus)
 
-        sql = "SELECT kuerzel, bezeichnung FROM untersuchrichtung"
-        subject = "xml_import untersuchrichtung"
-        consume(sql, subject, self.mapper_untersuchrichtung)
+        # sql = "SELECT kuerzel, bezeichnung FROM untersuchrichtung"
+        # subject = "xml_import untersuchrichtung"
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_untersuchrichtung)
 
-        sql = "SELECT kuerzel, bezeichnung FROM wetter"
+        sql = "SELECT m150, bezeichnung FROM wetter"
         subject = "xml_import wetter"
-        consume(sql, subject, self.mapper_wetter)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_wetter)
 
         # sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
         # subject = "xml_import bewertungsart"
-        # consume(sql, subject, self.mapper_bewertungsart)
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_bewertungsart)
         #
-        sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
-        subject = "xml_import druckdicht"
-        consume(sql, subject, self.mapper_druckdicht)
+        # sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
+        # subject = "xml_import druckdicht"
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_druckdicht)
 
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:
@@ -856,24 +810,23 @@ class ImportTask:
                     knotentyp=knotentyp,
                     schachttyp=schachttyp,
                     material=material,
-                    simstatus=block.findtext("KG401", 'vorhanden'),
+                    simstatus=block.findtext("KG401", None),
                     kommentar=block.findtext("KG999", "-")
                 )
 
         for schacht in _iter():
 
             # Entwässerungsarten
-            if schacht.entwart in self.mapper_entwart:
-                entwart = self.mapper_entwart[schacht.entwart]
-            else:
-                entwart = schacht.entwart
-                self.mapper_entwart[entwart]=entwart
-
-                sql = "INSERT INTO entwaesserungsarten (bezeichnung, kuerzel, bemerkung)" \
-                      "VALUES (?, ?, ?)"
-                params = (entwart, entwart, 'unbekannt')
-                if not self.db_qkan.sql(sql, "nicht zugeordnete Entwässerungsarten", params):
-                    return None
+            entwart = self.db_qkan.get_from_mapper(
+                schacht.entwart,
+                self.mapper_entwart,
+                'schaechte',
+                'entwaesserungsarten',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
 
             # Druckdichtigkeit
             # if schacht.druckdicht in self.mapper_druckdicht:
@@ -891,35 +844,28 @@ class ImportTask:
             #         return None
 
             # Simulationsstatus
-            if schacht.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[schacht.simstatus]
-            else:
-                simstatus = schacht.simstatus
-                self.mapper_simstatus[simstatus] = simstatus
-
-                sql = """
-                INSERT INTO simulationsstatus (he_nr, bezeichnung)
-                VALUES ('{s}', '{s}')
-                """.format(
-                    s=schacht.simstatus
-                )
-                if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
-                    return None
+            simstatus = self.db_qkan.get_from_mapper(
+                schacht.simstatus,
+                self.mapper_simstatus,
+                'schacht',
+                'simulationsstatus',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
             # Material
-            if schacht.material in self.mapper_material:
-                material = self.mapper_material[schacht.material]
-            else:
-                material = schacht.material
-                self.mapper_material[material] = material
-
-                sql = """
-                    INSERT INTO material (m150, bezeichnung)
-                    VALUES ? ?"""
-
-                params = (material, material)
-                if not self.db_qkan.sql(sql, "nicht zugeordnete Werte für Material", params):
-                    return None
+            material = self.db_qkan.get_from_mapper(
+                schacht.material,
+                self.mapper_material,
+                'schacht',
+                'material',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
             # Datensatz einfügen
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
@@ -1020,18 +966,16 @@ class ImportTask:
         for schacht_untersucht in _iter():
 
             # Wetter
-            if schacht_untersucht.wetter in self.mapper_wetter:
-                wetter = self.mapper_wetter[schacht_untersucht.wetter]
-            else:
-                wetter = schacht_untersucht.wetter
-                self.mapper_wetter[schacht_untersucht.wetter] = schacht_untersucht.wetter
-
-                sql = """
-                INSERT INTO wetter (kuerzel, bezeichnung)
-                VALUES (?, ?)"""
-
-                if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [2]"):
-                    return None
+            wetter = self.db_qkan.get_from_mapper(
+                schacht_untersucht.wetter,
+                self.mapper_wetter,
+                'schaechte_untersucht',
+                'wetter',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
 
             # Datensatz einfügen
             params = {'schnam': schacht_untersucht.schnam, 'xsch': schacht_untersucht.xsch,
@@ -1232,20 +1176,30 @@ class ImportTask:
                 )
 
         for auslass in _iter():
-            # Simstatus-Nr aus HE ersetzten
-            if auslass.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[auslass.simstatus]
-            else:
-                sql = """
-                INSERT INTO simulationsstatus (he_nr, bezeichnung)
-                VALUES ('{s}', '{s}')
-                """.format(
-                    s=auslass.simstatus
-                )
-                simstatus = f"{auslass.simstatus}_he"
-                self.mapper_simstatus[auslass.simstatus] = simstatus
-                if not self.db_qkan.sql(sql, "xml_import Auslässe [1]"):
-                    return None
+
+            # Entwässerungsarten
+            entwart = self.db_qkan.get_from_mapper(
+                auslass.entwart,
+                self.mapper_entwart,
+                'Auslässe',
+                'entwaesserungsarten',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
+
+            # Simstatus
+            simstatus = self.db_qkan.get_from_mapper(
+                auslass.simstatus,
+                self.mapper_simstatus,
+                'Auslässe',
+                'simulationsstatus',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
             # sql = f"""
             # INSERT INTO schaechte (
@@ -1274,7 +1228,7 @@ class ImportTask:
 
             params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
                       'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe, 'baujahr': auslass.baujahr,
-                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
+                      'durchm': auslass.durchm, 'entwart': entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: schaechte\n'
@@ -1555,49 +1509,57 @@ class ImportTask:
         for haltung in _iter():
 
             # Simulationsstatus
-            if haltung.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[haltung.simstatus]
-            else:
-                simstatus = f"{haltung.simstatus}_he"
-                self.mapper_simstatus[haltung.simstatus] = simstatus
-                if not self.db_qkan.sql(
-                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
-                    "xml_import Haltungen [1]",
-                    parameters=(haltung.simstatus, haltung.simstatus),
-                ):
-                    return None
+            simstatus = self.db_qkan.get_from_mapper(
+                haltung.simstatus,
+                self.mapper_simstatus,
+                'Haltungen',
+                'simulationsstatus',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
-            if haltung.entwart in self.mapper_entwart:
-                entwart = self.mapper_entwart[haltung.entwart]
-            else:
-                bez = 'NULL'
-                entwaesserung = {'Mischwasser': ['Mi*'],
-                                 'Regenwasser': ['Re*'],
-                                 'Schmutzwasser': ['Sc*']}
-                for x in entwaesserung.keys():
-                    for patt in entwaesserung[x]:
-                        if fnmatch(haltung.entwart, patt):
-                            key = [i for i, x in entwaesserung.items() if str(patt) in x][0]
-                            bez = key
+            # Entwässerungsarten
+            entwart = self.db_qkan.get_from_mapper(
+                haltung.entwart,
+                self.mapper_entwart,
+                'Haltungen',
+                'entwaesserungsarten',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
 
-                sql = """
-                               INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
-                               VALUES ('{e}', '{f}')
-                               """.format(
-                    e=bez, f=haltung.entwart
-                )
+            # Profile
+            profilnam = self.db_qkan.get_from_mapper(
+                haltung.profilnam,
+                self.mapper_profile,
+                'Haltungen',
+                'profile',
+                'profilnam',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
-                self.mapper_entwart[haltung.entwart] = haltung.entwart
-                entwart = haltung.entwart
-
-                if not self.db_qkan.sql(sql, "xml_import Haltung [1]"):
-                    return None
-
+            # Material
+            material = self.db_qkan.get_from_mapper(
+                haltung.material,
+                self.mapper_material,
+                'Haltungen',
+                'material',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
             params = {'haltnam': haltung.haltnam, 'schoben': haltung.schoben, 'schunten': haltung.schunten, 'hoehe': haltung.hoehe,
-                      'breite': haltung.breite, 'laenge': haltung.laenge, 'material': haltung.material, 'profilauskleidung': haltung.profilauskleidung,
+                      'breite': haltung.breite, 'laenge': haltung.laenge, 'material': material, 'profilauskleidung': haltung.profilauskleidung,
                       'innenmaterial': haltung.innenmaterial, 'sohleoben': haltung.sohleoben, 'baujahr': haltung.baujahr,
-                      'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
+                      'sohleunten': haltung.sohleunten, 'profilnam': profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
@@ -1834,6 +1796,18 @@ class ImportTask:
 
         for haltung_untersucht in _iter():
 
+            # Wetter
+            wetter = self.db_qkan.get_from_mapper(
+                haltung_untersucht.wetter,
+                self.mapper_wetter,
+                'haltung_untersucht',
+                'wetter',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
+
             params = {'haltnam': haltung_untersucht.haltnam, 'schoben': haltung_untersucht.schoben,
                       'schunten': haltung_untersucht.schunten, 'hoehe': haltung_untersucht.hoehe,
                       'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
@@ -1842,7 +1816,7 @@ class ImportTask:
                       'yschob': haltung_untersucht.yschob, 'xschun': haltung_untersucht.xschun,
                       'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg,
                       'untersuchtag': haltung_untersucht.untersuchtag,
-                      'untersucher': haltung_untersucht.untersucher, 'wetter': haltung_untersucht.wetter,
+                      'untersucher': haltung_untersucht.untersucher, 'wetter': wetter,
                       'bewertungsart': haltung_untersucht.bewertungsart, 'bewertungstag': haltung_untersucht.bewertungstag,
                       'datenart': haltung_untersucht.datenart, 'max_ZD': haltung_untersucht.max_ZD,
                       'max_ZB': haltung_untersucht.max_ZB, 'max_ZS': haltung_untersucht.max_ZS,
@@ -1850,21 +1824,6 @@ class ImportTask:
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
             #              f'params: {params}')
-
-            if haltung_untersucht.wetter in self.mapper_wetter:
-                wetter = self.mapper_wetter[haltung_untersucht.wetter]
-            else:
-                sql = """
-                INSERT INTO wetter (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=haltung_untersucht.wetter
-                )
-                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
-                wetter = haltung_untersucht.wetter
-
-                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
-                    return None
 
             if not self.db_qkan.insertdata(
                     tabnam="haltungen_untersucht",
@@ -1919,12 +1878,14 @@ class ImportTask:
                 name = block.findtext("HG001", None)
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
-                untersuchrichtung = block.findtext("HI/HI101", None)
-                if untersuchrichtung == "I":
+                _ = block.findtext("HI/HI101", None)
+                if _ == "I":
                     untersuchrichtung = "in Fließrichtung"
-
-                if untersuchrichtung == "G":
+                elif _ == "G":
                     untersuchrichtung = "gegen Fließrichtung"
+                else:
+                    logger.warning(f"Untersuchungsdaten Haltung: Fehlerhafter Wert in Feld HI/HI101: {_}")
+                    untersuchrichtung = None
 
                 untersuchtag = block.findtext("HI/HI104")
 
@@ -1997,22 +1958,7 @@ class ImportTask:
 
         for untersuchdat_haltung in _iter():
 
-            if untersuchdat_haltung.untersuchrichtung in self.mapper_untersuchrichtung:
-                untersuchrichtung = self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung]
-            else:
-                sql = """
-                INSERT INTO untersuchrichtung (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=untersuchdat_haltung.untersuchrichtung
-                )
-                self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung] = untersuchdat_haltung.untersuchrichtung
-                untersuchrichtung = untersuchdat_haltung.untersuchrichtung
-
-                if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
-                    return None
-
-            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchrichtung,
+            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchdat_haltung.untersuchrichtung,
                       'schoben': untersuchdat_haltung.schoben, 'schunten': untersuchdat_haltung.schunten,
                       'id': untersuchdat_haltung.id, 'untersuchtag': untersuchdat_haltung.untersuchtag,
                       'videozaehler': untersuchdat_haltung.videozaehler,
@@ -2143,30 +2089,54 @@ class ImportTask:
 
         # 1. Teil: Hier werden die Stammdaten zu den anschlussleitung in die Datenbank geschrieben
         for anschlussleitung in _iter():
-            if anschlussleitung.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[anschlussleitung.simstatus]
-            else:
-                simstatus = f"{anschlussleitung.simstatus}_he"
-                self.mapper_simstatus[anschlussleitung.simstatus] = simstatus
-                if not self.db_qkan.sql(
-                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
-                    "xml_import anschlussleitung [1]",
-                    parameters=(anschlussleitung.simstatus, anschlussleitung.simstatus),
-                ):
-                    return None
 
-            if anschlussleitung.entwart in self.mapper_entwart:
-                entwart = self.mapper_entwart[anschlussleitung.entwart]
-            else:
-                self.mapper_entwart[anschlussleitung.entwart] = anschlussleitung.entwart
-                entwart = anschlussleitung.entwart
+            # Simulationsstatus
+            simstatus = self.db_qkan.get_from_mapper(
+                anschlussleitung.simstatus,
+                self.mapper_simstatus,
+                'anschlussleitung',
+                'simulationsstatus',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
-                if not self.db_qkan.sql(
-                    "INSERT INTO entwaesserungsarten (kuerzel, bezeichnung) VALUES (?, ?)",
-                    "xml_import anschlussleitung [2]",
-                    parameters=(anschlussleitung.entwart, anschlussleitung.entwart),
-                ):
-                    return None
+            # Entwässerungsart
+            entwart = self.db_qkan.get_from_mapper(
+                anschlussleitung.entwart,
+                self.mapper_entwart,
+                'Anschlussleitungen',
+                'entwaesserungsarten',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
+
+            # Profile
+            profilnam = self.db_qkan.get_from_mapper(
+                anschlussleitung.profilnam,
+                self.mapper_profile,
+                'Haltungen',
+                'profile',
+                'profilnam',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
+
+            # Material
+            material = self.db_qkan.get_from_mapper(
+                anschlussleitung.material,
+                self.mapper_material,
+                'Anschlussleitung',
+                'material',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
             # sql = f"""
             #     INSERT INTO anschlussleitungen
@@ -2209,11 +2179,11 @@ class ImportTask:
             params = {'leitnam': anschlussleitung.leitnam,
                       'schoben': anschlussleitung.schoben, 'schunten': anschlussleitung.schunten,
                       'hoehe': anschlussleitung.hoehe, 'breite': anschlussleitung.breite,
-                      'laenge': anschlussleitung.laenge, 'material': anschlussleitung.material,
+                      'laenge': anschlussleitung.laenge, 'material': material,
                       'sohleoben': anschlussleitung.sohleoben, 'sohleunten': anschlussleitung.sohleunten,
                       'deckeloben': anschlussleitung.deckeloben, 'deckelunten': anschlussleitung.deckelunten,
-                      'profilnam': anschlussleitung.profilnam, 'entwart': entwart, 'baujahr': anschlussleitung.baujahr,
-                      'ks': anschlussleitung.ks, 'simstatus': anschlussleitung.simstatus,
+                      'profilnam': profilnam, 'entwart': entwart, 'baujahr': anschlussleitung.baujahr,
+                      'ks': anschlussleitung.ks, 'simstatus': simstatus,
                       'kommentar': anschlussleitung.kommentar, 'xschob': anschlussleitung.xschob,
                       'xschun': anschlussleitung.xschun, 'yschob': anschlussleitung.yschob,
                       'yschun': anschlussleitung.yschun, 'epsg': QKan.config.epsg}
@@ -2344,17 +2314,6 @@ class ImportTask:
         def _iter() -> Iterator[Haltung_untersucht]:
             blocks = self.xml.findall("HG/HI/..")
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
-
-            schoben, schunten, profilnam = ("",) * 3
-            (
-                sohleoben,
-                sohleunten,
-                laenge,
-                hoehe,
-                breite,
-                deckeloben,
-                deckelunten,
-            ) = (0.0,) * 7
 
             for block in blocks:
                 name = block.findtext("HG001", None)
@@ -2550,20 +2509,18 @@ class ImportTask:
         # self.db_qkan.commit()
 
         for haltung_untersucht in _iter3():
-            if haltung_untersucht.wetter in self.mapper_wetter:
-                wetter = self.mapper_wetter[haltung_untersucht.wetter]
-            else:
-                sql = """
-                INSERT INTO wetter (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=haltung_untersucht.wetter
-                )
-                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
-                wetter = haltung_untersucht.wetter
 
-                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
-                    return None
+            # Wetter
+            wetter = self.db_qkan.get_from_mapper(
+                haltung_untersucht.wetter,
+                self.mapper_wetter,
+                'haltung_untersucht',
+                'wetter',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
 
             # if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
             #     bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
@@ -2635,12 +2592,14 @@ class ImportTask:
                 name = block.findtext("HG001", None)
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
-                untersuchrichtung = block.findtext("HI/HI101", None)
-                if untersuchrichtung == "I":
+                _ = block.findtext("HI/HI101", None)
+                if _ == "I":
                     untersuchrichtung = "in Fließrichtung"
-
-                if untersuchrichtung == "G":
+                elif _ == "G":
                     untersuchrichtung = "gegen Fließrichtung"
+                else:
+                    logger.warning(f"Untersuchungsdaten Anschluss: Fehlerhafter Wert in Feld HI/HI101: {_}")
+                    untersuchrichtung = None
 
                 untersuchtag = block.findtext("HI/HI104")
 
@@ -2710,23 +2669,7 @@ class ImportTask:
 
         for untersuchdat_haltung in _iter():
 
-            if untersuchdat_haltung.untersuchrichtung in self.mapper_untersuchrichtung:
-                untersuchrichtung = self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung]
-            else:
-                sql = """
-                INSERT INTO untersuchrichtung (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=untersuchdat_haltung.untersuchrichtung
-                )
-                self.mapper_untersuchrichtung[
-                    untersuchdat_haltung.untersuchrichtung] = untersuchdat_haltung.untersuchrichtung
-                untersuchrichtung = untersuchdat_haltung.untersuchrichtung
-
-                if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
-                    return None
-
-            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchrichtung,
+            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchdat_haltung.untersuchrichtung,
                       'schoben': untersuchdat_haltung.schoben, 'schunten': untersuchdat_haltung.schunten,
                       'id': untersuchdat_haltung.id, 'untersuchtag': untersuchdat_haltung.untersuchtag,
                       'videozaehler': untersuchdat_haltung.videozaehler,
@@ -2927,7 +2870,7 @@ class ImportTask:
             pnam=""
             schoben= ""
             schunten = ""
-            pumpentyp= 0
+            # pumpentyp= 0
             volanf = 0.0
             volges = 0.0
             sohle = 0.0
@@ -2970,7 +2913,7 @@ class ImportTask:
                     pnam=pnam,
                     schoben=pnam,
                     schunten=schunten,
-                    pumpentyp=pumpentyp,
+                    # pumpentyp=pumpentyp,
                     volanf=volanf,
                     volges=volges,
                     sohle=sohlhoehe,
@@ -2981,17 +2924,17 @@ class ImportTask:
         for pumpe in _iter2():
             # geom = geo_hydro()
 
-            if str(pumpe.pumpentyp) in self.mapper_pump:
-                pumpentyp = self.mapper_pump[str(pumpe.pumpentyp)]
-            else:
-                pumpentyp = "{}_he".format(pumpe.pumpentyp)
-                self.mapper_pump[str(pumpe.pumpentyp)] = pumpentyp
-                if not self.db_qkan.sql(
-                    "INSERT INTO pumpentypen (bezeichnung) Values (?)",
-                    "xml_import Pumpe [1]",
-                    parameters=(pumpe.pumpentyp,),
-                ):
-                    break
+            # if str(pumpe.pumpentyp) in self.mapper_pump:
+            #     pumpentyp = self.mapper_pump[str(pumpe.pumpentyp)]
+            # else:
+            #     pumpentyp = "{}_he".format(pumpe.pumpentyp)
+            #     self.mapper_pump[str(pumpe.pumpentyp)] = pumpentyp
+            #     if not self.db_qkan.sql(
+            #         "INSERT INTO pumpentypen (bezeichnung) Values (?)",
+            #         "xml_import Pumpe [1]",
+            #         parameters=(pumpe.pumpentyp,),
+            #     ):
+            #         break
 
             # Bei den Pumpen muessen im Gegensatz zu den Haltungen die
             # Koordinaten aus den Schachtdaten entnommen werden.

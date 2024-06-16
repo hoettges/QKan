@@ -51,7 +51,7 @@ class Schacht_untersucht(ClassObject):
     baujahr: int = 0
     untersuchtag: str = ""
     untersucher: str = ""
-    wetter: int = 0
+    wetter: str = ""
     bewertungsart: str = ""
     bewertungstag: str = ""
     datenart: str = ""
@@ -125,7 +125,7 @@ class Haltung_untersucht(ClassObject):
     kommentar: str = ""
     untersuchtag: str = ""
     untersucher: str = ""
-    wetter: int = 0
+    wetter: str = ""
     strasse: str = ""
     bewertungsart: str = ""
     bewertungstag: str = ""
@@ -295,7 +295,7 @@ class ImportTask:
         self.mapper_profile: Dict[str, str] = {}
         # self.mapper_outlet: Dict[str, str] = {}
         self.mapper_simstatus: Dict[str, str] = {}
-        self.mapper_untersuchrichtung: Dict[str, str] = {}
+        # self.mapper_untersuchrichtung: Dict[str, str] = {}
         self.mapper_wetter: Dict[str, str] = {}
         # self.mapper_bewertungsart: Dict[str, str] = {}
         self.mapper_druckdicht: Dict[str, str] = {}
@@ -464,11 +464,6 @@ class ImportTask:
         return True
 
     def _init_mappers(self) -> None:
-        def consume(sql: str, subject: str, target: Dict[str, str]) -> None:
-            if not self.db_qkan.sql(sql, subject):
-                raise Exception(f"Failed to init {subject} mapper")
-            for row in self.db_qkan.fetchall():
-                target[row[0]] = row[1]
 
         # Entwässerungsarten
         blocks = self.xml.findall("d:RT1005", self.NS)
@@ -536,11 +531,11 @@ class ImportTask:
 
         # sql = "SELECT he_nr, bezeichnung FROM pumpentypen"
         # subject = "xml_import pumpentypen"
-        # consume(sql, subject, self.mapper_pump)
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_pump)
         #
         # sql = "SELECT he_nr, profilnam FROM profile"
         # subject = "xml_import profile"
-        # consume(sql, subject, self.mapper_profile)
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_profile)
 
         # Profilarten nicht über Referenztabelle
         self.mapper_profile = {
@@ -552,27 +547,27 @@ class ImportTask:
 
         # sql = "SELECT he_nr, bezeichnung FROM auslasstypen"
         # subject = "xml_import auslasstypen"
-        # consume(sql, subject, self.mapper_outlet)
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_outlet)
 
         sql = "SELECT he_nr, bezeichnung FROM simulationsstatus"
         subject = "xml_import simulationsstatus"
-        consume(sql, subject, self.mapper_simstatus)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_simstatus)
 
-        sql = "SELECT kuerzel, bezeichnung FROM untersuchrichtung"
-        subject = "xml_import untersuchrichtung"
-        consume(sql, subject, self.mapper_untersuchrichtung)
+        # sql = "SELECT kuerzel, bezeichnung FROM untersuchrichtung"
+        # subject = "xml_import untersuchrichtung"
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_untersuchrichtung)
 
         sql = "SELECT kuerzel, bezeichnung FROM wetter"
         subject = "xml_import wetter"
-        consume(sql, subject, self.mapper_wetter)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_wetter)
 
         # sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
         # subject = "xml_import bewertungsart"
-        # consume(sql, subject, self.mapper_bewertungsart)
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_bewertungsart)
         #
         sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
         subject = "xml_import druckdicht"
-        consume(sql, subject, self.mapper_druckdicht)
+        self.db_qkan.consume_mapper(sql, subject, self.mapper_druckdicht)
 
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:
@@ -820,16 +815,13 @@ class ImportTask:
             if schacht_untersucht.wetter in self.mapper_wetter:
                 wetter = self.mapper_wetter[schacht_untersucht.wetter]
             else:
-                sql = """
-                INSERT INTO wetter (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=schacht_untersucht.wetter
-                )
-                self.mapper_wetter[schacht_untersucht.wetter] = schacht_untersucht.wetter
                 wetter = schacht_untersucht.wetter
+                self.mapper_wetter[schacht_untersucht.wetter] = schacht_untersucht.wetter
 
-                if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [2]"):
+                sql = "INSERT INTO wetter (kuerzel, bezeichnung, bemerkung) " \
+                      "VALUES (?, ?, ?)"
+                params = (wetter, wetter, 'unbekannt')
+                if not self.db_qkan.sql(sql, "schacht_untersucht: nicht zugeordnete Werte für wetter", params):
                     return None
 
             # if schacht_untersucht.bewertungsart in self.mapper_bewertungsart:
@@ -1535,16 +1527,13 @@ class ImportTask:
             if haltung_untersucht.wetter in self.mapper_wetter:
                 wetter = self.mapper_wetter[haltung_untersucht.wetter]
             else:
-                sql = """
-                INSERT INTO wetter (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=haltung_untersucht.wetter
-                )
-                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
                 wetter = haltung_untersucht.wetter
+                self.mapper_wetter[haltung_untersucht.wetter] = haltung_untersucht.wetter
 
-                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
+                sql = "INSERT INTO wetter (kuerzel, bezeichnung, bemerkung) " \
+                      "VALUES (?, ?, ?)"
+                params = (wetter, wetter, 'unbekannt')
+                if not self.db_qkan.sql(sql, "haltung_untersucht: nicht zugeordnete Werte für wetter", params):
                     return None
 
             params = {'haltnam': haltung_untersucht.haltnam, 'schoben': haltung_untersucht.schoben,
@@ -1608,12 +1597,14 @@ class ImportTask:
 
                 id = block.findtext("d:IN0001", None, self.NS)
 
-                untersuchrichtung = block.findtext("d:IN0005", None, self.NS)
-                if untersuchrichtung == "1":
+                _ = block.findtext("d:IN0005", None, self.NS)
+                if _ == "1":
                     untersuchrichtung = "in Fließrichtung"
-
-                if untersuchrichtung == "2":
+                elif _ == "2":
                     untersuchrichtung = "gegen Fließrichtung"
+                else:
+                    logger.warning(f"Untersuchungsdaten Haltung: Fehlerhafter Wert in Feld IN0005: {_}")
+                    untersuchrichtung = None
 
                 untersuchtag = block.findtext("d:IN0002", None, self.NS)
 
@@ -1671,22 +1662,7 @@ class ImportTask:
 
         for untersuchdat_haltung in _iter():
 
-            if untersuchdat_haltung.untersuchrichtung in self.mapper_untersuchrichtung:
-                untersuchrichtung = self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung]
-            else:
-                sql = """
-                INSERT INTO untersuchrichtung (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=untersuchdat_haltung.untersuchrichtung
-                )
-                self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung] = untersuchdat_haltung.untersuchrichtung
-                untersuchrichtung = untersuchdat_haltung.untersuchrichtung
-
-                if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
-                    return None
-
-            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchrichtung,
+            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchdat_haltung.untersuchrichtung,
                       'schoben': untersuchdat_haltung.schoben, 'schunten': untersuchdat_haltung.schunten,
                       'id': untersuchdat_haltung.id, 'untersuchtag': untersuchdat_haltung.untersuchtag,
                       'videozaehler': untersuchdat_haltung.videozaehler,

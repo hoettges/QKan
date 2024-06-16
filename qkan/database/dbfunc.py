@@ -12,7 +12,7 @@ import sqlite3
 from array import array
 from distutils.version import LooseVersion
 from sqlite3 import Connection
-from typing import Any, List, Optional, Union, cast
+from typing import Any, List, Optional, Union, cast, Dict
 
 from qgis.core import Qgis, QgsVectorLayer, QgsGeometry, QgsPoint
 from qgis.PyQt.QtWidgets import QProgressBar
@@ -1196,10 +1196,6 @@ class DBConnection:
 
         return True
 
-    def numuntersuchdat(self, data):
-        """Vergibt fortlaufende Nummern für die untersuchten Haltungen und die Untersuchungsdaten der Haltungen"""
-        pass
-
     def executefile(self, filenam):
         """Liest eine Datei aus dem template-Verzeichnis und führt sie als SQL-Befehle aus"""
         try:
@@ -1622,3 +1618,57 @@ class DBConnection:
             return False
 
         return True
+
+    def get_from_mapper(
+        self,
+            key: str,
+            mapper: dict,
+            table: str,
+            reftable: str,
+            attr_name: str,
+            attr_key: str,
+            attr_bem: str = None,
+            attr_short: str = None,
+            default: str = None
+    ) -> Union[bool, str, None]:
+        """
+    Liefert Langbezeichnung für einen key mit Hilfe eines mappers.
+    Wenn der key im mapper nicht vorhanden ist, wird der key sowohl
+    im mapper als auch der zugehörigen Datenbanktabelle ergänzt.
+
+    :param key:                 gelesener Schlüsselwert
+    :param mapper:              Schlüsselwerte mit zugeodneten Feldwerten
+    :param table:               Name der Tabelle, in die der Feldwert eingetragen werden soll. Nur für Fehlermeldung benötigt!
+    :param reftable:            Name der Referenztabelle
+    :param attr_name:           Referenztabelle: Attributname der Langbezeichnung
+    :param attr_key:            Referenztabelle: Attributname des Schlüsselwertes
+    :param attr_bem:            Referenztabelle: Attributname des Kommentarwertes
+    :param attr_short:          Referenztabelle: Attributname der Kurzbezeichnung
+    :param default:             optional: Defaultwert, falls key None ist
+        """
+
+        if key in mapper:
+            result = mapper[key]
+        elif key is None:
+            result = default
+        else:
+            result = key
+            mapper[key] = key  # Ergänzung des Dict braucht nicht zurückgegeben werden
+
+            if attr_short is None:
+                sql = f"INSERT INTO {reftable} ({attr_name}, {attr_key}, {attr_bem}) " \
+                      "VALUES (?, ?, ?)"
+                params = (result, result, 'unbekannt')
+            else:
+                sql = f"INSERT INTO {reftable} ({attr_name}, {attr_key}, {attr_short}, {attr_bem}) " \
+                      "VALUES (?, ?, ?, ?)"
+                params = (result, result, result, 'unbekannt')
+            if not self.sql(sql, f"{table}: nicht zugeordneter Wert für {reftable}", params):
+                return False
+        return result
+
+    def consume_mapper(self, sql: str, subject: str, target: Dict[str, str]) -> None:
+        if not self.sql(sql, subject):
+            raise Exception(f"Failed to init {subject} mapper")
+        for row in self.fetchall():
+            target[row[0]] = row[1]

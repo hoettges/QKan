@@ -83,17 +83,27 @@ Referenztabellen
 Grundlagen
 ++++++++++
 
-QKan nutzt Referenztabellen anders als viele etablierte Kanalkatasterprogramme ausschließlich als Nachschlagetabellen. Statt der häufig 
-verwendeten Schlüssel (z. B. "MW" für "Mischwasser") enthalten alle Datentabellen die Langbezeichnungen. Dies hat den Vorteil, dass in 
-den Werte in den Tabellen direkt mit dem Ausdruckseditor im Tabellenfenster (Attributtabelle öffnen) bearbeitet werden können. 
-Die in den Referenztabellen enthaltenen 
-Schlüssel werden ausschließlich für den Datenaustausch benötigt. Beim Datenimport besteht deshalb je nach Datenquelle die Notwendigkeit, 
-die Schlüsselwerte in die Langbezeichnungen umzuwandeln. Dazu durchsucht QKan zunächst die Datenquelle auf Referenztabellen. Falls diese 
-nicht vorliegen, erzeugt QKan intern entsprechend der Datenquelle eine Tabelle mit Standardwerten, die dann beim Import zur Anwendung kommt. 
+Eine QKan-Datenbank enthält neben den eigentlichen Geodatentabellen auch Referenztabellen, die in den Formularen als Nachschlagetabellen 
+dienen. Anders als in vielen 
+Datenbanken üblich erfolgt dabei der Zugriff nicht indirekt über die Schlüssel, sondern ausschließlich direkt über die Langbezeichnungen. 
+Beispielsweise wird in der Haltungstabelle als Entwässerungsart "Mischwasser" und nicht das Kürzel "M" verwendet.  
+Dies hat den Vorteil, dass Werte in den Tabellen direkt mit dem Ausdruckseditor im Tabellenfenster (Attributtabelle öffnen) bearbeitet werden können. 
 
-Falls Schlüsselwerte in den zu importierenden Daten vorkommen, für die keine Datensätze in der entsprechenden Referenztabelle angelegt werden 
-konnten, werden diese hinzugefügt und der Schlüsselwert auch als Langbezeichnung eingetragen. Zur Information wird im Feld "Kommentar" der 
-Hinweis eingetragen, dass die Langbezeichnung noch angepasst werden sollte. 
+Beim Datenimport werden zunächst in der zu importierenden Datei vorhandene Referenztabellen eingelesen und anschließend beim Einlesen 
+alle Schlüsselwerte durch die zugeordneten Langbezeichnungen ersetzt. 
+
+Falls in der zu importierenden Datei keine Referenztabelle enthalten ist, hält QKan drei Maßnahmen vor:
+
+- es werden dem Dateiformat entsprechende Standardschlüssel angelegt (z. B. die im Merkblatt DWA-M 145 enthaltenen Werte der jeweiligen 
+  Referenztabellen).
+- bereits vor dem Datenimport können Schlüsselwerte und die zugehörigen Langbezeichnungen in den Referenztabellen hinzugefügt werden.
+- unbekannte Schlüsselwerte werden beim Datenimport in die Referenztabelle übernommen, wobei der Schlüsselwert auch als Langbezeichnung 
+  eingetragen wird. 
+  Zusätzlich wird in der Kommentarspalte "unbekannt" ergänzt. Dem Anwender wird empfohlen, direkt nach dem Datenimmport an Stelle dieser 
+  Langbezeichnungen entsprechende Bezeichnungen einzutragen, also z. B. "KM" durch "Mischwasser" zu ersetzen. 
+  QKan enthält einen automatischen Trigger, der Änderungen der Langbezeichnungen automatisch (erst nach dem Speichern der Änderungen an 
+  der Referenztabelle!) auch in den 
+  zugeordneten Geodatentabellen ausführt, damit die logische Verknüpfung zwischen den Tabellen erhalten bleibt. 
 
 Von besonderer Bedeutung ist die Referenztabelle "Entwässerungsarten". Sie bestimmt die Linienstile im Lageplan. Beim Import versucht 
 QKan, die intern festgelegten Linienstile mit den Langbezeichnungen abzustimmen. Falls dies nicht funktioniert oder nachträglich Änderungen 
