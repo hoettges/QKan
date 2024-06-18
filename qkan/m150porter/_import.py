@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator
 
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsGeometry, QgsPoint
 
 from qkan import QKan
 from qkan.config import ClassObject
@@ -102,10 +102,7 @@ class Haltung(ClassObject):
     aussendurchmesser: float = 0.0
     profilauskleidung: str = ""
     innenmaterial: str = ""
-    xschob: float = 0.0
-    yschob: float = 0.0
-    xschun: float = 0.0
-    yschun: float = 0.0
+    geom: QgsGeometry = None
 
 class Haltung_untersucht(ClassObject):
     haltnam: str = ""
@@ -122,14 +119,11 @@ class Haltung_untersucht(ClassObject):
     strasse: str = ""
     bewertungsart: str = ""
     bewertungstag: str = ""
-    xschob: float = 0.0
-    yschob: float = 0.0
-    xschun: float = 0.0
-    yschun: float = 0.0
     datenart: str = ""
     max_ZD: int = 63
     max_ZB: int = 63
     max_ZS: int = 63
+    geom: QgsGeometry = None
 
 class Untersuchdat_haltung(ClassObject):
     untersuchhal: str = ""
@@ -181,10 +175,7 @@ class Anschlussleitung(ClassObject):
     ks: float = 1.5
     simstatus: str = ""
     kommentar: str = ""
-    xschob: float = 0.0
-    yschob: float = 0.0
-    xschun: float = 0.0
-    yschun: float = 0.0
+    geom: QgsGeometry = None
 
 class Anschlussleitung_untersucht(ClassObject):
     haltnam: str
@@ -202,14 +193,10 @@ class Anschlussleitung_untersucht(ClassObject):
     bewertungsart: int = 0
     bewertungstag: str = ""
     datenart: str = ""
-    xschob: float = 0.0
-    yschob: float = 0.0
-    xschun: float = 0.0
-    yschun: float = 0.0
     max_ZD: int = 63
     max_ZB: int = 63
     max_ZS: int = 63
-
+    geom: QgsGeometry = None
 
 class Untersuchdat_anschlussleitung(ClassObject):
     untersuchhal: str = ""
@@ -238,11 +225,7 @@ class Untersuchdat_anschlussleitung(ClassObject):
     ZD: int = 63
     ZB: int = 63
     ZS: int = 63
-    xschob: float = 0.0
-    yschob: float = 0.0
-    xschun: float = 0.0
-    yschun: float = 0.0
-
+    geom: QgsGeometry = None
 
 class Wehr(ClassObject):
     wnam: str =""
@@ -371,7 +354,7 @@ class ImportTask:
             self._auslaesse()                               ;self.progress_bar.setValue(20)
             #self._speicher()
             self._haltungen()                               ;self.progress_bar.setValue(30)
-            self._haltunggeom()                             ;self.progress_bar.setValue(35)
+            # self._haltunggeom()                             ;self.progress_bar.setValue(35)
             #self._wehre()
             self._pumpen()                                  ;self.progress_bar.setValue(40)
         # if getattr(QKan.config.xml, "import_haus", True):
@@ -446,7 +429,7 @@ class ImportTask:
         sql = """INSERT INTO entwaesserungsarten (
                     bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m150, isybau)
                     SELECT :bezeichnung, :kuerzel, :bemerkung, :he_nr, :kp_nr, :m150, :isybau
-                    WHERE bezeichnung NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
+                    WHERE :bezeichnung NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
         if not self.db_qkan.sql(sql, "M150 Import Referenzliste entwaesserungsarten", params, many=True):
             return False
 
@@ -485,7 +468,7 @@ class ImportTask:
                 ('Kreis', 'DN', 1, 1, None, 0, 'DN', None),
                 ('Rechteck', 'RE', 2, 3, None, 3, 'RE', None),
                 ('Ei (B:H = 2:3)', 'EI', 3, 5, None, 1, 'EI', None),
-                ('Maul (B:H = 2:1,66)', 'MA', 4, 4, None, 2, 'MA', None),
+                ('Maul (B:H = 2:1.66)', 'MA', 4, 4, None, 2, 'MA', None),
                 ('Halbschale (offen) (B:H = 2:1)', 'HS', 5, None, None, None, None, None),
                 ('Kreis gestreckt (B:H=2:2.5)', None, 6, None, None, None, None, None),
                 ('Kreis überhöht (B:H=2:3)', None, 7, None, None, None, None, None),
@@ -509,10 +492,10 @@ class ImportTask:
                 ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.4B)', None, 25, None, None, None, None, None),
                 ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.4B)', None, 26, None, None, None, None, None),
                 ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.4B)', None, 27, None, None, None, None, None),
-                ('Sonderprofil', 68, 2, None, None, None, None),
+                ('Sonderprofil', 68, 2, None, None, None, None, None),
                 ('Gerinne', 'RI', 69, None, None, None, None, None),
                 ('Trapez (offen)', 'TR', 900, None, None, 8, None, None),
-                ('Rechteck offen', None, None, None, None, 5, None, None)
+                ('Rechteck offen', None, None, None, None, 5, None, None),
                 ('Doppeltrapez (offen)', None, 901, None, None, None, None, None),
                 ('Offener Graben', 'GR', None, None, None, None, 'GR', None),
                 ('Oval', 'OV', None, None, None, 12, 'OV', None),
@@ -537,7 +520,7 @@ class ImportTask:
                         SELECT
                             :profilnam, :kuerzel, :he_nr, :mu_nr, :kp_key, 
                             :isybau, :m150, :m145, :kommentar
-                        WHERE profilnam NOT IN (SELECT profilnam FROM profile)"""
+                        WHERE :profilnam NOT IN (SELECT profilnam FROM profile)"""
             if not self.db_qkan.sql(sql, "M150 Import Referenzliste profile", params, many=True):
                 return False
 
@@ -599,11 +582,11 @@ class ImportTask:
                     }
                 )
 
-            sql = """INSERT INTO simulationsstatus (profilnam, kuerzel, he_nr, mu_nr, kp_nr, isybau, m150, m145, kommentar)
+            sql = """INSERT INTO simulationsstatus (bezeichnung, kuerzel, he_nr, mu_nr, kp_nr, isybau, m150, m145, kommentar)
                         SELECT
                             :bezeichnung, :kuerzel, :he_nr, :mu_nr, :kp_nr, 
                             :isybau, :m150, :m145, :kommentar
-                        WHERE bezeichnung NOT IN (SELECT bezeichnung FROM simulationsstatus)"""
+                        WHERE :bezeichnung NOT IN (SELECT bezeichnung FROM simulationsstatus)"""
             if not self.db_qkan.sql(sql, "M150 Import Referenzliste Simulationsstatus", params, many=True):
                 return False
 
@@ -638,51 +621,51 @@ class ImportTask:
 
         if not blocks:
             data = [          #   kurz    m150  m145   isy
-                ('Asbestzement', 'AZ', 'AZ', '7', 'AZ'),
-                ('Beton', 'B', 'B', '2', 'B'),
-                ('Bitumen', 'BIT', 'BIT', None, None),
-                ('Betonsegmente', 'BS', 'BS', None, 'BS'),
-                ('Betonsegmente kunststoffmodifiziert', 'BSK', 'BSK', None, None),
-                ('Bitumen', 'BT', 'BT', None, None),
-                ('Edelstahl', 'CN', 'CN', '22', None),
-                ('Nichtidentifiziertes Metall (z. B. Eisen und Stahl)', 'EIS', 'EIS', None, 'EIS'),
-                ('Epoxydharz', 'EPX', 'EPX', None, None),
-                ('Epoxydharz mit Synthesefaser', 'EPSF', 'EPSF', None, None),
-                ('Faserzement', 'FZ', 'FZ', '6', 'FZ'),
-                ('Glasfaserverstärkter Kunststoff', 'GFK', 'GFK', '51', 'GFK'),
-                ('Grauguß', 'GG', 'GG', '4', 'GG'),
-                ('Duktiles Gußeisen', 'GGG', 'GGG', '5', 'GGG'),
-                ('Nichtidentifizierter Kunststoff', 'KST', 'KST', '50', 'KST'),
-                ('Mauerwerk', 'MA', 'MA', '3', 'MA'),
-                ('Ortbeton', 'OB', 'OB', None, 'OB'),
-                ('Polymerbeton', 'PC', 'PC', None, 'PC'),
-                ('Polymermodifizierter Zementbeton', 'PCC', 'PCC', None, 'PCC'),
-                ('Polyethylen', 'PE', 'PE', '52', 'PE'),
-                ('Polyesterharz', 'PH', 'PH', None, 'PH'),
-                ('Polyesterharzbeton', 'PHB', 'PHB', None, 'PHB'),
-                ('Polypropylen', 'PP', 'PP', '54', 'PP'),
-                ('Polyurethanharz', 'PUR', 'PUR', None, None),
-                ('Polyvinylchlorid modifiziert', 'PVCM', 'PVCM', None, None),
-                ('Polyvinylchlorid hart', 'PVCU', 'PVCU', None, 'PVCU'),
-                ('Stahlfaserbeton', 'SFB', 'SFB', None, 'SFB'),
-                ('Spannbeton', 'SPB', 'SPB', '12', 'SPB'),
-                ('Stahlbeton', 'SB', 'SB', '13', 'SB'),
-                ('Stahl', 'ST', 'ST', '21', 'ST'),
-                ('Steinzeug', 'STZ', 'STZ', '1', 'STZ'),
-                ('Spritzbeton', 'SZB', 'SZB', '14', 'SZB'),
-                ('Spritzbeton kunststoffmodifiziert', 'SZBK', 'SZBK', None, None),
-                ('Teerfaser', 'TF', 'TF', None, None),
-                ('Ungesättigtes Polyesterharz mit Glasfaser', 'UPGF', 'UPGF', None, None),
-                ('Ungesättigtes Polyesterharz mit Synthesefaser', 'UPSF', 'UPSF', None, None),
-                ('Vinylesterharz mit Synthesefaser', 'VEGF', 'VEGF', None, None),
-                ('Vinylesterharz mit Glasfaser', 'VESF', 'VESF', None, None),
-                ('Verbundrohr Beton-/StahlbetonKun', 'VBK', 'VBK', None, None),
-                ('Verbundrohr Beton-/Stahlbeton Steinzeug', 'VBS', 'VBS', None, None),
-                ('Nichtidentifizierter Werkstoff', 'W', 'W', None, None),
-                ('Wickelrohr (PEHD)', 'WPE', 'WPE', None, None),
-                ('Wickelrohr (PVCU)', 'WPVC', 'WPVC', None, None),
-                ('Zementmörtel', 'ZM', 'ZM', None, None),
-                ('Ziegelwerk', 'ZG', 'ZG', None, 'ZG'),
+                ('Asbestzement', 'AZ', 'AZ', '7', 'AZ', None),
+                ('Beton', 'B', 'B', '2', 'B', None),
+                ('Bitumen', 'BIT', 'BIT', None, None, None),
+                ('Betonsegmente', 'BS', 'BS', None, 'BS', None),
+                ('Betonsegmente kunststoffmodifiziert', 'BSK', 'BSK', None, None, None),
+                ('Bitumen', 'BT', 'BT', None, None, None),
+                ('Edelstahl', 'CN', 'CN', '22', None, None),
+                ('Nichtidentifiziertes Metall (z. B. Eisen und Stahl)', 'EIS', 'EIS', None, 'EIS', None),
+                ('Epoxydharz', 'EPX', 'EPX', None, None, None),
+                ('Epoxydharz mit Synthesefaser', 'EPSF', 'EPSF', None, None, None),
+                ('Faserzement', 'FZ', 'FZ', '6', 'FZ', None),
+                ('Glasfaserverstärkter Kunststoff', 'GFK', 'GFK', '51', 'GFK', None),
+                ('Grauguß', 'GG', 'GG', '4', 'GG', None),
+                ('Duktiles Gußeisen', 'GGG', 'GGG', '5', 'GGG', None),
+                ('Nichtidentifizierter Kunststoff', 'KST', 'KST', '50', 'KST', None),
+                ('Mauerwerk', 'MA', 'MA', '3', 'MA', None),
+                ('Ortbeton', 'OB', 'OB', None, 'OB', None),
+                ('Polymerbeton', 'PC', 'PC', None, 'PC', None),
+                ('Polymermodifizierter Zementbeton', 'PCC', 'PCC', None, 'PCC', None),
+                ('Polyethylen', 'PE', 'PE', '52', 'PE', None),
+                ('Polyesterharz', 'PH', 'PH', None, 'PH', None),
+                ('Polyesterharzbeton', 'PHB', 'PHB', None, 'PHB', None),
+                ('Polypropylen', 'PP', 'PP', '54', 'PP', None),
+                ('Polyurethanharz', 'PUR', 'PUR', None, None, None),
+                ('Polyvinylchlorid modifiziert', 'PVCM', 'PVCM', None, None, None),
+                ('Polyvinylchlorid hart', 'PVCU', 'PVCU', None, 'PVCU', None),
+                ('Stahlfaserbeton', 'SFB', 'SFB', None, 'SFB', None),
+                ('Spannbeton', 'SPB', 'SPB', '12', 'SPB', None),
+                ('Stahlbeton', 'SB', 'SB', '13', 'SB', None),
+                ('Stahl', 'ST', 'ST', '21', 'ST', None),
+                ('Steinzeug', 'STZ', 'STZ', '1', 'STZ', None),
+                ('Spritzbeton', 'SZB', 'SZB', '14', 'SZB', None),
+                ('Spritzbeton kunststoffmodifiziert', 'SZBK', 'SZBK', None, None, None),
+                ('Teerfaser', 'TF', 'TF', None, None, None),
+                ('Ungesättigtes Polyesterharz mit Glasfaser', 'UPGF', 'UPGF', None, None, None),
+                ('Ungesättigtes Polyesterharz mit Synthesefaser', 'UPSF', 'UPSF', None, None, None),
+                ('Vinylesterharz mit Synthesefaser', 'VEGF', 'VEGF', None, None, None),
+                ('Vinylesterharz mit Glasfaser', 'VESF', 'VESF', None, None, None),
+                ('Verbundrohr Beton-/StahlbetonKun', 'VBK', 'VBK', None, None, None),
+                ('Verbundrohr Beton-/Stahlbeton Steinzeug', 'VBS', 'VBS', None, None, None),
+                ('Nichtidentifizierter Werkstoff', 'W', 'W', None, None, None),
+                ('Wickelrohr (PEHD)', 'WPE', 'WPE', None, None, None),
+                ('Wickelrohr (PVCU)', 'WPVC', 'WPVC', None, None, None),
+                ('Zementmörtel', 'ZM', 'ZM', None, None, None),
+                ('Ziegelwerk', 'ZG', 'ZG', None, 'ZG', None),
             ]
 
             for bezeichnung, kuerzel, m150, m145, isybau, kommentar in data:
@@ -701,7 +684,7 @@ class ImportTask:
                         SELECT
                             :bezeichnung, :kuerzel, 
                             :isybau, :m150, :m145, :kommentar
-                        WHERE bezeichnung NOT IN (SELECT bezeichnung FROM material)"""
+                        WHERE :bezeichnung NOT IN (SELECT bezeichnung FROM material)"""
             if not self.db_qkan.sql(sql, "M150 Import Referenzliste Material", params, many=True):
                 return False
 
@@ -1037,7 +1020,7 @@ class ImportTask:
 
                 name = block.findtext("KG001", None)
                 untersuchtag = block.findtext("KI/KI104")
-                film_dateiname = _untersuchdat_schacht.findtext("KI/KI116", None)
+                film_dateiname = block.findtext("KI/KI116", None)
 
                 for _untersuchdat_schacht in block.findall("KI/KZ"):
 
@@ -1353,86 +1336,75 @@ class ImportTask:
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
             for block in blocks:
-                if block.findtext("[HG006='L']")is not None:
-                    pass
-                    #continue
-                else:
+                # if block.findtext("[HG006='L']")is not None:
+                #     # pass                  - damit würde die vorherige Haltung nochmal mit yield zurückgegeben!
+                #     continue
+                # else:
 
-                    name = block.findtext("HG001")
-                    if name is None:
-                        name = block.findtext("HG002", "")
-                        # if name is None:
-                        #     logger.warning("Haltung ohne (Alternativ-) Name HG001/HG002 wird ignoriert!")
-                        #     continue
+                name = block.findtext("HG001")
+                if name is None:
+                    name = block.findtext("HG002", "")
+                    # if name is None:
+                    #     logger.warning("Haltung ohne (Alternativ-) Name HG001/HG002 wird ignoriert!")
+                    #     continue
 
-                    baujahr = _get_int(block,"HG303", 0)
+                baujahr = _get_int(block,"HG303", 0)
 
-                    schoben = block.findtext("HG003", None)
-                    schunten = block.findtext("HG004", None)
+                schoben = block.findtext("HG003", None)
+                schunten = block.findtext("HG004", None)
 
-                    laenge =  _get_float(block, "HG310", 0.0)
+                laenge =  _get_float(block, "HG310", 0.0)
 
-                    material = block.findtext("HG304", None)
+                material = block.findtext("HG304", None)
 
-                    profilauskleidung = block.findtext("HG008", None)
-                    innenmaterial = block.findtext("HG009", None)
+                profilauskleidung = block.findtext("HG008", None)
+                innenmaterial = block.findtext("HG009", None)
 
 
-                    profilnam = block.findtext("HG305", None)
-                    hoehe = (
-                        _get_float(block, "HG307", 0.0)
-                        / 1000
-                    )
-                    breite = (
-                        _get_float(block, "HG306", 0.0)
-                        / 1000
-                    )
+                profilnam = block.findtext("HG305", None)
+                hoehe = (
+                    _get_float(block, "HG307", 0.0)
+                    / 1000
+                )
+                breite = (
+                    _get_float(block, "HG306", 0.0)
+                    / 1000
+                )
 
-                    sohleoben = 0
-                    sohleunten = 0
-                    xschob = 0.0
-                    yschob = 0.0
-                    xschun = 0.0
-                    yschun = 0.0
+                sohleoben = None
+                sohleunten = None
 
-                    if block.findall("GO[GO002='L']") is not None:
-                        pass
-                        # for _gp in block.findall("GO[GO002='L']/GP[1]"):
-                        #
-                        #     xschob = _get_float(_gp.findtext("GP003", 0.0))
-                        #     if xschob == 0.0:
-                        #         xschob = _get_float(_gp.findtext("GP005", 0.0))
-                        #     yschob = _get_float(_gp.findtext("GP004", 0.0))
-                        #     if yschob == 0.0:
-                        #         yschob = _get_float(_gp.findtext("GP006", 0.0))
-                        #     sohleoben = _get_float(
-                        #         _gp.findtext("GP007", 0.0)
-                        #     )
+                # Haltung mit beliebig vielen Stützstellen
 
-                    if block.findall("GO[GO002='H']") is not None:
-                        _gp = block.find("GO[GO002='H']/GP[1]")
+                coords = []
 
-                        xschob =  _get_float(_gp, "GP003")
-                        if xschob is None:
-                            xschob = _get_float(_gp, "GP005")
+                if block.findall("GO") is not None:
 
-                        yschob = _get_float(_gp, "GP004")
-                        if yschob is None:
-                            yschob = _get_float(_gp, "GP006")
+                    sohleoben = None
 
-                        sohleoben = _get_float(_gp, "GP007", 0.0)
+                    for _gp in block.findall("GO/GP"):
 
-                        _gp = block.find("GO[GO002='H']/GP[last()]")
+                        if not sohleoben:
+                            sohleoben = _get_float(_gp, "GP007", 0.0)  # erste Sohlhöhe
+                        xsch = _get_float(_gp, "GP003")
+                        if xsch is None:
+                            xsch = _get_float(_gp, "GP005")
+                        ysch = _get_float(_gp, "GP004")
+                        if ysch is None:
+                            ysch = _get_float(_gp, "GP006")
 
-                        xschun = _get_float(_gp, "GP003")
-                        if xschun is None:
-                            xschun = _get_float(_gp, "GP005")
+                        coords.append((xsch, ysch))
 
-                        yschun = _get_float(_gp, "GP004")
-                        if yschun is None:
-                            yschun = _get_float(_gp, "GP006")
+                    # Am Schluss noch letzte Sohlhöhe lesen
+                    sohleunten = _get_float(_gp, "GP007", 0.0)
 
-                        sohleunten = _get_float(_gp, "GP007", 0.0)
+                    # Linienobjekt aus Punktobjekten
+                    if len(coords) > 0:
+                        pts = [QgsPoint(x, y) for x, y in coords]
+                        line = QgsGeometry.fromPolyline(pts)
+                        geom = line.asWkb()
+                    else:
+                        geom = None
 
                 yield Haltung(
                     haltnam=name,
@@ -1453,57 +1425,8 @@ class ImportTask:
                     kommentar=block.findtext("HG999", "-"),
                     profilauskleidung=profilauskleidung,
                     innenmaterial=innenmaterial,
-                    xschob=xschob,
-                    yschob=yschob,
-                    xschun=xschun,
-                    yschun=yschun,
+                    geom=geom,
                 )
-
-        # def _iter2() -> Iterator[Haltung]:
-        #     blocks = self.xml.findall(
-        #         "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-        #         "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
-        #         self.NS,
-        #     )
-        #     logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
-        #
-        #     ks = 1.5
-        #     laenge = 0.0
-        #     for block in blocks:
-        #         name = block.findtext("d:Objektbezeichnung", None, self.NS)
-        #
-        #         # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
-        #
-        #         #nicht vorhanden in DWA?
-        #
-        #         # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
-        #         for _haltung in block.findall("d:Haltung", self.NS):
-        #             cs1 = _haltung.findtext("d:Rauigkeitsansatz", "0", self.NS)
-        #             if cs1 == "1":
-        #                 ks = _get_float(
-        #                     _haltung.findtext("d:RauigkeitsbeiwertKb", 0.0, self.NS)
-        #                 )
-        #             elif cs1 == "2":
-        #                 ks = _get_float(
-        #                     _haltung.findtext("d:RauigkeitsbeiwertKst", 0.0, self.NS)
-        #                 )
-        #             else:
-        #                 ks = 0.0
-        #                 fehlermeldung(
-        #                     "Fehler im XML-Import von HydraulikObjekte_Haltungen",
-        #                     f"Ungültiger Wert für Rauigkeitsansatz {cs1} in Haltung {name}",
-        #                 )
-        #
-        #             laenge = _get_float(
-        #                 _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
-        #             )
-        #
-        #         yield Haltung(
-        #             haltnam=name,
-        #             laenge=laenge,
-        #             ks=ks,
-        #        )
-
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
         for haltung in _iter():
@@ -1560,7 +1483,8 @@ class ImportTask:
                       'breite': haltung.breite, 'laenge': haltung.laenge, 'material': material, 'profilauskleidung': haltung.profilauskleidung,
                       'innenmaterial': haltung.innenmaterial, 'sohleoben': haltung.sohleoben, 'baujahr': haltung.baujahr,
                       'sohleunten': haltung.sohleunten, 'profilnam': profilnam, 'entwart': entwart, 'strasse': haltung.strasse,
-                      'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
+                      'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar,
+                      'geom': haltung.geom, 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen\n'
             #              f'params: {params}')
@@ -1579,126 +1503,6 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _haltunggeom(self):
-        blocks = self.xml.findall("HG")
-
-        x_start = 0
-        y_start = 0
-        x_end = 0
-        y_end = 0
-
-        list = []
-        for block in blocks:
-            x_liste=[]
-            y_liste=[]
-            name = block.findtext("HG001", None)
-            if name == None:
-                name = block.findtext("HG002", None)
-            if name == None:
-                continue
-
-            if block.findall("GO[GO002='H']") is not None:
-                if len(block.findall("GO[GO002='H']/GP")) > 2:
-                    for _gp in block.findall("GO[GO002='H']/GP"):
-
-                        xsch = _get_float(_gp, "GP003")
-                        if xsch is None:
-                            xsch = _get_float(_gp, "GP005")
-                        ysch = _get_float(_gp, "GP004")
-                        if ysch is None:
-                            ysch = _get_float(_gp, "GP006")
-
-                        x_liste.append(xsch)
-                        y_liste.append(ysch)
-
-                    text = str(name), x_liste, y_liste
-                    list.append(text)
-
-        list.append('Ende')
-
-        for line in list:
-            #line_tokens = line.split(',')
-            name = line[0]
-            if line != "Ende":
-                x_liste = line[1]   # xsch
-                x_liste.pop(0)
-                x_liste.pop(-1)
-                y_liste = line[2]   # ysch
-                y_liste.pop(0)
-                y_liste.pop(-1)
-
-            npt=1
-
-            for xsch, ysch in zip(x_liste, y_liste):
-                if npt == 1:
-                    # Start und Endpunkt der Haltung ausgeben
-                    sql = f"""Select 
-                                ST_X(StartPoint(geom)) AS xanf,
-                                ST_Y(StartPoint(geom)) AS yanf,
-                                ST_X(EndPoint(geom))   AS xend,
-                                ST_Y(EndPoint(geom))   AS yend
-                            FROM haltungen
-                            WHERE haltnam =?"""
-
-                    self.db_qkan.sql(sql, parameters=(name,))
-                    for attr in self.db_qkan.fetchall():
-                        x_start, y_start, x_end, y_end = attr
-
-                    # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
-                    sql = f"""
-                                                 UPDATE haltungen SET geom = NULL
-                                                 WHERE haltnam = ?
-                                                 """
-
-                    if not self.db_qkan.sql(
-                            sql, parameters=(name,)
-                    ):
-                        return False
-
-                    sql = f"""
-                                    UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
-                                                    MakePoint(?, ?, ?), ?)
-                                    WHERE haltnam = ?
-                                 """
-
-                    paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
-                                QKan.config.epsg, npt, name]
-
-                    if not self.db_qkan.sql(
-                            sql, parameters=paralist
-                    ):
-                        return False
-
-                if npt > 1:
-                    # weitere punkte ergänzen
-                    sql = f"""
-                                        UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
-                                        WHERE haltnam = ?
-                                     """
-
-                    paralist = [xsch, ysch, QKan.config.epsg, npt, name]
-
-                    if not self.db_qkan.sql(
-                            sql, parameters=paralist
-                    ):
-                        return False
-
-                npt+=1
-            self.db_qkan.commit()
-
-
-
-        # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
-        # for haltung in _iter2():
-        #     if not self.db_qkan.sql(
-        #         "UPDATE haltungen SET ks = ?, laenge = ? WHERE haltnam = ?",
-        #         "xml_import Haltung [4]",
-        #         parameters=(haltung.ks, haltung.laenge, haltung.haltnam),
-        #     ):
-        #         return None
-        #
-        # self.db_qkan.commit()
-
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
@@ -1707,6 +1511,9 @@ class ImportTask:
 
             for block in blocks:
                 name = block.findtext("HG001", None)
+                if name is None:
+                    name = block.findtext("HG002", "")
+
                 baujahr = _get_int(block, "HG303", 0)
 
                 schoben = block.findtext("HG003", None)
@@ -1726,27 +1533,29 @@ class ImportTask:
                 strasse = block.findtext("HG102", None)
                 kommentar = block.findtext("HG999", "-")
 
-                _gp = block.find("GO/GP[1]")
-                xschob = _get_float(_gp, "GP003")
-                if xschob is None:
-                    xschob = _get_float(_gp, "GP005")
+                coords = []
+                geom = None
 
-                yschob = _get_float(_gp, "GP004")
-                if yschob is None:
-                    yschob = _get_float(_gp, "GP006")
+                if block.findall("GO") is not None:
 
-                deckeloben = _get_float(_gp, "GP007", 0.0)
+                    for _gp in block.findall("GO/GP"):
 
-                _gp = block.find("GO/GP[2]")
-                xschun = _get_float(_gp, "GP003")
-                if xschun is None:
-                    xschun = _get_float(_gp, "GP005")
+                        xsch = _get_float(_gp, "GP003")
+                        if xsch is None:
+                            xsch = _get_float(_gp, "GP005")
+                        ysch = _get_float(_gp, "GP004")
+                        if ysch is None:
+                            ysch = _get_float(_gp, "GP006")
 
-                yschun = _get_float(_gp, "GP004")
-                if yschun is None:
-                    yschun = _get_float(_gp, "GP006")
+                        coords.append((xsch, ysch))
 
-                deckelunten = _get_float(_gp, "GP007", 0.0)
+                    # Linienobjekt aus Punktobjekten
+                    if len(coords) > 0:
+                        pts = [QgsPoint(x, y) for x, y in coords]
+                        line = QgsGeometry.fromPolyline(pts)
+                        geom = line.asWkb()
+                    else:
+                        geom = None
 
                 _haltung = block.find("HI")
                 if _haltung:
@@ -1779,10 +1588,6 @@ class ImportTask:
                     laenge=laenge,
                     kommentar=kommentar,
                     baujahr=baujahr,
-                    xschob=xschob,
-                    yschob=yschob,
-                    xschun=xschun,
-                    yschun=yschun,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
@@ -1792,6 +1597,7 @@ class ImportTask:
                     max_ZD=max_ZD,
                     max_ZB=max_ZB,
                     max_ZS=max_ZS,
+                    geom=geom,
                 )
 
         for haltung_untersucht in _iter():
@@ -1812,15 +1618,14 @@ class ImportTask:
                       'schunten': haltung_untersucht.schunten, 'hoehe': haltung_untersucht.hoehe,
                       'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
                       'kommentar': haltung_untersucht.kommentar, 'baujahr': haltung_untersucht.baujahr,
-                      'strasse': haltung_untersucht.strasse, 'xschob': haltung_untersucht.xschob,
-                      'yschob': haltung_untersucht.yschob, 'xschun': haltung_untersucht.xschun,
-                      'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg,
+                      'strasse': haltung_untersucht.strasse, 'epsg': QKan.config.epsg,
                       'untersuchtag': haltung_untersucht.untersuchtag,
                       'untersucher': haltung_untersucht.untersucher, 'wetter': wetter,
                       'bewertungsart': haltung_untersucht.bewertungsart, 'bewertungstag': haltung_untersucht.bewertungstag,
                       'datenart': haltung_untersucht.datenart, 'max_ZD': haltung_untersucht.max_ZD,
                       'max_ZB': haltung_untersucht.max_ZB, 'max_ZS': haltung_untersucht.max_ZS,
-            }
+                      'geom': haltung_untersucht.geom,
+                      }
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: haltungen_untersucht\n'
             #              f'params: {params}')

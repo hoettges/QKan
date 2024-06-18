@@ -366,7 +366,6 @@ def createdbtables(
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT,
             untersucher TEXT,
             wetter INTEGER DEFAULT 0,
@@ -408,7 +407,6 @@ def createdbtables(
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler TEXT,
@@ -719,8 +717,11 @@ def createdbtables(
 
     sql = """CREATE TABLE untersuchrichtung (
         pk INTEGER PRIMARY KEY, 
-        kuerzel TEXT, 
         bezeichnung TEXT, 
+        kuerzel TEXT, 
+        isybau TEXT,                        -- BFR Abwasser
+        m150 TEXT,                          -- DWA M150
+        m145 TEXT,                          -- DWA M145
         bemerkung TEXT)"""
 
     try:

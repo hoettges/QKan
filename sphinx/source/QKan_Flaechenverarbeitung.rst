@@ -141,7 +141,7 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`Anbindungen von Einzeleinleite
 .. _linkverbindunghaltungflaeche:
 
 Verknüpfungslinien von Flächen zu Haltungen erstellen
-----------------------------------------------------
+-----------------------------------------------------
 
 Mit der Funktion |Tool_verknuepfungslinien_erstellen| :guilabel:`Erzeuge Verknüpfungslinien von Flächen zu Haltungen` wird für jede 
 Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), eine Linie erzeugt, die innerhalb der Fläche beginnt und 

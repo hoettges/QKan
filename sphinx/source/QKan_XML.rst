@@ -50,7 +50,7 @@ Import aus ISYBAU-XML
 
 Export nach ISYBAU-XML
 ----------------------
-Mit der Funktion |Tool_export_isybau| :guilabel:`Export nach ISYBAU-XML` kann aus der QKan-Datenbank (*.sqlite) eine ISYBAU-XML-Datei
+Mit der Funktion |Tool_export_isybau| :guilabel:`Export nach ISYBAU-XML` kann aus der QKan-Datenbank (\*.sqlite) eine ISYBAU-XML-Datei
 erzeugt werden.
 
 .. image:: ./QKan_Bilder/Formulare/export_isybau.png

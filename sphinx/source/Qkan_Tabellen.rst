@@ -92,11 +92,11 @@ Dies hat den Vorteil, dass Werte in den Tabellen direkt mit dem Ausdruckseditor 
 Beim Datenimport werden zunächst in der zu importierenden Datei vorhandene Referenztabellen eingelesen und anschließend beim Einlesen 
 alle Schlüsselwerte durch die zugeordneten Langbezeichnungen ersetzt. 
 
-Falls in der zu importierenden Datei keine Referenztabelle enthalten ist, hält QKan drei Maßnahmen vor:
+Falls in der zu importierenden Datei eine benötigte Referenztabelle nicht enthalten ist, hält QKan drei Maßnahmen vor:
 
 - es werden dem Dateiformat entsprechende Standardschlüssel angelegt (z. B. die im Merkblatt DWA-M 145 enthaltenen Werte der jeweiligen 
-  Referenztabellen).
-- bereits vor dem Datenimport können Schlüsselwerte und die zugehörigen Langbezeichnungen in den Referenztabellen hinzugefügt werden.
+  Referenztabelle).
+- bereits vor dem Datenimport können Schlüsselwerte und die zugehörigen Langbezeichnungen in der Referenztabelle hinzugefügt werden.
 - unbekannte Schlüsselwerte werden beim Datenimport in die Referenztabelle übernommen, wobei der Schlüsselwert auch als Langbezeichnung 
   eingetragen wird. 
   Zusätzlich wird in der Kommentarspalte "unbekannt" ergänzt. Dem Anwender wird empfohlen, direkt nach dem Datenimmport an Stelle dieser 
@@ -105,17 +105,20 @@ Falls in der zu importierenden Datei keine Referenztabelle enthalten ist, hält 
   der Referenztabelle!) auch in den 
   zugeordneten Geodatentabellen ausführt, damit die logische Verknüpfung zwischen den Tabellen erhalten bleibt. 
 
+
 Von besonderer Bedeutung ist die Referenztabelle "Entwässerungsarten". Sie bestimmt die Linienstile im Lageplan. Beim Import versucht 
 QKan, die intern festgelegten Linienstile mit den Langbezeichnungen abzustimmen. Falls dies nicht funktioniert oder nachträglich Änderungen 
 am Attribut "Entwässerungsart" in der Tabelle "Haltungen" vorgenommen werden, müssen gegebenenfalls die Bezeichnungen in den 
 Layereigenschaften des Layers "Haltungen" entsprechend angepasst werden. 
 
-Nachfolgend sind die in QKan implementierten Refernztabellen aufgeführt. Die Referenztabellen enthalten bis zu drei Blöcke:
+Nachfolgend sind die in QKan implementierten Refernztabellen aufgeführt. Die Referenztabellen enthalten optional die nachfolgend 
+aufgeführten Blöcke für den Datenaustausch; darüber hinaus erfüllen alle Referenztabellen QKan-interne Funktionen von Nachschlagefeldern 
+in Formularen und Darstellungsstile im Lageplan:
 
-1 interne Schlüssel, z. B. für QKan-Schachttypen
-2 Schlüssel für den Datenaustausch mit Programmen zur hydrodynamischen Simulation. Dies sind aktuell: HYSTEM-EXTRAN ("he"), Mike+ ("mu"), 
-  Kanal++ ("kp"), SWMM ("sw")
-3 Schlüssel für den Datenaustausch mit allgemeinen Datenaustauschformaten (ISYBAU, DWA-M 150, DWA-M 145)
+1. Schlüssel für den Datenaustausch mit Programmen zur hydrodynamischen Simulation. Dies sind aktuell: HYSTEM-EXTRAN ("he"), Mike\+ ("mu"), 
+   Kanal\+\+ ("kp"), SWMM ("sw"). 
+
+2. Schlüssel für den Datenaustausch mit allgemeinen Datenaustauschformaten (ISYBAU, DWA-M\ 150, DWA-M\ 145)
 
 In der QKan-Datenbank haben die Tabellen aus softwaretechnischen Gründen leicht vereinfachte Tabellennamen (z. B. entwart für Entwässerungsarten). 
 
@@ -123,43 +126,44 @@ In der QKan-Datenbank haben die Tabellen aus softwaretechnischen Gründen leicht
 Abflussparameter
 ++++++++++++++++
 
-Hydrologische Parameter für die hydrodynamsiche Simulation (nur Schlüsseltyp 2)
+Hydrologische Parameter für die hydrodynamsiche Simulation (Simulationsprogramme)
 
 
 Abflusstypen
 ++++++++++++
 
-Art des hydrologischen Modells zur Beschreibung des Oberflächenabflusses (nur Schlüsseltyp 2)
+Art des hydrologischen Modells zur Beschreibung des Oberflächenabflusses (Simulationsprogramme)
 
 
 Auslasstypen
 ++++++++++++
 
-Art des Auslasses (nur Schlüsseltyp 2)
+Art des Auslasses (Simulationsprogramme)
 
 
 Bewertungsart
 +++++++++++++
 
-Art bzw. verwendete Richtlinie für die Zustandsbewertung (nur Schlüsseltyp 3)
+Art bzw. verwendete Richtlinie für die Zustandsbewertung (allgemeiner Datenaustausch)
 
 
 Bodenklassen
 ++++++++++++
 
-Hydrogeologische Parameter für die hydrodynamsiche Simulation
+Hydrogeologische Parameter für die hydrodynamsiche Simulation (Simulationsprogramme)
 
 
 Entwässerungsarten
 ++++++++++++++++++
 
-Die Abwasserart wird für die farbige Darstellung der Haltungen verwendet. 
+Die Abwasserart wird für die farbige Darstellung der Haltungen verwendet (Simulationsprogramme und allgemeiner Datenaustausch) 
 
 
 Flächentypen
 ++++++++++++
 
-Klassifizierung der Flächen für das Simulationsprogramm HYSTEM/EXTRAN. Die Bezeichnungen werden für die farbige Darstellung verwendet
+Klassifizierung der Flächen für das Simulationsprogramm HYSTEM/EXTRAN. Die Bezeichnungen werden für die farbige Darstellung 
+verwendet (Simulationsprogramme)
 
 
 Haltungstypen
@@ -167,50 +171,48 @@ Haltungstypen
 
 Art des Verbindungselements. Die interne Tabelle "haltungen" enthält nicht nur Haltungen, sondern auch alle anderen Elemente, die eine hydraulische Verbindung 
 zwischen zwei Knotenelementen darstellen, also z. B. Wehre, Pumpen, Drosseln. Einige Elemente wie z. B. "Q-Regler" sind speziell für das Simulationsprogramm 
-HYSTEM-EXTRAN eingefügt worden. 
+HYSTEM-EXTRAN eingefügt worden (nur in QKan)
 
 
 Knotentypen
 +++++++++++
 
-Klassifizierung des Schachtes nach seiner Funktion im Entwässerungsnetz. Sie dient ausschließlich zur farbigen Auszeichnung im Lageplan. 
+Klassifizierung des Schachtes nach seiner Funktion im Entwässerungsnetz. Sie dient ausschließlich zur farbigen Auszeichnung im Lageplan (nur in QKan)
 
 
 Profile
 +++++++
 
-Zusätzlich zu den Bezeichnungen enthält die Tabelle Schlüsselwerte für die Simulationsprogramme HYSTEM/EXTRAN (ITWH), Mike+ (DHI) sowie 
-Kanal++ (Tandler)
+Bezeichnungen der Rohrprofile (Simulationsprogramme und allgemeiner Datenaustausch)
 
 
 Pumpentypen
 +++++++++++
 
 Die Tabelle wird ausschließlich für den Datenaustausch mit dem Simulationsprogramm HYSTEM/EXTRAN verwendet und enthält neben der 
-Bezeichnung den zugehörigen Schlüsselwert.
+Bezeichnung den zugehörigen Schlüsselwert (Simulationsprogramme)
 
 
 Schachttypen
 ++++++++++++
 
 Art des Knotenelements. Die interne Tabelle "schaechte" enthält nicht nur Schächte, sondern auch alle anderen Elemente, die Knotenelemente 
-im Entwässerungsnetz darstellen, z. B. Speicher oder Auslässe. 
+im Entwässerungsnetz darstellen, z. B. Speicher oder Auslässe (nur in QKan)
 
 
 Simulationsstatus
 +++++++++++++++++
 
-Der Status ermöglicht die Klassifizierung als fiktives, geplantes, stillgelegtes etc. Element. Zusätzlich zu den Bezeichnungen enthält 
-die Tabelle Schlüsselwerte für die Simulationsprogramme HYSTEM/EXTRAN (ITWH), Mike+ (DHI) sowie Kanal++ (Tandler)
+Der Status ermöglicht die Klassifizierung als fiktives, geplantes, stillgelegtes Element etc. (Simulationsprogramme und allgemeiner Datenaustausch)
 
 
 Untersuchungsrichtung
 +++++++++++++++++++++
 
-Untersuchungsrichtung bei einer Kamerabefahrung
+Untersuchungsrichtung bei einer Kamerabefahrung (allgemeiner Datenaustausch)
 
 
 Wetter
 ++++++
 
-Bezeichnung des Wetters während einer Kanaluntersuchung
+Bezeichnung des Wetters während einer Kanaluntersuchung (allgemeiner Datenaustausch)

@@ -5,7 +5,7 @@ building [mo]: targets for 0 po files that are out of date
 writing output... 
 building [html]: targets for 1 source files that are out of date
 updating environment: 0 added, 1 changed, 0 removed
-reading sources... [100%] Qkan_allgemein
+reading sources... [100%] Qkan_Tabellen
 looking for now-outdated files... none found
 pickling environment... done
 checking consistency... done
@@ -14,12 +14,11 @@ copying assets... copying downloadable files... [ 50%] _static/kanaldaten.xlsxc
 copying static files... done
 copying extra files... done
 done
-writing output... [ 50%] Qkan_allgemeinwriting output... [100%] index
+writing output... [ 50%] Qkan_Tabellenwriting output... [100%] index
 generating indices... genindex done
 writing additional pages... search done
-copying images... [100%] QKan_Bilder/png-DBU-Logo-gefoerdert-durch-RGB.png
 dumping search index in German (code: de)... done
 dumping object inventory... done
-build succeeded, 2 warnings.
+build succeeded.
 
 The HTML pages are in build\html.

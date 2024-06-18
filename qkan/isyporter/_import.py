@@ -30,7 +30,7 @@ class Schacht(ClassObject):
     knotentyp: str = ""
     schachttyp: str = ""
     material: str = ""
-    simstatus: str = ""
+    simstatus: str = 0
     kommentar: str = ""
 
 class Schacht_untersucht(ClassObject):
@@ -41,7 +41,7 @@ class Schacht_untersucht(ClassObject):
     entwart: str = ""
     strasse: str = ""
     knotentyp: str = ""
-    simstatus: str = ""
+    simstatus: str = 0
     kommentar: str = ""
     baujahr: int = 0
     untersuchtag: str = ""
@@ -101,7 +101,7 @@ class Haltung(ClassObject):
     material: str = ""
     strasse: str = ""
     ks: float = 1.5
-    simstatus: str = ""
+    simstatus: str = 0
     kommentar: str = ""
     aussendurchmesser: float = 0.0
     profilauskleidung: str = ""
@@ -185,7 +185,7 @@ class Anschlussleitung(ClassObject):
     material: str = ""
     baujahr: int = 0
     ks: float = 1.5
-    simstatus: str = ""
+    simstatus: str = 0
     kommentar: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
@@ -260,7 +260,7 @@ class Wehr(ClassObject):
     kammerhoehe: float
     laenge: float
     uebeiwert: float
-    simstatus: str = ""
+    simstatus: str = 0
     kommentar: str = ""
     xsch: float = 0.0
     ysch: float = 0.0
@@ -277,7 +277,7 @@ class Pumpe(ClassObject):
     steuersch: str = ""  # //HydraulikObjekt/Pumpe/Steuerschacht
     einschalthoehe: float = 0.0  # Nicht in ISYBAU gefunden, TODO: XSD prüfen
     ausschalthoehe: float = 0.0  # Nicht in ISYBAU gefunden, TODO: XSD prüfen
-    simstatus: str = ""
+    simstatus: str = 0
     kommentar: str = ""
     xsch: float = 0.0
     ysch: float = 0.0
@@ -478,7 +478,7 @@ class ImportTask:
                     schachttyp = 'Anschlussschacht'
 
                 knoten_typ = 'Normalschacht'
-                baujahr = _get_int(block.findtext("d:Baujahr", 0, self.NS))
+                baujahr = _get_int(block.findtext("d:Baujahr", None, self.NS))
 
                 yield Schacht(
                     schnam=name,
@@ -489,7 +489,7 @@ class ImportTask:
                         block.findtext(
                             "d:Geometrie/d:Geometriedaten/d:Knoten"
                             "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
-                            0.0,
+                            None,
                             self.NS
                         )
                     ),
@@ -499,7 +499,7 @@ class ImportTask:
                     baujahr=baujahr,
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
-                    simstatus=_get_int(block.findtext("d:Status", 0, self.NS)),
+                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                     material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
@@ -1032,7 +1032,7 @@ class ImportTask:
                     entwart="",
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
-                    simstatus=_get_int(block.findtext("d:Status", 0, self.NS)),
+                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -1168,7 +1168,7 @@ class ImportTask:
                     entwart="",
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
-                    simstatus=_get_int(block.findtext("d:Status", 0, self.NS)),
+                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -1335,7 +1335,7 @@ class ImportTask:
                         entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                         strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                         ks=1.5,  # in Hydraulikdaten enthalten.
-                        simstatus=block.findtext("d:Status", None, self.NS),
+                        simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                         kommentar=block.findtext("d:Kommentar", "-", self.NS),
                         aussendurchmesser=aussendurchmesser,
                         profilauskleidung=profilauskleidung,
@@ -2286,7 +2286,7 @@ class ImportTask:
                         profilnam=profilnam,
                         entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                         ks=1.5,  # in Hydraulikdaten enthalten.
-                        simstatus=block.findtext("d:Status", None, self.NS),
+                        simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                         kommentar=block.findtext("d:Kommentar", "-", self.NS),
                         xschob=xschob,
                         yschob=yschob,
@@ -3122,7 +3122,7 @@ class ImportTask:
             for block in blocks:
                 yield Pumpe(
                     pnam=block.findtext("d:Objektbezeichnung", None, self.NS),
-                    simstatus=block.findtext("d:Status", None, self.NS),
+                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 

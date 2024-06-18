@@ -1,6 +1,7 @@
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.k_layersadapt import load_plausisql
 from qkan.utils import get_logger
+from qkan import QKan
 
 VERSION = "3.3.8"  # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
 
@@ -281,87 +282,6 @@ def run(dbcon: DBConnection) -> bool:
         )
 
     if not dbcon.alter_table(
-            "anschlussleitungen_untersucht",
-            [
-            "leitnam TEXT",
-            "bezugspunkt TEXT",
-            "schoben TEXT                                   -- join schaechte.schnam",
-            "schunten TEXT                                  -- join schaechte.schnam",
-            "hoehe REAL                                     -- Profilhoehe (m)",
-            "breite REAL                                    -- Profilbreite (m)",
-            "laenge REAL                                    -- abweichende Haltungslänge (m)",
-            "baujahr INTEGER",
-            "id INTEGER                                     -- absolute Nummer der Inspektion",
-            "untersuchtag TEXT",
-            "untersucher TEXT",
-            "wetter INTEGER DEFAULT 0",
-            "bewertungsart TEXT",
-            "bewertungstag TEXT",
-            "strasse TEXT",
-            "datenart TEXT",
-            "auftragsbezeichnung TEXT",
-            "max_ZD INTEGER",
-            "max_ZB INTEGER",
-            "max_ZS INTEGER",
-            "xschob REAL",
-            "yschob REAL",
-            "xschun REAL",
-            "yschun REAL",
-            "kommentar TEXT",
-            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
-            ]
-    ):
-        logger.error(
-            f"Fehler bei Migration zu Version {VERSION}: "
-            "Hinzufügen von Attributen in Tabelle anschlussleitungen_untersucht fehlgeschlagen"
-        )
-
-    if not dbcon.alter_table(
-            "untersuchdat_anschlussleitung",
-            [
-            "untersuchleit TEXT",
-            "untersuchrichtung TEXT",
-            "schoben TEXT                                   -- join schaechte.schnam ",
-            "schunten TEXT                                  -- join schaechte.schnam",
-            "id INTEGER                                     -- absolute Nummer der Inspektion",
-            "untersuchtag TEXT",
-            "bandnr INTEGER",
-            "videozaehler TEXT",
-            "inspektionslaenge REAL",
-            "station REAL",
-            "stationtext REAL",
-            "timecode INTEGER",
-            "video_offset REAL",
-            "kuerzel TEXT",
-            "charakt1 TEXT",
-            "charakt2 TEXT",
-            "quantnr1 REAL",
-            "quantnr2 REAL",
-            "streckenschaden TEXT",
-            "streckenschaden_lfdnr INTEGER",
-            "pos_von INTEGER",
-            "pos_bis INTEGER",
-            "foto_dateiname TEXT",
-            "film_dateiname TEXT",
-            "ordner_bild TEXT",
-            "ordner_video TEXT",
-            "richtung TEXT",
-            "filmtyp INTEGER",
-            "video_start INTEGER",
-            "video_ende INTEGER",
-            "ZD INTEGER",
-            "ZB INTEGER",
-            "ZS INTEGER",
-            "kommentar TEXT",
-            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
-            ]
-    ):
-        logger.error(
-            f"Fehler bei Migration zu Version {VERSION}: "
-            "Hinzufügen von Attributen in Tabelle untersuchdat_anschlussleitung fehlgeschlagen"
-        )
-
-    if not dbcon.alter_table(
         "profile",
         [
             "profilnam TEXT",
@@ -415,9 +335,27 @@ def run(dbcon: DBConnection) -> bool:
             "Hinzufügen von Attributen in Tabelle wetter fehlgeschlagen"
         )
 
-    #Anschlussleitungen_untersucht
-    sql = """
-        CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht (
+    if not dbcon.alter_table(
+        "untersuchrichtung",
+        [
+            "bezeichnung TEXT",
+            "kuerzel INTEGER",
+            "isybau TEXT                         -- BFR Abwasser",
+            "m150 TEXT                           -- DWA M150",
+            "m145 TEXT                           -- DWA M145",
+            "bemerkung TEXT",
+        ]
+    ):
+        logger.error(
+            f"Fehler bei Migration zu Version {VERSION}: "
+            "Hinzufügen von Attributen in Tabelle wetter fehlgeschlagen"
+        )
+
+    # Anschlussleitungen_untersucht ----------------------------------------------------------------
+
+    sqls = [
+        """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht(
+            pk INTEGER PRIMARY KEY,
             leitnam TEXT,
             bezugspunkt TEXT,
             schoben TEXT,                                   -- join schaechte.schnam
@@ -427,7 +365,6 @@ def run(dbcon: DBConnection) -> bool:
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT,
             untersucher TEXT,
             wetter INTEGER DEFAULT 0,
@@ -444,28 +381,25 @@ def run(dbcon: DBConnection) -> bool:
             xschun REAL,
             yschun REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
-            """
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+        "SELECT AddGeometryColumn('anschlussleitungen_untersucht','geom',{},'LINESTRING',2)".format(QKan.config.epsg),
+        "SELECT CreateSpatialIndex('anschlussleitungen_untersucht','geom')"
+    ]
+    for sql in sqls:
+        if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
+                              f"Erstellen der Tabelle anschlussleitungen_untersucht"):
+            return False
 
-    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
-        return False
+    # untersuchungsdaten Anschlussleitungen
 
-    sql = f"""
-            SELECT AddGeometryColumn('anschlussleitungen_untersucht','geom',{dbcon.epsg},'LINESTRING',2)
-        """
-
-    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
-        return False
-
-    sql = """
-        CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung (
+    sqls = [
+        """CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung (
             pk INTEGER PRIMARY KEY,
             untersuchleit TEXT,
             untersuchrichtung TEXT,
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler TEXT,
@@ -495,19 +429,17 @@ def run(dbcon: DBConnection) -> bool:
             ZB INTEGER,
             ZS INTEGER,
             kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
-                """
-
-    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
-        return False
-
-    sql = f"""
-            SELECT AddGeometryColumn('anschlussleitungen_untersucht','geom',{dbcon.epsg},'LINESTRING',2)
-            """
-
-    if not dbcon.sql(sql, f"dbfunc.DBConnection.version {VERSION}"):
-        return False
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+        "SELECT AddGeometryColumn('untersuchdat_anschlussleitung','geom',{},'LINESTRING',2)".format(QKan.config.epsg),
+        "SELECT CreateSpatialIndex('untersuchdat_anschlussleitung','geom')",
+    ]
+    for sql in sqls:
+        if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
+                              f"Erstellen der Tabelle untersuchdat_anschlussleitung"):
+            return False
 
     if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat")
+        logger.error("Fehler in migration 0037_untersuchdat bei load_plausisql")
         return False
+
+    return True

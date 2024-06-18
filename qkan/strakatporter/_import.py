@@ -125,7 +125,7 @@ class ImportTask:
         self.strakatdir = QKan.config.strakat.import_dir
         self.projectfile = QKan.config.project.file
         self.db_name = QKan.config.database.qkan
-        self.richtung = 'fließrichtung'         # QKan.config.xml.richt_choice
+        self.richtung = QKan.config.xml.richt_choice
         self.kriterienschaeden = QKan.config.zustand.kriterienschaeden
 
 
@@ -1722,7 +1722,7 @@ class ImportTask:
                 streckenschaden, streckenschaden_lfdnr,
                 pos_von, pos_bis,
                 foto_dateiname, film_dateiname, ordner_bild, ordner_video,
-                richtung, kommentar, ZD, ZB, ZS
+                kommentar, ZD, ZB, ZS
             )
             SELECT
                 Trim(stk.haltungsname)          AS untersuchhal,
@@ -1757,7 +1757,6 @@ class ImportTask:
                 NULL                            AS film_dateiname,
                 NULL                            AS ordner_bild,
                 NULL                            AS ordner_video,
-                :richtung                       AS richtung,
                 kommentar                       AS kommentar,        -- Kombi aus STRAKAT-Feldern Sanierung + Anmerkung
                 stb.skdichtheit                 AS ZD,
                 stb.skbetriebssicherheit        AS ZB,
@@ -1771,8 +1770,7 @@ class ImportTask:
             WHERE stk.laenge > 0.04 AND stk.schachtnummer <> 0 AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
         """
 
-        params = {"richtung": self.richtung}
-        if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden", params):
+        if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden"):
             raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Haltungsschäden")
 
         self.db_qkan.commit()
