@@ -27,7 +27,7 @@
     :caption: Übersicht
     
     Qkan_Formulare
-    Qkan_Tabellen    
+    Qkan_Tabellen
 
 
 Register und Tabellen

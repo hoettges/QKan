@@ -1,7 +1,8 @@
+import importlib
 import json
 import os
 from pathlib import Path
-from typing import Callable, List, Optional, cast
+from typing import Callable, List, Optional, cast, Dict
 
 import qgis
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
@@ -16,6 +17,30 @@ from .utils import setup_logging
 
 # Toggle in DEV to log to console
 LOG_TO_CONSOLE = False
+
+# list of all available plugins
+PLUGIN_LIST = [
+    "createunbeffl.CreateUnbefFl",
+    "he8porter.He8Porter",
+    "dynaporter.DynaPorter",
+    "muporter.MuPorter",
+    "swmmporter.SWMMPorter",
+    "strakatporter.StrakatPorter",
+    "linkflaechen.LinkFl",
+    "surfaceTools.SurfaceTools",
+    "isyporter.IsyPorter",
+    "m150porter.M150Porter",
+    "m145porter.M145Porter",
+    # "ganglinienhe8.GanglinienHE8",
+    "datacheck.Plausi",
+    "zustandsklassen.Zustandsklassen",
+    "subkans.Substanzklasse",
+    "sanierungsbedarfszahl.Sanierungsbedarfszahl",
+    "laengsschnitt.Laengsschnitt",
+    "floodTools.FloodTools",
+    "tools.QKanTools",
+    "info.Infos",
+]
 
 
 # noinspection PyPep8Naming
@@ -88,50 +113,20 @@ class QKan:
         # noinspection PyArgumentList
         QCoreApplication.installTranslator(self.translator)
 
-        from .createunbeffl import CreateUnbefFl
-        from .he8porter import He8Porter
-        from .dynaporter import DynaPorter
-        from .muporter import MuPorter
-        from .swmmporter import SWMMPorter
-        from .strakatporter import StrakatPorter
-        from .linkflaechen import LinkFl
-        from .surfaceTools import SurfaceTools
-        from .isyporter import IsyPorter
-        from .m150porter import M150Porter
-        from .m145porter import M145Porter
+        self.plugins: List = []
 
-        # from .ganglinienhe8 import GanglinienHE8
-        from .datacheck import Plausi
-        from .zustandsklassen import Zustandsklassen
-        from .subkans import Substanzklasse
-        from .sanierungsbedarfszahl import Sanierungsbedarfszahl
-        from .laengsschnitt import Laengsschnitt
-        from .floodTools import FloodTools
-        from .tools import QKanTools
-        from .info import Infos
+        for plugin_name in PLUGIN_LIST:
+            try:
+                module_name, class_name = plugin_name.rsplit(".", 1)
+                klass = getattr(importlib.import_module(f"qkan.{module_name}"), class_name)
+                if klass is None:
+                    self.logger.error_code("Failed to find class %s inside %s", class_name, module_name)
+                    continue
 
-        self.plugins: List = [
-            CreateUnbefFl(iface),
-            He8Porter(iface),
-            DynaPorter(iface),
-            MuPorter(iface),
-            SWMMPorter(iface),
-            StrakatPorter(iface),
-            LinkFl(iface),
-            SurfaceTools(iface),
-            IsyPorter(iface),
-            M150Porter(iface),
-            M145Porter(iface),
-            # GanglinienHE8(iface),
-            Plausi(iface),
-            Zustandsklassen(iface),
-            Substanzklasse(iface),
-            Sanierungsbedarfszahl(iface),
-            Laengsschnitt(iface),
-            FloodTools(iface),
-            QKanTools(iface),
-            Infos(iface),
-        ]
+                self.plugins.append(klass(iface))
+            except ImportError:
+                self.logger.error_code("Failed to load plugin %s", plugin_name, exc_info=True)
+                continue
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()
 
@@ -169,11 +164,19 @@ class QKan:
     def sort_actions(self) -> None:
         # Finally sort all actions
         self.actions.sort(key=lambda x: cast(str, cast(QAction, x).text().lower()))
-        alis={}
-        e=0
+        alis: Dict[str, int] = {}
+        e = 0
         for x in self.actions:
             alis[x.text()] = e
-            e+=1
+            e += 1
+
+        def safe_add_action(menu: QMenu, key: str) -> None:
+            if key not in alis:
+                return
+            if alis[key] >= len(self.actions):
+                return
+
+            menu.addAction(self.actions[alis[key]])
 
         if self.menu:
             self.menu.clear()
@@ -191,47 +194,59 @@ class QKan:
             flood2D = self.menu.addMenu("Überflutung")
             info = self.menu.addMenu("Info")
 
-            allgemein.addAction(self.actions[alis['Allgemeine Optionen']])
-            allgemein.addAction(self.actions[alis['QKan-Projekt aktualisieren']])
-            allgemein.addAction(self.actions[alis['QKan-Projektdatei übertragen']])
-            verwaltung.addAction(self.actions[alis['QKan-Datenbank aktualisieren']])
-            verwaltung.addAction(self.actions[alis['Neue QKan-Datenbank erstellen']])
-            verwaltung.addAction(self.actions[alis['Dateipfade suchen']])
-            daten.addAction(self.actions[alis['Plausibilitätsprüfungen']])
-            daten.addAction(self.actions[alis['Tabellendaten aus Clipboard einfügen']])
-            daten.addAction(self.actions[alis['Tabellendaten aus Clipboard: Zuordnung anzeigen']])
-            daten.addAction(self.actions[alis['Laengsschnitt']])
-            flaechen.addAction(self.actions[alis['Erzeuge unbefestigte Flächen...']])
-            flaechen.addAction(self.actions[alis['Erzeuge Voronoiflächen zu Haltungen']])
-            flaechen.addAction(self.actions[alis['Entferne Überlappungen']])
-            flaechen.addAction(self.actions[alis['Zuordnung zu Teilgebiet']])
-            flaechen.addAction(self.actions[alis['Teilgebietszuordnungen als Gruppen verwalten']])
-            flaechen.addAction(self.actions[alis['Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen']])
-            flaechen.addAction(self.actions[alis['Erzeuge Verknüpfungslinien von Flächen zu Haltungen']])
-            flaechen.addAction(self.actions[alis['Verknüpfungen bereinigen']])
-            flaechen.addAction(self.actions[alis['Oberflächenabflussparameter eintragen']])
-            hyex.addAction(self.actions[alis['Import aus Hystem-Extran 8']])
-            hyex.addAction(self.actions[alis['Export nach Hystem-Extran 8']])
-            hyex.addAction(self.actions[alis['Ergebnisse aus Hystem-Extran 8']])
-            mike.addAction(self.actions[alis['Import aus Mike+']])
-            dyna.addAction(self.actions[alis['Import aus DYNA-Datei (*.EIN)']])
-            dyna.addAction(self.actions[alis['Export in DYNA-Datei...']])
-            xml.addAction(self.actions[alis['Import aus DWA-150-XML']])
-            xml.addAction(self.actions[alis['Export nach DWA-150-XML']])
-            xml.addAction(self.actions[alis['Import aus ISYBAU-XML']])
-            xml.addAction(self.actions[alis['Export nach ISYBAU-XML']])
-            xml.addAction(self.actions[alis['Import aus DWA-145-XML']])
-            swmm.addAction(self.actions[alis['Import aus SWMM-Datei (*.INP)']])
-            swmm.addAction(self.actions[alis['Export in SWMM-Datei (*.INP)']])
-            strakat.addAction(self.actions[alis['Import aus STRAKAT']])
-            # laengs.addAction(self.actions[alis['Längsschnitt-Tool für HE8']])
-            # laengs.addAction(self.actions[alis['Ganglinien-Tool für HE8']])
-            zustand.addAction(self.actions[alis['Zustandsklassen ermitteln']])
-            zustand.addAction(self.actions[alis['Sanierungsbedarfszahl ermitteln']])
-            zustand.addAction(self.actions[alis['Substanzklassen ermitteln']])
-            flood2D.addAction(self.actions[alis['Überflutungsanimation']])
-            info.addAction(self.actions[alis['Über QKan']])
-            info.addAction(self.actions[alis['Infos zum QKan Projekt']])
+            safe_add_action(allgemein, "Allgemeine Optionen")
+            safe_add_action(allgemein, "QKan-Projekt aktualisieren")
+            safe_add_action(allgemein, "QKan-Projektdatei übertragen")
+
+            safe_add_action(verwaltung, "QKan-Datenbank aktualisieren")
+            safe_add_action(verwaltung, "Neue QKan-Datenbank erstellen")
+            safe_add_action(verwaltung, "Dateipfade suchen")
+
+            safe_add_action(daten, "Plausibilitätsprüfungen")
+            safe_add_action(daten, "Tabellendaten aus Clipboard einfügen")
+            safe_add_action(daten, "Tabellendaten aus Clipboard: Zuordnung anzeigen")
+            safe_add_action(daten, "Laengsschnitt")
+
+            safe_add_action(flaechen, "Erzeuge unbefestigte Flächen...")
+            safe_add_action(flaechen, "Erzeuge Voronoiflächen zu Haltungen")
+            safe_add_action(flaechen, "Entferne Überlappungen")
+            safe_add_action(flaechen, "Zuordnung zu Teilgebiet")
+            safe_add_action(flaechen, "Teilgebietszuordnungen als Gruppen verwalten")
+            safe_add_action(flaechen, "Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen")
+            safe_add_action(flaechen, "Erzeuge Verknüpfungslinien von Flächen zu Haltungen")
+            safe_add_action(flaechen, "Verknüpfungen bereinigen")
+            safe_add_action(flaechen, "Oberflächenabflussparameter eintragen")
+
+            safe_add_action(hyex, "Import aus Hystem-Extran 8")
+            safe_add_action(hyex, "Export nach Hystem-Extran 8")
+            safe_add_action(hyex, "Ergebnisse aus Hystem-Extran 8")
+
+            safe_add_action(mike, "Import aus Mike+")
+
+            safe_add_action(dyna, "Import aus DYNA-Datei (*.EIN)")
+            safe_add_action(dyna, "Export in DYNA-Datei...")
+
+            safe_add_action(xml, "Import aus DWA-150-XML")
+            safe_add_action(xml, "Export nach DWA-150-XML")
+            safe_add_action(xml, "Import aus ISYBAU-XML")
+            safe_add_action(xml, "Export nach ISYBAU-XML")
+            safe_add_action(xml, "Import aus DWA-145-XML")
+
+            safe_add_action(swmm, "Import aus SWMM-Datei (*.INP)")
+            safe_add_action(swmm, "Export in SWMM-Datei (*.INP)")
+
+            safe_add_action(strakat, "Import aus STRAKAT")
+            # safe_add_action(laengs, "Längsschnitt-Tool für HE8")
+            # safe_add_action(laengs, "Ganglinien-Tool für HE8")
+
+            safe_add_action(zustand, "Zustandsklassen ermitteln")
+            safe_add_action(zustand, "Sanierungsbedarfszahl ermitteln")
+            safe_add_action(zustand, "Substanzklassen ermitteln")
+
+            safe_add_action(flood2D, "Überflutungsanimation")
+
+            safe_add_action(info, "Über QKan")
+            safe_add_action(info, "Infos zum QKan Projekt")
 
     def unload(self) -> None:
         from qgis.utils import unloadPlugin
