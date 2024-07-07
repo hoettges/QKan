@@ -4759,10 +4759,12 @@ class Zustandsklassen_funkt:
                 except:
                     pass
                 if attr[13] >= 100:
+                    z = '1'
+                elif 100 > attr[13] > 50:
                     z = '2'
-                elif 100 > attr[13] > 10:
+                elif 50 > attr[13] > 20:
                     z = '3'
-                elif attr[13] < 10:
+                elif attr[13] < 20:
                     z = '4'
                 else:
                     z = '5'
@@ -5166,6 +5168,20 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
+            if attr[10] == "BAH" and attr[11] == "A":
+                z = '3'
+                sql = f"""
+                      UPDATE untersuchdat_haltung_bewertung
+                        SET Zustandsklasse_B = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?;
+                        """
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[10] == "BAH" and (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
                 z = '2'
                 sql = f"""
@@ -5271,7 +5287,7 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
-            if attr[10] == "BAI" and attr[11] == "Z" and attr[12] == "Y":
+            if attr[10] == "BAI" and attr[11] == "Z":
                 if attr[13] >= 50:
                     z = '0'
                 elif 50 > attr[13] >= 35:
@@ -6493,17 +6509,6 @@ class Zustandsklassen_funkt:
                             SET Zustandsklasse_D = ?
                             WHERE untersuchdat_haltung_bewertung.pk = ?;
                             """
-                data = (z, attr[0])
-                try:
-                    curs.execute(sql, data)
-                    #db.commit()
-                except:
-                    pass
-                sql = f"""
-                    UPDATE untersuchdat_haltung_bewertung
-                    SET Zustandsklasse_B = ?
-                    WHERE untersuchdat_haltung_bewertung.pk = ?;
-                    """
                 data = (z, attr[0])
                 try:
                     curs.execute(sql, data)
