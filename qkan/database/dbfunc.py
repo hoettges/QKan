@@ -12,7 +12,7 @@ import sqlite3
 from array import array
 from distutils.version import LooseVersion
 from sqlite3 import Connection
-from typing import Any, List, Optional, Union, cast, Dict
+from typing import Any, List, Optional, Union, cast, Dict, Tuple
 
 from qgis.core import Qgis, QgsVectorLayer, QgsGeometry, QgsPoint
 from qgis.PyQt.QtWidgets import QProgressBar
@@ -290,7 +290,7 @@ class DBConnection:
         self,
         sql: str,
         stmt_category: str = "allgemein",
-        parameters=(),  # : Optional[Iterable, dict[str, str]]   "Iterable" is deprecated
+        parameters: Union[Tuple, List, dict[str, str]] = (),
         many: bool = False,
         mute_logger: bool = False,
         ignore: bool = False,
@@ -305,7 +305,7 @@ class DBConnection:
         :type stmt_category:    String
 
         :parameters:            parameters used in sql statement
-        :type parameters:       List or Dict
+        :type parameters:       Tuple, List or Dict
 
         :many:                  executes sql for every element in parameters -> must be a sequence of lists
         :type many:             Boolean
@@ -453,12 +453,12 @@ class DBConnection:
                     :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
                     CASE WHEN :geop IS NULL
                         THEN MakePoint(:xsch, :ysch, :epsg)
-                        ELSE GeomFromText(:geop, :epsg)
+                        ELSE GeomFromWKB(:geop, :epsg)
                     END,
                     CASE WHEN :geom IS NULL
                         THEN CastToMultiPolygon(MakePolygon(
                             MakeCircle(:xsch,:ysch,coalesce(:durchm, 1.0)/2.0, :epsg)))
-                        ELSE GeomFromText(:geom, :epsg)
+                        ELSE GeomFromWKB(:geom, :epsg)
                     END);"""
 
         elif tabnam == "haltungen":
@@ -531,7 +531,7 @@ class DBConnection:
                           MakePoint(:xschun, :yschun, :epsg)
                         )
                       )
-                    ELSE GeomFromText(:geom, :epsg)
+                    ELSE GeomFromWKB(:geom, :epsg)
                   END
                   ;"""
 
@@ -578,25 +578,32 @@ class DBConnection:
                   (haltnam, bezugspunkt, schoben, schunten,
                    hoehe, breite, laenge,
                    kommentar, createdat, baujahr,  
-                   geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
+                   geom, untersuchtag, untersucher, wetter, strasse, bewertungsart,
+                   bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT 
                   :haltnam, :bezugspunkt, :schoben, :schunten, 
                   CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END, 
                   CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
                   :laenge, :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
-                  MakeLine(
-                    coalesce(
-                      MakePoint(:xschob, :yschob, :epsg),
-                      suo.geop,
-                      so.geop
-                    ), 
-                    coalesce(
-                      MakePoint(:xschun, :yschun, :epsg),
-                      suu.geop,
-                      su.geop
-                    )
-                  ), :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart, :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
+                  CASE WHEN :geom IS NULL
+                    THEN
+                      MakeLine(
+                        coalesce(
+                          MakePoint(:xschob, :yschob, :epsg),
+                          suo.geop,
+                          so.geop
+                        ), 
+                        coalesce(
+                          MakePoint(:xschun, :yschun, :epsg),
+                          suu.geop,
+                          su.geop
+                        )
+                      )
+                    ELSE GeomFromWKB(:geom, :epsg)
+                  END,
+                  :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart,
+                  :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
                 FROM
                   (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
                   LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
@@ -738,7 +745,7 @@ class DBConnection:
                       THEN MakeLine(
                           MakePoint(:xschob, :yschob, :epsg), 
                           MakePoint(:xschun, :yschun, :epsg))
-                      ELSE GeomFromText(:geom, :epsg)
+                      ELSE GeomFromWKB(:geom, :epsg)
                   END
                 );"""
 
@@ -796,18 +803,24 @@ class DBConnection:
                   CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
                   :laenge, :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
-                  MakeLine(
-                    coalesce(
-                      MakePoint(:xschob, :yschob, :epsg),
-                      suo.geop,
-                      so.geop
-                    ), 
-                    coalesce(
-                      MakePoint(:xschun, :yschun, :epsg),
-                      suu.geop,
-                      su.geop
-                    )
-                  ), :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart, :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
+                  CASE WHEN :geom IS NULL
+                    THEN
+                      MakeLine(
+                        coalesce(
+                          MakePoint(:xschob, :yschob, :epsg),
+                          suo.geop,
+                          so.geop
+                        ), 
+                        coalesce(
+                          MakePoint(:xschun, :yschun, :epsg),
+                          suu.geop,
+                          su.geop
+                        )
+                      )
+                    ELSE GeomFromWKB(:geom, :epsg)
+                  END, 
+                  :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart,
+                  :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
                 FROM
                   (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
                   LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
@@ -931,10 +944,14 @@ class DBConnection:
                   :schnam,
                   CASE WHEN :durchm > 200 THEN :durchm/1000 ELSE :durchm END, :bezugspunkt, :id,
                   :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
-                  coalesce(
-                    MakePoint(:xsch, :ysch, :epsg),
-                    sch.geop
-                  ),
+                  CASE WHEN :geop IS NULL
+                    THEN
+                      coalesce(
+                        MakePoint(:xsch, :ysch, :epsg),
+                        sch.geop
+                      )
+                    ELSE GeomFromWKB(:geop, :epsg)
+                  END,
                   :untersuchtag, :untersucher, 
                   :wetter, :strasse, :bewertungsart, 
                   :bewertungstag, :datenart, 
@@ -1023,7 +1040,7 @@ class DBConnection:
                     :flnam, :regenschreiber, :schnam, :befgrad, :neigung, 
                         coalesce(:createdat, CURRENT_TIMESTAMP), :haltnam, :neigkl, :schwerpunktlaufzeit, :teilgebiet, 
                         :abflussparameter, :kommentar,
-                    GeomFromText(:geom, :epsg)
+                    GeomFromWKB(:geom, :epsg)
                 );"""
 
         elif tabnam == "flaechen":
@@ -1051,7 +1068,7 @@ class DBConnection:
                     :teilgebiet, :regenschreiber, :abflussparameter, 
                     :aufteilen, :kommentar, 
                     coalesce(:createdat, CURRENT_TIMESTAMP),
-                    GeomFromText(:geom, :epsg)
+                    GeomFromWKB(:geom, :epsg)
                 );"""
 
         elif tabnam == "teilgebiete":
@@ -1071,7 +1088,7 @@ class DBConnection:
                 VALUES (
                     :tgnam, :kommentar, 
                     coalesce(:createdat, CURRENT_TIMESTAMP),
-                    GeomFromText(:geom, :epsg)
+                    GeomFromWKB(:geom, :epsg)
                 );"""
 
         else:
@@ -1126,7 +1143,7 @@ class DBConnection:
 
         si = len(data_uh)  # Anzahl Untersuchungen
         if si == 0:
-            logger.error_user(
+            logger.error(
                 "Es konnten keine Schadenstexte erzeugt werden. Wahrscheinlich ist ein notwendiges Attribut noch leer",
             )
             return

@@ -21,9 +21,12 @@ class TestM150QKan(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        QKan.config.database.qkan = str(BASE_WORK / "alsdorf.sqlite")
-        QKan.config.xml.import_file = str(BASE_WORK / "Alsdorf_Test_mit Zustand_25832.xml")
+        # QKan.config.database.qkan = str(BASE_WORK / "alsdorf.sqlite")
+        # QKan.config.xml.import_file = str(BASE_WORK / "Alsdorf_Test_mit Zustand_25832.xml")
+        QKan.config.database.qkan = str(BASE_WORK / "lemgo.sqlite")
+        QKan.config.xml.import_file = str(BASE_WORK / "Lemgo_test_DWA-M_150.XML")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
+        QKan.config.epsg = 25832
 
         imp = M150Porter(iface())
         erg = imp._doimport()
@@ -46,8 +49,8 @@ class TestQKanM150(QgisTest):
 
     def test_export(self) -> None:
         QKan.config.database.qkan = str(BASE_WORK / "itwh.sqlite")
-        QKan.config.m150.export_file = str(BASE_WORK / "itwh.idbm")
-        QKan.config.m150.template = str(BASE_WORK / "muster_vorlage.idbm")
+        QKan.config.xml.export_file = str(BASE_WORK / "itwh.idbm")
+        QKan.config.xml.template = str(BASE_WORK / "muster_vorlage.idbm")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 
         dbAdapt(

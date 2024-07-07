@@ -438,8 +438,82 @@ def run(dbcon: DBConnection) -> bool:
                               f"Erstellen der Tabelle untersuchdat_anschlussleitung"):
             return False
 
-    if not load_plausisql(dbcon):
-        logger.error("Fehler in migration 0037_untersuchdat bei load_plausisql")
+    # Löschen nicht mehr benötigter Views
+
+    sql = "DROP VIEW IF EXISTS schaechte_data"
+    if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
+                          f"Löschen des VIEW 'schaechte_data'"):
         return False
+
+    # Neue Tabelle 'material'
+
+    sql= """CREATE TABLE IF NOT EXISTS material (
+            pk INTEGER PRIMARY KEY, 
+            bezeichnung TEXT,
+            kuerzel TEXT,
+            isybau TEXT,                        -- BFR Abwasser
+            m150 TEXT,                          -- DWA M150
+            m145 TEXT,                          -- DWA M145
+            kommentar TEXT)"""
+    if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
+                          f"Erstellen der Tabelle 'material'"):
+        return False
+
+
+    # Trigger für die Referenztabellen
+
+    sqls = [
+        """CREATE TRIGGER trig_ref_simstatus AFTER UPDATE OF bezeichnung ON simulationsstatus
+            BEGIN
+                UPDATE haltungen
+                SET simstatus = new.bezeichnung
+                WHERE simstatus = old.bezeichnung;
+                UPDATE schaechte
+                SET simstatus = new.bezeichnung
+                WHERE simstatus = old.bezeichnung;
+                UPDATE anschlussleitungen
+                SET simstatus = new.bezeichnung
+                WHERE simstatus = old.bezeichnung;
+            END""",
+        """CREATE TRIGGER trig_ref_material AFTER UPDATE OF bezeichnung ON material
+            BEGIN
+                UPDATE haltungen
+                SET material = new.bezeichnung
+                WHERE material = old.bezeichnung;
+                UPDATE schaechte
+                SET material = new.bezeichnung
+                WHERE material = old.bezeichnung;
+                UPDATE anschlussleitungen
+                SET material = new.bezeichnung
+                WHERE material = old.bezeichnung;
+            END""",
+        """CREATE TRIGGER trig_ref_profile AFTER UPDATE OF profilnam ON profile
+            BEGIN
+                UPDATE haltungen
+                SET profilnam = new.profilnam
+                WHERE profilnam = old.profilnam;
+                UPDATE anschlussleitungen
+                SET profilnam = new.profilnam
+                WHERE profilnam = old.profilnam;
+            END""",
+        """CREATE TRIGGER trig_ref_entwart AFTER UPDATE OF bezeichnung ON entwaesserungsarten
+            BEGIN
+                UPDATE haltungen
+                SET entwart = new.bezeichnung
+                WHERE entwart = old.bezeichnung;
+                UPDATE schaechte
+                SET entwart = new.bezeichnung
+                WHERE entwart = old.bezeichnung;
+                UPDATE anschlussleitungen
+                SET entwart = new.bezeichnung
+                WHERE entwart = old.bezeichnung;
+            END"""
+    ]
+    for sql in sqls:
+        if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
+                              f"Erstellen der Trigger"):
+            return False
+
+    dbcon.commit()
 
     return True

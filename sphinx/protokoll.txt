@@ -3,22 +3,11 @@ loading translations [de]... done
 loading pickled environment... done
 building [mo]: targets for 0 po files that are out of date
 writing output... 
-building [html]: targets for 1 source files that are out of date
-updating environment: 0 added, 1 changed, 0 removed
-reading sources... [100%] Qkan_Tabellen
+building [html]: targets for 0 source files that are out of date
+updating environment: 0 added, 0 changed, 0 removed
+reading sources... 
 looking for now-outdated files... none found
-pickling environment... done
-checking consistency... done
-preparing documents... done
-copying assets... copying downloadable files... [ 50%] _static/kanaldaten.xlsxcopying downloadable files... [100%] _static/kostra_dwd_2010r.zip
-copying static files... done
-copying extra files... done
-done
-writing output... [ 50%] Qkan_Tabellenwriting output... [100%] index
-generating indices... genindex done
-writing additional pages... search done
-dumping search index in German (code: de)... done
-dumping object inventory... done
+no targets are out of date.
 build succeeded.
 
 The HTML pages are in build\html.

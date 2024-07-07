@@ -56620,7 +56620,7 @@ def my_form_open(dialog, layer, feature):
       </fieldConfiguration>
       <aliases>
         <alias index="0" name="" field="pk"/>
-        <alias index="1" name="Bezeichnug" field="bezeichnung"/>
+        <alias index="1" name="Bezeichnung" field="bezeichnung"/>
         <alias index="2" name="NR (HYSTEM-EXTRAN)" field="he_nr"/>
         <alias index="3" name="NR (Mike Urban)" field="mu_nr"/>
         <alias index="4" name="NR (Kanal++)" field="kp_nr"/>

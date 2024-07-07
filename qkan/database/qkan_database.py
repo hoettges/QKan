@@ -163,7 +163,7 @@ def createdbtables(
             strasse TEXT,                                   -- für ISYBAU benötigt
             profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
-            material TEXT,
+            material TEXT,                                  -- join material.bezeichnung
             profilauskleidung TEXT,
             innenmaterial TEXT,
             ks REAL DEFAULT 1.5,                            -- abs. Rauheit (Prandtl-Colebrook)
@@ -214,7 +214,6 @@ def createdbtables(
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT,
             untersucher TEXT,
             untersuchrichtung TEXT,
@@ -257,7 +256,6 @@ def createdbtables(
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT,
             bandnr INTEGER,
             videozaehler TEXT,
@@ -309,7 +307,6 @@ def createdbtables(
         """CREATE TABLE anschlussleitungen (
             pk INTEGER PRIMARY KEY,
             leitnam TEXT,
-            objekt_id INTEGER,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (m)
@@ -322,9 +319,9 @@ def createdbtables(
             haltnam TEXT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             qzu REAL,
-            profilnam TEXT DEFAULT 'Kreisquerschnitt',
+            profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
-            material TEXT,
+            material TEXT,                                  -- join material.bezeichnung
             profilauskleidung TEXT,
             innenmaterial TEXT,
             ks REAL DEFAULT 1.5,
@@ -413,7 +410,7 @@ def createdbtables(
             inspektionslaenge REAL,
             station REAL,
             stationtext REAL,
-            timecode INTEGER,
+            timecode TEXT,
             video_offset REAL,
             kuerzel TEXT,
             charakt1 TEXT,
@@ -428,7 +425,6 @@ def createdbtables(
             film_dateiname TEXT,
             ordner_bild TEXT,
             ordner_video TEXT,
-            richtung TEXT,
             filmtyp INTEGER,
             video_start INTEGER,
             video_ende INTEGER,
@@ -460,7 +456,6 @@ def createdbtables(
         """CREATE TABLE schaechte (
             pk INTEGER PRIMARY KEY,
             schnam TEXT,
-            objekt_id INTEGER,
             sohlhoehe REAL,
             deckelhoehe REAL,
             durchm REAL,
@@ -474,7 +469,7 @@ def createdbtables(
             auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
             schachttyp TEXT DEFAULT 'Schacht',              -- join schachttypen.schachttyp
             simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
-            material TEXT,
+            material TEXT,                                  -- join material.bezeichnung
             xsch REAL, 
             ysch REAL,
             kommentar TEXT,
@@ -497,29 +492,6 @@ def createdbtables(
             consl.close()
             return False
 
-    sql = f"""CREATE VIEW IF NOT EXISTS schaechte_data AS 
-          SELECT
-            schnam, 
-            xsch, ysch, 
-            sohlhoehe, 
-            deckelhoehe, durchm, 
-            druckdicht, ueberstauflaeche, 
-            entwart, strasse, teilgebiet, 
-            knotentyp, auslasstyp, schachttyp, 
-            simstatus, material,
-            kommentar, createdat,
-            geop, geom
-          FROM schaechte;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "schaechte_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
     consl.commit()
 
     # Schaechte_untersucht ----------------------------------------------------------------
@@ -533,7 +505,6 @@ def createdbtables(
             baujahr INTEGER,
             bezugspunkt TEXT,
             id INTEGER,                                     -- absolute Nummer der Inspektion
-            objekt_id INTEGER,
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
@@ -638,6 +609,27 @@ def createdbtables(
         consl.close()
         return False
 
+    # Änderungen an der Profilbezeichnung in der Detailtabelle nachführen
+    sql = """CREATE TRIGGER trig_ref_profile AFTER UPDATE OF profilnam ON profile
+                BEGIN
+                    UPDATE haltungen
+                    SET profilnam = new.profilnam
+                    WHERE profilnam = old.profilnam;
+                    UPDATE anschlussleitungen
+                    SET profilnam = new.profilnam
+                    WHERE profilnam = old.profilnam;
+                END"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Trigger "profile.profilnam" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Entwaesserungssysteme ----------------------------------------------------
@@ -662,6 +654,30 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "entwaesserungsarten" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    # Änderungen an der Bezeichnung in der Detailtabelle nachführen
+    sql = """CREATE TRIGGER trig_ref_entwart AFTER UPDATE OF bezeichnung ON entwaesserungsarten
+                BEGIN
+                    UPDATE haltungen
+                    SET entwart = new.bezeichnung
+                    WHERE entwart = old.bezeichnung;
+                    UPDATE schaechte
+                    SET entwart = new.bezeichnung
+                    WHERE entwart = old.bezeichnung;
+                    UPDATE anschlussleitungen
+                    SET entwart = new.bezeichnung
+                    WHERE entwart = old.bezeichnung;
+                END"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Trigger für "entwaesserungsarten.bezeichnung" konnte nicht erstellt werden.',
         )
         consl.close()
         return False
@@ -1294,6 +1310,30 @@ def createdbtables(
         consl.close()
         return False
 
+    # Änderungen an der Bezeichnung in der Detailtabelle nachführen
+    sql = """CREATE TRIGGER trig_ref_simstatus AFTER UPDATE OF bezeichnung ON simulationsstatus
+                BEGIN
+                    UPDATE haltungen
+                    SET simstatus = new.bezeichnung
+                    WHERE simstatus = old.bezeichnung;
+                    UPDATE schaechte
+                    SET simstatus = new.bezeichnung
+                    WHERE simstatus = old.bezeichnung;
+                    UPDATE anschlussleitungen
+                    SET simstatus = new.bezeichnung
+                    WHERE simstatus = old.bezeichnung;
+                END"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Trigger "simulationsstatus.bezeichnung" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Material -----------------------------------------------------------------
@@ -1313,6 +1353,32 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "material" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
+    # Änderungen an der Bezeichnung in der Detailtabelle nachführen
+    sql = """CREATE TRIGGER trig_ref_material AFTER UPDATE OF bezeichnung ON material
+                BEGIN
+                    UPDATE haltungen
+                    SET material = new.bezeichnung
+                    WHERE material = old.bezeichnung;
+                    UPDATE schaechte
+                    SET material = new.bezeichnung
+                    WHERE material = old.bezeichnung;
+                    UPDATE anschlussleitungen
+                    SET material = new.bezeichnung
+                    WHERE material = old.bezeichnung;
+                END"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Trigger für "material.bezeichnung" konnte nicht erstellt werden.',
         )
         consl.close()
         return False
