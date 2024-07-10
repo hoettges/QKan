@@ -51,7 +51,7 @@ class Bericht_STRAKAT(ClassObject):
     berichtid: str = ""
 
 
-class Schacht_STRAKAT(ClassObject):
+class Kanal_STRAKAT(ClassObject):
     nummer: int = 0
     rw_gerinne_o: float = 0.0
     hw_gerinne_o: float = 0.0
@@ -170,7 +170,7 @@ class ImportTask:
         return result
 
     def _strakat_kanaltabelle(self) -> bool:
-        """Import der Kanaldaten aus der STRAKAT-Datei 'kanal.rwtopen', ACCESS-Tabelle 'KANALTABELLE'
+        """Import der Kanaldaten aus der STRAKAT-Datei 'kanal.rwtopen', entspricht ACCESS-Tabelle 'KANALTABELLE'
         """
 
         # Erstellung Tabelle t_strakatkanal
@@ -244,7 +244,7 @@ class ImportTask:
             if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatkanal"'):
                 return False
 
-        def _iter() -> Iterator[Schacht_STRAKAT]:
+        def _iter() -> Iterator[Kanal_STRAKAT]:
         # Datei kanal.rwtopen einlesen und in Tabelle schreiben
             blength = 1024                      # Blocklänge in der STRAKAT-Datei
             with open(os.path.join(self.strakatdir, 'kanal.rwtopen'), 'rb') as fo:
@@ -328,7 +328,7 @@ class ImportTask:
 
                     schacht_unten = unpack('15s', b[965:980])[0].replace(b'\x00', b' ').decode('ansi').strip()
 
-                    yield Schacht_STRAKAT(
+                    yield Kanal_STRAKAT(
                         nummer=nummer,
                         rw_gerinne_o=rw_gerinne_o,
                         hw_gerinne_o=hw_gerinne_o,
@@ -598,7 +598,7 @@ class ImportTask:
         return True
 
     def _strakat_hausanschl(self) -> bool:
-        """Import der Hausanschlussdaten aus der STRAKAT-Datei 'haus.rwtopen', ACCESS-Tabelle 'HAUSANSCHLUSSTABELLE'
+        """Import der Hausanschlussdaten aus der STRAKAT-Datei 'haus.rwtopen', entspricht ACCESS-Tabelle 'HAUSANSCHLUSSTABELLE'
         """
 
         # Erstellung Tabelle t_strakathausanschluesse
@@ -743,7 +743,7 @@ class ImportTask:
         return True
 
     def _strakat_berichte(self) -> bool:
-        """Import der Schadensdaten aus der STRAKAT-Datei 'ENBericht.rwtopen', ACCESS-Tabelle 'SCHADENSTABELLE'
+        """Import der Schadensdaten aus der STRAKAT-Datei 'ENBericht.rwtopen', entspricht ACCESS-Tabelle 'SCHADENSTABELLE'
         """
         # Erstellung Tabelle t_strakatberichte
         sql = "PRAGMA table_list('t_strakatberichte')"
@@ -1059,14 +1059,19 @@ class ImportTask:
         # Referenztabelle Entwässerungsarten
 
         daten = [
-            ('Regenwasser', 'R', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
-            ('Schmutzwasser', 'S', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
-            ('Mischwasser', 'M', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
-            ('RW Druckleitung', 'RD', 'Transporthaltung ohne Anschlüsse', 1, 2, None, 'DR', 1, 1),
-            ('SW Druckleitung', 'SD', 'Transporthaltung ohne Anschlüsse', 2, 1, None, 'DS', 1, 1),
-            ('MW Druckleitung', 'MD', 'Transporthaltung ohne Anschlüsse', 0, 0, None, 'DW', 1, 1),
-            ('RW nicht angeschlossen', 'RT', 'Transporthaltung ohne Anschlüsse', 1, 2, None, None, 1, 0),
-            ('MW nicht angeschlossen', 'MT', 'Transporthaltung ohne Anschlüsse', 0, 0, None, None, 1, 0),
+            ('KR-Kanal', 'KR', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
+            ('KS-Kanal', 'KS', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
+            ('KM-Kanal', 'KM', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
+            ('RW Druck', 'RD', 'Regenwasserdruckleitung', 1, 2, None, 'DR', 1, 1),
+            ('SW Druck', 'SD', 'Schmutzwasserdruckleitung', 2, 1, None, 'DS', 1, 1),
+            ('MW Druck', 'MD', 'Mischwasserdruckleitung', 0, 0, None, 'DW', 1, 1),
+            ('NEUBAU', 'NEU', 'Neubau', 1, 2, 'R', 'KR', 0, 0),
+            ('NEUBAU MW', 'NMW', 'Neubau MW', 0, 0, 'M', 'KM', 0, 0),
+            ('PLANUNG', 'PL', 'Planung', 1, 2, 'R', 'KR', 0, 0),
+            ('PLANUNG MW', 'PM', 'Planung MW', 0, 0, 'M', 'KM', 0, 0),
+            ('STILLGEL', 'X', 'stillgelegt', None, None, None, None, None, None),
+            ('nicht erfasst', 'U', 'nicht erfasst', None, None, None, None, None, None),
+            ('PRIVAT Privater Kanal', 'PK', 'privater Kanal', None, None, None, None, None, None),
             ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, None, None, 0, None),
             ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, 0, None),
         ]
@@ -1280,40 +1285,39 @@ class ImportTask:
                                 many=True):
             return False
 
-        # Erstellung Tabelle t_mapper_kanalarten2entwart
-        sql = "PRAGMA table_list('t_mapper_kanalarten2entwart')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_kanalarten2entwart', vorhanden ist"):
-            return False                                        # Abbruch weil Anfrage fehlgeschlagen
-        if not self.db_qkan.fetchone():
-            sql = """ 
-            CREATE TABLE IF NOT EXISTS t_mapper_kanalarten2entwart (
-                id INTEGER PRIMARY KEY,
-                entwart TEXT,
-                druckdicht INTEGER
-            )"""
-
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_kanalarten2entwart"'):
-                return False
-
-        # Liste enthält nur Haltungsarten, die nicht 'Haltung' sind
-        daten = [
-            (1, 'Regenwasser', False),
-            (2, 'Schmutzwasser', False),
-            (3, 'Mischwasser', False),
-            (4, 'RW Druckleitung', True),
-            (5, 'SW Druckleitung', True),
-            (6, 'MW Druckleitung', True),
-            (16, 'Rinnen/Gräben', False),
-            (9, 'stillgelegt', False),
-        ]
-        sql = """INSERT INTO t_mapper_kanalarten2entwart (id, entwart, druckdicht)
-                    VALUES (?, ?, ?)"""
-
-        if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_mapper_kanalarten2entwart",
-                                daten,
-                                many=True):
-            return False
+        # # Erstellung Tabelle t_mapper_kanalarten2entwart
+        # sql = "PRAGMA table_list('t_mapper_kanalarten2entwart')"
+        # if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_kanalarten2entwart', vorhanden ist"):
+        #     return False                                        # Abbruch weil Anfrage fehlgeschlagen
+        # if not self.db_qkan.fetchone():
+        #     sql = """
+        #     CREATE TABLE IF NOT EXISTS t_mapper_kanalarten2entwart (
+        #         id INTEGER PRIMARY KEY,
+        #         entwart TEXT,
+        #         druckdicht INTEGER
+        #     )"""
+        #
+        #     if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_kanalarten2entwart"'):
+        #         return False
+        #
+        # daten = [
+        #     (1, 'Regenwasser', False),
+        #     (2, 'Schmutzwasser', False),
+        #     (3, 'Mischwasser', False),
+        #     (4, 'RW Druckleitung', True),
+        #     (5, 'SW Druckleitung', True),
+        #     (6, 'MW Druckleitung', True),
+        #     (16, 'Rinnen/Gräben', False),
+        #     (9, 'stillgelegt', False),
+        # ]
+        # sql = """INSERT INTO t_mapper_kanalarten2entwart (id, entwart, druckdicht)
+        #             VALUES (?, ?, ?)"""
+        #
+        # if not self.db_qkan.sql(sql,
+        #                         "strakat_import Referenzliste t_mapper_kanalarten2entwart",
+        #                         daten,
+        #                         many=True):
+        #     return False
 
         self.db_qkan.commit()
 
@@ -1339,12 +1343,20 @@ class ImportTask:
                 SELECT n1 AS id, kurz, text
                 FROM t_reflists
                 WHERE tabtyp = 'schachtmaterial'
+            ),
+            entwart AS (
+                SELECT n1 AS id, kurz, text
+                FROM t_reflists
+                WHERE tabtyp = 'kanalart' 
+            ),
+            knotenart AS (
+                SELECT n1 AS id, kurz, text
+                FROM t_reflists
+                WHERE tabtyp = 'schachtart' 
             )
             
             INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, strasse, material, 
-                                durchm, 
-                                druckdicht, 
-                                entwart, schachttyp, simstatus, 
+                                durchm, entwart, schachttyp, knotentyp, 
                                 kommentar, geop, geom)
             
             
@@ -1371,10 +1383,9 @@ class ImportTask:
                 END                                         AS strasse,
                 schachtmaterial.text                        AS material,
                 1.0                                         AS durchm,
-                k2e.druckdicht                              AS druckdicht, 
-                k2e.entwart                                 AS entwart,
-                Coalesce(s2s.schachttyp ,'Schacht')         AS schachttyp,
-                Coalesce(s2s.simstatus, 'vorhanden')        AS simstatus,
+                k2e.text                                    AS entwart,
+                'Schacht'                                   AS schachttyp,
+                k2t.text                                    AS knotentyp,
                 'QKan-STRAKAT-Import'                       AS kommentar,
                 Makepoint(t_strakatkanal.rw_gerinne_o, t_strakatkanal.hw_gerinne_o, :epsg)  AS geop,
                 CastToMultiPolygon(MakePolygon(MakeCircle(
@@ -1387,10 +1398,10 @@ class ImportTask:
                 ON t_strakatkanal.strassennummer = strassen.id
                 LEFT JOIN schachtmaterial                       
                 ON t_strakatkanal.schachtmaterial = schachtmaterial.id
-                LEFT JOIN t_mapper_schachtarten2typen AS s2s    
-                ON t_strakatkanal.schachtart = s2s.id
-                LEFT JOIN t_mapper_kanalarten2entwart AS k2e           
+                LEFT JOIN entwart AS k2e           
                 ON t_strakatkanal.kanalart = k2e.id
+                LEFT JOIN knotenart AS k2t
+                ON t_strakatkanal.schachtart = k2t.id
             WHERE
                 t_strakatkanal.schachtnummer <> 0
                 AND (
@@ -1445,30 +1456,37 @@ class ImportTask:
                 SELECT n1 AS id, kurz, text AS name
                 FROM t_reflists
                 WHERE tabtyp = 'strasse'
+            ),
+            entwart AS (
+                SELECT n1 AS id, kurz, text
+                FROM t_reflists
+                WHERE tabtyp = 'kanalart' 
             )
             INSERT INTO haltungen (haltnam, schoben, schunten, laenge, 
                 xschob, yschob, xschun, yschun, 
                 breite, hoehe, 
                 sohleoben, sohleunten, 
-                profilnam, entwart, material, strasse, 
+                profilnam, entwart, druckdicht, material, strasse, 
                 haltungstyp, simstatus, kommentar, geom)
             SELECT
-                Trim(stk.haltungsname)       AS haltnam,
+                Trim(stk.haltungsname)                  AS haltnam,
                 Trim(Coalesce(
                     sto.schacht_unten,stk.schacht_oben
                     ))                                  AS schoben,
-                Trim(stk.schacht_unten)      AS schunten,
-                stk.laenge                   AS laenge,
-                stk.rw_gerinne_o             AS xschob,
-                stk.hw_gerinne_o             AS yschob,
-                stk.rw_gerinne_u             AS xschun,
-                stk.hw_gerinne_u             AS yschun,
-                stk.rohrbreite_v/1000.       AS breite,
-                stk.rohrhoehe___v/1000.      AS hoehe,
-                stk.sohle_oben___v           AS sohleoben,
-                stk.sohle_unten__v           AS sohleunten,
+                Trim(stk.schacht_unten)                 AS schunten,
+                stk.laenge                              AS laenge,
+                stk.rw_gerinne_o                        AS xschob,
+                stk.hw_gerinne_o                        AS yschob,
+                stk.rw_gerinne_u                        AS xschun,
+                stk.hw_gerinne_u                        AS yschun,
+                stk.rohrbreite_v/1000.                  AS breite,
+                stk.rohrhoehe___v/1000.                 AS hoehe,
+                stk.sohle_oben___v                      AS sohleoben,
+                stk.sohle_unten__v                      AS sohleunten,
                 profilarten.text                        AS profilnam,
-                k2e.entwart                             AS entwart,
+                k2e.text                                AS entwart,
+                CASE WHEN instr(lower(k2e.text),'druck') > 0
+                    THEN 1 ELSE 0 END                   AS druckdicht,
                 rohrmaterialien.text                    AS material,
                 CASE WHEN INSTR(strassen.name,' ') > 0
                     THEN substr(strassen.name, INSTR(strassen.name,' ')+1)
@@ -1491,7 +1509,7 @@ class ImportTask:
                 ON stk.strassennummer = strassen.ID
                 LEFT JOIN t_mapper_schart2haltyp AS s2h
                 ON stk.schachtart = s2h.id
-                LEFT JOIN t_mapper_kanalarten2entwart AS k2e
+                LEFT JOIN entwart AS k2e
                 ON stk.kanalart = k2e.id
                 LEFT JOIN sto
                 ON stk.Zuflussnummer1 = sto.Nummer

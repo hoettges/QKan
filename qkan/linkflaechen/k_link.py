@@ -329,7 +329,7 @@ def createlinkfl(
                     ha.haltnam, 
                     Distance(ha.geom,{bezug}) AS dist, 
                     ha.geom AS geohal, lf.geom AS geolf
-                FROM haltungen AS ha
+                FROM (SELECT * FROM haltungen WHERE transport IS NULL or transport = 0) AS ha
                 INNER JOIN linkfl AS lf
                 ON Intersects(ha.geom,lf.gbuf)
                 INNER JOIN tezg AS tg
@@ -349,7 +349,7 @@ def createlinkfl(
                     ha.haltnam, 
                     Distance(ha.geom,{bezug}) AS dist, 
                     ha.geom AS geohal, lf.geom AS geolf
-                FROM haltungen AS ha
+                FROM (SELECT * FROM haltungen WHERE transport IS NULL or transport = 0) AS ha
                 INNER JOIN linkfl AS lf
                 ON Intersects(ha.geom,lf.gbuf)
                 WHERE lf.glink IS NULL
@@ -515,7 +515,7 @@ def createlinksw(
                     Distance(hal.geom,sw.geom) AS dist, 
                     hal.geom AS geohal, sw.geom AS geosw
                 FROM
-                    haltungen AS hal
+                    (SELECT * FROM haltungen WHERE transport IS NULL or transport = 0) AS hal
                 INNER JOIN
                     linksw AS sw
                 ON Intersects(hal.geom,sw.gbuf)
@@ -783,7 +783,6 @@ def reload_group(iface: QgisInterface, db_qkan: DBConnection, gruppenname: str) 
     status_message.setLevel(Qgis.Success)
 
     return True
-
 
 # -------------------------------------------------------------------------------------------------------------
 

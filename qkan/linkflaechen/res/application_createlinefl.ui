@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>770</width>
-    <height>600</height>
+    <height>610</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>770</width>
-    <height>600</height>
+    <height>610</height>
    </size>
   </property>
   <property name="font">
@@ -28,7 +28,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>550</y>
+     <y>560</y>
      <width>731</width>
      <height>32</height>
     </rect>
@@ -60,7 +60,7 @@
      <x>20</x>
      <y>20</y>
      <width>731</width>
-     <height>351</height>
+     <height>361</height>
     </rect>
    </property>
    <property name="font">
@@ -222,7 +222,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>310</y>
+      <y>330</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -255,7 +255,7 @@
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>310</y>
+      <y>330</y>
       <width>61</width>
       <height>20</height>
      </rect>
@@ -288,7 +288,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>310</y>
+      <y>330</y>
       <width>171</width>
       <height>20</height>
      </rect>
@@ -318,7 +318,7 @@
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>310</y>
+      <y>330</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -348,7 +348,7 @@
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>310</y>
+      <y>330</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -381,7 +381,7 @@
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>310</y>
+      <y>330</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -411,7 +411,7 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>310</y>
+      <y>330</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -521,12 +521,42 @@ rungsarten berücksichtigen</string>
 berücksichtigen</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>290</y>
+      <width>181</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden ganzen Flächen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden ganzen Flächen"/>
+    </property>
+    <property name="text">
+     <string>ohne &quot;Transport&quot;-Haltungen</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>380</y>
+     <y>390</y>
      <width>731</width>
      <height>151</height>
     </rect>

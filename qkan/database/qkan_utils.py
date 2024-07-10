@@ -259,7 +259,7 @@ def get_database_QKan(silent: bool = False) -> Tuple[Optional[str], Optional[int
     )
     if len(layerobjects) > 0:
         lay = layerobjects[0]
-        dbname_s: Optional[str] = get_qkanlayer_attributes(lay.source())[0]
+        dbname_s: Optional[str] = get_qkanlayer_attributes(lay.source())[0].replace('\\', '/')
         epsg_s = int(lay.crs().postgisSrid())
     else:
         dbname_s = None
@@ -268,7 +268,7 @@ def get_database_QKan(silent: bool = False) -> Tuple[Optional[str], Optional[int
     layerobjects = project.mapLayersByName("Flächen")
     if len(layerobjects) > 0:
         lay = layerobjects[0]
-        dbname_f: Optional[str] = get_qkanlayer_attributes(lay.source())[0]
+        dbname_f: Optional[str] = get_qkanlayer_attributes(lay.source())[0].replace('\\', '/')
         epsg_f = int(lay.crs().postgisSrid())
     else:
         dbname_f = None

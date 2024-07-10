@@ -24,7 +24,7 @@ def wktmod(wkt_geom):
     """Wandelt einen WKT-Ausdruck in einen WKB-Ausdruck um, um das Dezimaltrennzeichenproblem
        zu umgehen"""
     pg = QgsGeometry.fromWkt(wkt_geom)
-    bgeo = QgsGeometry.asWkb(pg).data().hex()
+    bgeo = QgsGeometry.asWkb(pg)                        # .data().hex()
     return bgeo
 
 
@@ -147,7 +147,7 @@ class ReadData:  # type: ignore
             if len(head_clipboard) > 1:
                 break
 
-        head_match: List[str] = [None] * len(
+        head_match: List[Union[str, None]] = [None] * len(
             head_clipboard
         )  # attribute names from QKan table
         # corresponding to head_clipboard

@@ -220,21 +220,16 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
             if len(liste_hal_entw) == 0:
                 auswahl = ""
             else:
-                auswahl = " WHERE haltungen.entwart in ('{}')".format(
+                auswahl = " and haltungen.entwart in ('{}')".format(
                     "', '".join(liste_hal_entw)
                 )
 
             if len(liste_teilgebiete) != 0:
-                if auswahl == "":
-                    auswahl = " WHERE haltungen.teilgebiet in ('{}')".format(
-                        "', '".join(liste_teilgebiete)
-                    )
-                else:
-                    auswahl += " and haltungen.teilgebiet in ('{}')".format(
-                        "', '".join(liste_teilgebiete)
-                    )
+                auswahl += " and haltungen.teilgebiet in ('{}')".format(
+                    "', '".join(liste_teilgebiete)
+                )
 
-            sql = f"SELECT count(*) AS anzahl FROM haltungen{auswahl}"
+            sql = f"SELECT count(*) AS anzahl FROM haltungen WHERE (transport IS NULL or transport = 0) {auswahl}"
             if not db_qkan.sql(sql, "count_selection"):
                 return
             anz_haltungen = db_qkan.fetchone()
@@ -289,20 +284,21 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
                     teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                     GROUP BY teilgebiet"""
             if not db_qkan.sql(sql, "QKan_LinkFlaechen (1)"):
-                return
+                return False
 
             sql = """INSERT INTO teilgebiete (tgnam)
                     SELECT teilgebiet FROM haltungen 
-                    WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    WHERE teilgebiet IS NOT NULL AND teilgebiet <> ''
+                    AND (transport IS NULL or transport = 0)
+                    AND teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                     GROUP BY teilgebiet"""
             if not db_qkan.sql(sql, "QKan_LinkFlaechen (1)"):
-                return
+                return False
 
             db_qkan.commit()
 
             # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
-            sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
+            sql = 'SELECT "entwart" FROM "haltungen" WHERE transport IS NULL OR transport = 0 GROUP BY "entwart"'
             if not db_qkan.sql(sql, "{__name__}.VoronoiDialog.prepareDialog(1)", mute_logger=True):
                 return False
             daten = db_qkan.fetchall()
@@ -317,7 +313,7 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
             sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
             if not db_qkan.sql(sql, "{__name__}.VoronoiDialog.prepareDialog(2)"):
-                return
+                return False
             daten = db_qkan.fetchall()
             self.lw_teilgebiete.clear()
             for ielem, elem in enumerate(daten):

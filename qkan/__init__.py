@@ -189,7 +189,7 @@ class QKan:
             mike = self.menu.addMenu("Mike+")
             swmm = self.menu.addMenu("SWMM")
             strakat = self.menu.addMenu("STRAKAT")
-            flaechen = self.menu.addMenu("Flächenverabeitung")
+            flaechen = self.menu.addMenu("Flächenverarbeitung")
             zustand = self.menu.addMenu("Zustandsbewertung")
             flood2D = self.menu.addMenu("Überflutung")
             info = self.menu.addMenu("Info")
@@ -212,8 +212,8 @@ class QKan:
             safe_add_action(flaechen, "Entferne Überlappungen")
             safe_add_action(flaechen, "Zuordnung zu Teilgebiet")
             safe_add_action(flaechen, "Teilgebietszuordnungen als Gruppen verwalten")
-            safe_add_action(flaechen, "Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen")
             safe_add_action(flaechen, "Erzeuge Verknüpfungslinien von Flächen zu Haltungen")
+            safe_add_action(flaechen, "Erzeuge Verknüpfungslinien von Einzeleinleitungen zu Haltungen")
             safe_add_action(flaechen, "Verknüpfungen bereinigen")
             safe_add_action(flaechen, "Oberflächenabflussparameter eintragen")
 
