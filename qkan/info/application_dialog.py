@@ -34,6 +34,7 @@ class _Dialog(QDialog):
         self.setupUi(self)
         self.default_dir = str(default_dir)
         self.tr = tr
+        self.canv = None
 
 
 
@@ -132,7 +133,6 @@ class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
                     pass
         except:
             pass
-
 
 
     def export(self) -> None:

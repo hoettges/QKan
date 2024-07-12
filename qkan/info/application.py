@@ -1,16 +1,20 @@
 from qgis.gui import QgisInterface
 from qgis.core import QgsProject
+from PyQt5.QtWidgets import *
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.plugin import QKanPlugin
 from qkan.database.qkan_database import qgs_version
 from qkan.database.qkan_utils import warnung
 from xml.etree.ElementTree import Element, SubElement, tostring
+import win32com.client as w3c
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from typing import Dict, List, Optional, Union
 from pathlib import Path
 from xml.dom import minidom
 import time
-import win32com.client
 
 from PyQt5.QtWidgets import QTableWidgetItem
 
@@ -55,6 +59,11 @@ class Infos(QKanPlugin):
 
         self.stamm: Optional[Element] = None
         self.hydraulik_objekte: Optional[Element] = None
+        self.get_widget()
+        self.get_widget_2()
+        self.get_widget_3()
+        self.canv = None
+
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -62,12 +71,169 @@ class Infos(QKanPlugin):
         QKan.instance.add_action(
             icon_import,
             text=self.tr("Infos zum QKan Projekt"),
-            callback=self.run_info,
+            callback=self.run,
             parent=self.iface.mainWindow(),
         )
 
     def unload(self) -> None:
         self.info_dlg.close()
+
+    def get_widget(self):
+        """
+        Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
+        """
+        self.dialog = self.info_dlg
+        self.dialog.fig = plt.figure()
+        #in der self.fig können die Matplotlib sachen angezeigt werden
+
+        qw = QWidget(self.dialog)
+        self.dialog.canv = FigureCanvas(self.dialog.fig)
+
+        self.dialog.verticalLayout.addWidget(self.dialog.canv)
+        self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv, qw, True))
+
+    def get_widget_2(self):
+        """
+        Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
+        """
+        self.dialog = self.info_dlg
+        self.dialog.fig_2 = plt.figure()
+        #in der self.fig können die Matplotlib sachen angezeigt werden
+
+        qw = QWidget(self.dialog)
+        self.dialog.canv_2 = FigureCanvas(self.dialog.fig_2)
+
+        self.dialog.verticalLayout_2.addWidget(self.dialog.canv_2)
+        self.dialog.verticalLayout_2.addWidget(NavigationToolbar(self.dialog.canv_2, qw, True))
+
+    def get_widget_3(self):
+        """
+        Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
+        """
+        self.dialog = self.info_dlg
+        self.dialog.fig_3 = plt.figure()
+        #in der self.fig können die Matplotlib sachen angezeigt werden
+
+        qw = QWidget(self.dialog)
+        self.dialog.canv_3 = FigureCanvas(self.dialog.fig_3)
+
+        self.dialog.verticalLayout_3.addWidget(self.dialog.canv_3)
+        self.dialog.verticalLayout_3.addWidget(NavigationToolbar(self.dialog.canv_3, qw, True))
+
+    def on_click(self, event):
+        Info.handle_click(event, Info.anzeigen, Info.anzeigen)
+
+
+
+    def run(self) -> None:
+        # Prüfen, ob ein Projekt geladen ist
+        project = QgsProject.instance()
+        layers = project.mapLayers()
+
+        self.info_dlg.select_date()
+        if len(layers) > 0:
+
+            self.fig = self.dialog.fig
+            self.canv = self.dialog.canv
+            self.fig_2 = self.dialog.fig_2
+            self.canv_2 = self.dialog.canv_2
+            self.fig_3 = self.dialog.fig_3
+            self.canv_3 = self.dialog.canv_3
+
+            # with DBConnection() as db_qkan:
+            #     connected = db_qkan.connected
+
+            test = Info(self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, DBConnection())
+            test.run(self.info_dlg.date.currentText())
+
+            def on_click(self, event):
+                test.handle_click(event, self.pie_wedges, run_script)
+
+            # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+            # self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
+
+            self.info_dlg.show()
+            version = qgs_version()
+            self.info_dlg.textBrowser_2.setText(str(version))
+            self.info_dlg.textBrowser_3.setText(str(test.anz_haltungen))
+            self.info_dlg.textBrowser_4.setText(str(test.anz_schaechte))
+            self.info_dlg.textBrowser_5.setText(str(test.laenge_haltungen))
+            self.info_dlg.textBrowser_6.setText(str(test.anz_teilgeb))
+
+            # Felder Haltungen
+            if test.bew_art == 'DWA':
+                self.info_dlg.comboBox.setItemText(0, 'DWA')
+            if test.bew_art == 'ISYBAU':
+                self.info_dlg.comboBox.setItemText(1, 'ISYBAU')
+            self.info_dlg.tableWidget.setItem(0, 1, QTableWidgetItem(str(test.laenge_haltungen_rw)))
+            self.info_dlg.tableWidget.setItem(1, 1, QTableWidgetItem(str(test.laenge_haltungen_sw)))
+            self.info_dlg.tableWidget.setItem(2, 1, QTableWidgetItem(str(test.laenge_haltungen_mw)))
+
+            self.info_dlg.tableWidget.setItem(0, 2, QTableWidgetItem(str(test.haltungen_0_rw)))
+            self.info_dlg.tableWidget.setItem(0, 3, QTableWidgetItem(str(test.haltungen_1_rw)))
+            self.info_dlg.tableWidget.setItem(0, 4, QTableWidgetItem(str(test.haltungen_2_rw)))
+            self.info_dlg.tableWidget.setItem(0, 5, QTableWidgetItem(str(test.haltungen_3_rw)))
+            self.info_dlg.tableWidget.setItem(0, 6, QTableWidgetItem(str(test.haltungen_4_rw)))
+            self.info_dlg.tableWidget.setItem(0, 7, QTableWidgetItem(str(test.haltungen_5_rw)))
+            self.info_dlg.tableWidget.setItem(0, 8, QTableWidgetItem(str(test.laenge_haltungen_untersuch_rw)))
+            self.info_dlg.tableWidget.setItem(0, 9, QTableWidgetItem(str(test.laenge_haltungen_untersuch_bj_rw)))
+            self.info_dlg.tableWidget.setItem(0, 10, QTableWidgetItem(str(test.laenge_haltungen_saniert_rw)))
+
+            self.info_dlg.tableWidget.setItem(1, 2, QTableWidgetItem(str(test.haltungen_0_sw)))
+            self.info_dlg.tableWidget.setItem(1, 3, QTableWidgetItem(str(test.haltungen_1_sw)))
+            self.info_dlg.tableWidget.setItem(1, 4, QTableWidgetItem(str(test.haltungen_2_sw)))
+            self.info_dlg.tableWidget.setItem(1, 5, QTableWidgetItem(str(test.haltungen_3_sw)))
+            self.info_dlg.tableWidget.setItem(1, 6, QTableWidgetItem(str(test.haltungen_4_sw)))
+            self.info_dlg.tableWidget.setItem(1, 7, QTableWidgetItem(str(test.haltungen_5_sw)))
+            self.info_dlg.tableWidget.setItem(1, 8, QTableWidgetItem(str(test.laenge_haltungen_untersuch_sw)))
+            self.info_dlg.tableWidget.setItem(1, 9, QTableWidgetItem(str(test.laenge_haltungen_untersuch_bj_sw)))
+            self.info_dlg.tableWidget.setItem(1, 10, QTableWidgetItem(str(test.laenge_haltungen_saniert_sw)))
+
+            self.info_dlg.tableWidget.setItem(2, 2, QTableWidgetItem(str(test.haltungen_0_mw)))
+            self.info_dlg.tableWidget.setItem(2, 3, QTableWidgetItem(str(test.haltungen_1_mw)))
+            self.info_dlg.tableWidget.setItem(2, 4, QTableWidgetItem(str(test.haltungen_2_mw)))
+            self.info_dlg.tableWidget.setItem(2, 5, QTableWidgetItem(str(test.haltungen_3_mw)))
+            self.info_dlg.tableWidget.setItem(2, 6, QTableWidgetItem(str(test.haltungen_4_mw)))
+            self.info_dlg.tableWidget.setItem(2, 7, QTableWidgetItem(str(test.haltungen_5_mw)))
+            self.info_dlg.tableWidget.setItem(2, 8, QTableWidgetItem(str(test.laenge_haltungen_untersuch_mw)))
+            self.info_dlg.tableWidget.setItem(2, 9, QTableWidgetItem(str(test.laenge_haltungen_untersuch_bj_mw)))
+            self.info_dlg.tableWidget.setItem(2, 10, QTableWidgetItem(str(test.laenge_haltungen_saniert_mw)))
+
+            # Felder Schäachte
+
+            self.info_dlg.tableWidget_2.setItem(0, 1, QTableWidgetItem(str(test.anz_schaechte_rw)))
+            self.info_dlg.tableWidget_2.setItem(1, 1, QTableWidgetItem(str(test.anz_schaechte_sw)))
+            self.info_dlg.tableWidget_2.setItem(2, 1, QTableWidgetItem(str(test.anz_schaechte_mw)))
+
+            self.info_dlg.tableWidget_2.setItem(0, 2, QTableWidgetItem(str(test.anz_schaechte_0_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 3, QTableWidgetItem(str(test.anz_schaechte_1_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 4, QTableWidgetItem(str(test.anz_schaechte_2_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 5, QTableWidgetItem(str(test.anz_schaechte_3_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 6, QTableWidgetItem(str(test.anz_schaechte_4_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 7, QTableWidgetItem(str(test.anz_schaechte_5_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 8, QTableWidgetItem(str(test.anz_schaechte_untersuch_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 9, QTableWidgetItem(str(test.anz_schaechte_untersuch_bj_rw)))
+            self.info_dlg.tableWidget_2.setItem(0, 10, QTableWidgetItem(str(test.anz_schaechte_saniert_rw)))
+
+            self.info_dlg.tableWidget_2.setItem(1, 2, QTableWidgetItem(str(test.anz_schaechte_0_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 3, QTableWidgetItem(str(test.anz_schaechte_1_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 4, QTableWidgetItem(str(test.anz_schaechte_2_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 5, QTableWidgetItem(str(test.anz_schaechte_3_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 6, QTableWidgetItem(str(test.anz_schaechte_4_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 7, QTableWidgetItem(str(test.anz_schaechte_5_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 8, QTableWidgetItem(str(test.anz_schaechte_untersuch_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 9, QTableWidgetItem(str(test.anz_schaechte_untersuch_bj_sw)))
+            self.info_dlg.tableWidget_2.setItem(1, 10, QTableWidgetItem(str(test.anz_schaechte_saniert_sw)))
+
+            self.info_dlg.tableWidget_2.setItem(2, 2, QTableWidgetItem(str(test.anz_schaechte_0_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 3, QTableWidgetItem(str(test.anz_schaechte_1_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 4, QTableWidgetItem(str(test.anz_schaechte_2_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 5, QTableWidgetItem(str(test.anz_schaechte_3_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 6, QTableWidgetItem(str(test.anz_schaechte_4_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 7, QTableWidgetItem(str(test.anz_schaechte_5_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 8, QTableWidgetItem(str(test.anz_schaechte_untersuch_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 9, QTableWidgetItem(str(test.anz_schaechte_untersuch_bj_mw)))
+            self.info_dlg.tableWidget_2.setItem(2, 10, QTableWidgetItem(str(test.anz_schaechte_saniert_mw)))
 
     def run_info(self) -> None:
         # Prüfen, ob ein Projekt geladen ist
@@ -77,10 +243,17 @@ class Infos(QKanPlugin):
         self.info_dlg.select_date()
         if len(layers) > 0:
 
+            self.fig = self.dialog.fig
+            self.canv = self.dialog.canv
+            self.fig_2 = self.dialog.fig_2
+            self.canv_2 = self.dialog.canv_2
+            self.fig_3 = self.dialog.fig_3
+            self.canv_3 = self.dialog.canv_3
+
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
 
-            test = Info(DBConnection())
+            test = Info(self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, DBConnection())
             test.run(self.info_dlg.date.currentText())
             # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
             # self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
@@ -304,11 +477,12 @@ class Infos(QKanPlugin):
                 )
 
             path = os.path.dirname(__file__)
-            xl = win32com.client.Dispatch("Excel.Application")
+            xl = w3c.Dispatch("Excel.Application")
             xl.Workbooks.Open(Filename=path + r"\süwvo abw-erhebungsbögen 2021_test.xlsm", ReadOnly=1)
             xl.Application.Run("Tabelle2.ImportXMLData")
-            xl.Workbooks(1).Close(SaveChanges=0)
+            xl.Workbooks.Close(SaveChanges=0)
             xl.Application.Quit()
+            xl.Quit()
             xl = 0
 
             # Run the dialog event loop
@@ -327,8 +501,10 @@ class Infos(QKanPlugin):
 
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
+            self.fig = self.dialog.fig
+            self.canv = self.dialog.canv
 
-            test = Info(DBConnection())
+            test = Info(self.fig, self.canv, DBConnection())
             test.run(self.info_dlg.date.currentText())
             # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
             # self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
