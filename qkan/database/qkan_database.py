@@ -1056,7 +1056,7 @@ def createdbtables(
             teilgebiet TEXT,                        -- join teilgebiet.tgnam
             regenschreiber TEXT,
             abflussparameter TEXT,                  -- join abflussparameter.apnam
-            aufteilen TEXT DEFAULT 'nein',
+            aufteilen INTEGER DEFAULT 0,
             kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg),

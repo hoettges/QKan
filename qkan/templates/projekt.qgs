@@ -3076,7 +3076,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="S" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -3095,7 +3095,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="S"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -3179,7 +3179,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="S" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -3198,7 +3198,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="S"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -5669,7 +5669,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="Q" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -5688,7 +5688,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="Q"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -5772,7 +5772,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="Q" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -5791,7 +5791,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="Q"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -8506,7 +8506,7 @@ def my_form_open(dialog, layer, feature):
       </renderer-v2>
       <labeling type="simple">
         <settings calloutType="simple">
-          <text-style fontUnderline="0" blendMode="0" fontSize="10" multilineHeight="1" fontSizeMapUnitScale="3x:0,0,0,0,0,0" namedStyle="Regular" fontItalic="0" useSubstitutions="0" fontWordSpacing="0" previewBkgrdColor="255,255,255,255" fontLetterSpacing="0" allowHtml="0" capitalization="0" fontWeight="50" isExpression="1" textColor="50,50,50,255" fontKerning="1" fontSizeUnit="Point" textOpacity="1" fontStrikeout="0" legendString="Aa" fontFamily="Open Sans" fieldName="haltnam + ' (' + untersuchtag + ')'" textOrientation="horizontal">
+          <text-style fontUnderline="0" blendMode="0" fontSize="10" multilineHeight="1" fontSizeMapUnitScale="3x:0,0,0,0,0,0" namedStyle="Regular" fontItalic="0" useSubstitutions="0" fontWordSpacing="0" previewBkgrdColor="255,255,255,255" fontLetterSpacing="0" allowHtml="0" capitalization="0" fontWeight="50" isExpression="1" textColor="50,50,50,255" fontKerning="1" fontSizeUnit="Point" textOpacity="1" fontStrikeout="0" legendString="Aa" fontFamily="Arial" fieldName="haltnam + ' (' + untersuchtag + ')'" textOrientation="horizontal">
             <families/>
             <text-buffer bufferColor="250,250,250,255" bufferNoFill="1" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferDraw="0" bufferBlendMode="0" bufferSize="1" bufferOpacity="1" bufferSizeUnits="MM" bufferJoinStyle="128"/>
             <text-mask maskSizeUnits="MM" maskType="0" maskEnabled="0" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskedSymbolLayers="" maskJoinStyle="128" maskSize="0" maskOpacity="1"/>
@@ -14335,7 +14335,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="W" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -14354,7 +14354,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="W"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -14438,7 +14438,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="W" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -14457,7 +14457,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="W"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -15428,7 +15428,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="P" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -15447,7 +15447,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="P"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -15531,7 +15531,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="P" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -15550,7 +15550,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="P"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -19438,7 +19438,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="H" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -19457,7 +19457,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="H"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -19541,7 +19541,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="H" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -19560,7 +19560,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="H"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -20537,7 +20537,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="G" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -20556,7 +20556,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="G"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -20640,7 +20640,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="G" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -20659,7 +20659,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="G"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -47841,7 +47841,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="D" name="chr" type="QString"/>
                     <Option value="255,21,21,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Bold" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -47860,7 +47860,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="D"/>
                   <prop k="color" v="255,21,21,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Bold"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>
@@ -47944,7 +47944,7 @@ def my_form_open(dialog, layer, feature):
                     <Option value="0" name="angle" type="QString"/>
                     <Option value="D" name="chr" type="QString"/>
                     <Option value="255,0,0,255" name="color" type="QString"/>
-                    <Option value="Open Sans" name="font" type="QString"/>
+                    <Option value="Arial" name="font" type="QString"/>
                     <Option value="Regular" name="font_style" type="QString"/>
                     <Option value="1" name="horizontal_anchor_point" type="QString"/>
                     <Option value="miter" name="joinstyle" type="QString"/>
@@ -47963,7 +47963,7 @@ def my_form_open(dialog, layer, feature):
                   <prop k="angle" v="0"/>
                   <prop k="chr" v="D"/>
                   <prop k="color" v="255,0,0,255"/>
-                  <prop k="font" v="Open Sans"/>
+                  <prop k="font" v="Arial"/>
                   <prop k="font_style" v="Regular"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="miter"/>

@@ -844,12 +844,12 @@ class ImportTask:
     def _init_mappers(self) -> None:
 
         # Entwässerungsarten
-        sql = "SELECT m150, bezeichnung FROM entwaesserungsarten"
+        sql = "SELECT m150, bezeichnung FROM entwaesserungsarten WHERE m150 IS NOT NULL"
         subject = "M150 Import entwaesserungsarten"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_entwart)
 
         # Profilarten
-        sql = "SELECT m150, profilnam FROM profile"
+        sql = "SELECT m150, profilnam FROM profile WHERE m150 IS NOT NULL"
         subject = "xml_import profile"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_profile)
 
@@ -857,7 +857,7 @@ class ImportTask:
         # subject = "xml_import pumpentypen"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_pump)
 
-        sql = "SELECT m150, bezeichnung FROM material"
+        sql = "SELECT m150, bezeichnung FROM material WHERE m150 IS NOT NULL"
         subject = "xml_import material"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_material)
 
@@ -865,7 +865,7 @@ class ImportTask:
         # subject = "xml_import auslasstypen"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_outlet)
 
-        sql = "SELECT m150, bezeichnung FROM simulationsstatus"
+        sql = "SELECT m150, bezeichnung FROM simulationsstatus WHERE m150 IS NOT NULL"
         subject = "xml_import simulationsstatus"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_simstatus)
 
@@ -873,7 +873,7 @@ class ImportTask:
         # subject = "xml_import untersuchrichtung"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_untersuchrichtung)
 
-        sql = "SELECT m150, bezeichnung FROM wetter"
+        sql = "SELECT m150, bezeichnung FROM wetter WHERE m150 IS NOT NULL"
         subject = "xml_import wetter"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_wetter)
 
@@ -2197,7 +2197,7 @@ class ImportTask:
 
         for anschluss_untersucht in _iter():
 
-            params = {'haltnam': anschluss_untersucht.haltnam, 'schoben': anschluss_untersucht.schoben,
+            params = {'leitnam': anschluss_untersucht.haltnam, 'schoben': anschluss_untersucht.schoben,
                       'schunten': anschluss_untersucht.schunten, 'hoehe': anschluss_untersucht.hoehe,
                       'breite': anschluss_untersucht.breite, 'laenge': anschluss_untersucht.laenge,
                       'kommentar': anschluss_untersucht.kommentar, 'baujahr': anschluss_untersucht.baujahr,
@@ -2215,7 +2215,7 @@ class ImportTask:
             #              f'params: {params}')
 
             if not self.db_qkan.insertdata(
-                    tabnam="haltungen_untersucht",
+                    tabnam="anschlussleitungen_untersucht",
                     stmt_category='m150-import haltungen_untersucht',
                     mute_logger=False,
                     parameters=params,
@@ -2340,7 +2340,7 @@ class ImportTask:
 
         for untersuchdat_anschluss in _iter():
 
-            params = {'untersuchhal': untersuchdat_anschluss.untersuchhal, 'untersuchrichtung': untersuchdat_anschluss.untersuchrichtung,
+            params = {'untersuchleit': untersuchdat_anschluss.untersuchhal, 'untersuchrichtung': untersuchdat_anschluss.untersuchrichtung,
                       'schoben': untersuchdat_anschluss.schoben, 'schunten': untersuchdat_anschluss.schunten,
                       'id': untersuchdat_anschluss.id, 'untersuchtag': untersuchdat_anschluss.untersuchtag,
                       'videozaehler': untersuchdat_anschluss.videozaehler,

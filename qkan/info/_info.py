@@ -2,12 +2,22 @@ from qgis.utils import spatialite_connect
 
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger
+import matplotlib.pyplot as plt
+
+from qgis.core import (
+    Qgis,
+    QgsProject,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+)
+from qgis.utils import iface, spatialite_connect
+
 
 logger = get_logger("QKan.xml.info")
 
 
 class Info:
-    def __init__(self, db_qkan: DBConnection):
+    def __init__(self, fig, canv, fig_2, canv_2, fig_3, canv_3, db_qkan: DBConnection):
         self.db_qkan = db_qkan
         self.anz_haltungen = 0
         self.anz_schaechte = 0
@@ -16,6 +26,13 @@ class Info:
         path = db_qkan.dbname
         db = spatialite_connect(path)
         self.curs = db.cursor()
+        self.canv = canv
+        self.fig = fig
+        self.canv_2 = canv_2
+        self.fig_2 = fig_2
+        self.canv_3 = canv_3
+        self.fig_3 = fig_3
+
 
     def _infos(self) -> None:
         # anzahl haltungen
@@ -49,6 +66,259 @@ class Info:
             return
 
         self.laenge_haltungen = round(self.db_qkan.fetchall()[0][0],2)
+
+    def handle_click(event, pie_wedges, run_script_callback):
+        # Check if the click event is within any of the pie slices
+        for wedge in pie_wedges:
+            if wedge.contains_point([event.x, event.y]):
+                run_script_callback()
+                break
+
+    def anzeigen(self):
+        figure = self.fig
+        figure.clear()
+        plt.figure(figure.number)
+        new_plot = figure.add_subplot(221)
+
+        #TODO: Matplotlib Darstellungen ergänzen
+
+        #Darstellung Haltungen nach Entwässerungsart
+        data = {}
+        entwart_list =[]
+        sql = """select count() from haltungen"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        sql = """select DISTINCT entwart from haltungen """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+
+        data = {k:None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from haltungen WHERE entwart = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        #new_plot.pie(values, labels=names, autopct='%1.1f%%')
+        #new_plot.set_title('Entwässerungsart')
+
+        wedges, texts, autotexts = new_plot.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot.set_title('Entwässerungsart')
+
+
+        #return self.canv, wedges
+
+        # # Event handler for mouse clicks
+        # def on_click(event):
+        #     # Check if the event was in the pie chart area
+        #     if event.inaxes == new_plot:
+        #         for wedge in wedges:
+        #             if wedge.contains_point((event.x, event.y)):
+        #                 index = wedges.index(wedge)
+        #                 # Display the label of the clicked wedge
+        #                 label = names[index]
+        #                 iface.messageBar().pushMessage("Error",
+        #                                                str(label),
+        #                                                level=Qgis.Critical)
+        #                 #funktioniert nur beim ersten Mal anklicken
+        #
+        #                 layers = QgsProject.instance().mapLayersByName('Haltungen')
+        #                 ids = []
+        #
+        #                 sql = f"""select pk from haltungen where entwart = '{label}'"""
+        #
+        #                 if not self.db_qkan.sql(sql):
+        #                     return
+        #                 for attr in self.db_qkan.fetchall():
+        #                     ids.append(attr[0])
+        #
+        #                 layers[0].selectByIds(ids)
+        #
+        #                 plt.draw()
+        #                 #break
+
+        # Connect the click event to the handler
+        #figure.canvas.mpl_connect('button_press_event', on_click)
+
+        self.canv.draw()
+
+        #Darstellungen Haltungen nach Baujahren?
+
+        # Darstellungen Haltungen nach Material
+        data = {}
+        entwart_list = []
+        sql = """select DISTINCT material from haltungen """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from haltungen WHERE material = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot2 = figure.add_subplot(222)
+        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2.set_title('Material')
+
+        self.canv.draw()
+
+        # Darstellungen Haltungen nach Profiltyp
+        data = {}
+        entwart_list = []
+        sql = """select DISTINCT profilnam from haltungen """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from haltungen WHERE profilnam = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot3 = figure.add_subplot(223)
+        new_plot3.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot3.set_title('Profilart')
+
+        self.canv.draw()
+
+        # #Haltungen nach Zustandsklasse (Farben nach Zustandsklassen anpassen)
+        # figure_3 = self.fig_3
+        # figure_3.clear()
+        # plt.figure(figure_3.number)
+        # new_plot_2 = figure_3.add_subplot(111)
+
+        # data = {}
+        # entwart_list = []
+        # sql = """select count() from haltungen_untersucht"""
+        #
+        # if not self.db_qkan.sql(sql):
+        #     return
+        #
+        # anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+        #
+        # sql = """select DISTINCT MIN(max_ZD,max_ZS,max_ZB) from haltungen_untersucht """
+        #
+        # if not self.db_qkan.sql(sql):
+        #     return
+        #
+        # for i in self.db_qkan.fetchall():
+        #     i = str(i[0])
+        #     entwart_list.append(i)
+        #
+        # data = {k: None for k in entwart_list}
+        #
+        # for i in data.keys():
+        #     sql = f"""select count() from haltungen_untersucht WHERE Zustandsklasse_gesamt = '{i}'"""
+        #
+        #     if not self.db_qkan.sql(sql):
+        #         return
+        #
+        #     anz = self.db_qkan.fetchall()[0][0]
+        #
+        #     data[i] = anz
+        #
+        # names = list(data.keys())
+        # values = list(data.values())
+        # # Plot
+        # new_plot.pie(values, labels=names, autopct='%1.1f%%')
+        # new_plot.set_title('Zustandsklasse_gesamt')
+        #
+        # self.canv.draw()
+
+        #TODO: Zustandsdaten Schächte
+
+        # Darstellung Schächte nach Entwässerungsart
+        figure_2 = self.fig_2
+        figure_2.clear()
+        plt.figure(figure_2.number)
+        new_plot_2 = figure_2.add_subplot(111)
+
+        data = {}
+        entwart_list = []
+        sql = """select count() from schaechte"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        sql = """select DISTINCT entwart from schaechte """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from schaechte WHERE entwart = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot_2.set_title('Entwässerungsart')
+
+        self.canv.draw()
+
+        # Darstellungen Schächte nach Baujahren?
 
     def _suewvo(self):
         date = self.date+'%'
@@ -666,6 +936,7 @@ class Info:
             """
             self.date = date
             self._infos()
+            self.anzeigen()
             self._suewvo()
 
             # Close connection
