@@ -7,7 +7,7 @@ from qgis.testing import unittest
 
 sys.path.append(os.path.join(os.path.split(__file__)[0], ".."))
 
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
+from base_test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 
 from qkan.datacheck.application import Plausi
 from qkan.database.dbfunc import DBConnection

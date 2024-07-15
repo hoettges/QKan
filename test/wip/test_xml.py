@@ -1,4 +1,4 @@
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
+from test.base_test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences

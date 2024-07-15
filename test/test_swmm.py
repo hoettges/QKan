@@ -1,5 +1,5 @@
 from qkan.database.dbfunc import DBConnection
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
+from base_test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 from zipfile import ZipFile
 from pathlib import Path
 

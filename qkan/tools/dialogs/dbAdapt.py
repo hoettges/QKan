@@ -1,6 +1,4 @@
 import os
-import webbrowser
-from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from qgis.PyQt import uic

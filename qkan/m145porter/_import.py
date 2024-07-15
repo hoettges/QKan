@@ -1,17 +1,14 @@
-import logging
 import sys
-import re
-from array import array
 import xml.etree.ElementTree as ElementTree
 from lxml import etree
-from typing import Dict, Iterator, Tuple, Union
+from typing import Dict, Iterator, Union
 from fnmatch import fnmatch
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis, QgsOgcUtils
+from qgis.core import Qgis
 from qgis.utils import iface
 from qkan.utils import get_logger
 
@@ -35,8 +32,9 @@ class Schacht(ClassObject):
     schachttyp: str = ""
     simstatus: str = ""
     kommentar: str = ""
-    material: str= ""
-    coord: str=""
+    material: str = ""
+    coord: str = ""
+
 
 class Schacht_untersucht(ClassObject):
     schnam: str = ""
@@ -60,6 +58,7 @@ class Schacht_untersucht(ClassObject):
     max_ZS: int = 63
     xsch: float = 0.0
     ysch: float = 0.0
+
 
 class Untersuchdat_schacht(ClassObject):
     untersuchsch: str = ""
@@ -88,6 +87,7 @@ class Untersuchdat_schacht(ClassObject):
     ZB: int = 63
     ZS: int = 63
 
+
 class Haltung(ClassObject):
     haltnam: str = ""
     schoben: str = ""
@@ -112,7 +112,8 @@ class Haltung(ClassObject):
     yschob: float = 0.0
     xschun: float = 0.0
     yschun: float = 0.0
-    coord: str=""
+    coord: str = ""
+
 
 class Haltung_untersucht(ClassObject):
     haltnam: str = ""
@@ -137,6 +138,7 @@ class Haltung_untersucht(ClassObject):
     max_ZD: int = 63
     max_ZB: int = 63
     max_ZS: int = 63
+
 
 class Untersuchdat_haltung(ClassObject):
     untersuchhal: str = ""
@@ -171,6 +173,7 @@ class Untersuchdat_haltung(ClassObject):
     xschun: float = 0.0
     yschun: float = 0.0
 
+
 class Anschlussleitung(ClassObject):
     leitnam: str = ""
     schoben: str = ""
@@ -194,11 +197,12 @@ class Anschlussleitung(ClassObject):
     xschun: float = 0.0
     yschun: float = 0.0
 
+
 class Wehr(ClassObject):
-    wnam: str =""
-    schoben: str =""
-    schunten: str =""
-    wehrtyp: str =""
+    wnam: str = ""
+    schoben: str = ""
+    schunten: str = ""
+    wehrtyp: str = ""
     schwellenhoehe: float
     kammerhoehe: float
     laenge: float
@@ -208,8 +212,9 @@ class Wehr(ClassObject):
     xsch: float = 0.0
     ysch: float = 0.0
 
+
 class Pumpe(ClassObject):
-    pnam: str =""
+    pnam: str = ""
     schoben: str = ""  # //HydraulikObjekt/Pumpe/SchachtZulauf
     schunten: str = ""  # //HydraulikObjekt/Pumpe/SchachtAblauf
     pumpentyp: int = 0  # //HydraulikObjekt/Pumpe/PumpenTyp
@@ -228,9 +233,13 @@ class Pumpe(ClassObject):
 # endregion
 
 def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
-    """Ersetzt während der Entwicklungszeit die QKan-Funktion"""
     """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
-       enthalten ist, werden n Nachkommastellen angenommen"""
+       enthalten ist, werden n Nachkommastellen angenommen.
+
+       text: Text welcher in ein float umgewandelt werden soll.
+       n:
+    """
+
     zahl = text.strip()
     if zahl == "":
         return default
@@ -243,17 +252,19 @@ def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
     else:
         return float(zahl) / 10.0 ** n
 
+
 def _get_float(value: Union[str, float], default: float = 0.0) -> float:
-     if isinstance(value, float):
-         return value
+    if isinstance(value, float):
+        return value
 
-     if isinstance(value, str) and value.strip() != "":
-         try:
+    if isinstance(value, str) and value.strip() != "":
+        try:
             return float(value)
-         except ValueError:
-             return default
+        except ValueError:
+            return default
 
-     return default
+    return default
+
 
 def _get_int(value: Union[str, int], default: int = 0) -> int:
     if isinstance(value, int):
