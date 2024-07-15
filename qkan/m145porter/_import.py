@@ -549,7 +549,8 @@ class ImportTask:
         # subject = "xml_import auslasstypen"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_outlet)
 
-        sql = "SELECT he_nr, bezeichnung FROM simulationsstatus"
+        sql = "SSELECT m145, FIRST_VALUE(bezeichnung) OVER (PARTITION BY m145 ORDER BY pk) " \
+              "FROM simulationsstatus WHERE m145 IS NOT NULL GROUP BY m145"
         subject = "xml_import simulationsstatus"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_simstatus)
 
@@ -557,17 +558,18 @@ class ImportTask:
         # subject = "xml_import untersuchrichtung"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_untersuchrichtung)
 
-        sql = "SELECT kuerzel, bezeichnung FROM wetter"
-        subject = "xml_import wetter"
+        sql = "SSELECT m145, FIRST_VALUE(bezeichnung) OVER (PARTITION BY m145 ORDER BY pk) " \
+              "FROM wetter"
+        subject = "xml_import wetter WHERE m145 IS NOT NULL GROUP BY m145"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_wetter)
 
         # sql = "SELECT kuerzel, bezeichnung FROM bewertungsart"
         # subject = "xml_import bewertungsart"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_bewertungsart)
         #
-        sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
-        subject = "xml_import druckdicht"
-        self.db_qkan.consume_mapper(sql, subject, self.mapper_druckdicht)
+        # sql = "SELECT kuerzel, bezeichnung FROM druckdicht"
+        # subject = "xml_import druckdicht"
+        # self.db_qkan.consume_mapper(sql, subject, self.mapper_druckdicht)
 
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:

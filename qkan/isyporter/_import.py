@@ -625,12 +625,14 @@ class ImportTask:
 
     def _init_mappers(self) -> None:
         # Entwässerungsarten
-        sql = "SELECT isybau, bezeichnung FROM entwaesserungsarten WHERE isybau IS NOT NULL"
+        sql = "SELECT isybau, FIRST_VALUE(bezeichnung) OVER (PARTITION BY isybau ORDER BY pk) " \
+              "FROM entwaesserungsarten WHERE isybau IS NOT NULL GROUP BY isybau"
         subject = "isybau Import entwaesserungsarten"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_entwart)
 
         # Profilarten
-        sql = "SELECT isybau, profilnam FROM profile WHERE isybau IS NOT NULL"
+        sql = "SELECT isybau, FIRST_VALUE(profilnam) OVER (PARTITION BY isybau ORDER BY pk) " \
+              "FROM profile WHERE isybau IS NOT NULL GROUP BY isybau"
         subject = "xml_import profile"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_profile)
 
@@ -638,7 +640,8 @@ class ImportTask:
         # subject = "xml_import pumpentypen"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_pump)
 
-        sql = "SELECT isybau, bezeichnung FROM material WHERE isybau IS NOT NULL"
+        sql = "SELECT isybau, FIRST_VALUE(bezeichnung) OVER (PARTITION BY isybau ORDER BY pk) " \
+              "FROM material WHERE isybau IS NOT NULL GROUP BY isybau"
         subject = "xml_import material"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_material)
 
@@ -646,7 +649,8 @@ class ImportTask:
         # subject = "xml_import auslasstypen"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_outlet)
 
-        sql = "SELECT isybau, bezeichnung FROM simulationsstatus WHERE isybau IS NOT NULL"
+        sql = "SELECT isybau, FIRST_VALUE(bezeichnung) OVER (PARTITION BY isybau ORDER BY pk) " \
+              "FROM simulationsstatus WHERE isybau IS NOT NULL GROUP BY isybau"
         subject = "xml_import simulationsstatus"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_simstatus)
 
@@ -654,7 +658,8 @@ class ImportTask:
         # subject = "xml_import untersuchrichtung"
         # self.db_qkan.consume_mapper(sql, subject, self.mapper_untersuchrichtung)
 
-        sql = "SELECT isybau, bezeichnung FROM wetter WHERE isybau IS NOT NULL"
+        sql = "SELECT isybau, FIRST_VALUE(bezeichnung) OVER (PARTITION BY isybau ORDER BY pk) " \
+              "FROM wetter WHERE isybau IS NOT NULL GROUP BY isybau"
         subject = "xml_import wetter"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_wetter)
 

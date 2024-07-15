@@ -637,7 +637,7 @@ def eval_node_types(db_qkan: "DBConnection") -> None:
         UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
         (SELECT t_sch.schnam
         FROM schaechte AS t_sch 
-        LEFT JOIN haltungen AS t_hob
+        JOIN haltungen AS t_hob                         --- nur Schaechte mit Haltung oben
         ON t_sch.schnam = t_hob.schunten
         LEFT JOIN haltungen AS t_hun
         ON t_sch.schnam = t_hun.schoben

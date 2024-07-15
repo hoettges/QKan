@@ -273,9 +273,8 @@ class ImportTask:
                         abflussnummer5
                     ) = unpack('iiiiiiiiiiiii', b[64:116])
 
-                    (
-                        schacht_oben, haltungsname
-                    ) = [t.decode('ansi').strip() for t in unpack('15s15s', b[172:202].replace(b'\x00', b' '))]
+                    schacht_oben = b[172:b[172:187].find(b'\x00')+172].decode('ansi').strip()
+                    haltungsname = b[187:b[187:202].find(b'\x00')+187].decode('ansi').strip()
 
                     (
                         rohrbreite_v, rohrbreite_g, rohrhoehe___v, rohrhoehe___g,
@@ -326,7 +325,7 @@ class ImportTask:
                     ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[917:933])]
                     strakatid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
 
-                    schacht_unten = unpack('15s', b[965:980])[0].replace(b'\x00', b' ').decode('ansi').strip()
+                    schacht_unten = b[965:b[965:980].find(b'\x00')+965].decode('ansi').strip()
 
                     yield Kanal_STRAKAT(
                         nummer=nummer,
@@ -672,12 +671,12 @@ class ImportTask:
                 anschlusshalnr = unpack('i', b[303:307])[0]
                 nextnum = unpack('i', b[311:315])[0]
 
-                haschob = unpack('20s', b[326:346])[0].replace(b'\x00', b' ').decode('ansi').strip()
-                haschun = unpack('20s', b[362:382])[0].replace(b'\x00', b' ').decode('ansi').strip()
+                haschob = b[326:b[326:346].find(b'\x00')+326].decode('ansi').strip()
+                haschun = b[362:b[362:382].find(b'\x00')+362].decode('ansi').strip()
 
                 urstation = unpack('f', b[515:519])[0]
 
-                anschlusshalname = unpack('20s', b[611:631])[0].replace(b'\x00', b' ').decode('ansi').strip()
+                anschlusshalname = b[611:b[611:631].find(b'\x00')+611].decode('ansi').strip()
 
                 (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
                  ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[524:540])]
@@ -1059,21 +1058,12 @@ class ImportTask:
         # Referenztabelle Entwässerungsarten
 
         daten = [
-            ('KR-Kanal', 'KR', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
-            ('KS-Kanal', 'KS', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
-            ('KM-Kanal', 'KM', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
-            ('RW Druck', 'RD', 'Regenwasserdruckleitung', 1, 2, None, 'DR', 1, 1),
-            ('SW Druck', 'SD', 'Schmutzwasserdruckleitung', 2, 1, None, 'DS', 1, 1),
-            ('MW Druck', 'MD', 'Mischwasserdruckleitung', 0, 0, None, 'DW', 1, 1),
-            ('NEUBAU', 'NEU', 'Neubau', 1, 2, 'R', 'KR', 0, 0),
-            ('NEUBAU MW', 'NMW', 'Neubau MW', 0, 0, 'M', 'KM', 0, 0),
-            ('PLANUNG', 'PL', 'Planung', 1, 2, 'R', 'KR', 0, 0),
-            ('PLANUNG MW', 'PM', 'Planung MW', 0, 0, 'M', 'KM', 0, 0),
-            ('STILLGEL', 'X', 'stillgelegt', None, None, None, None, None, None),
+            ('Regenwasser', 'KR', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
+            ('Schmutzwasser', 'KS', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
+            ('Mischwasser', 'KM', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
+            ('stillgelegt', 'X', 'stillgelegt', None, None, None, None, None, None),
             ('nicht erfasst', 'U', 'nicht erfasst', None, None, None, None, None, None),
-            ('PRIVAT Privater Kanal', 'PK', 'privater Kanal', None, None, None, None, None, None),
             ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, None, None, 0, None),
-            ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, 0, None),
         ]
 
         daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
@@ -1533,23 +1523,9 @@ class ImportTask:
             WITH lo AS (
                 SELECT
                     h.pk, 
-                    0 AS n, 
-                CASE WHEN abs(h.urstation + 1.0) < 0.0001 THEN
-                    MakePoint(k.[rw_gerinne_o], k.[hw_gerinne_o], :epsg)
-                ELSE
-                    MakePoint(k.[rw_gerinne_u]+(k.[rw_gerinne_o]-k.[rw_gerinne_u])*h.urstation/
-                        sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
-                              k.[hw_gerinne_u]+(k.[hw_gerinne_o]-k.[hw_gerinne_u])*h.urstation/
-                        sqrt(pow(k.[rw_gerinne_o]-k.[rw_gerinne_u],2)+pow(k.[hw_gerinne_o]-k.[hw_gerinne_u],2)),
-                        :epsg)
-                END AS geop
+                    1 AS n, 
+                    Makepoint(x1, y1, :epsg) AS geop
                 FROM t_strakathausanschluesse AS h
-                JOIN t_strakatkanal AS k ON k.nummer = h.anschlusshalnr
-                WHERE abs(h.urstation + 1.0) > 0.0001
-                UNION
-                SELECT pk, 1 AS n, Makepoint(x1, y1, :epsg) AS geop
-                FROM t_strakathausanschluesse
-                WHERE x1 > 1
                 UNION 
                 SELECT pk, 2 AS n, Makepoint(x2, y2, :epsg) AS geop
                 FROM t_strakathausanschluesse
