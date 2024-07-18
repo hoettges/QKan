@@ -865,7 +865,7 @@ class ImportTask:
                     else:
                         kommentar = sanierung + anmerkung               # eins von beiden ist leer
 
-                    skdichtheit, skstandsicherheit, skbetriebssicherheit = unpack('BBB', b[714:717])
+                    skdichtheit, skstandsicherheit, skbetriebssicherheit = unpack('BBB', b[634:637])
 
                     (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
                      ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[643:659])]

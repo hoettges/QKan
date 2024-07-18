@@ -113,8 +113,8 @@ class M150Porter(QKanPlugin):
             QKan.config.project.file = self.import_dlg.tf_project.text()
             #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
             QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-            QKan.config.xml.ordner_bild = self.import_dlg.tf_import_2.text()
-            QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
+            QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
+            QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
 
             QKan.config.xml.import_stamm = (
                 self.import_dlg.checkBox.isChecked()
@@ -174,8 +174,8 @@ class M150Porter(QKanPlugin):
         """
         #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
         QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-        QKan.config.xml.ordner_bild = self.import_dlg.tf_import_2.text()
-        QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
+        QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
+        QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
 
         self.log.info("Creating DB")
         with DBConnection(

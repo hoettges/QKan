@@ -578,7 +578,7 @@
          <property name="checkable">
           <bool>false</bool>
          </property>
-         <widget class="QPushButton" name="pb_import_2">
+         <widget class="QPushButton" name="pb_ordnerbild">
           <property name="geometry">
            <rect>
             <x>430</x>
@@ -594,7 +594,7 @@
            <string>...</string>
           </property>
          </widget>
-         <widget class="QLineEdit" name="tf_import_2">
+         <widget class="QLineEdit" name="tf_ordnerbild">
           <property name="geometry">
            <rect>
             <x>10</x>
@@ -640,7 +640,7 @@
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
-         <widget class="QLineEdit" name="tf_import_3">
+         <widget class="QLineEdit" name="tf_ordnervideo">
           <property name="geometry">
            <rect>
             <x>10</x>
@@ -686,7 +686,7 @@
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
-         <widget class="QPushButton" name="pb_import_3">
+         <widget class="QPushButton" name="pb_ordnervideo">
           <property name="geometry">
            <rect>
             <x>430</x>
