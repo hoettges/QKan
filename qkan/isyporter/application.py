@@ -55,6 +55,7 @@ class IsyPorter(QKanPlugin):
 
         if self.export_dlg.exec_():
             export_file = self.export_dlg.tf_export.text()
+            vorlage = self.export_dlg.tf_export_2.text()
             self.database_qkan = self.export_dlg.tf_database.text()
 
             # Save to config
@@ -85,6 +86,15 @@ class IsyPorter(QKanPlugin):
 
             QKan.config.save()
 
+            check = {}
+            check['cb_schaechte'] = self.export_dlg.cb_export_schaechte.isChecked()
+            check['cb_auslaesse'] = self.export_dlg.cb_export_auslaesse.isChecked()
+            check['cb_speicher'] = self.export_dlg.cb_export_speicher.isChecked()
+            check['cb_haltung'] = self.export_dlg.cb_export_haltungen.isChecked()
+            check['cb_leitung'] = self.export_dlg.cb_export_anschlussleitungen.isChecked()
+            check['cb_pumpe'] = self.export_dlg.cb_export_pumpen.isChecked()
+            check['cb_wehr'] = self.export_dlg.cb_export_wehre.isChecked()
+
             with DBConnection(dbname=self.database_qkan) as db_qkan:
                 if not db_qkan.connected:
                     fehlermeldung(
@@ -99,7 +109,7 @@ class IsyPorter(QKanPlugin):
                     return
 
                 # Run export
-                ExportTask(db_qkan, export_file).run()
+                ExportTask(db_qkan, export_file, vorlage, check).run()
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""

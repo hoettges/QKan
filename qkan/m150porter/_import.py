@@ -283,7 +283,8 @@ class ImportTask:
                     gplis.append([xp, yp])
             if link:                    # Sonderfall Pumpwerk, muss als Linienobjekt zurückgegeben werden.
                 if geotyp == 'Pkt':
-                    geom = QgsGeometry.fromLineString([QgsPoint(xp, yp), QgsPoint(xp + 1.0, yp + 1.0)])
+                    #geom = QgsGeometry.fromLineString([QgsPoint(xp, yp), QgsPoint(xp + 1.0, yp + 1.0)])
+                    geom = QgsGeometry.fromPolyline([QgsPoint(xp, yp), QgsPoint(xp + 1.0, yp + 1.0)])
                 else:
                     logger.info(f"Pumpwerk kann nicht als Bauwerk dargestellt werden")
             elif geotyp == 'Pkt':

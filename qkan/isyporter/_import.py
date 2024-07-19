@@ -1100,9 +1100,10 @@ class ImportTask:
                     ),
                     baujahr=baujahr,
                     durchm=0.5,
-                    entwart="",
+                    entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
+                    material=block.findtext("d:Knoten//d:Bauwerk/d:Auslaufbauwerk/d:Material", None, self.NS),
                     simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
@@ -1172,7 +1173,7 @@ class ImportTask:
             params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
                       'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe, 'baujahr': auslass.baujahr,
                       'durchm': auslass.durchm, 'entwart': entwart, 'strasse': auslass.strasse, 'simstatus': simstatus,
-                      'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
+                      'kommentar': auslass.kommentar, 'material': auslass.material, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
