@@ -751,6 +751,7 @@ class ToolsConfig(ClassObject):
 
 class XmlConfig(ClassObject):
     export_file: str = ""
+    vorlage: str=""
     import_file: str = ""
     richt_choice: str = ""
     data_choice: str = ""

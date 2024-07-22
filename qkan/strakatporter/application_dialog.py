@@ -90,8 +90,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
         self.button_box.helpRequested.connect(self.click_help)
-        self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
-        self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
+        #self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
+        #self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)

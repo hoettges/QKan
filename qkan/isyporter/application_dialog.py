@@ -37,9 +37,11 @@ class _Dialog(QDialog):
 class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_database: QLineEdit
     tf_export: QLineEdit
+    tf_export_2: QLineEdit
 
     pb_database: QPushButton
     pb_export: QPushButton
+    pb_export_2: QPushButton
 
     cb_export_schaechte: QCheckBox
     cb_export_auslaesse: QCheckBox
@@ -60,10 +62,12 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Attach events
         self.pb_database.clicked.connect(self.select_database)
         self.pb_export.clicked.connect(self.select_export)
+        self.pb_export_2.clicked.connect(self.select_vorlage)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_export.setText(QKan.config.xml.export_file)
+        self.tf_export_2.setText(QKan.config.xml.vorlage)
         self.cb_export_schaechte.setChecked(
             getattr(QKan.config.check_export, "export_schaechte", True)
         )
@@ -96,6 +100,17 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         )
         if filename:
             self.tf_export.setText(filename)
+
+    def select_vorlage(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            self.tr("Vorlage XML-Datei wählen"),
+            self.default_dir,
+            "*.xml",
+        )
+        if filename:
+            self.tf_export_2.setText(filename)
 
     def select_database(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
