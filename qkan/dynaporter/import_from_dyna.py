@@ -472,8 +472,8 @@ def _read_dynafile(db_qkan: DBConnection, dynafile: str) -> bool:
                             # Erst wenn das erste Profil eingelesen wurde
                             if x1 is not None:
                                 # Höhe zu Breite-Verhältnis berechnen
-                                breite = (grenzen.xmax - grenzen.xmin) / 1000.0
-                                hoehe = (grenzen.ymax - grenzen.ymin) / 1000.0
+                                breite = (grenzen.xmax - grenzen.xmin)
+                                hoehe = (grenzen.ymax - grenzen.ymin)
                                 sql = """INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe)
                                             VALUES (?, ?, ?, ?)"""
                                 logger.debug("sql = {}".format(sql))
@@ -544,7 +544,7 @@ def _read_dynafile(db_qkan: DBConnection, dynafile: str) -> bool:
                             n = 9
                             profil_key = zeile[46:48].strip()
                             n = 10
-                            hoehe = fzahl(zeile[48:52]) / 1000.0
+                            hoehe = fzahl(zeile[48:52])
                             n = 11
                             ks_key = zeile[52:53].strip()
                             n = 12

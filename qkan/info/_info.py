@@ -17,7 +17,7 @@ logger = get_logger("QKan.xml.info")
 
 
 class Info:
-    def __init__(self, fig, canv, fig_2, canv_2, fig_3, canv_3, db_qkan: DBConnection):
+    def __init__(self, fig, canv, fig_2, canv_2, fig_3, canv_3, fig_4, canv_4, db_qkan: DBConnection):
         self.db_qkan = db_qkan
         self.anz_haltungen = 0
         self.anz_schaechte = 0
@@ -32,9 +32,78 @@ class Info:
         self.fig_2 = fig_2
         self.canv_3 = canv_3
         self.fig_3 = fig_3
+        self.canv_4 = canv_4
+        self.fig_4 = fig_4
 
 
     def _infos(self) -> None:
+        # figure_4 = self.fig_4
+        # figure_4.clear()
+        # plt.figure(figure_4.number)
+        # new_plot = figure_4.add_subplot(231)
+        #
+        # #Tabelle mit Algemeinen Informationen
+        #
+        # data = {}
+        # entwart_list = []
+        # sql = """select count() from haltungen"""
+        #
+        # if not self.db_qkan.sql(sql):
+        #     return
+        #
+        # anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+        #
+        # sql = """select count(laenge) from haltungen"""
+        #
+        # if not self.db_qkan.sql(sql):
+        #     return
+        #
+        # l_haltungen_ges = self.db_qkan.fetchall()[0][0]
+        #
+        # sql = """select DISTINCT entwart from haltungen """
+        #
+        # if not self.db_qkan.sql(sql):
+        #     return
+        #
+        # for i in self.db_qkan.fetchall():
+        #     i = str(i[0])
+        #     entwart_list.append(i)
+        #
+        # data = {k: None for k in entwart_list}
+        #
+        # for i in data.keys():
+        #     sql = f"""select count() from haltungen WHERE entwart = '{i}'"""
+        #
+        #     if not self.db_qkan.sql(sql):
+        #         return
+        #
+        #     anz = self.db_qkan.fetchall()[0][0]
+        #
+        #     data[i] = anz
+        #
+        # names = list(data.keys())
+        # values = list(data.values())
+        #
+        #
+        #
+        # data = [
+        #     [l_haltungen_ges],
+        #     [anz_haltungen_ges]
+        # ]
+        #
+        # columns = ( "Gesamt")
+        # #columns ergänzen um die einzelnen entwässerungsarten
+        # rows = ["km", "Anzahl"]
+        # #rows mit den Daten aus der Datenbank
+        # fig, ax = plt.subplots()
+        #
+        # ax.table(cellText=data, colLabels=columns, rowLabels=rows, loc='center')
+        # ax.axis('off')
+        # plt.show()
+        #
+        # # Tabelle anzeigen
+        # self.canv_4.draw()
+
         # anzahl haltungen
         sql = """select count() from haltungen"""
 
@@ -78,9 +147,7 @@ class Info:
         figure = self.fig
         figure.clear()
         plt.figure(figure.number)
-        new_plot = figure.add_subplot(221)
-
-        #TODO: Matplotlib Darstellungen ergänzen
+        new_plot = figure.add_subplot(231)
 
         #Darstellung Haltungen nach Entwässerungsart
         data = {}
@@ -160,7 +227,78 @@ class Info:
 
         self.canv.draw()
 
-        #Darstellungen Haltungen nach Baujahren?
+        #Darstellungen Haltungen nach Baujahren
+
+        data = {}
+        entwart_list = []
+        sql = """select DISTINCT baujahr from haltungen """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from haltungen WHERE baujahr = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot2 = figure.add_subplot(232)
+        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2.set_title('Baujahr')
+
+        self.canv.draw()
+
+
+
+        # Darstellungen Haltungen nach Durchmesser
+
+        data = {}
+        entwart_list = []
+        sql = """select DISTINCT hoehe from haltungen """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from haltungen WHERE hoehe = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot2 = figure.add_subplot(233)
+        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2.set_title('Durchmesser')
+
+        self.canv.draw()
+
+        #Darstellung nach Tiefenlage?
+
 
         # Darstellungen Haltungen nach Material
         data = {}
@@ -189,7 +327,7 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot2 = figure.add_subplot(222)
+        new_plot2 = figure.add_subplot(234)
         new_plot2.pie(values, labels=names, autopct='%1.1f%%')
         new_plot2.set_title('Material')
 
@@ -222,63 +360,106 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot3 = figure.add_subplot(223)
+        new_plot3 = figure.add_subplot(235)
         new_plot3.pie(values, labels=names, autopct='%1.1f%%')
         new_plot3.set_title('Profilart')
 
         self.canv.draw()
 
-        # #Haltungen nach Zustandsklasse (Farben nach Zustandsklassen anpassen)
-        # figure_3 = self.fig_3
-        # figure_3.clear()
-        # plt.figure(figure_3.number)
-        # new_plot_2 = figure_3.add_subplot(111)
+        #Haltungen nach Zustandsklasse (Farben nach Zustandsklassen anpassen)
+        figure_3 = self.fig_3
+        figure_3.clear()
+        plt.figure(figure_3.number)
+        new_plot_2 = figure_3.add_subplot(221)
 
-        # data = {}
-        # entwart_list = []
-        # sql = """select count() from haltungen_untersucht"""
-        #
-        # if not self.db_qkan.sql(sql):
-        #     return
-        #
-        # anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
-        #
-        # sql = """select DISTINCT MIN(max_ZD,max_ZS,max_ZB) from haltungen_untersucht """
-        #
-        # if not self.db_qkan.sql(sql):
-        #     return
-        #
-        # for i in self.db_qkan.fetchall():
-        #     i = str(i[0])
-        #     entwart_list.append(i)
-        #
-        # data = {k: None for k in entwart_list}
-        #
-        # for i in data.keys():
-        #     sql = f"""select count() from haltungen_untersucht WHERE Zustandsklasse_gesamt = '{i}'"""
-        #
-        #     if not self.db_qkan.sql(sql):
-        #         return
-        #
-        #     anz = self.db_qkan.fetchall()[0][0]
-        #
-        #     data[i] = anz
-        #
-        # names = list(data.keys())
-        # values = list(data.values())
-        # # Plot
-        # new_plot.pie(values, labels=names, autopct='%1.1f%%')
-        # new_plot.set_title('Zustandsklasse_gesamt')
-        #
-        # self.canv.draw()
+        data = {}
+        entwart_list = []
+        sql = """select count() from haltungen_untersucht"""
 
-        #TODO: Zustandsdaten Schächte
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        sql = """select DISTINCT MIN(max_ZD,max_ZS,max_ZB) from haltungen_untersucht """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            if i != 'None':
+                sql = f"""select count() from haltungen_untersucht WHERE MIN(max_ZD,max_ZS,max_ZB) = {i}"""
+
+                if not self.db_qkan.sql(sql):
+                    return
+
+                anz = self.db_qkan.fetchall()[0][0]
+
+                data[i] = anz
+
+        del data['None']
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot_2.set_title('Zustandsklasse Haltungen')
+
+        self.canv_3.draw()
+
+        #Zustandsdaten Schächte
+
+        data = {}
+        entwart_list = []
+        sql = """select count() from schaechte_untersucht"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        sql = """select DISTINCT MIN(max_ZD,max_ZS,max_ZB) from schaechte_untersucht """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            if i != 'None':
+                sql = f"""select count() from schaechte_untersucht WHERE MIN(max_ZD,max_ZS,max_ZB) = {i}"""
+
+                if not self.db_qkan.sql(sql):
+                    return
+
+                anz = self.db_qkan.fetchall()[0][0]
+
+                data[i] = anz
+
+        del data['None']
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot_2 = figure_3.add_subplot(222)
+        new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot_2.set_title('Zustandsklasse Schächte')
+
+        self.canv_3.draw()
 
         # Darstellung Schächte nach Entwässerungsart
         figure_2 = self.fig_2
         figure_2.clear()
         plt.figure(figure_2.number)
-        new_plot_2 = figure_2.add_subplot(111)
+        new_plot_2 = figure_2.add_subplot(231)
 
         data = {}
         entwart_list = []
@@ -316,9 +497,74 @@ class Info:
         new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
         new_plot_2.set_title('Entwässerungsart')
 
-        self.canv.draw()
+        self.canv_2.draw()
 
-        # Darstellungen Schächte nach Baujahren?
+        # Darstellungen Schächte nach Baujahren
+        data = {}
+        entwart_list = []
+        sql = """select DISTINCT baujahr from schaechte """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from schaechte WHERE baujahr = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot2 = figure_2.add_subplot(232)
+        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2.set_title('Baujahr')
+
+        self.canv_2.draw()
+
+        # Darstellung Schächte nach Material
+
+        data = {}
+        entwart_list = []
+        sql = """select DISTINCT material from schaechte """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        for i in self.db_qkan.fetchall():
+            i = str(i[0])
+            entwart_list.append(i)
+
+        data = {k: None for k in entwart_list}
+
+        for i in data.keys():
+            sql = f"""select count() from schaechte WHERE material = '{i}'"""
+
+            if not self.db_qkan.sql(sql):
+                return
+
+            anz = self.db_qkan.fetchall()[0][0]
+
+            data[i] = anz
+
+        names = list(data.keys())
+        values = list(data.values())
+        # Plot
+        new_plot2 = figure_2.add_subplot(233)
+        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2.set_title('Material')
+
+        self.canv_2.draw()
 
     def _suewvo(self):
         date = self.date+'%'

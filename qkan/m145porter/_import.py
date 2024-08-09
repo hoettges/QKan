@@ -1234,11 +1234,11 @@ class ImportTask:
                 profilnam = block.findtext("d:HG2005", None, self.NS)
                 hoehe = (
                     _get_float(block.findtext("d:HG2008", 0.0, self.NS))
-                    / 1000
+
                 )
                 breite = (
                     _get_float(block.findtext("d:HG2007", 0.0, self.NS))
-                    / 1000
+
                 )
 
 
@@ -1800,11 +1800,11 @@ class ImportTask:
                 profilnam = block.findtext("d:AN2005", None, self.NS)
                 hoehe = (
                         _get_float(block.findtext("d:AN2008", 0.0, self.NS))
-                        / 1000
+
                 )
                 breite = (
                         _get_float(block.findtext("d:AN2007", 0.0, self.NS))
-                        / 1000
+
                 )
 
                 sohleoben = _get_float(block.findtext("GP007", 0.0, self.NS))

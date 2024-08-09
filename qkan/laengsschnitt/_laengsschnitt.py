@@ -208,19 +208,19 @@ class LaengsTask:
             x_sohle.append(laenge2)
 
             if sohleoben > 0:
-                y_sohle2.append(sohleoben + hoehe)
+                y_sohle2.append(sohleoben + hoehe/1000)
             else:
                 y_sohle2.append(sohleoben)
             if haltung_sohle_o > 0:
-                y_sohle2.append(haltung_sohle_o + hoehe)
+                y_sohle2.append(haltung_sohle_o + hoehe/1000)
             else:
                 y_sohle2.append(haltung_sohle_o)
             if haltung_sohle_u > 0:
-                y_sohle2.append(haltung_sohle_u + hoehe)
+                y_sohle2.append(haltung_sohle_u + hoehe/1000)
             else:
                 y_sohle2.append(haltung_sohle_u)
             if sohleunten > 0:
-                y_sohle2.append(sohleunten + hoehe)
+                y_sohle2.append(sohleunten + hoehe/1000)
             else:
                 y_sohle2.append(sohleunten)
             x_sohle2.append(laenge2 - laenge)
@@ -237,8 +237,8 @@ class LaengsTask:
             x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
-            y_label.append((deckeloben + sohleoben - hoehe) / 2)
-            y_label.append((deckelunten + sohleunten - hoehe) / 2)
+            y_label.append((deckeloben + sohleoben - hoehe/1000) / 2)
+            y_label.append((deckelunten + sohleunten - hoehe/1000) / 2)
 
             name.append(schoben)
             name.append(schunten)
@@ -247,8 +247,8 @@ class LaengsTask:
             schunten_l.append(schunten)
             laenge_l.append(laenge)
             entwart_l.append(entwart)
-            hoehe_l.append(hoehe)
-            breite_l.append(breite)
+            hoehe_l.append(hoehe/1000)
+            breite_l.append(breite/1000)
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
@@ -637,19 +637,19 @@ class LaengsTask:
             x_sohle.append(laenge2)
 
             if sohleoben > 0:
-                y_sohle2.append(sohleoben + hoehe)
+                y_sohle2.append(sohleoben + hoehe/1000)
             else:
                 y_sohle2.append(sohleoben)
             if haltung_sohle_o > 0:
-                y_sohle2.append(haltung_sohle_o + hoehe)
+                y_sohle2.append(haltung_sohle_o + hoehe/1000)
             else:
                 y_sohle2.append(haltung_sohle_o)
             if haltung_sohle_u > 0:
-                y_sohle2.append(haltung_sohle_u + hoehe)
+                y_sohle2.append(haltung_sohle_u + hoehe/1000)
             else:
                 y_sohle2.append(haltung_sohle_u)
             if sohleunten > 0:
-                y_sohle2.append(sohleunten + hoehe)
+                y_sohle2.append(sohleunten + hoehe/1000)
             else:
                 y_sohle2.append(sohleunten)
             x_sohle2.append(round(laenge2 - laenge,2))
@@ -673,8 +673,8 @@ class LaengsTask:
             z_sohle.append(sohleoben)
             z_sohle.append(sohleunten)
 
-            y_label.append(round((deckeloben+sohleoben-hoehe)/2,2))
-            y_label.append(round((deckelunten+sohleunten-hoehe)/2,2))
+            y_label.append(round((deckeloben+sohleoben-hoehe/1000)/2,2))
+            y_label.append(round((deckelunten+sohleunten-hoehe/1000)/2,2))
 
             name.append(schoben)
             name.append(schunten)
@@ -683,8 +683,8 @@ class LaengsTask:
             schunten_l.append(schunten)
             laenge_l.append(round(laenge, 2))
             entwart_l.append(entwart)
-            hoehe_l.append(hoehe)
-            breite_l.append(int(breite*1000))
+            hoehe_l.append(hoehe/1000)
+            breite_l.append(int(breite/1000))
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
@@ -1206,19 +1206,19 @@ class LaengsTask:
             x_sohle.append((laenge2/massstab)+pointx)
 
             if sohleoben > 0:
-                y_sohle2.append(sohleoben + hoehe+pointy)
+                y_sohle2.append(sohleoben + hoehe/1000+pointy)
             else:
                 y_sohle2.append(sohleoben+pointy)
             if haltung_sohle_o > 0:
-                y_sohle2.append(haltung_sohle_o + hoehe+pointy)
+                y_sohle2.append(haltung_sohle_o + hoehe/1000+pointy)
             else:
                 y_sohle2.append(haltung_sohle_o+pointy)
             if haltung_sohle_u > 0:
-                y_sohle2.append(haltung_sohle_u + hoehe+pointy)
+                y_sohle2.append(haltung_sohle_u + hoehe/1000+pointy)
             else:
                 y_sohle2.append(haltung_sohle_u+pointy)
             if sohleunten > 0:
-                y_sohle2.append(sohleunten + hoehe+pointy)
+                y_sohle2.append(sohleunten + hoehe/1000+pointy)
             else:
                 y_sohle2.append(sohleunten+pointy)
             x_sohle2.append(((laenge2 - laenge)/massstab)+pointx)
@@ -1255,8 +1255,8 @@ class LaengsTask:
             schunten_l.append(schunten)
             laenge_l.append(laenge)
             entwart_l.append(entwart)
-            hoehe_l.append(hoehe)
-            breite_l.append(breite)
+            hoehe_l.append(hoehe/1000)
+            breite_l.append(breite/1000)
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
@@ -2005,19 +2005,19 @@ class LaengsTask:
             x_sohle.append(laenge2)
 
             if sohleoben > 0:
-                y_sohle2.append(sohleoben + hoehe)
+                y_sohle2.append(sohleoben + hoehe/1000)
             else:
                 y_sohle2.append(sohleoben)
             if haltung_sohle_o > 0:
-                y_sohle2.append(haltung_sohle_o + hoehe)
+                y_sohle2.append(haltung_sohle_o + hoehe/1000)
             else:
                 y_sohle2.append(haltung_sohle_o)
             if haltung_sohle_u > 0:
-                y_sohle2.append(haltung_sohle_u + hoehe)
+                y_sohle2.append(haltung_sohle_u + hoehe/1000)
             else:
                 y_sohle2.append(haltung_sohle_u)
             if sohleunten > 0:
-                y_sohle2.append(sohleunten + hoehe)
+                y_sohle2.append(sohleunten + hoehe/1000)
             else:
                 y_sohle2.append(sohleunten)
             x_sohle2.append(laenge2 - laenge)
@@ -2034,8 +2034,8 @@ class LaengsTask:
             x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
-            y_label.append((deckeloben + sohleoben - hoehe) / 2)
-            y_label.append((deckelunten + sohleunten - hoehe) / 2)
+            y_label.append((deckeloben + sohleoben - hoehe/1000) / 2)
+            y_label.append((deckelunten + sohleunten - hoehe/1000) / 2)
 
             name.append(schoben)
             name.append(schunten)
@@ -2044,8 +2044,8 @@ class LaengsTask:
             schunten_l.append(schunten)
             laenge_l.append(laenge)
             entwart_l.append(entwart)
-            hoehe_l.append(hoehe)
-            breite_l.append(breite)
+            hoehe_l.append(hoehe/1000)
+            breite_l.append(breite/1000)
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)

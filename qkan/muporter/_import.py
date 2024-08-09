@@ -157,8 +157,8 @@ class ImportTask:
                     ro.muid                             AS haltnam
                   , ro.fromnodeid                       AS schoben
                   , ro.tonodeid                         AS schunten
-                  , coalesce(ro.height, ro.diameter)    AS hoehe
-                  , coalesce(ro.width, ro.diameter)     AS breite
+                  , IIF(coalesce(ro.height, ro.diameter) >20, coalesce(ro.height, ro.diameter), coalesce(ro.height, ro.diameter)*1000)   AS hoehe
+                  , IIF(coalesce(ro.width, ro.diameter) >20, coalesce(ro.width, ro.diameter), coalesce(ro.width, ro.diameter)*1000)     AS breite
                   , ro.length                           AS laenge
                   , CASE WHEN ro.typeno = 2 
                         THEN ro.crsid 
@@ -235,9 +235,9 @@ class ImportTask:
                     wu.muid                 AS haltnam,
                     wu.fromnodeid           AS schoben, 
                     wu.tonodeid             AS schunten,
-                    coalesce(wu.maxcrestlevel - mincrestlevel, 0.3)
+                    IIF(coalesce(wu.maxcrestlevel - mincrestlevel, 0.3)>20, coalesce(wu.maxcrestlevel - mincrestlevel, 0.3), coalesce(wu.maxcrestlevel - mincrestlevel, 0.3)*1000)
                                             AS hoehe, 
-                    wu.crestwidth           AS breite,
+                    IIF(wu.crestwidth >20, wu.crestwidth, wu.crestwidth*1000)           AS breite,
                     wu.crestlevel           AS sohleoben,
                     wu.crestlevel           AS sohleunten,
                     'Wehr'                  AS haltungstyp, 

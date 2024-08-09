@@ -153,8 +153,8 @@ def createdbtables(
             baujahr INT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
-            hoehe REAL,                                     -- Profilhoehe (m)
-            breite REAL,                                    -- Profilbreite (m)
+            hoehe REAL,                                     -- Profilhoehe (mm)
+            breite REAL,                                    -- Profilbreite (mm)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             aussendurchmesser REAL,
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
@@ -209,8 +209,8 @@ def createdbtables(
             bezugspunkt TEXT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
-            hoehe REAL,                                     -- Profilhoehe (m)
-            breite REAL,                                    -- Profilbreite (m)
+            hoehe REAL,                                     -- Profilhoehe (mm)
+            breite REAL,                                    -- Profilbreite (mm)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
             id INTEGER,                                     -- absolute Nummer der Inspektion
@@ -309,8 +309,8 @@ def createdbtables(
             leitnam TEXT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
-            hoehe REAL,                                     -- Profilhoehe (m)
-            breite REAL,                                    -- Profilbreite (m)
+            hoehe REAL,                                     -- Profilhoehe (mm)
+            breite REAL,                                    -- Profilbreite (mm)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             aussendurchmesser REAL,
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
@@ -358,8 +358,8 @@ def createdbtables(
             bezugspunkt TEXT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
-            hoehe REAL,                                     -- Profilhoehe (m)
-            breite REAL,                                    -- Profilbreite (m)
+            hoehe REAL,                                     -- Profilhoehe (mm)
+            breite REAL,                                    -- Profilbreite (mm)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
             id INTEGER,                                     -- absolute Nummer der Inspektion

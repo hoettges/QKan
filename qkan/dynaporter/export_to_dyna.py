@@ -181,7 +181,7 @@ def write12(
             coalesce(h.sohleunten, su.sohlhoehe) AS sohleun,
             '0' AS material, 
             {sql_prof1}, 
-            h.hoehe*1000. AS profilhoehe, 
+            IIF(h.hoehe >20, h.hoehe, h.hoehe*1000.) AS profilhoehe, 
             h.ks AS ks, 
             f.flbef*abflussbeiwert AS flbef, 
             f.flges AS flges,

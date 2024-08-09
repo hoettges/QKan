@@ -6545,6 +6545,7 @@ class Zustandsklassen_funkt:
                     pass
 
             #if für alle übrigen sachen Haltungsanfang ende usw.
+            #TODO: Zustandsklasse 5 vergeben, damit die gesamte Zustandsklasse für die Haltung 5 ist!
             if attr[10] in ["BCD", "BDD", "BCE", "BDC", "BCA", "BCB", "BCC", "BDA", "BDF", "BDG", "BDB", "AEC", "AED"]:
                 z = '-'
                 sql = f"""

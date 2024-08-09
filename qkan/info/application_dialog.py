@@ -45,9 +45,6 @@ INFO_CLASS, _ = uic.loadUiType(
 
 class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
     textBrowser_2: QLineEdit
-    textBrowser_3: QLineEdit
-    textBrowser_4: QLineEdit
-    textBrowser_5: QLineEdit
     textBrowser_6: QLineEdit
     textBrowser_7: QLineEdit
     textBrowser_8: QLineEdit

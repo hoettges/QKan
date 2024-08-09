@@ -723,12 +723,12 @@ class ImportTask:
             )
             logger.debug(f"Anzahl Schaechte: {len(blocks)}")
 
-            druckdicht = 0
+            druckdicht = None
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
                 for _schacht in block.findall("d:Schacht", self.NS):
-                    druckdicht = _get_int(_schacht.findtext("d:DruckdichterDeckel", 0, self.NS))
+                    druckdicht = _get_int(_schacht.findtext("d:DruckdichterDeckel", None, self.NS))
 
 
                 yield Schacht(
@@ -1103,7 +1103,7 @@ class ImportTask:
                     entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
-                    material=block.findtext("d:Knoten//d:Bauwerk/d:Auslaufbauwerk/d:Material", None, self.NS),
+                    material=block.findtext("d:Knoten/d:Bauwerk/d:Auslaufbauwerk/d:Material", None, self.NS),
                     simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
@@ -1206,13 +1206,17 @@ class ImportTask:
                 baujahr = _get_int(block.findtext("d:Baujahr", 0, self.NS))
 
                 for _schacht in block.findall("d:Knoten", self.NS):
-                    knoten = _get_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
-                    if knoten == 0:
-                        knoten_typ = 'Schacht'
+                    knoten = _get_int(_schacht.findtext("d:Bauwerkstyp", None, self.NS))
                     if knoten == 1:
-                        knoten_typ = 'Anschlusspunkt'
+                        knoten_typ = 'Regenrückhaltebecken(RRB)'
                     if knoten == 2:
-                        knoten_typ = 'Bauwerk'
+                        knoten_typ = 'Regenüberlaufbecken(RÜB)'
+                    if knoten == 3:
+                        knoten_typ = 'Regenklärbecken(RKB)'
+                    if knoten == 4:
+                        knoten_typ = 'Versickerungsanlage'
+                    if knoten == 5:
+                        knoten_typ = 'Bodenfilter'
 
                 smp = block.find(
                     "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
@@ -1247,7 +1251,7 @@ class ImportTask:
                     ),
                     baujahr=baujahr,
                     durchm=0.5,
-                    entwart="",
+                    entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
@@ -1324,8 +1328,8 @@ class ImportTask:
                 profilauskleidung = block.findtext("d:Kante/d:Haltung/d:Auskleidung", None, self.NS)
                 innenmaterial = block.findtext("d:Kante/d:Haltung/d:MaterialAuskleidung", None, self.NS)
                 profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", None, self.NS)
-                hoehe = _get_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.
-                breite = _get_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS)) / 1000.
+                hoehe = _get_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS))
+                breite = _get_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS))
 
 
                 found_kanten = block.findtext("d:Geometrie/d:Geometriedaten/d:Kanten", None, self.NS)
@@ -1617,8 +1621,25 @@ class ImportTask:
                         del self.db_qkan
                         return False
 
+                    #TODO: Geometrie erstellung anpassen
+                    #prüfen ob die Erstellung und Löschung der einfachen Haltung notwendig ist
+                    # if geotyp in ('Poly', 'L'):
+                    #     ptlis = [QgsPoint(x, y) for x, y in gplis]
+                    #     geom = QgsGeometry.fromPolyline(ptlis)
+                    #     if not geom:
+                    #         logger.error(f'Fehler bei polyline: {ptlis}')
+                    #     else:
+                    #         logger.warning(f'm150._get_HG_coords: geotyp unbekannt: {geotyp}')
+                    #     continue
+                    #
+                    # if geom:
+                    #     geom_wkb = geom.asWkb()
+                    # else:
+                    #     geom_wkb = None
+                    #     logger.warning(f"M150-Import: Konnte keine Punktobjekte finden für Haltung {name}")
+
                     sql = f"""
-                                    UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+                                     UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
                                                     MakePoint(?, ?, ?), ?)
                                     WHERE haltnam = ?
                                  """
@@ -1627,7 +1648,7 @@ class ImportTask:
                                 QKan.config.epsg, npt, name]
 
                     if not self.db_qkan.sql(
-                            sql, parameters=paralist
+                               sql, parameters=paralist
                     ):
                         del self.db_qkan
                         return False
@@ -1688,11 +1709,11 @@ class ImportTask:
                     for profil in _haltung.findall("d:Profil", self.NS):
                         hoehe = (
                             _get_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
-                            / 1000
+
                         )
                         breite = (
                             _get_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
-                            / 1000
+
                         )
 
                 for _haltung in block.findall(
@@ -2115,11 +2136,11 @@ class ImportTask:
                             profilnam = profil.findtext("d:Profilart", None, self.NS)
                             hoehe = (
                                 _get_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
-                                / 1000
+
                             )
                             breite = (
                                 _get_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
-                                / 1000
+
                             )
 
 
@@ -2493,11 +2514,11 @@ class ImportTask:
                     for profil in _haltung.findall("d:Profil", self.NS):
                         hoehe = (
                                 _get_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
-                                / 1000
+
                         )
                         breite = (
                                 _get_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
-                                / 1000
+
                         )
 
                 for _haltung in block.findall(

@@ -511,8 +511,8 @@ class DBConnection:
                    geom)
                 SELECT 
                   :haltnam, :baujahr, :schoben, :schunten,
-                  CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END,
-                  CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
+                  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000 END,
+                  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :aussendurchmesser,
                   :sohleoben, :sohleunten,
                   :teilgebiet, coalesce(:profilnam, 'Kreisquerschnitt'),
@@ -582,8 +582,8 @@ class DBConnection:
                    bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT 
                   :haltnam, :bezugspunkt, :schoben, :schunten, 
-                  CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END, 
-                  CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
+                  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000 END, 
+                  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
                   CASE WHEN :geom IS NULL
@@ -733,8 +733,8 @@ class DBConnection:
                    geom)
                 VALUES( 
                   :leitnam, :schoben, :schunten, 
-                  CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END, 
-                  CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
+                  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000 END, 
+                  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :aussendurchmesser,
                   :sohleoben, :sohleunten, :baujahr, :haltnam,
                   :teilgebiet, :qzu, coalesce(:profilnam, 'Kreisquerschnitt'), 
@@ -799,8 +799,8 @@ class DBConnection:
                    geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT 
                   :leitnam, :bezugspunkt, :schoben, :schunten, 
-                  CASE WHEN :hoehe > 20 THEN :hoehe/1000 ELSE :hoehe END, 
-                  CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
+                  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000 END, 
+                  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
                   CASE WHEN :geom IS NULL

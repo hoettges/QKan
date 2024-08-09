@@ -235,12 +235,14 @@ class ExportTask:
                 # geom_knoten = SubElement(
                 #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                 # )
-                # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
+
                 geo = SubElement(abw, "Geometrie")
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
                 _create_children_text(
                     geo,
                     {
-                        "CRSLage": QgsProject.instance().crs().authid(),
+                        "CRSLage": x,
                     }, )
 
                 geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
@@ -335,12 +337,13 @@ class ExportTask:
                     # geom_knoten = SubElement(
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
-                    # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
                     geo = SubElement(new_item, "Geometrie")
+                    x = QgsProject.instance().crs().authid()
+                    x.replace('EPSG:', '')
                     _create_children_text(
                         geo,
                         {
-                            "CRSLage": QgsProject.instance().crs().authid(),
+                            "CRSLage": x,
                         }, )
 
                     geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
@@ -434,12 +437,13 @@ class ExportTask:
                 # geom_knoten = SubElement(
                 #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                 # )
-                # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
                 geo = SubElement(abw, "Geometrie")
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
                 _create_children_text(
                     geo,
                     {
-                        "CRSLage": QgsProject.instance().crs().authid(),
+                        "CRSLage": x,
                     }, )
 
                 geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
@@ -502,7 +506,7 @@ class ExportTask:
             fortschritt("Export Schacht...", 0.25)
             for attr in self.db_qkan.fetchall():
                 blocks = root.find(
-                    f"d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektbezeichnung={attr[0]}]", self.NS, )
+                    f".//d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektbezeichnung={attr[0]}]/[d:Objektart='2']", self.NS, )
 
                 if blocks is None:
                     # Daten ergänzen
@@ -527,19 +531,20 @@ class ExportTask:
                     schacht = SubElement(knoten, "Schacht")
                     strasse = SubElement(new_item, "Lage")
                     SubElementText(strasse, "Strassenname", attr[10])
-                    SubElementText(schacht, "Schachttiefe", attr[1] - attr[2])
+                    SubElementText(schacht, "Schachttiefe", round(attr[1] - attr[2],2))
                     _create_children(
                         SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
                     )
                     # geom_knoten = SubElement(
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
-                    # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
                     geo = SubElement(new_item, "Geometrie")
+                    x=QgsProject.instance().crs().authid()
+                    x.replace('EPSG:', '')
                     _create_children_text(
                         geo,
                         {
-                            "CRSLage": QgsProject.instance().crs().authid(),
+                            "CRSLage": x,
                         }, )
 
                     geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
@@ -633,12 +638,13 @@ class ExportTask:
                 #geom_knoten = SubElement(
                 #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                 #)
-                # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
                 geo = SubElement(abw, "Geometrie")
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
                 _create_children_text(
                     geo,
                     {
-                        "CRSLage": QgsProject.instance().crs().authid(),
+                        "CRSLage": x,
                     },)
 
                 geom_knoten= SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
@@ -696,7 +702,7 @@ class ExportTask:
             fortschritt("Export Speicher...", 0.25)
             for attr in self.db_qkan.fetchall():
                 blocks = root.find(
-                    f"d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektbezeichnung={attr[0]}/[d:Objektart='2']", self.NS, )
+                    f".//d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektbezeichnung={attr[0]}/[d:Objektart='2']", self.NS, )
 
                 if blocks is None:
                     # Daten ergänzen
@@ -726,12 +732,13 @@ class ExportTask:
                     # geom_knoten = SubElement(
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
-                    # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
                     geo = SubElement(new_item, "Geometrie")
+                    x = QgsProject.instance().crs().authid()
+                    x.replace('EPSG:', '')
                     _create_children_text(
                         geo,
                         {
-                            "CRSLage": QgsProject.instance().crs().authid(),
+                            "CRSLage": x,
                         }, )
 
                     geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
@@ -863,8 +870,8 @@ class ExportTask:
                         "ProfilID": None,
                         "SonderprofilVorhanden": None,
                         "Profilart": attr[8],
-                        "Profilbreite": (attr[4]*1000),
-                        "Profilhoehe": (attr[3]*1000),
+                        "Profilbreite": (attr[4]),
+                        "Profilhoehe": (attr[3]),
                         "Aussendurchmesser": attr[19],
                         "Auskleidung": attr[20],
                         "MaterialAuskleidung": attr[21],
@@ -874,11 +881,12 @@ class ExportTask:
                 SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", attr[5])
 
                 geom = SubElement(abw, "Geometrie")
-
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
                 _create_children_text(
                     geom,
                     {
-                        "CRSLage": QgsProject.instance().crs().authid(),
+                        "CRSLage": x,
                     }, )
 
                 _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
@@ -990,18 +998,20 @@ class ExportTask:
                         "ProfilID": None,
                         "SonderprofilVorhanden": None,
                         "Profilart": attr[10],
-                        "Profilbreite": (attr[4]*1000),
-                        "Profilhoehe": (attr[3]*1000),
+                        "Profilbreite": (attr[4]),
+                        "Profilhoehe": (attr[3]),
                     },
                 )
 
                 SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", attr[5])
 
                 geom = SubElement(abw, "Geometrie")
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
                 _create_children_text(
                     geom,
                     {
-                        "CRSLage": QgsProject.instance().crs().authid(),
+                        "CRSLage": x,
                     }, )
                 _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
@@ -1044,7 +1054,6 @@ class ExportTask:
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
         if self.vorlage == "":
-
 
             # region Create XML structure
             root = Element(
