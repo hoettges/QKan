@@ -1541,51 +1541,50 @@ class ImportTask:
         x_end = 0
         y_end = 0
 
-        list = []
+        # list = []
         for block in blocks:
             x_liste = []
             y_liste = []
             name = block.findtext("d:Objektbezeichnung", None, self.NS)
 
             found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)
-            if found_kanten:
+            if found_kanten is not None:
+                if len(found_kanten) > 2:
+                    for _gp in found_kanten:
+                        xschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Rechtswert", 0.0, self.NS))
+                        yschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Hochwert",0.0, self.NS))
 
-                if block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS) is not None:
-                    if len(block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)) > 2:
-                        for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS):
-                            xschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Rechtswert", 0.0, self.NS))
-                            yschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Hochwert",0.0, self.NS))
+                        x_liste.append(xschob)
+                        y_liste.append(yschob)
 
-                            x_liste.append(xschob)
-                            y_liste.append(yschob)
-
-                        text = str(name), x_liste, y_liste
-                        list.append(text)
-
-
+                    text = str(name), x_liste, y_liste
+                    # list.append(text)
             else:
-                if block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS) is not None:
-                    if len(block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS)) > 1:
-                        for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS):
+                found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS)
+                if found_kanten is not None:
+                    if len(found_kanten) > 1:
+                        for _gp in found_kanten:
                             xschob = _get_float(_gp.findtext("d:Start/d:Rechtswert", 0.0, self.NS))
                             yschob = _get_float(_gp.findtext("d:Start/d:Hochwert", 0.0, self.NS))
 
                             x_liste.append(xschob)
                             y_liste.append(yschob)
 
-                        text = str(name), x_liste, y_liste
-                        list.append(text)
-        list.append('Ende')
+                        # text = str(name), x_liste, y_liste
+                        # list.append(text)
+        # list.append('Ende')
 
-        for line in list:
+            if len(x_liste) == 0:
+                continue
+        # for line in list:
             #line_tokens = line.split(',')
-            name = line[0]
-            if line != "Ende":
-                x_liste = line[1]   # xsch
-                x_liste.pop(0)
-                #x_liste.pop(-1)
-                y_liste = line[2]   # ysch
-                y_liste.pop(0)
+            # name = line[0]
+            # if line != "Ende":
+            #     x_liste = line[1]   # xsch
+            x_liste.pop(0)
+                # #x_liste.pop(-1)
+                # y_liste = line[2]   # ysch
+            y_liste.pop(0)
                 #y_liste.pop(-1)
 
             npt=1
@@ -2341,7 +2340,7 @@ class ImportTask:
         x_end = 0
         y_end = 0
 
-        list = []
+        # list = []
         for block in blocks:
             x_liste = []
             y_liste = []
@@ -2355,25 +2354,24 @@ class ImportTask:
                 # Haltungen können alternativ als Kanten oder als Polygone vorkommen.
 
                 found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)
-                if found_kanten:
+                if found_kanten is not None:
+                    if len(found_kanten) > 2:
+                        for _gp in found_kanten:
+                            xschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Rechtswert", 0.0, self.NS))
+                            yschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Hochwert",0.0, self.NS))
 
-                    if block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS) is not None:
-                        if len(block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)) > 2:
-                            for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS):
-                                xschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Rechtswert", 0.0, self.NS))
-                                yschob = _get_float(_gp.findtext("d:Kante/d:Start/d:Hochwert",0.0, self.NS))
+                            x_liste.append(xschob)
+                            y_liste.append(yschob)
 
-                                x_liste.append(xschob)
-                                y_liste.append(yschob)
-
-                            text = str(name), x_liste, y_liste
-                            list.append(text)
+                        text = str(name), x_liste, y_liste
+                        list.append(text)
 
 
                 else:
-                    if block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS) is not None:
-                        if len(block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS)) > 1:
-                            for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS):
+                    found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS)
+                    if found_kanten is not None:
+                        if len(found_kanten) > 1:
+                            for _gp in found_kanten:
                                 xschob = _get_float(_gp.findtext("d:Start/d:Rechtswert", 0.0, self.NS))
                                 yschob = _get_float(_gp.findtext("d:Start/d:Hochwert", 0.0, self.NS))
 
@@ -2382,18 +2380,19 @@ class ImportTask:
 
                             text = str(name), x_liste, y_liste
                             list.append(text)
+        # list.append('Ende')
 
-        list.append('Ende')
-
-        for line in list:
+            if len(x_liste) == 0:
+                continue
+            # for line in list:
             #line_tokens = line.split(',')
-            name = line[0]
-            if line != "Ende":
-                x_liste = line[1]   # xsch
-                x_liste.pop(0)
+            # name = line[0]
+            # if line != "Ende":
+            #     x_liste = line[1]   # xsch
+            x_liste.pop(0)
                 #x_liste.pop(-1)
-                y_liste = line[2]   # ysch
-                y_liste.pop(0)
+                # y_liste = line[2]   # ysch
+            y_liste.pop(0)
                 #y_liste.pop(-1)
 
             npt=1

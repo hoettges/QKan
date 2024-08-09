@@ -1,6 +1,6 @@
 import os
 
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtWidgets import QDialog, QTableWidgetItem
 from qgis.PyQt.uic import loadUiType
 from qkan.database.dbfunc import DBConnection
@@ -14,15 +14,21 @@ form_class, _ = loadUiType(os.path.join(os.path.dirname(__file__), 'res/qkan_sch
 logger = get_logger("QKan.tools.zeige_schaeden")
 
 class ShowHaltungsschaeden(QDialog, form_class):
-    def __init__(self, haltnam: str, schoben: str, schunten: str):
+    """Zeigt Haltungsschäden an"""
+    def __init__(self, haltnam: str, schoben: str, schunten: str, untersuch_id: int = None):
         super(ShowHaltungsschaeden, self).__init__()
 
         self.haltnam = haltnam
         self.schoben = schoben
         self.schunten = schunten
+        self.untersuch_id = untersuch_id
         self.showschaedencolumns = QKan.config.zustand.showschaedencolumns      # evtl. ergänzen: Eingabe unter Optionen
 
         self.setupUi(self)
+
+        self.iface = QKan.instance.iface
+
+        self.show_selected()
 
         self.showlist()
 
@@ -243,6 +249,36 @@ class ShowHaltungsschaeden(QDialog, form_class):
                 cell = ("{}".format(elem[1])).replace('None', '')
                 self.tw_schadenstabelle.setItem(row, col + 1, QTableWidgetItem(cell))
 
+    def show_selected(self):
+        """Setzt einen Filter auf ausgewählte Haltungen_untersucht"""
+        splitstr = ' AND untersuchhal = '
+        layername = 'Untersuchungsdaten Haltung'
+        project = QgsProject.instance()
+        layer = project.mapLayersByName(layername)[0]
+        # layer = iface.activeLayer()
+        # layer.source()
+        ren = layer.renderer()
+        root_rule = ren.rootRule()
+        for child in root_rule.children():
+            rule = root_rule.takeChild(child)
+            kat = rule.filterExpression()
+            ruleexpressions = kat.split(splitstr, 1)
+            if len(ruleexpressions) == 2:
+                baserule, fil = ruleexpressions
+            elif  len(ruleexpressions) == 1:
+                baserule = ruleexpressions[0]
+            else:
+                logger.error('QKan-Fehler in ruleexpressions')
+            logger.info(f'Ausgewählte Haltung_untersucht: {self.untersuch_id}')
+            if self.untersuch_id is None:
+                filter = baserule
+            else:
+                filter = baserule + splitstr + f"'{self.haltnam}' AND ID = {self.untersuch_id}"
+            rule.setFilterExpression(filter)
+            root_rule.appendChild(rule)
+        #    layer.setRenderer(renderer)                            # notwendig?
+        layer.triggerRepaint()
+        self.iface.layerTreeView().refreshLayerSymbology(layer.id())
 
 if __name__ == '__main__':
     form = ShowHaltungsschaeden('74115531', '74115531', '74115529')

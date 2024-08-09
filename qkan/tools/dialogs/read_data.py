@@ -44,10 +44,10 @@ class ReadData:  # type: ignore
 
         self.db_name: Optional[str] = None
 
-        self.required_fields = QKan.config.tools.Clipboard.required_fields
-        self.schacht_types = QKan.config.tools.Clipboard.schacht_types
-        self.haltung_types = QKan.config.tools.Clipboard.haltung_types
-        self.qkan_patterns = QKan.config.tools.Clipboard.qkan_patterns
+        self.required_fields = QKan.config.tools.clipboardattributes.required_fields
+        self.schacht_types = QKan.config.tools.clipboardattributes.schacht_types
+        self.haltung_types = QKan.config.tools.clipboardattributes.haltung_types
+        self.qkan_patterns = QKan.config.tools.clipboardattributes.qkan_patterns
 
         self.proceed = proceed
 

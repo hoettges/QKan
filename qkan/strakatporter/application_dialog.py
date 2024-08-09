@@ -59,6 +59,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     pb_ordnervideo: QPushButton
     tf_ordnervideo: QLineEdit
 
+    tf_maxdist: QLineEdit
+
     pw_epsg: QgsProjectionSelectionWidget
 
     cb_haltungen: QCheckBox
@@ -68,13 +70,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     cb_schachtschaeden: QCheckBox
     cb_haltungsschaeden: QCheckBox
 
-    cb_abflussparameter: QCheckBox
-    cb_rohrprofile: QCheckBox
-    cb_bodenklassen: QCheckBox
-
     cb_testmodus: QCheckBox
-
-    cb_allrefs: QCheckBox
 
     def __init__(
         self,
@@ -100,18 +96,15 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
 
+        self.tf_maxdist.setText(str(QKan.config.strakat.maxdiff))
+
         self.cb_schaechte.setChecked(QKan.config.check_import.schaechte)
         self.cb_haltungen.setChecked(QKan.config.check_import.haltungen)
         self.cb_hausanschluesse.setChecked(QKan.config.check_import.hausanschluesse)
         self.cb_schachtschaeden.setChecked(QKan.config.check_import.schachtschaeden)
         self.cb_haltungsschaeden.setChecked(QKan.config.check_import.haltungsschaeden)
-        self.cb_abflussparameter.setChecked(QKan.config.check_import.abflussparameter)
-        self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
-        self.cb_bodenklassen.setChecked(QKan.config.check_import.bodenklassen)
 
         #self.cb_testmodus.setChecked(False)         # Standard: deaktiviert, vorher QKan.config.check_import.testmodus
-
-        self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

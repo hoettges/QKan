@@ -254,9 +254,9 @@ class ImportTask:
         sohlhoehe = None
         deckelhoehe = None
         geop_d = None  # falls kein Gerinnepunktobjekt, wird Deckel übernommen
-        geom_g = QgsMultiPolygon()  # falls kein Objekt für Bauwerk oder Deckel, wird Kreis aus Gerinne übernommen
+        geom_g = QgsGeometry()  # falls kein Objekt für Bauwerk oder Deckel, wird Kreis aus Gerinne übernommen
         geop = QgsPoint()
-        geom = QgsMultiPolygon()
+        geom = QgsGeometry()
         sohle_b = None  # falls kein Gerinnepunktobjekt, wird Sohlhöhe aus Beuwerk übernommen
         blocks_go = block.findall("GO")
         if len(blocks_go) == 0:
@@ -289,22 +289,20 @@ class ImportTask:
             elif geotyp == 'Pkt':
                 # Normalfall
                 if pttyp in ('B', 'D'):
-                    geom.addGeometry(QgsCircle.fromCenterDiameter(QgsPoint(xp, yp), 1.0).toPolygon(36))
+                    geom.combine(QgsGeometry.fromPolyline(QgsCircle.fromCenterDiameter(QgsPoint(xp, yp), 1.0).points(36)))
                     geop_d = QgsGeometry.fromPointXY(QgsPointXY(xp, yp))                  # nur für den Fall, dass pttyp == 'G'fehlt
                 elif pttyp == 'G':
                     geop = QgsGeometry.fromPointXY(QgsPointXY(xp, yp))
                     # falls kein Bauwerk oder Deckel:
-                    geom_g.addGeometry(QgsCircle.fromCenterDiameter(QgsPoint(xp, yp), 1.0).toPolygon(36))
+                    geom_g.combine(QgsGeometry.fromPolyline(QgsCircle.fromCenterDiameter(QgsPoint(xp, yp), 1.0).points(36)))
             elif geotyp == 'Kr':
-                geom.addGeometry(QgsCircle.fromCenterDiameter(QgsPoint(xp, yp), 1.0).toPolygon(36))
+                geom.combine(QgsGeometry.fromPolyline(QgsCircle.fromCenterDiameter(QgsPoint(xp, yp), 1.0).points(36)))
             elif geotyp in ('Poly', 'Fl'):
                 ptlis = [QgsPointXY(x, y) for x, y in gplis]
                 gpol = QgsGeometry.fromPolygonXY([ptlis])
-                poly = QgsPolygon()
-                poly.fromWkt(gpol.asWkt())
-                erg = geom.addGeometry(poly)
+                erg = geom.combine(gpol)
                 if not erg:
-                    logger.error(f"geom.addGeometry mit {ptlis=} nicht erfolgreich!")
+                    logger.error(f"geom.combine mit {ptlis=} nicht erfolgreich!")
             elif geotyp in ('L'):
                 logger.error(f"Linienelement nicht zulässig in Element <KG001> = {name}")
             else:
@@ -334,7 +332,7 @@ class ImportTask:
             geop_wkb = None
             logger.warning(f"M150-Import: Konnte kein Punktobjekt finden für {name}")
 
-        if link or geom.partCount() > 0:
+        if link or not geom.isEmpty():
             geom_wkb = geom.asWkb()
         else:
             geom_wkb = None
@@ -520,6 +518,7 @@ class ImportTask:
             self._untersuchdat_schaechte()                  ;self.progress_bar.setValue(75)
             self._haltungen_untersucht()                    ;self.progress_bar.setValue(85)
             self._untersuchdat_haltung()                    ;self.progress_bar.setValue(95)
+        self.db_qkan._adapt_reftable('entwaesserungsarten')
 
         self.progress_bar.setValue(100)
         status_message.setText("Fertig! M150-Import abgeschlossen.")
@@ -2560,4 +2559,3 @@ class ImportTask:
                 return
 
         self.db_qkan.commit()
-

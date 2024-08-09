@@ -13,6 +13,7 @@ from array import array
 from distutils.version import LooseVersion
 from sqlite3 import Connection
 from typing import Any, List, Optional, Union, cast, Dict, Tuple
+from fnmatch import fnmatch
 
 from qgis.core import Qgis, QgsVectorLayer, QgsGeometry, QgsPoint
 from qgis.PyQt.QtWidgets import QProgressBar
@@ -290,7 +291,7 @@ class DBConnection:
         self,
         sql: str,
         stmt_category: str = "allgemein",
-        parameters: Union[Tuple, List, dict[str, str]] = (),
+        parameters: Union[Tuple, List, dict[str, any]] = (),
         many: bool = False,
         mute_logger: bool = False,
         ignore: bool = False,
@@ -392,7 +393,16 @@ class DBConnection:
             ignore: bool = False,  # ignore error and continue
             parameters: [dict, tuple] = None
     ) -> bool:
-        """Fügt einen Datensatz mit Geo-Objekt hinzu"""
+        """Fügt einen Datensatz mit Geo-Objekt hinzu
+
+        :tabnam:            Tabelle zum Einfügen der Daten
+        :stmt_category:     Erläuterung für Protokoll und Fehlermeldungen
+        :mute_logger:       suppress logging message for the same stmt_category for 2 seconds
+        :ignore:            ignore error and continue
+        :parameters:        Parameter für das SQL-Statement, 2 Varainten:
+                             - dict:  einzelner Datensatz wird eingefügt
+                             - tuple: jeder Datensatz muss ein dict darstellen und wird mit "executemany" eingefügt
+        """
 
         if isinstance(parameters, tuple):
             param1 = parameters[0]
@@ -1833,3 +1843,35 @@ class DBConnection:
             raise Exception(f"Failed to init {subject} mapper")
         for row in self.fetchall():
             target[row[0]] = row[1]
+
+    def _adapt_reftable(self, table: str):
+        """Ersetzt die importierten Bezeichnungen der Entwässerungsarten durch die QKan-Standards.
+           Die entsprechenden Attribute in den Detailtabellen werden automatisch durch die definierten
+           Trigger angepasst."""
+        patterns = QKan.config.tools.clipboardattributes.qkan_patterns.get(table)
+        sql = f"SELECT bezeichnung FROM {table}"
+        if not self.sql(sql, 'Anpassen der Entwässerungsarten an den QKan-Standard (1)'):
+            raise Exception(f'_adapt_reftable: Fehler beim Einlesen der Bezeichnungen aus {table}')
+        for data in self.fetchall():
+            bezeichnung = data[0]
+            qkan_bez = None
+            for qkan_patt in patterns.keys():
+                # Schleife über alle QKan-Bezeichnungen
+                for patt in patterns[qkan_patt]:
+                    # Schleife über die Matchliste
+                    if fnmatch(bezeichnung.lower(), patt):
+                        # Match gefunden
+                        qkan_bez = qkan_patt
+                        if qkan_bez != bezeichnung:
+                            sql = f'UPDATE {table} SET bezeichnung = :qkan_bez WHERE bezeichnung = :bezeichnung'
+                            if not self.sql(
+                                sql=sql,
+                                stmt_category='Anpassen der Entwässerungsarten an den QKan-Standard (1)',
+                                parameters={'qkan_bez': qkan_bez, 'bezeichnung': bezeichnung}
+                            ):
+                                raise Exception(f'_adapt_reftable: Fehler beim Wechsel der Bezeichnungen in {table}')
+                            logger.debug(f'Tabelle entwaesserungsarten: Wechsel von {bezeichnung} zu {qkan_bez}')
+                        break
+                else:
+                    continue            # nichts in der Matchliste gefunden, gehe zum nächsten QKan-Bezeichnungen
+                break                   # eine QKan-Bezeichnung gefunden, gehe zum nächsten Datensatz

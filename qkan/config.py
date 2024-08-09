@@ -290,13 +290,14 @@ class HE8Config(ClassObject):
     qml_choice: enums.QmlChoice = enums.QmlChoice.UEBH
     qml_file_results: str = ""
     template: str = ""  # Vorlage für Export-Datenbank
-    import_file: str = ""  # Import-Datenbank *.idbm
-    export_file: str = ""  # Export-Datenbank *.idbm
+    import_file: str = ""   # Import-Datenbank *.idbm
+    export_file: str = ""   # Export-Datenbank *.idbm
     results_file: str = ""  # Ergebnis-Datenbank *.idbr
 
 
 class STRAKATConfig(ClassObject):
-    import_dir: str = ""  # Importverzeichnis mit den STRAKAT-Dateien, u. a. kanal.rwtopen
+    import_dir: str = ""    # Importverzeichnis mit den STRAKAT-Dateien, u. a. kanal.rwtopen
+    maxdiff: float = 0.1    # Abst
 
 
 class FLOODConfig(ClassObject):
@@ -375,7 +376,7 @@ class ToolsConfig(ClassObject):
         """Patterns for replacing column names with the QKan database names"""
 
         # 1. required fields,
-        required_fields = {
+        required_fields: dict = {
             "schaechte": ["schnam", "sohlhoehe"],
             "auslaesse": ["schnam", "sohlhoehe"],
             "speicher": ["schnam", "sohlhoehe"],
@@ -398,7 +399,7 @@ class ToolsConfig(ClassObject):
         }
 
         # Layer names with data source table 'schaechte'
-        schacht_types = {
+        schacht_types: dict = {
             "Schächte": "Schacht",
             "Knotenpunkte": "Schacht",
             "Knotentyp": "Schacht",
@@ -407,7 +408,7 @@ class ToolsConfig(ClassObject):
         }
 
         # Layer names with data source table 'haltungen'
-        haltung_types = {
+        haltung_types: dict = {
             "Haltungen": "Haltung",
             "Pumpen": "Pumpe",
             "Wehre": "Wehr",
@@ -419,7 +420,7 @@ class ToolsConfig(ClassObject):
         }
 
         # patterns must be lower case
-        qkan_patterns = {
+        qkan_patterns: dict = {
             'schaechte': {
                 'schnam': ['scha*', 'schna*', 'nam*'],
                 'xsch': ['x*', 'laengs*', 'breit*'],
@@ -727,10 +728,16 @@ class ToolsConfig(ClassObject):
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geop': ['wkt_geom', 'geop'],
             },
-            'entwart': {
-                'Mischwasser': ['M*'],
-                'Schmutzwasser': ['S*'],
-                'Regenwasser': ['R*']
+            'entwaesserungsarten': {
+                'Mischwasser':      ['mischw*', 'mw', 'km', 'mk'],
+                'Schmutzwasser':    ['schmutzw*', 'sw', 'ks', 'sk'],
+                'Regenwasser':      ['regenw*', 'rw', 'kr', 'rk'],
+                'Rinnen/Gräben':    ['*rinne*', '*gräbe*', '*grabe*'],
+                'stillgelegt':      ['stillg*'],
+                'außer Betrieb':    ['*auße*', '*ausse*'],
+                'verdämmert': ['verdämm*', 'verdaemm*'],
+                'fiktiv': ['fikti*'],
+                'rückgebaut': ['zurückgeb*', 'zurueckgeb*', 'rückgeb*', 'rueckgeb*'],
             },
         }
 
@@ -747,6 +754,8 @@ class ToolsConfig(ClassObject):
     )
     runoffparamsfunctions: RunoffParams = RunoffParams()
     runoffparamstype_choice: enums.RunOffParamsType = enums.RunOffParamsType.ITWH
+
+    clipboardattributes: Clipboard = Clipboard()
 
 
 class XmlConfig(ClassObject):

@@ -467,7 +467,7 @@ class ImportTask:
 
         # Entwässerungsarten
         blocks = self.xml.findall("d:RT1005", self.NS)
-        pattern = QKan.config.tools.Clipboard.qkan_patterns.get('entwart')
+        pattern = QKan.config.tools.clipboardattributes.qkan_patterns.get('entwart')
         if pattern and blocks:
             for block in blocks:
                 nr = block.findtext("RT0001", None)
@@ -502,7 +502,7 @@ class ImportTask:
 
         # Planungsstatus
         blocks = self.xml.findall("d:RT1010", self.NS)
-        pattern = QKan.config.tools.Clipboard.qkan_patterns.get('simstatus')
+        pattern = QKan.config.tools.clipboardattributes.qkan_patterns.get('simstatus')
         if pattern and blocks:
             for block in blocks:
                 nr = block.findtext("RT0001", None)

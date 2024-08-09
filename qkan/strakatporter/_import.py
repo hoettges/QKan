@@ -4,8 +4,7 @@ from struct import unpack
 from typing import Iterator
 
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis
-
+from qgis.core import Qgis, QgsGeometry, QgsPoint
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
@@ -127,6 +126,7 @@ class ImportTask:
         self.db_name = QKan.config.database.qkan
         self.richtung = QKan.config.xml.richt_choice
         self.kriterienschaeden = QKan.config.zustand.kriterienschaeden
+        self.maxdiff = QKan.config.strakat.maxdiff
 
 
     def run(self) -> bool:
@@ -147,13 +147,16 @@ class ImportTask:
 
         result = all(
             [
+                self._strakat_kanaltabelle(), self.progress_bar.setValue(30),   logger.debug("_strakat_kanaltabelle"),
                 self._strakat_reftables(), self.progress_bar.setValue(10),      logger.debug("_strakat_reftables"),
                 self._reftables(), self.progress_bar.setValue(15),              logger.debug("_reftables"),
-                self._strakat_kanaltabelle(), self.progress_bar.setValue(30),   logger.debug("strakat_kanaltabelle"),
                 self._schaechte(), self.progress_bar.setValue(40),              logger.debug("_schaechte"),
                 self._haltungen(), self.progress_bar.setValue(50),              logger.debug("_haltungen"),
                 self._strakat_hausanschl(), self.progress_bar.setValue(80),     logger.debug("_strakat_hausanschl"),
                 self._anschlussleitungen(), self.progress_bar.setValue(90),     logger.debug("_anschlussleitungen"),
+
+                self.db_qkan._adapt_reftable('entwaesserungsarten'),
+
                 self._strakat_berichte(), self.progress_bar.setValue(95),       logger.debug("_strakat_berichte"),
                 self._haltungen_untersucht(),                                   logger.debug("_haltungen_untersucht"),
                 self._untersuchdat_haltung(),                                   logger.debug("_untersuchdat_haltung"),
@@ -238,11 +241,24 @@ class ImportTask:
                 eigentum INTEGER,
                 naechste_halt INTEGER,
                 rueckadresse INTEGER,
+                mark INTEGER DEFAULT 0,
                 strakatid TEXT
             )"""
-
             if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatkanal"'):
                 return False
+
+            sqls = [
+                f"SELECT AddGeometryColumn('t_strakatkanal', 'geom', {self.epsg}, 'LINESTRING')",
+                "SELECT CreateSpatialIndex('t_strakatkanal', 'geom')",
+                f"SELECT AddGeometryColumn('t_strakatkanal', 'geop', {self.epsg}, 'POINT')",
+                "SELECT CreateSpatialIndex('t_strakatkanal', 'geop')",
+            ]
+            for sql in sqls:
+                if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import ergänze geom und geop in t_strakatkanal"):
+                    logger.error('Fehler beim Ergänzen von geom und geop in t_strakatkanal')
+                    return False
+
+            self.db_qkan.commit()
 
         def _iter() -> Iterator[Kanal_STRAKAT]:
         # Datei kanal.rwtopen einlesen und in Tabelle schreiben
@@ -478,6 +494,112 @@ class ImportTask:
         if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Schächte", parameters=params, many=True):
             logger.error('Fehler beim Lesen der Datei "kanal.rwtopen"')
             return False
+
+        sqls = [
+            f"""UPDATE t_strakatkanal
+                SET geom = MakeLine(
+                    Makepoint(rw_gerinne_o, hw_gerinne_o, {self.epsg}),
+                    Makepoint(rw_gerinne_u, hw_gerinne_u, {self.epsg})
+                )
+                WHERE rw_gerinne_o > 1
+                  AND rw_gerinne_u > 1
+                  AND hw_gerinne_o > 1
+                  AND hw_gerinne_u > 1
+            """,
+            f"""UPDATE t_strakatkanal
+                SET geop = Makepoint(rw_gerinne_o, hw_gerinne_o, {self.epsg})
+                WHERE rw_gerinne_o > 1   AND hw_gerinne_o > 1
+            """,
+            "DELETE FROM t_strakatkanal WHERE schachtnummer = 0"
+        ]
+        for sql in sqls:
+            if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Geoobjekte t_strakatkanal"):
+                logger.error('Fehler beim Erzeugen der Geoobjekte t_strakatkanal')
+                return False
+
+        # Bereinigung inkonsistenter Schachtbezeichnungen
+
+        # 1. Übertragen des schacht_oben auf Kanäle ohne schachtoben oder mit einem schachtoben,
+        #    der nicht mit anderen Schachtoben übereinstimmt.
+        sqls = [
+            # 1.0 Fehlende Schachtbezeichnungen ergänzen
+            "UPDATE t_strakatkanal SET schacht_oben = 'S_' || substr(printf('0000%d', pk), -5) WHERE schacht_oben = ''",
+            # 1.1 Abzweigende Haltungen (k1k), deren schacht_oben nicht mit dem eines durchlaufenden
+            #     Stranges (schacht_unten = schacht_oben: k2k) übereinstimmt.
+            f"""WITH k2k AS (
+                    SELECT ku.ROWID, ku.nummer, ku.geop, ku.schacht_oben, ku.schachtart, ku.kanalart
+                    FROM t_strakatkanal ko
+                    JOIN t_strakatkanal ku ON ko.abflussnummer1 = ku.nummer AND ko.schacht_unten = ku.schacht_oben
+                ),
+                k1k AS (
+                    SELECT
+                        k1.nummer AS n1, k2.nummer AS n2, k1.schacht_oben AS schoben_diff, 
+                        k2.schacht_oben AS schoben, k1.schachtart, k1.kanalart
+                    FROM k2k AS k2
+                    JOIN t_strakatkanal AS k1 ON st_distance(k2.geop, k1.geop) < {self.maxdiff}
+                    WHERE
+                        k2.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='t_strakatkanal'
+                            AND search_frame=makecircle(x(k1.geop),y(k1.geop), {self.maxdiff}, {self.epsg}))
+                        AND k2.schacht_oben <> k1.schacht_oben
+                )
+                UPDATE t_strakatkanal SET schacht_oben = ksk.schoben
+                FROM (SELECT n1, schoben FROM k1k) AS ksk
+                WHERE ksk.n1 = t_strakatkanal.nummer AND ksk.schoben <> ''""",
+
+            # 1.2 Unterschiedliche Schachtnamen an der gleichen Position
+            f"""WITH k2k AS (
+                    SELECT k2.nummer AS nummer, k1.schacht_oben AS schoben
+                    FROM t_strakatkanal AS k2
+                    JOIN t_strakatkanal AS k1 ON st_distance(k2.geop, k1.geop) < {self.maxdiff}
+                    WHERE
+                        k2.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='t_strakatkanal'
+                            AND search_frame=makecircle(x(k1.geop),y(k1.geop), {self.maxdiff}, {self.epsg}))
+                        AND k1.schacht_oben <> k2.schacht_oben AND k1.nummer < k2.nummer
+                )
+                UPDATE t_strakatkanal SET schacht_oben = ksk.schoben
+                FROM (SELECT nummer, schoben FROM k2k) AS ksk
+                WHERE ksk.nummer = t_strakatkanal.nummer AND ksk.schoben <> ''""",
+
+            # 1.3 Test der Haltungen, die über "abflussnummmerx" und "zuflussnummerx" verbunden sind.
+            """ WITH ka AS (
+                    SELECT n1 AS id, n4, kurz, text
+                    FROM t_reflists
+                    WHERE tabtyp = 'schachtart' 
+                ),
+                sx AS (
+                    SELECT ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, ko.schacht_unten, ku.schacht_oben, ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un
+                    FROM t_strakatkanal AS ko
+                    JOIN t_strakatkanal AS ku ON ko.abflussnummer1 = ku.nummer
+                    WHERE ko.abflussnummer1 > 0 AND ko.schacht_unten <> ku.schacht_oben
+                    UNION 
+                    SELECT ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, ko.schacht_unten, ku.schacht_oben, ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un
+                    FROM t_strakatkanal AS ko
+                    JOIN t_strakatkanal AS ku ON ko.abflussnummer2 = ku.nummer
+                    WHERE ko.abflussnummer2 > 0 AND ko.schacht_unten <> ku.schacht_oben
+                    UNION 
+                    SELECT ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, ko.schacht_unten, ku.schacht_oben, ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un
+                    FROM t_strakatkanal AS ko
+                    JOIN t_strakatkanal AS ku ON ko.abflussnummer3 = ku.nummer
+                    WHERE ko.abflussnummer3 > 0 AND ko.schacht_unten <> ku.schacht_oben
+                    UNION 
+                    SELECT ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, ko.schacht_unten, ku.schacht_oben, ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un
+                    FROM t_strakatkanal AS ko
+                    JOIN t_strakatkanal AS ku ON ko.abflussnummer4 = ku.nummer
+                    WHERE ko.abflussnummer4 > 0 AND ko.schacht_unten <> ku.schacht_oben
+                    UNION 
+                    SELECT ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, ko.schacht_unten, ku.schacht_oben, ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un
+                    FROM t_strakatkanal AS ko
+                    JOIN t_strakatkanal AS ku ON ko.abflussnummer5 = ku.nummer
+                    WHERE ko.abflussnummer5 > 0 AND ko.schacht_unten <> ku.schacht_oben
+                )
+                UPDATE t_strakatkanal SET schacht_unten = sx.schacht_oben
+                FROM sx
+                WHERE sx.nummer_oben = t_strakatkanal.nummer AND t_strakatkanal.schacht_unten <> sx.schacht_oben AND sx.schacht_oben <> ''""",
+        ]
+        for sql in sqls:
+            if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Korrektur Schachtnamen t_strakatkanal"):
+                logger.error('Fehler bei der Korrektur der Schachtnamen t_strakatkanal')
+                return False
 
         self.db_qkan.commit()
 
@@ -1051,27 +1173,31 @@ class ImportTask:
         return True
 
     def _reftables(self) -> bool:
-        """Referenztabellen mit Datensätzen für HE-Import füllen"""
+        """Referenztabellen füllen"""
 
         # Hinweis: 'None' bewirkt beim Import eine Zuordnung unabhängig vom Wert
 
         # Referenztabelle Entwässerungsarten
 
+        sql = """INSERT INTO entwaesserungsarten (bezeichnung, kuerzel, bemerkung)
+                 SELECT text, kurz, 'Importiert aus STRAKAT'
+                 FROM t_reflists
+                 WHERE tabtyp = 'kanalart'"""
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste entwaesserungsarten"):
+            return False
+
+        # Ergänzen weiterer Kennnummern in speziellen Datensätzen
         daten = [
             ('Regenwasser', 'KR', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
             ('Schmutzwasser', 'KS', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
             ('Mischwasser', 'KM', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
-            ('stillgelegt', 'X', 'stillgelegt', None, None, None, None, None, None),
-            ('nicht erfasst', 'U', 'nicht erfasst', None, None, None, None, None, None),
-            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, None, None, 0, None),
         ]
 
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
-        sql = """INSERT INTO entwaesserungsarten (
-                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m150, isybau, transport, druckdicht)
-                    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
-                    WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste entwaesserungsarten", daten, many=True):
+        params = [(ds[3], ds[4], ds[5], ds[6], ds[7], ds[8], ds[0],) for ds in daten]           # umsortieren
+        sql = """UPDATE entwaesserungsarten
+                 SET he_nr = ?, kp_nr = ?, m150 = ?, isybau = ?, transport = ?, druckdicht = ?
+                 WHERE bezeichnung = ?"""
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste entwaesserungsarten", params, many=True):
             return False
 
         # Referenztabelle Haltungstypen
@@ -1087,58 +1213,34 @@ class ImportTask:
             ('Wehr', None),
         ]
 
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        params = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE
         sql = """INSERT INTO haltungstypen (bezeichnung, bemerkung)
                     SELECT ?, ?
                     WHERE ? NOT IN (SELECT bezeichnung FROM haltungstypen)"""
 
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste haltungstypen", daten, many=True):
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste haltungstypen", params, many=True):
             return False
 
         # Referenztabelle Rohrprofile
 
-        daten = [
-            ('Kreis', 1, 1, None),
-            ('Rechteck (geschlossen)', 2, 3, None),
-            ('Ei (B:H = 2:3)', 3, 5, None),
-            ('Maul (B:H = 2:1,66)', 4, 4, None),
-            ('Halbschale (offen) (B:H = 2:1)', 5, None, None),
-            ('Kreis gestreckt (B:H=2:2.5)', 6, None, None),
-            ('Kreis überhöht (B:H=2:3)', 7, None, None),
-            ('Ei überhöht (B:H=2:3.5)', 8, None, None),
-            ('Ei breit (B:H=2:2.5)', 9, None, None),
-            ('Ei gedrückt (B:H=2:2)', 10, None, None),
-            ('Drachen (B:H=2:2)', 11, None, None),
-            ('Maul (DIN) (B:H=2:1.5)', 12, None, None),
-            ('Maul überhöht (B:H=2:2)', 13, None, None),
-            ('Maul gedrückt (B:H=2:1.25)', 14, None, None),
-            ('Maul gestreckt (B:H=2:1.75)', 15, None, None),
-            ('Maul gestaucht (B:H=2:1)', 16, None, None),
-            ('Haube (B:H=2:2.5)', 17, None, None),
-            ('Parabel (B:H=2:2)', 18, None, None),
-            ('Rechteck mit geneigter Sohle (B:H=2:1)', 19, None, None),
-            ('Rechteck mit geneigter Sohle (B:H=1:1)', 20, None, None),
-            ('Rechteck mit geneigter Sohle (B:H=1:2)', 21, None, None),
-            ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.2B)', 22, None, None),
-            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.2B)', 23, None, None),
-            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.2B)', 24, None, None),
-            ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.4B)', 25, None, None),
-            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.4B)', 26, None, None),
-            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.4B)', 27, None, None),
-            ('Druckrohrleitung', 50, None, None),
-            ('Sonderprofil', 68, 2, None),
-            ('Gerinne', 69, None, None),
-            ('Trapez (offen)', 900, None, None),
-            ('Doppeltrapez (offen)', 901, None, None),
-        ]
-
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
-        sql = """INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key)
-                    SELECT ?, ?, ?, ?
-                    WHERE ? NOT IN (SELECT profilnam FROM profile)"""
-
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste profile", daten, many=True):
+        sql = """INSERT INTO profile (profilnam, kuerzel, kommentar)
+                 SELECT text, kurz, 'Importiert aus STRAKAT'
+                 FROM t_reflists
+                 WHERE tabtyp = 'profilart'"""
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste profile"):
             return False
+
+        # Referenztabelle Entwässerungsgebiete
+
+        sql = """INSERT INTO teilgebiete (tgnam, kommentar)
+                 SELECT rl.text, 'Importiert aus STRAKAT'
+                 FROM t_reflists AS rl
+                 JOIN t_strakatkanal AS skt ON skt.e_gebiet = rl.id         -- nur verwendete
+                 WHERE tabtyp = 'entwaesserungsgebiet'
+                 GROUP BY rl.id"""
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste profile"):
+            return False
+
 
         # Referenztabelle Pumpentypen
 
@@ -1150,12 +1252,12 @@ class ImportTask:
             ('Ideal', 5),
         ]
 
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        params = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
         sql = """INSERT INTO pumpentypen (bezeichnung, he_nr)
                     SELECT ?, ?
                     WHERE ? NOT IN (SELECT bezeichnung FROM pumpentypen)"""
 
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste pumpentypen", daten, many=True):
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste pumpentypen", params, many=True):
             return False
 
         # Referenztabelle Untersuchungsrichtung
@@ -1165,12 +1267,12 @@ class ImportTask:
             ('gegen Fließrichtung', 'U', 'automatisch hinzugefügt'),
         ]
 
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        params = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
         sql = """INSERT INTO untersuchrichtung (bezeichnung, kuerzel, bemerkung)
                     SELECT ?, ?, ?
                     WHERE ? NOT IN (SELECT bezeichnung FROM untersuchrichtung)"""
 
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste untersuchrichtung", daten, many=True):
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste untersuchrichtung", params, many=True):
             return False
 
         # Erstellung Tabelle t_mapper_untersuchrichtung
@@ -1202,113 +1304,6 @@ class ImportTask:
                                 many=True):
             return False
 
-        # Wegen der sehr eigenwilligen Logik in STRAKAT enthält die Tabelle 'schachtarten'
-        # Zuordnungen sowohl zu Schächten als auch Haltungen
-
-        # Erstellung Tabelle t_mapper_schachtarten2typen
-        sql = "PRAGMA table_list('t_mapper_schachtarten2typen')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_schachtarten2typen', vorhanden ist"):
-            return False                                        # Abbruch weil Anfrage fehlgeschlagen
-        if not self.db_qkan.fetchone():
-            sql = """ 
-            CREATE TABLE IF NOT EXISTS t_mapper_schachtarten2typen (
-                id INTEGER PRIMARY KEY,
-                schachttyp TEXT,
-                simstatus TEXT
-            )"""
-
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_schachtarten2typen"'):
-                return False
-
-        # Liste enthält nur Schachtarten, die nicht 'Schacht' und dabei 'vorhanden' sind (einschließlich 1: 'NS Normalschacht')
-        daten = [
-            (2,  'Auslass', 'vorhanden'),
-            (5,  'Schacht', 'fiktiv'),
-            (10, 'Speicher', 'vorhanden'),
-            (19, 'Speicher', 'vorhanden'),
-            (20, 'Speicher', 'vorhanden'),
-            (23, 'Speicher', 'vorhanden'),
-            (24, 'Schacht', 'fiktiv'),
-            (27, 'Schacht', 'geplant'),
-            (31, 'Schacht', 'fiktiv'),
-        ]
-        sql = """INSERT INTO t_mapper_schachtarten2typen (id, schachttyp, simstatus)
-                    VALUES (?, ?, ?)"""
-
-        if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_mapper_schachtarten2typen",
-                                daten,
-                                many=True):
-            return False
-
-        # Erstellung Tabelle t_mapper_schart2haltyp
-        sql = "PRAGMA table_list('t_mapper_schart2haltyp')"
-        if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_schart2haltyp', vorhanden ist"):
-            return False                                        # Abbruch weil Anfrage fehlgeschlagen
-        if not self.db_qkan.fetchone():
-            sql = """ 
-            CREATE TABLE IF NOT EXISTS t_mapper_schart2haltyp (
-                id INTEGER PRIMARY KEY,
-                haltungstyp TEXT,
-                simstatus TEXT
-            )"""
-
-            if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_schart2haltyp"'):
-                return False
-
-        # Liste enthält nur Haltungsarten, die nicht 'Haltung' und 'vorhanden' sind
-        daten = [
-            (5,  'Haltung', 'fiktiv'),
-            (15, 'Schieber', 'vorhanden'),
-            (18, 'Pumpe', 'vorhanden'),
-            (21, 'Pumpe', 'vorhanden'),
-            (24, 'Haltung', 'fiktiv'),
-            (27, 'Haltung', 'geplant'),
-            (31, 'Haltung', 'fiktiv'),
-        ]
-        sql = """INSERT INTO t_mapper_schart2haltyp (id, haltungstyp, simstatus)
-                    VALUES (?, ?, ?)"""
-
-        if not self.db_qkan.sql(sql,
-                                "strakat_import Referenzliste t_mapper_schart2haltyp",
-                                daten,
-                                many=True):
-            return False
-
-        # # Erstellung Tabelle t_mapper_kanalarten2entwart
-        # sql = "PRAGMA table_list('t_mapper_kanalarten2entwart')"
-        # if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_mapper_kanalarten2entwart', vorhanden ist"):
-        #     return False                                        # Abbruch weil Anfrage fehlgeschlagen
-        # if not self.db_qkan.fetchone():
-        #     sql = """
-        #     CREATE TABLE IF NOT EXISTS t_mapper_kanalarten2entwart (
-        #         id INTEGER PRIMARY KEY,
-        #         entwart TEXT,
-        #         druckdicht INTEGER
-        #     )"""
-        #
-        #     if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_mapper_kanalarten2entwart"'):
-        #         return False
-        #
-        # daten = [
-        #     (1, 'Regenwasser', False),
-        #     (2, 'Schmutzwasser', False),
-        #     (3, 'Mischwasser', False),
-        #     (4, 'RW Druckleitung', True),
-        #     (5, 'SW Druckleitung', True),
-        #     (6, 'MW Druckleitung', True),
-        #     (16, 'Rinnen/Gräben', False),
-        #     (9, 'stillgelegt', False),
-        # ]
-        # sql = """INSERT INTO t_mapper_kanalarten2entwart (id, entwart, druckdicht)
-        #             VALUES (?, ?, ?)"""
-        #
-        # if not self.db_qkan.sql(sql,
-        #                         "strakat_import Referenzliste t_mapper_kanalarten2entwart",
-        #                         daten,
-        #                         many=True):
-        #     return False
-
         self.db_qkan.commit()
 
         return True
@@ -1319,7 +1314,7 @@ class ImportTask:
         """Import der Schächte aus der STRAKAT-Tabelle KANALTABELLE"""
 
         sql = """WITH
-            t_strakatkanal_oberhalb AS (
+            stk_oberhalb AS (
                 SELECT nummer, abflussnummer1
                 FROM t_strakatkanal
                 WHERE schachtnummer <> 0
@@ -1340,31 +1335,33 @@ class ImportTask:
                 WHERE tabtyp = 'kanalart' 
             ),
             knotenart AS (
-                SELECT n1 AS id, kurz, text
+                SELECT n1 AS id, n4, kurz, text
                 FROM t_reflists
                 WHERE tabtyp = 'schachtart' 
+            ),
+            gebiet AS (
+                SELECT n1 AS id, text, kurz
+                FROM t_reflists
+                WHERE tabtyp = 'entwaesserungsgebiet'
             )
-            
             INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, strasse, material, 
-                                durchm, entwart, schachttyp, knotentyp, 
+                                durchm, entwart, schachttyp, knotentyp, teilgebiet,
                                 kommentar, geop, geom)
-            
-            
             SELECT
-                CASE WHEN Trim(t_strakatkanal.schacht_oben) = ''
-                THEN printf('strakatnr_%1', t_strakatkanal.nummer)
-                ELSE Trim(t_strakatkanal.schacht_oben)
+                CASE WHEN stk.schacht_oben = ''
+                THEN printf('strakatnr_%1', stk.nummer)
+                ELSE stk.schacht_oben
                 END                                         AS schnam,
-                t_strakatkanal.rw_gerinne_o                 AS xsch,
-                t_strakatkanal.hw_gerinne_o                 AS ysch,
-                MIN(CASE WHEN t_strakatkanal.s_sohle_oben_v<1 Or t_strakatkanal.s_sohle_oben_v > 5000
-                    THEN t_strakatkanal.sohle_oben___v
-                    ELSE t_strakatkanal.s_sohle_oben_v
+                stk.rw_gerinne_o                 AS xsch,
+                stk.hw_gerinne_o                 AS ysch,
+                MIN(CASE WHEN stk.s_sohle_oben_v<1 Or stk.s_sohle_oben_v > 5000
+                    THEN stk.sohle_oben___v
+                    ELSE stk.s_sohle_oben_v
                     END
                 )                                           AS sohlhoehe,
-                MAX(CASE WHEN t_strakatkanal.deckel_oben_v <1 Or t_strakatkanal.deckel_oben_v > 5000
+                MAX(CASE WHEN stk.deckel_oben_v <1 Or stk.deckel_oben_v > 5000
                     THEN Null 
-                    ELSE t_strakatkanal.deckel_oben_v
+                    ELSE stk.deckel_oben_v
                     END
                 )                                           AS deckelhoehe,
                 CASE WHEN INSTR(strassen.name,' ') > 0
@@ -1376,30 +1373,36 @@ class ImportTask:
                 k2e.text                                    AS entwart,
                 'Schacht'                                   AS schachttyp,
                 k2t.text                                    AS knotentyp,
-                'QKan-STRAKAT-Import'                       AS kommentar,
-                Makepoint(t_strakatkanal.rw_gerinne_o, t_strakatkanal.hw_gerinne_o, :epsg)  AS geop,
+                k2g.text                                    AS teilgebiet,
+                CASE WHEN count(*) > 1
+                THEN printf('Schacht in STRAKAT %s mal vorhanden', count(*))
+                ELSE 'QKan-STRAKAT-Import' END              AS kommentar,
+                Makepoint(stk.rw_gerinne_o, stk.hw_gerinne_o, :epsg)  AS geop,
                 CastToMultiPolygon(MakePolygon(MakeCircle(
-                    t_strakatkanal.rw_gerinne_o, t_strakatkanal.hw_gerinne_o, 1.0, :epsg))) AS geom
+                    stk.rw_gerinne_o, stk.hw_gerinne_o, 1.0, :epsg))) AS geom
             FROM
-                t_strakatkanal
-                LEFT JOIN t_strakatkanal_oberhalb               
-                ON t_strakatkanal.nummer = t_strakatkanal_oberhalb.abflussnummer1
+                t_strakatkanal AS stk
+                LEFT JOIN stk_oberhalb               
+                ON stk.nummer = stk_oberhalb.abflussnummer1
                 LEFT JOIN strassen                              
-                ON t_strakatkanal.strassennummer = strassen.id
+                ON stk.strassennummer = strassen.id
                 LEFT JOIN schachtmaterial                       
-                ON t_strakatkanal.schachtmaterial = schachtmaterial.id
-                LEFT JOIN entwart AS k2e           
-                ON t_strakatkanal.kanalart = k2e.id
-                LEFT JOIN knotenart AS k2t
-                ON t_strakatkanal.schachtart = k2t.id
+                ON stk.schachtmaterial = schachtmaterial.id
+                JOIN entwart AS k2e           
+                ON stk.kanalart = k2e.id
+                JOIN knotenart AS k2t
+                ON stk.schachtart = k2t.id
+                JOIN gebiet AS k2g
+                ON stk.e_gebiet = k2g.id
             WHERE
-                t_strakatkanal.schachtnummer <> 0
+                    stk.schachtnummer <> 0
+                AND stk.schachtart <> 0
                 AND (
-                    t_strakatkanal_oberhalb.abflussnummer1 Is Not Null AND 
-                    t_strakatkanal.zuflussnummer1 = t_strakatkanal_oberhalb.nummer
+                    stk_oberhalb.abflussnummer1 Is Not Null AND 
+                    stk.zuflussnummer1 = stk_oberhalb.nummer
                     OR
-                    t_strakatkanal_oberhalb.abflussnummer1 Is Null AND
-                    t_strakatkanal.zuflussnummer1 = 0
+                    stk_oberhalb.abflussnummer1 Is Null AND
+                    stk.zuflussnummer1 = 0
                 )
             GROUP BY
                 schnam, xsch, ysch,
@@ -1408,8 +1411,7 @@ class ImportTask:
                 schnam Is Not Null
                 AND xsch Is Not Null
                 AND ysch Is Not Null
-            ORDER BY
-                schnam"""
+            """
 
         params = {"epsg": self.epsg}
 
@@ -1451,19 +1453,29 @@ class ImportTask:
                 SELECT n1 AS id, kurz, text
                 FROM t_reflists
                 WHERE tabtyp = 'kanalart' 
+            ),
+            knotenart AS (
+                SELECT n1 AS id, n4, kurz, text
+                FROM t_reflists
+                WHERE tabtyp = 'schachtart' 
+            ),
+            gebiet AS (
+                SELECT n1 AS id, text, kurz
+                FROM t_reflists
+                WHERE tabtyp = 'entwaesserungsgebiet'
             )
             INSERT INTO haltungen (haltnam, schoben, schunten, laenge, 
                 xschob, yschob, xschun, yschun, 
                 breite, hoehe, 
                 sohleoben, sohleunten, 
-                profilnam, entwart, druckdicht, material, strasse, 
+                profilnam, entwart, druckdicht, material, strasse, teilgebiet,  
                 haltungstyp, simstatus, kommentar, geom)
             SELECT
-                Trim(stk.haltungsname)                  AS haltnam,
-                Trim(Coalesce(
+                stk.haltungsname                        AS haltnam,
+                Coalesce(
                     sto.schacht_unten,stk.schacht_oben
-                    ))                                  AS schoben,
-                Trim(stk.schacht_unten)                 AS schunten,
+                    )                                   AS schoben,
+                stk.schacht_unten                       AS schunten,
                 stk.laenge                              AS laenge,
                 stk.rw_gerinne_o                        AS xschob,
                 stk.hw_gerinne_o                        AS yschob,
@@ -1482,8 +1494,9 @@ class ImportTask:
                     THEN substr(strassen.name, INSTR(strassen.name,' ')+1)
                     ELSE strassen.name
                 END                                     AS strasse,
-                Coalesce(s2h.haltungstyp ,'Haltung')    AS haltungstyp,
-                Coalesce(s2h.simstatus, 'vorhanden')    AS simstatus,
+                k2g.text                                AS teilgebiet,
+                'Haltung'                               AS haltungstyp,
+                'vorhanden'                             AS simstatus,
                 'QKan-STRAKAT-Import'                   AS kommentar,
                 MakeLine(MakePoint(stk.rw_gerinne_o,
                                    stk.hw_gerinne_o, :epsg),
@@ -1497,20 +1510,97 @@ class ImportTask:
                 ON stk.Material_v = rohrmaterialien.ID
                 LEFT JOIN strassen
                 ON stk.strassennummer = strassen.ID
-                LEFT JOIN t_mapper_schart2haltyp AS s2h
-                ON stk.schachtart = s2h.id
-                LEFT JOIN entwart AS k2e
+                JOIN entwart AS k2e
                 ON stk.kanalart = k2e.id
                 LEFT JOIN sto
                 ON stk.Zuflussnummer1 = sto.Nummer
-            WHERE stk.laenge > 0.04 AND
-                   stk.schachtnummer <> 0"""
+                JOIN knotenart AS k2t
+                ON stk.schachtart = k2t.id
+                JOIN gebiet AS k2g
+                ON stk.e_gebiet = k2g.id
+            WHERE stk.laenge > 0.04
+              AND stk.schachtnummer <> 0
+              AND stk.schachtart <> 0"""
 
         params = {"epsg": self.epsg}
 
-        if not self.db_qkan.sql(sql, "strakat_import Haltungen", params):
-            logger.error('Fehler in strakat_import Haltungen')
+        if not self.db_qkan.sql(sql, "strakat_import Haltungen (1)", params):
+            logger.error('Fehler in strakat_import Haltungen (1)')
             return False
+
+        self.db_qkan.commit()
+
+        # Zusammengesetzte Haltungen werden neu erzeugt und überschreiben das geom-Objekt der jeweiligen Anfanghaltung
+        # Erkennungsmerkmal: 1. Kanal hat Schachtart <>0, alle weiteren haben die Schachtart 0.
+        # Einschränkung: Als 1. Kanal zählen nur Kanäle, die nicht gemeinsam mit einem anderen Kanal mit schachtart = 0
+        # in einen Schacht einleiten. Zusätzlich müssen aufeinander folgende Teile in folgenden Attribute
+        # identisch sein: eigentum, kanalart
+
+        def _getstraenge():
+            """Liest alle zusammengesetzten Kanäle (Kriterium: schachtart = 0 zuzüglich oberhalb liegendem Kanal)"""
+            sql = f"""WITH ko AS (
+                        SELECT *
+                        FROM t_strakatkanal AS ko
+                        LEFT JOIN (SELECT * FROM t_strakatkanal WHERE schachtart = 0) AS k2
+                        ON k2.schacht_unten = ko.schacht_unten          -- muendet gemeinsam in einen Schacht
+                        WHERE ko.schachtart = 0 OR k2.nummer IS NULL    -- entweder schachtart 0 oder wenn nicht, dann kein paralleler mit schachtart 0
+                    )
+                    SELECT
+                        ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, 
+                        ko.haltungsname, ko.schacht_oben, ko.schacht_unten,
+                        ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un, 
+                        ko.rw_gerinne_o, ko.hw_gerinne_o, ko.rw_gerinne_u, ko.hw_gerinne_u
+                        FROM ko
+                        JOIN t_strakatkanal AS ku ON ku.schacht_oben = ko.schacht_unten
+                        WHERE ko.schachtart = 0
+                           OR (ku.schachtart = 0 AND ko.kanalart = ku.kanalart AND ko.eigentum = ku.eigentum)"""
+
+            if not self.db_qkan.sql(sql):
+                logger.error('Fehler in strakat_import Haltungen (2)')
+                return False
+
+            stnet = self.db_qkan.fetchall()
+
+            idxschob = {ds[3]: ds for ds in stnet}
+            idxschun = {ds[4]: ds for ds in stnet}
+
+            # Schleife bis alle Haltungsteilstücke verarbeitet sind
+            while len(idxschob) > 0:
+                gplis = []  # Knotenpunkte einer zusammengesetzten Haltung
+                # Anfang finden
+                for anf in idxschob:
+                    # Wenn kein Teilstück oberhalb
+                    if not idxschun.get(anf):
+                        break
+                else:
+                    raise Exception(f'Fehler: Konnte (mindestens) ein Haltungsteilstück'
+                                    f'nicht verarbeiten: Schacht oben = {anf}')
+                # Kanal verfolgen und jedes Teilstück entnehmen
+                haltnam = idxschob[anf][2]
+                node = anf  # Anfang übernehmen
+                while True:
+                    ds = idxschob[node]
+                    gplis.append([ds[7], ds[8]])  # Anfangskoordinate
+                    next = idxschob.get(node)[4]  # Schacht unten als nächsten Schacht übernehmen
+                    if not idxschob.get(next):
+                        # Ende gefunden
+                        gplis.append([ds[9], ds[10]])  # Endkoordinate
+                        del idxschob[node]
+                        break
+                    del idxschob[node]
+                    node = next
+
+                ptlis = [QgsPoint(x, y) for x, y in gplis]
+                geom = QgsGeometry.fromPolyline(ptlis)
+
+                yield haltnam, geom.asWkb()
+
+        for strang_haltnam, strang_wkb in _getstraenge():
+            params = {"geom": strang_wkb, "haltnam": strang_haltnam, "epsg": self.epsg}
+            sql = f"""UPDATE haltungen SET geom = GeomFromWKB(:geom, :epsg)
+                        WHERE haltnam = :haltnam"""
+            if not self.db_qkan.sql(sql, "strakat_import Zusammensetzen der Kanalstränge", params):
+                return False
 
         self.db_qkan.commit()
 
@@ -1644,11 +1734,11 @@ class ImportTask:
                 max_ZD, max_ZB, max_ZS, 
                 kommentar, geom)
             SELECT
-                Trim(stk.haltungsname)       AS haltnam,
-                Trim(Coalesce(
+                stk.haltungsname                AS haltnam,
+                Coalesce(
                     sto.schacht_unten,stk.schacht_oben
-                    ))                                  AS schoben,
-                Trim(stk.schacht_unten)         AS schunten,
+                    )                           AS schoben,
+                stk.schacht_unten               AS schunten,
                 stk.laenge                      AS laenge,
                 stk.rw_gerinne_o                AS xschob,
                 stk.hw_gerinne_o                AS yschob,
@@ -1719,11 +1809,11 @@ class ImportTask:
                 kommentar, ZD, ZB, ZS
             )
             SELECT
-                Trim(stk.haltungsname)          AS untersuchhal,
-                Trim(Coalesce(
+                stk.haltungsname                AS untersuchhal,
+                Coalesce(
                     sto.schacht_unten,stk.schacht_oben
-                    ))                          AS schoben,
-                Trim(stk.schacht_unten)         AS schunten,
+                    )                           AS schoben,
+                stk.schacht_unten               AS schunten,
                 NULL                            AS id, 
                 stb.datum                       AS untersuchtag,
                 CASE stb.untersuchungsrichtung

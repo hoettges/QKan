@@ -540,7 +540,7 @@
      <x>440</x>
      <y>260</y>
      <width>231</width>
-     <height>131</height>
+     <height>61</height>
     </rect>
    </property>
    <property name="font">
@@ -551,16 +551,22 @@
      <bold>true</bold>
     </font>
    </property>
-   <property name="title">
-    <string>Referenztabellen</string>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximalabstand, bis zu dem Schächte als identisch erkannt werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
-   <widget class="QCheckBox" name="cb_bodenklassen">
+   <property name="statusTip">
+    <string>Maximalabstand, bis zu dem Schächte als identisch erkannt werden</string>
+   </property>
+   <property name="title">
+    <string>Toleranzen</string>
+   </property>
+   <widget class="QLineEdit" name="tf_maxdist">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>111</width>
-      <height>21</height>
+      <x>150</x>
+      <y>30</y>
+      <width>41</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -572,48 +578,18 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bodenklassen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximalabstand, bis zu dem Schächte als identisch erkannt werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Bodenklassen</string>
+     <string>Maximalabstand, bis zu dem Schächte als identisch erkannt werden</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_abflussparameter">
+   <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>20</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abflussparameter importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Abflussparameter</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_allrefs">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>161</width>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -626,22 +602,25 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;wenn aktiviert, werden alle Datensätze in die hier aufgeführten Referenztabellen übernommen, auch wenn sie nicht verwendet werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string/>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Maximalabstand, bis zu dem Schächte als identisch erkannt werden</string>
     </property>
     <property name="text">
-     <string>Auch nicht verwendete
-Datensätze importieren</string>
+     <string>Abstand für Korrektur 
+der Schachtnamen</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_rohrprofile">
+   <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>91</width>
+      <x>200</x>
+      <y>30</y>
+      <width>21</width>
       <height>21</height>
      </rect>
     </property>
@@ -653,14 +632,11 @@ Datensätze importieren</string>
       <bold>false</bold>
      </font>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bodenklassen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
     <property name="text">
-     <string>Rohrprofile</string>
+     <string>m</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>
