@@ -1535,8 +1535,8 @@ class ImportTask:
 
 
                 profilnam = block.findtext("HG305", None)
-                hoehe = (_get_float(block, "HG307", 0.0) / 1000)
-                breite = (_get_float(block, "HG306", 0.0) / 1000)
+                hoehe = (_get_float(block, "HG307", 0.0))
+                breite = (_get_float(block, "HG306", 0.0))
 
                 geom, sohleoben, sohleunten = self._get_HG_GO(block, name)
                 if geom is None:
@@ -1693,8 +1693,8 @@ class ImportTask:
 
                 laenge = _get_float(block, "HG314", 0.0)
 
-                hoehe = (_get_float(block, "HG307", 0.0) / 1000)
-                breite = (_get_float(block, "HG306", 0.0) / 1000)
+                hoehe = (_get_float(block, "HG307", 0.0))
+                breite = (_get_float(block, "HG306", 0.0))
 
                 strasse = block.findtext("HG102", None)
                 kommentar = block.findtext("HG999", None)
@@ -1983,8 +1983,8 @@ class ImportTask:
                 material = block.findtext("HG304", None)
 
                 profilnam = block.findtext("HG305", None)
-                hoehe = (_get_float(block, "HG307", 0.0) / 1000)
-                breite = (_get_float(block, "HG306", 0.0) / 1000)
+                hoehe = (_get_float(block, "HG307", 0.0))
+                breite = (_get_float(block, "HG306", 0.0))
 
                 geom, sohleoben, sohleunten = self._get_HG_GO(block, name)
                 if geom is None:
@@ -2133,8 +2133,8 @@ class ImportTask:
 
                 laenge = _get_float(block,"HG314", 0.0)
 
-                hoehe = (_get_float(block,"HG307", 0.0) / 1000)
-                breite = (_get_float(block,"HG306", 0.0) / 1000)
+                hoehe = (_get_float(block,"HG307", 0.0))
+                breite = (_get_float(block,"HG306", 0.0))
 
                 strasse = block.findtext("HG102", None)
                 kommentar = block.findtext("HG999", None)

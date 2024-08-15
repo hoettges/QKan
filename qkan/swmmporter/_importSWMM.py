@@ -644,8 +644,8 @@ class ImportTask:
                 hoehe = "NULL"
                 breite = "NULL"
             else: # der Normalfall
-                hoehe = line_tokens[2]  # Geom1
-                breite = line_tokens[3]  # Geom2   
+                hoehe = line_tokens[2]*1000  # Geom1
+                breite = line_tokens[3]*1000  # Geom2
 
             if xsection in profiltypes:
                 profilnam = profiltypes[xsection]
