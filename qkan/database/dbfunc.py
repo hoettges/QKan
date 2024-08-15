@@ -1254,10 +1254,10 @@ class DBConnection:
 
         self.commit()
 
-    def setschadenstexte(self):
+    def setschadenstexte_haltungen(self):
         """Textpositionen für Schadenstexte berechnen"""
 
-        logger.debug("Schadenstext werden neu arrangiert ...")
+        logger.debug("Schadenstexte Haltungen werden neu arrangiert ...")
 
         sql = """SELECT
             hu.pk AS id,

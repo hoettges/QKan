@@ -2067,7 +2067,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.db_qkan.setschadenstexte()
+        self.db_qkan.setschadenstexte_haltungen()
 
 
     def _anschlussleitungen(self) -> None:

@@ -46,12 +46,11 @@ class ShowHaltungsschaeden(QDialog, form_class):
 
         with DBConnection(dbname=database_qkan, epsg=epsg) as db_qkan:
             if not db_qkan.connected:
-                self.iface.messageBar().pushMessage(
-                    "Fehler im STRAKAT-Import",
-                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                    level=Qgis.Critical,
+                logger.error_user(
+                    msg="Fehler im STRAKAT-Import"
+                        f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
                 )
-                return False
+                raise Exception("Abbruch!")
 
             sql = """
                 SELECT
@@ -258,7 +257,16 @@ class ShowHaltungsschaeden(QDialog, form_class):
         # layer = iface.activeLayer()
         # layer.source()
         ren = layer.renderer()
-        root_rule = ren.rootRule()
+        if ren.type() != 'RuleRenderer':
+            logger.warning("Fehler: Der Layer 'Haltungen untersucht' enthält keine regelbasierenden Symbole"
+                           "\nAktualisieren Sie das Projekt oder bearbeiten den Layer entsprechend.")
+            return False
+        try:
+            root_rule = ren.rootRule()
+        except BaseException as e:
+            logger.error("Fehler: Der Layer 'Haltungen untersucht' enthält keine regelbasierenden Symbole")
+            raise Exception(f"{self.__class__.__name__}")
+
         for child in root_rule.children():
             rule = root_rule.takeChild(child)
             kat = rule.filterExpression()
@@ -268,6 +276,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
             elif  len(ruleexpressions) == 1:
                 baserule = ruleexpressions[0]
             else:
+                baserule = None
                 logger.error('QKan-Fehler in ruleexpressions')
             logger.info(f'Ausgewählte Haltung_untersucht: {self.untersuch_id}')
             if self.untersuch_id is None:

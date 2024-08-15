@@ -63,6 +63,7 @@ class Untersuchdat_schacht(ClassObject):
     videozaehler: str = ""
     timecode: str = ""
     kuerzel: str = ""
+    langtext: str = ""
     charakt1: str = ""
     charakt2: str = ""
     quantnr1: float = 0.0
@@ -137,6 +138,7 @@ class Untersuchdat_haltung(ClassObject):
     station: float = 0.0
     timecode: str = ""
     kuerzel: str = ""
+    langtext: str = ""
     charakt1: str = ""
     charakt2: str = ""
     quantnr1: float = 0.0
@@ -1167,6 +1169,7 @@ class ImportTask:
             videozaehler = ""
             timecode = ""
             kuerzel = ""
+            langtext = ""
             charakt1 = ""
             charakt2 = ""
             quantnr1 = 0.0
@@ -1194,6 +1197,7 @@ class ImportTask:
                     videozaehler = _untersuchdat_schacht.findtext("KZ008")
                     timecode = _untersuchdat_schacht.findtext("KZ008", None)
                     kuerzel = _untersuchdat_schacht.findtext("KZ002", None)
+                    langtext = _untersuchdat_schacht.findtext("KZ010", None)
                     charakt1 = _untersuchdat_schacht.findtext("KZ014", None)
                     charakt2 = _untersuchdat_schacht.findtext("KZ015", None)
                     quantnr1 =  _get_float(_untersuchdat_schacht, "KZ003", 0.0)
@@ -1218,6 +1222,7 @@ class ImportTask:
                     videozaehler = videozaehler,
                     timecode = timecode,
                     kuerzel = kuerzel,
+                    langtext = langtext,
                     charakt1 = charakt1,
                     charakt2 = charakt2,
                     quantnr1 = quantnr1,
@@ -1242,7 +1247,8 @@ class ImportTask:
             params = {'untersuchsch': untersuchdat_schacht.untersuchsch, 'id': untersuchdat_schacht.id,
                       'untersuchtag': untersuchdat_schacht.untersuchtag,
                       'videozaehler': untersuchdat_schacht.videozaehler, 'timecode': untersuchdat_schacht.timecode,
-                      'kuerzel': untersuchdat_schacht.kuerzel, 'charakt1': untersuchdat_schacht.charakt1,
+                      'kuerzel': untersuchdat_schacht.kuerzel, 'langtext': untersuchdat_schacht.langtext,
+                      'charakt1': untersuchdat_schacht.charakt1,
                       'charakt2': untersuchdat_schacht.charakt2, 'quantnr1': untersuchdat_schacht.quantnr1,
                       'quantnr2': untersuchdat_schacht.quantnr2, 'streckenschaden': untersuchdat_schacht.streckenschaden,
                       'streckenschaden_lfdnr': untersuchdat_schacht.streckenschaden_lfdnr, 'pos_von': untersuchdat_schacht.pos_von,
@@ -1824,6 +1830,7 @@ class ImportTask:
             station = 0.0
             timecode = ""
             kuerzel = ""
+            langtext = ""
             charakt1 = ""
             charakt2 = ""
             quantnr1 = 0.0
@@ -1871,6 +1878,7 @@ class ImportTask:
                     station = _get_float(_untersuchdat, "HZ001", 0.0)
                     timecode = _untersuchdat.findtext("HZ008", None)
                     kuerzel = _untersuchdat.findtext("HZ002", None)
+                    langtext = _untersuchdat.findtext("HZ010", None)
                     charakt1 = _untersuchdat.findtext("HZ014", None)
                     charakt2 = _untersuchdat.findtext("HZ015", None)
                     quantnr1 = _get_float(_untersuchdat, "HZ003", 0.0)
@@ -1905,6 +1913,7 @@ class ImportTask:
                     station=station,
                     timecode=timecode,
                     kuerzel=kuerzel,
+                    langtext=langtext,
                     charakt1=charakt1,
                     charakt2=charakt2,
                     quantnr1=quantnr1,
@@ -1929,7 +1938,8 @@ class ImportTask:
                       'id': untersuchdat_haltung.id, 'untersuchtag': untersuchdat_haltung.untersuchtag,
                       'videozaehler': untersuchdat_haltung.videozaehler,
                       'inspektionslaenge': untersuchdat_haltung.inspektionslaenge, 'station': untersuchdat_haltung.station,
-                      'timecode': untersuchdat_haltung.timecode, 'kuerzel': untersuchdat_haltung.kuerzel,
+                      'timecode': untersuchdat_haltung.timecode, 'langtext': untersuchdat_haltung.langtext,
+                      'kuerzel': untersuchdat_haltung.kuerzel,
                       'charakt1': untersuchdat_haltung.charakt1, 'charakt2': untersuchdat_haltung.charakt2,
                       'quantnr1': untersuchdat_haltung.quantnr1, 'quantnr2': untersuchdat_haltung.quantnr2,
                       'streckenschaden': untersuchdat_haltung.streckenschaden, 'streckenschaden_lfdnr': untersuchdat_haltung.streckenschaden_lfdnr,
@@ -1951,7 +1961,7 @@ class ImportTask:
 
         # Textpositionen für Schadenstexte berechnen
 
-        self.db_qkan.setschadenstexte()
+        self.db_qkan.setschadenstexte_haltungen()
 
     def _anschlussleitungen(self) -> None:
         def _iter() -> Iterator[Anschlussleitung]:
@@ -2249,6 +2259,7 @@ class ImportTask:
             station = 0.0
             timecode = ""
             kuerzel = ""
+            langtext = ""
             charakt1 = ""
             charakt2 = ""
             quantnr1 = 0.0
@@ -2293,6 +2304,7 @@ class ImportTask:
                     station = _get_float(_untersuchdat,"HZ001", 0.0)
                     # timecode = _get_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
                     kuerzel = _untersuchdat.findtext("HZ002", None)
+                    langtext = _untersuchdat.findtext("HZ010", None)
                     charakt1 = _untersuchdat.findtext("HZ014", None)
                     charakt2 = _untersuchdat.findtext("HZ015", None)
                     quantnr1 = _get_float(_untersuchdat,"HZ003", 0.0)
@@ -2326,6 +2338,7 @@ class ImportTask:
                         station=station,
                         timecode=timecode,
                         kuerzel=kuerzel,
+                        langtext=langtext,
                         charakt1=charakt1,
                         charakt2=charakt2,
                         quantnr1=quantnr1,
@@ -2352,7 +2365,8 @@ class ImportTask:
                       'videozaehler': untersuchdat_anschluss.videozaehler,
                       'inspektionslaenge': untersuchdat_anschluss.inspektionslaenge,
                       'station': untersuchdat_anschluss.station,
-                      'timecode': untersuchdat_anschluss.timecode, 'kuerzel': untersuchdat_anschluss.kuerzel,
+                      'timecode': untersuchdat_anschluss.timecode, 'langtext': untersuchdat_anschluss.langtext,
+                      'kuerzel': untersuchdat_anschluss.kuerzel,
                       'charakt1': untersuchdat_anschluss.charakt1, 'charakt2': untersuchdat_anschluss.charakt2,
                       'quantnr1': untersuchdat_anschluss.quantnr1, 'quantnr2': untersuchdat_anschluss.quantnr2,
                       'streckenschaden': untersuchdat_anschluss.streckenschaden,

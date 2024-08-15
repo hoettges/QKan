@@ -26,6 +26,9 @@ def _translate_level(level: int) -> Qgis.MessageLevel:
 
 
 class QgisPanelLogger(StreamHandler):
+    def __init__(self, iface):
+        super().__init__()
+        self.iface = iface
     def emit(self, record: LogRecord) -> None:
         msg = self.format(record)
 
@@ -36,6 +39,7 @@ class QgisPanelLogger(StreamHandler):
             notifyUser=record.levelno >= 30,
             level=_translate_level(record.levelno),
         )
+        self.iface.openMessageLog()
 
 
 class QKanLogger(logging.Logger):
@@ -61,7 +65,7 @@ class QKanLoggingManager(logging.Manager):
         self.setLoggerClass(QKanLogger)
 
 
-def setup_logging(log_to_console: bool) -> tuple[QKanLogger, Path]:
+def setup_logging(log_to_console: bool, iface) -> tuple[QKanLogger, Path]:
     """Set up our custom logger & logging manager"""
 
     # remove handlers if a prior instance of our logger exists
@@ -97,7 +101,7 @@ def setup_logging(log_to_console: bool) -> tuple[QKanLogger, Path]:
     file_handler.setLevel(logging.DEBUG)
 
     # todo: dynamically decide where to log to, configurable in settings
-    qgis_handler = QgisPanelLogger()
+    qgis_handler = QgisPanelLogger(iface)
     qgis_handler.setFormatter(logging.Formatter(fmt="%(name)s - %(message)s"))
     qgis_handler.setLevel(logging.INFO)
 

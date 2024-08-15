@@ -75,8 +75,12 @@ class QKan:
     def __init__(self, iface: qgis.gui.QgisInterface):
         QKan.instance = self
 
+        # QGIS
+        self.iface = iface
+        self.actions: List[QAction] = []
+
         # Init logging
-        self.logger, self.log_path = setup_logging(LOG_TO_CONSOLE)
+        self.logger, self.log_path = setup_logging(LOG_TO_CONSOLE, iface)
 
         # Init config
         try:
@@ -85,10 +89,6 @@ class QKan:
             self.logger.error("Failed to read config file.", exc_info=True)
             QKan.config = Config()
             QKan.config.save()
-
-        # QGIS
-        self.iface = iface
-        self.actions: List[QAction] = []
 
         # Set default template directory
         QKan.template_dir = os.path.join(pluginDirectory("qkan"), "templates")
@@ -303,6 +303,7 @@ class QKan:
         text: str,
         callback: Callable,
         enabled_flag: bool = True,
+        checkable: bool = False,
         add_to_menu: bool = True,
         add_to_toolbar: bool = True,
         status_tip: str = None,
@@ -318,6 +319,7 @@ class QKan:
         :param callback:        Function to be called when the action is triggered.
         :param enabled_flag:    A flag indicating if the action should be enabled
                                 by default. Defaults to True.
+        :param checkable:       Flag indicating whether Icon has/shows checked status
         :param add_to_menu:     Flag indicating whether the action should also
                                 be added to the menu. Defaults to True.
         :param add_to_toolbar:  Flag indicating whether the action should also
@@ -338,6 +340,9 @@ class QKan:
 
         if status_tip is not None:
             action.setStatusTip(status_tip)
+
+        if checkable:
+            action.setCheckable(checkable)
 
         if whats_this is not None:
             action.setWhatsThis(whats_this)

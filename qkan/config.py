@@ -739,6 +739,14 @@ class ToolsConfig(ClassObject):
                 'fiktiv': ['fikti*'],
                 'rückgebaut': ['zurückgeb*', 'zurueckgeb*', 'rückgeb*', 'rueckgeb*'],
             },
+            'simulationsstatus': {
+                'außer Betrieb': ['außer b*'],
+                'geplant': ['planu*', 'geplan*', 'in planu*'],
+                'stillgelegt': ['stillgel*'],
+                'verdämmert': ['verdämm*', 'verd\xe4mm*', 'verdaemm*'],
+                'fiktiv': ['fikt*'],
+                'rückgebaut': ['*rückgeb*', '*rueckgeb*', '*r\xfcckgeb*'],
+            },
         }
 
         def __str__(self) -> str:

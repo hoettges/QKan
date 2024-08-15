@@ -67,6 +67,7 @@ def run(dbcon: DBConnection) -> bool:
             "stationtext REAL",
             "timecode TEXT",
             "video_offset REAL",
+            "langtext TEXT",
             "kuerzel TEXT",
             "charakt1 TEXT",
             "charakt2 TEXT",
@@ -137,6 +138,7 @@ def run(dbcon: DBConnection) -> bool:
             "bandnr INTEGER",
             "videozaehler TEXT",
             "timecode TEXT",
+            "langtext TEXT",
             "kuerzel TEXT",
             "charakt1 TEXT",
             "charakt2 TEXT",
@@ -153,6 +155,9 @@ def run(dbcon: DBConnection) -> bool:
             "ordner TEXT",
             "film_dateiname TEXT",
             "ordner_video TEXT",
+            "filmtyp INTEGER",
+            "video_start INTEGER",
+            "video_ende INTEGER",
             "ZD INTEGER",
             "ZB INTEGER",
             "ZS INTEGER",
@@ -165,7 +170,6 @@ def run(dbcon: DBConnection) -> bool:
             "Hinzufügen von untersuchtag "
             "zu Tabelle 'untersuchdat_schacht' fehlgeschlagen"
         )
-
 
     if not dbcon.alter_table(
         "haltungen",
@@ -408,6 +412,7 @@ def run(dbcon: DBConnection) -> bool:
             stationtext REAL,
             timecode INTEGER,
             video_offset REAL,
+            langtext TEXT,
             kuerzel TEXT,
             charakt1 TEXT,
             charakt2 TEXT,
