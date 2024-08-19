@@ -3,6 +3,7 @@ from qgis.utils import spatialite_connect
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger
 import matplotlib.pyplot as plt
+import numpy as np
 
 from qgis.core import (
     Qgis,
@@ -37,88 +38,266 @@ class Info:
 
 
     def _infos(self) -> None:
-        # figure_4 = self.fig_4
-        # figure_4.clear()
-        # plt.figure(figure_4.number)
-        # new_plot = figure_4.add_subplot(231)
-        #
-        # #Tabelle mit Algemeinen Informationen
-        #
-        # data = {}
-        # entwart_list = []
-        # sql = """select count() from haltungen"""
-        #
-        # if not self.db_qkan.sql(sql):
-        #     return
-        #
-        # anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
-        #
-        # sql = """select count(laenge) from haltungen"""
-        #
-        # if not self.db_qkan.sql(sql):
-        #     return
-        #
-        # l_haltungen_ges = self.db_qkan.fetchall()[0][0]
-        #
-        # sql = """select DISTINCT entwart from haltungen """
-        #
-        # if not self.db_qkan.sql(sql):
-        #     return
-        #
-        # for i in self.db_qkan.fetchall():
-        #     i = str(i[0])
-        #     entwart_list.append(i)
-        #
-        # data = {k: None for k in entwart_list}
-        #
-        # for i in data.keys():
-        #     sql = f"""select count() from haltungen WHERE entwart = '{i}'"""
-        #
-        #     if not self.db_qkan.sql(sql):
-        #         return
-        #
-        #     anz = self.db_qkan.fetchall()[0][0]
-        #
-        #     data[i] = anz
-        #
-        # names = list(data.keys())
-        # values = list(data.values())
-        #
-        #
-        #
-        # data = [
-        #     [l_haltungen_ges],
-        #     [anz_haltungen_ges]
-        # ]
-        #
-        # columns = ( "Gesamt")
-        # #columns ergänzen um die einzelnen entwässerungsarten
-        # rows = ["km", "Anzahl"]
-        # #rows mit den Daten aus der Datenbank
-        # fig, ax = plt.subplots()
-        #
-        # ax.table(cellText=data, colLabels=columns, rowLabels=rows, loc='center')
-        # ax.axis('off')
-        # plt.show()
-        #
-        # # Tabelle anzeigen
-        # self.canv_4.draw()
+        #TODO: Anzeige anpassen um die Auswahl eines Teilgebietes zu ermöglichen!
 
-        # anzahl haltungen
+        figure_4 = self.fig_4
+        figure_4.clear()
+        plt.figure(figure_4.number)
+        new_plot = figure_4.add_subplot(511)
+
+        #Tabelle mit Algemeinen Informationen
+
+        entwart_list = []
         sql = """select count() from haltungen"""
 
         if not self.db_qkan.sql(sql):
             return
 
-        self.anz_haltungen = self.db_qkan.fetchall()[0][0]
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
 
-        # anzahl schaechte
-        sql = """select count() from schaechte"""
+        sql = """select sum(laenge) from haltungen"""
 
         if not self.db_qkan.sql(sql):
             return
 
-        self.anz_schaechte = self.db_qkan.fetchall()[0][0]
+        l_haltungen_ges = round(self.db_qkan.fetchall()[0][0]/1000., 2)
+
+        sql = """select sum(laenge), entwart, count() from haltungen group by entwart """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        laenge = []
+        anzahl = []
+
+        for i in self.db_qkan.fetchall():
+            entwart_list.append(i[1])
+            laenge.append(round(i[0]/1000., 2))
+            anzahl.append(i[2])
+
+        laenge.append(l_haltungen_ges)
+        anzahl.append(anz_haltungen_ges)
+        entwart_list.append("Gesamt")
+
+        data = [
+            laenge,
+            anzahl
+        ]
+
+        rows = ["km", "Anzahl"]
+
+        new_plot.table(cellText=data, colLabels=entwart_list, rowLabels=rows, loc='center')
+        new_plot.axis('off')
+
+        new_plot.set_title("Haltungen", fontsize=10, fontweight='bold', pad=20)
+
+        # Tabelle anzeigen
+        self.canv_4.draw()
+
+
+        #Infos Schächte
+        plt.figure(figure_4.number)
+        new_plot = figure_4.add_subplot(512)
+
+        # Tabelle mit Algemeinen Informationen
+
+        entwart_list = []
+        sql = """select count() from schaechte WHERE schachttyp is 'Schacht'"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_schaechte = self.db_qkan.fetchall()[0][0]
+
+        sql = """select count(), entwart from schaechte where schachttyp =' Schacht' group by entwart"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anzahl_schacht = []
+
+        for i in self.db_qkan.fetchall():
+            entwart_list.append(i[1])
+            anzahl_schacht.append(i[0])
+
+        anzahl_schacht.append(anz_schaechte)
+        entwart_list.append("Gesamt")
+
+        data = [
+            anzahl_schacht
+        ]
+
+        rows = ["Anzahl Schaechte"]
+
+        new_plot.table(cellText=data, colLabels=entwart_list, rowLabels=rows, loc='center')
+        new_plot.axis('off')
+        new_plot.set_title("Schächte", fontsize=10, fontweight='bold', pad=20)
+
+        # Tabelle anzeigen
+        self.canv_4.draw()
+
+
+        #Infos Anschlussleitungen
+        plt.figure(figure_4.number)
+        new_plot = figure_4.add_subplot(513)
+
+        # Tabelle mit Algemeinen Informationen
+
+        data = {}
+        entwart_list = []
+        sql = """select count() from anschlussleitungen"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        sql = """select sum(laenge) from anschlussleitungen"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        l_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        if l_haltungen_ges in ['NULL', 'None', None]:
+
+            l_haltungen_ges = 0
+
+
+        else:
+            l_haltungen_ges = round(l_haltungen_ges / 1000.0, 2)
+
+        sql = """select sum(laenge), entwart, count() from anschlussleitungen group by entwart """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        laenge = []
+        anzahl = []
+
+        for i in self.db_qkan.fetchall():
+            entwart_list.append(i[1])
+            laenge.append(round(i[0] / 1000., 2))
+            anzahl.append(i[2])
+
+        laenge.append(l_haltungen_ges)
+        anzahl.append(anz_haltungen_ges)
+        entwart_list.append("Gesamt")
+
+        data = [
+            laenge,
+            anzahl
+        ]
+
+        rows = ["km", "Anzahl"]
+
+        new_plot.table(cellText=data, colLabels=entwart_list, rowLabels=rows, loc='center')
+        new_plot.axis('off')
+        new_plot.set_title("Anschlussleitungen", fontsize=10, fontweight='bold', pad=20)
+        figure_4.tight_layout()
+        # Tabelle anzeigen
+        self.canv_4.draw()
+
+        #infos Sonderbauwerke
+
+        plt.figure(figure_4.number)
+        new_plot = figure_4.add_subplot(514)
+
+        # Tabelle mit Algemeinen Informationen
+
+        data = {}
+        entwart_list = []
+        sql = """select count() from haltungen"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_haltungen_ges = self.db_qkan.fetchall()[0][0]
+
+        sql = """select sum(laenge) from haltungen"""
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        l_haltungen_ges = round(self.db_qkan.fetchall()[0][0] / 1000, 2)
+
+        sql = """select sum(laenge), haltungstyp, count() from haltungen group by haltungstyp """
+        if not self.db_qkan.sql(sql):
+            return
+
+        laenge = []
+        anzahl = []
+
+        for i in self.db_qkan.fetchall():
+            entwart_list.append(i[1])
+            laenge.append(round(i[0] / 1000., 2))
+            anzahl.append(i[2])
+
+        laenge.append(l_haltungen_ges)
+        anzahl.append(anz_haltungen_ges)
+        entwart_list.append("Gesamt")
+
+        data = [
+            laenge,
+            anzahl
+        ]
+
+        rows = ["km", "Anzahl"]
+
+        new_plot.table(cellText=data, colLabels=entwart_list, rowLabels=rows, loc='center')
+        new_plot.set_title("Haltungstyp", fontsize=10, fontweight='bold', pad=20)
+        new_plot.axis('off')
+        figure_4.tight_layout()
+
+        # Tabelle anzeigen
+        self.canv_4.draw()
+
+
+        # Infos Schachttyp
+        plt.figure(figure_4.number)
+        new_plot = figure_4.add_subplot(515)
+
+        # Tabelle mit Algemeinen Informationen
+
+        entwart_list = []
+        sql = """select count() from schaechte """
+
+        if not self.db_qkan.sql(sql):
+            return
+
+        anz_schaechte = self.db_qkan.fetchall()[0][0]
+
+        sql = """select count(), schachttyp from schaechte group by schachttyp """
+        if not self.db_qkan.sql(sql):
+            return
+
+        anzahl = []
+
+        for i in self.db_qkan.fetchall():
+            entwart_list.append(i[1])
+            anzahl.append(i[0])
+
+        anzahl.append(anz_schaechte)
+        entwart_list.append("Gesamt")
+
+        data = [
+            anzahl
+        ]
+
+        columns = ("Gesamt",)
+        # columns ergänzen um die einzelnen entwässerungsarten
+        rows = ["Anzahl Schaechte"]
+        # rows mit den Daten aus der Datenbank
+        # fig, ax = new_plot.subplots()
+
+        new_plot.table(cellText=data, colLabels=entwart_list, rowLabels=rows, loc='center')
+        new_plot.axis('off')
+        new_plot.set_title("Schachttypen", fontsize=10, fontweight='bold', pad=20)
+
+        # Tabelle anzeigen
+        figure_4.tight_layout()
+        self.canv_4.draw()
+
 
         # anzahl teilgebiete
         sql = """select count() from teilgebiete"""
@@ -128,28 +307,23 @@ class Info:
 
         self.anz_teilgeb = self.db_qkan.fetchall()[0][0]
 
-        # anzahl lange haltungen
-        sql = """SELECT SUM(laenge) FROM haltungen"""
-
-        if not self.db_qkan.sql(sql):
-            return
-
-        self.laenge_haltungen = round(self.db_qkan.fetchall()[0][0],2)
-
     def handle_click(event, pie_wedges, run_script_callback):
-        # Check if the click event is within any of the pie slices
+        # TODO: Anpassen, sodass beim Anklicken der Grafik die jeweiligen Daten in QGIS ausgewählt werden!
         for wedge in pie_wedges:
             if wedge.contains_point([event.x, event.y]):
                 run_script_callback()
                 break
 
     def anzeigen(self):
+        def func(pct, allvals):
+            absolute = int(np.round(pct / 100. * np.sum(allvals)))
+            return f"{pct:.1f}%\n({absolute:d})"
         figure = self.fig
         figure.clear()
         plt.figure(figure.number)
-        new_plot = figure.add_subplot(231)
+        new_plot = figure.add_subplot(241)
 
-        #Darstellung Haltungen nach Entwässerungsart
+        #Darstellung Haltungen nach Entwässerungsart bezogen auf km
         data = {}
         entwart_list =[]
         sql = """select count() from haltungen"""
@@ -172,7 +346,7 @@ class Info:
         data = {k:None for k in entwart_list}
 
         for i in data.keys():
-            sql = f"""select count() from haltungen WHERE entwart = '{i}'"""
+            sql = f"""select sum(laenge) from haltungen WHERE entwart = '{i}'"""
 
             if not self.db_qkan.sql(sql):
                 return
@@ -183,11 +357,8 @@ class Info:
 
         names = list(data.keys())
         values = list(data.values())
-        # Plot
-        #new_plot.pie(values, labels=names, autopct='%1.1f%%')
-        #new_plot.set_title('Entwässerungsart')
 
-        wedges, texts, autotexts = new_plot.pie(values, labels=names, autopct='%1.1f%%')
+        wedges, texts, autotexts = new_plot.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot.set_title('Entwässerungsart')
 
 
@@ -222,9 +393,7 @@ class Info:
         #                 plt.draw()
         #                 #break
 
-        # Connect the click event to the handler
         #figure.canvas.mpl_connect('button_press_event', on_click)
-
         self.canv.draw()
 
         #Darstellungen Haltungen nach Baujahren
@@ -243,7 +412,7 @@ class Info:
         data = {k: None for k in entwart_list}
 
         for i in data.keys():
-            sql = f"""select count() from haltungen WHERE baujahr = '{i}'"""
+            sql = f"""select sum(laenge) from haltungen WHERE baujahr = '{i}'"""
 
             if not self.db_qkan.sql(sql):
                 return
@@ -255,17 +424,14 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot2 = figure.add_subplot(232)
-        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2 = figure.add_subplot(242)
+        new_plot2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot2.set_title('Baujahr')
-
         self.canv.draw()
-
 
 
         # Darstellungen Haltungen nach Durchmesser
 
-        data = {}
         entwart_list = []
         sql = """select DISTINCT hoehe from haltungen """
 
@@ -279,7 +445,7 @@ class Info:
         data = {k: None for k in entwart_list}
 
         for i in data.keys():
-            sql = f"""select count() from haltungen WHERE hoehe = '{i}'"""
+            sql = f"""select sum(laenge) from haltungen WHERE hoehe = '{i}'"""
 
             if not self.db_qkan.sql(sql):
                 return
@@ -288,20 +454,46 @@ class Info:
 
             data[i] = anz
 
-        names = list(data.keys())
-        values = list(data.values())
-        # Plot
-        new_plot2 = figure.add_subplot(233)
-        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
-        new_plot2.set_title('Durchmesser')
+        total = sum(data.values())
+        threshold = 0.1 * total
+        daten = {k: v for k, v in data.items() if v >= threshold}
+        sonstiges = {k: v for k, v in data.items() if v < threshold}
 
+        if sonstiges:
+            daten['Sonstiges'] = sum(sonstiges.values())
+
+        # Daten für das Kreisdiagramm
+        names = list(daten.keys())
+        values = list(daten.values())
+
+        new_plot2 = figure.add_subplot(243)
+        new_plot2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
+        new_plot2.set_title('Durchmesser DN')
+        new_plot3 = figure.add_subplot(244)
+
+        if 'Sonstiges' in daten:
+            fig, ax2 = plt.subplots()
+            sonstiges_names = list(sonstiges.keys())
+            sonstiges_values = list(sonstiges.values())
+
+            y_pos = np.arange(len(sonstiges_values))
+            box = new_plot3.get_position()
+            new_plot3.set_position([box.x0 + 0.05, box.y0, box.width * 0.5, box.height* 0.75])
+            new_plot3.barh(y_pos, sonstiges_values, align='center')
+            new_plot3.set_yticks(y_pos)
+            new_plot3.set_yticklabels(sonstiges_names)
+            new_plot3.invert_yaxis()
+            new_plot3.set_xlabel('Durchmesser')
+            new_plot3.set_title('Details der Kategorie "Sonstiges"')
+        new_plot2.autoscale()
+        new_plot3.autoscale()
         self.canv.draw()
 
-        #Darstellung nach Tiefenlage?
+        #TODO:Darstellung nach Tiefenlage?
 
 
         # Darstellungen Haltungen nach Material
-        data = {}
+
         entwart_list = []
         sql = """select DISTINCT material from haltungen """
 
@@ -315,7 +507,7 @@ class Info:
         data = {k: None for k in entwart_list}
 
         for i in data.keys():
-            sql = f"""select count() from haltungen WHERE material = '{i}'"""
+            sql = f"""select sum(laenge) from haltungen WHERE material = '{i}'"""
 
             if not self.db_qkan.sql(sql):
                 return
@@ -324,17 +516,41 @@ class Info:
 
             data[i] = anz
 
-        names = list(data.keys())
-        values = list(data.values())
-        # Plot
-        new_plot2 = figure.add_subplot(234)
-        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
-        new_plot2.set_title('Material')
+        total = sum(data.values())
+        threshold = 0.1 * total
+        daten = {k: v for k, v in data.items() if v >= threshold}
+        sonstiges = {k: v for k, v in data.items() if v < threshold}
 
+        if sonstiges:
+            daten['Sonstiges'] = sum(sonstiges.values())
+
+        # Daten für das Kreisdiagramm
+        names = list(daten.keys())
+        values = list(daten.values())
+
+        # Plot
+        new_plot2 = figure.add_subplot(245)
+        new_plot2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
+        new_plot2.set_title('Material')
+        new_plot3 = figure.add_subplot(246)
+        if 'Sonstiges' in daten:
+            sonstiges_names = list(sonstiges.keys())
+            sonstiges_values = list(sonstiges.values())
+
+            y_pos = np.arange(len(sonstiges_values))
+            box = new_plot3.get_position()
+            new_plot3.set_position([box.x0 + 0.05, box.y0, box.width * 0.5, box.height * 0.75])
+            new_plot3.barh(y_pos, sonstiges_values, align='center')
+            new_plot3.set_yticks(y_pos)
+            new_plot3.set_yticklabels(sonstiges_names)
+            new_plot3.invert_yaxis()
+            new_plot3.set_xlabel('Material')
+            new_plot3.set_title('Details der Kategorie "Sonstiges"')
+        new_plot2.autoscale()
+        new_plot3.autoscale()
         self.canv.draw()
 
         # Darstellungen Haltungen nach Profiltyp
-        data = {}
         entwart_list = []
         sql = """select DISTINCT profilnam from haltungen """
 
@@ -348,7 +564,7 @@ class Info:
         data = {k: None for k in entwart_list}
 
         for i in data.keys():
-            sql = f"""select count() from haltungen WHERE profilnam = '{i}'"""
+            sql = f"""select sum(laenge) from haltungen WHERE profilnam = '{i}'"""
 
             if not self.db_qkan.sql(sql):
                 return
@@ -360,21 +576,19 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot3 = figure.add_subplot(235)
-        new_plot3.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot3 = figure.add_subplot(247)
+        new_plot3.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot3.set_title('Profilart')
-
+        figure.tight_layout()
         self.canv.draw()
 
         #Haltungen nach Zustandsklasse (Farben nach Zustandsklassen anpassen)
         figure_3 = self.fig_3
         figure_3.clear()
         plt.figure(figure_3.number)
-        new_plot_2 = figure_3.add_subplot(221)
-
-        data = {}
+        new_plot_2 = figure_3.add_subplot(121)
         entwart_list = []
-        sql = """select count() from haltungen_untersucht"""
+        sql = """select sum(laenge) from haltungen_untersucht"""
 
         if not self.db_qkan.sql(sql):
             return
@@ -394,7 +608,7 @@ class Info:
 
         for i in data.keys():
             if i != 'None':
-                sql = f"""select count() from haltungen_untersucht WHERE MIN(max_ZD,max_ZS,max_ZB) = {i}"""
+                sql = f"""select sum(laenge) from haltungen_untersucht WHERE MIN(max_ZD,max_ZS,max_ZB) = {i}"""
 
                 if not self.db_qkan.sql(sql):
                     return
@@ -403,18 +617,22 @@ class Info:
 
                 data[i] = anz
 
-        del data['None']
+        #TODO: Verbesserung von Jörg einbauen
+        #sql = f"""select MIN(max_ZD,max_ZS,max_ZB) as minz, count() as anz from haltungen_untersucht WHERE GROUP BY minz"""
+
+        if 'None' in data.keys():
+            del data['None']
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot_2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot_2.set_title('Zustandsklasse Haltungen')
-
+        figure_3.tight_layout()
         self.canv_3.draw()
+
 
         #Zustandsdaten Schächte
 
-        data = {}
         entwart_list = []
         sql = """select count() from schaechte_untersucht"""
 
@@ -444,24 +662,24 @@ class Info:
                 anz = self.db_qkan.fetchall()[0][0]
 
                 data[i] = anz
-
-        del data['None']
+        if 'None' in data.keys():
+            del data['None']
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot_2 = figure_3.add_subplot(222)
-        new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot_2 = figure_3.add_subplot(122)
+        new_plot_2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot_2.set_title('Zustandsklasse Schächte')
-
+        figure_3.tight_layout()
         self.canv_3.draw()
+
 
         # Darstellung Schächte nach Entwässerungsart
         figure_2 = self.fig_2
         figure_2.clear()
         plt.figure(figure_2.number)
-        new_plot_2 = figure_2.add_subplot(231)
+        new_plot_2 = figure_2.add_subplot(131)
 
-        data = {}
         entwart_list = []
         sql = """select count() from schaechte"""
 
@@ -494,9 +712,9 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot_2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot_2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot_2.set_title('Entwässerungsart')
-
+        figure_2.tight_layout()
         self.canv_2.draw()
 
         # Darstellungen Schächte nach Baujahren
@@ -526,15 +744,14 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot2 = figure_2.add_subplot(232)
-        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2 = figure_2.add_subplot(132)
+        new_plot2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot2.set_title('Baujahr')
-
+        figure_2.tight_layout()
         self.canv_2.draw()
 
-        # Darstellung Schächte nach Material
 
-        data = {}
+        # Darstellung Schächte nach Material
         entwart_list = []
         sql = """select DISTINCT material from schaechte """
 
@@ -560,10 +777,10 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot2 = figure_2.add_subplot(233)
-        new_plot2.pie(values, labels=names, autopct='%1.1f%%')
+        new_plot2 = figure_2.add_subplot(133)
+        new_plot2.pie(values, labels=names, autopct=lambda pct: func(pct, values))
         new_plot2.set_title('Material')
-
+        figure_2.tight_layout()
         self.canv_2.draw()
 
     def _suewvo(self):
