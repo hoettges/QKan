@@ -784,6 +784,12 @@ class ZustandConfig(ClassObject):
     db: str = ""
     date: str = ""
     showschaedencolumns: int = 2
+    abstand_zustandstexte: float = 0.35
+    abstand_zustandsbloecke: float = 0.45
+    abstand_knoten_anf: float = 0.
+    abstand_knoten_1: float = 1.0
+    abstand_knoten_2: float = 1.5
+    abstand_knoten_end: float = 4.0
     kriterienschaeden: dict = {'haltung': '[ABC][A-E][A-Z]', 'schacht': '[D][A-E][A-Z]'}
 
 

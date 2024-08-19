@@ -171,6 +171,15 @@ def run(dbcon: DBConnection) -> bool:
             "zu Tabelle 'untersuchdat_schacht' fehlgeschlagen"
         )
 
+    sqls = [
+        """SELECT AddGeometryColumn('untersuchdat_schacht','geom',{},'LINESTRING',2);""".format(QKan.config.epsg),
+        """SELECT CreateSpatialIndex('untersuchdat_schacht','geom')""",
+    ]
+    for sql in sqls:
+        if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
+                              f"Ergänzen des Geo-Attributs geom(LINESTRING)"):
+            return False
+
     if not dbcon.alter_table(
         "haltungen",
         [

@@ -26,7 +26,7 @@ def meldung(title: str, text: str) -> None:
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), tag="QKan", level=Qgis.Info
     )
-    QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
+    # QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
 def warnung(title: str, text: str, duration: int = -1) -> None:
@@ -37,10 +37,10 @@ def warnung(title: str, text: str, duration: int = -1) -> None:
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), tag="QKan", level=Qgis.Warning
     )
-    QKan.instance.iface.openMessageLog()
-    QKan.instance.iface.messageBar().pushMessage(
-        title, text, duration=duration, level=Qgis.Warning
-    )
+    # QKan.instance.iface.openMessageLog()
+    # QKan.instance.iface.messageBar().pushMessage(
+    #     title, text, duration=duration, level=Qgis.Warning
+    # )
 
 
 def fortschritt(text: str, prozent: float = 0) -> None:
@@ -61,11 +61,10 @@ def fehlermeldung(title: str, text: str = "") -> None:
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), tag="QKan", level=Qgis.Critical
     )
-    QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
+    # QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
 
 
 # Allgemeine Funktionen
-
 
 def get_layer_config_from_qgs_template(
     qgsxml: ElementTree, layername: str

@@ -574,8 +574,8 @@ def createdbtables(
             kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP
             )""",
-        """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(epsg),
-        """SELECT CreateSpatialIndex('Untersuchdat_schacht','geop')""",
+        """SELECT AddGeometryColumn('untersuchdat_schacht','geom',{},'LINESTRING',2);""".format(epsg),
+        """SELECT CreateSpatialIndex('untersuchdat_schacht','geom')""",
     ]
     for sql in sqls:
         try:

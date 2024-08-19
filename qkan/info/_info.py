@@ -387,8 +387,8 @@ class Info:
             return
 
         for i in self.db_qkan.fetchall():
-            i = str(i[0])
-            entwart_list.append(i)
+            i1 = str(i[0])
+            entwart_list.append(i1)
 
         data = {k: None for k in entwart_list}
 

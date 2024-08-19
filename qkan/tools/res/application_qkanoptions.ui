@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>483</width>
-    <height>640</height>
+    <height>841</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,7 +28,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>600</y>
+     <y>780</y>
      <width>441</width>
      <height>31</height>
     </rect>
@@ -155,9 +155,9 @@
    <widget class="QLineEdit" name="tf_fangradius">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>229</x>
       <y>30</y>
-      <width>70</width>
+      <width>51</width>
       <height>20</height>
      </rect>
     </property>
@@ -200,7 +200,7 @@
      <string>Wert auf Standardwert (0,10 m) zurücksetzen</string>
     </property>
     <property name="text">
-     <string>Standwert</string>
+     <string>Standard</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -284,15 +284,15 @@
      <string>Wert auf Standardwert (0,50 m²) zurücksetzen</string>
     </property>
     <property name="text">
-     <string>Standwert</string>
+     <string>Standard</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="tf_mindestflaeche">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>229</x>
       <y>60</y>
-      <width>70</width>
+      <width>51</width>
       <height>20</height>
      </rect>
     </property>
@@ -311,7 +311,7 @@
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Mindestgröße zur Berücksichtigung von Flächen</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lf_warning">
+   <widget class="QLabel" name="lf_warning1">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -321,7 +321,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Warnung...</string>
     </property>
    </widget>
   </widget>
@@ -329,7 +329,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>130</y>
+     <y>310</y>
      <width>441</width>
      <height>61</height>
     </rect>
@@ -393,7 +393,7 @@
      <string>Wert auf Standardwert (1000) zurücksetzen</string>
     </property>
     <property name="text">
-     <string>Standwert</string>
+     <string>Standard</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
@@ -432,7 +432,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>200</y>
+     <y>380</y>
      <width>441</width>
      <height>71</height>
     </rect>
@@ -510,7 +510,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>280</y>
+     <y>460</y>
      <width>441</width>
      <height>71</height>
     </rect>
@@ -550,7 +550,7 @@ Haltungen pro Strang:</string>
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsProjectionSelectionWidget" name="qsw_epsg" native="true">
+   <widget class="QgsProjectionSelectionWidget" name="qsw_epsg">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -565,7 +565,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>360</y>
+     <y>540</y>
      <width>441</width>
      <height>121</height>
     </rect>
@@ -691,7 +691,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>490</y>
+     <y>670</y>
      <width>441</width>
      <height>91</height>
     </rect>
@@ -772,6 +772,557 @@ Haltungen pro Strang:</string>
     </property>
     <property name="text">
      <string>...</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_8">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>441</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Textpositionen Zustanddaten</string>
+   </property>
+   <widget class="QLineEdit" name="tf_abstand_zustandstexte">
+    <property name="geometry">
+     <rect>
+      <x>229</x>
+      <y>30</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abstand der Zustandstexte zueinander. Empfohlener Wert: 0.35&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Abstand der Zustandstexte zueinander</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_abstand_zustandstexte_default">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>30</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Werte auf Standard zurücksetzen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Werte auf Standard zurücksetzen</string>
+    </property>
+    <property name="text">
+     <string>Standard</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>181</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>Abstand Zustandstexte:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_unit_fangradius_2">
+    <property name="geometry">
+     <rect>
+      <x>285</x>
+      <y>30</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_abstand_zustandsbloecke">
+    <property name="geometry">
+     <rect>
+      <x>229</x>
+      <y>60</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abstand von Zustandstextblöcken zueinander. Empfohlener Wert (ca. 0.1 größer als Abstand Zustandstexte): 0.45&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Abstand von Zustandstextblöcken zueinander</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>191</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>Abstand zwischen Textblöcken:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_unit_fangradius_3">
+    <property name="geometry">
+     <rect>
+      <x>285</x>
+      <y>60</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_abstand_zustandsbloecke_default">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>60</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Werte auf Standard zurücksetzen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Werte auf Standard zurücksetzen</string>
+    </property>
+    <property name="text">
+     <string>Standard</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_warning_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Warnung...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_abstand_knoten_default">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>130</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Werte auf Standard zurücksetzen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Werte auf Standard zurücksetzen</string>
+    </property>
+    <property name="text">
+     <string>Standard</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>281</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <italic>true</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>Verbindungslinie: Abstände zum Objekt:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_unit_fangradius_4">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>130</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_abstand_knoten_anf">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>130</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbindungslinie Zustandstext zum Objekt: Abstand Linienstart&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Verbindungslinie Zustandstext zum Objekt: Abstand Linienstart</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_abstand_knoten_1">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>130</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbindungslinie Zustandstext zum Objekt: Abstand 1. Knick&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Verbindungslinie Zustandstext zum Objekt: Abstand 1. Knick</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_abstand_knoten_2">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>130</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbindungslinie Zustandstext zum Objekt: Abstand 2. Knick&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Verbindungslinie Zustandstext zum Objekt: Abstand 2. Knick</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_abstand_knoten_end">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>130</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbindungslinie Zustandstext zum Objekt: Abstand Linienende&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Verbindungslinie Zustandstext zum Objekt: Abstand Linienende</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>110</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>Ansatz</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>110</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>1. Knick</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_14">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>110</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>2. Knick</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>110</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>Ende</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

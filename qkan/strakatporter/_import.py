@@ -1740,19 +1740,10 @@ class ImportTask:
                 SELECT n1 AS id, kurz, text AS name
                 FROM t_reflists
                 WHERE tabtyp = 'strasse'
-            )
-            INSERT INTO schaechte_untersucht (
-                schnam, durchm, baujahr, 
-                untersuchtag, untersucher,
-                wetter, strasse,
-                bewertungsart, bewertungstag, auftragsbezeichnung,
-                datenart, max_ZD, max_ZB, max_ZS, 
-                kommentar, geop)
-            SELECT
-                CASE WHEN stk.schacht_oben = ''
-                THEN printf('strakatnr_%1', stk.nummer)
-                ELSE stk.schacht_oben
-                END                                         AS schnam,
+            ),
+            schunters AS (
+            SELECT                                              -- Schacht oben
+                stk.schacht_oben                            AS schnam,
                 1.0                                         AS durchm,
                 stk.baujahr                                 AS baujahr,
                 stb.datum                                   AS untersuchtag,
@@ -1787,11 +1778,73 @@ class ImportTask:
                 AND schnam Is Not Null
                 AND stk.rw_gerinne_o Is Not Null
                 AND stk.hw_gerinne_o Is Not Null
+                AND substr(stb.atv_kuerzel, 1, 1) = 'D' AND substr(stb.atv_kuerzel, 2, 1) <> '-' 
+                AND (   (stb.untersuchungsrichtung = 1 AND stb.station_untersucher < 0.01) 
+                     OR (stb.untersuchungsrichtung = 0 AND stb.station_untersucher > stk.laenge * 0.9)
+                    ) 
+            UNION
+            SELECT                                              -- Schacht unten 
+                stk.schacht_unten                           AS schnam,
+                1.0                                         AS durchm,
+                stk.baujahr                                 AS baujahr,
+                stb.datum                                   AS untersuchtag,
+                stb.untersucher                             AS untersucher,
+                CASE WHEN instr(lower(stb.wetter), 'trock') + 
+                           instr(lower(stb.wetter), 'kein Nied') > 0 THEN 1
+                      WHEN instr(lower(stb.wetter), 'reg')       > 0 THEN 2
+                      WHEN instr(lower(stb.wetter), 'fros') +
+                           instr(lower(stb.wetter), 'chnee')     > 0 THEN 3
+                      ELSE NULL END 		    AS wetter,
+                CASE WHEN INSTR(strassen.name,' ') > 0
+                    THEN substr(strassen.name, INSTR(strassen.name,' ')+1)
+                    ELSE strassen.name
+                END                                         AS strasse,
+                stb.bewertungsart                           AS bewertungsart,
+                NULL                                        AS bewertungstag,
+                NULL                                        AS auftragsbezeichnung,
+                'DWA'                                       AS datenart,
+                stb.skdichtheit                             AS max_ZD,
+                stb.skbetriebssicherheit                    AS max_ZB,
+                stb.skstandsicherheit                       AS max_ZS,
+                'QKan-STRAKAT-Import'                       AS kommentar,
+                Makepoint(stk.rw_gerinne_o, stk.hw_gerinne_o, :epsg)  AS geop
+            FROM
+                t_strakatkanal                  AS stk
+                LEFT JOIN strassen                      ON stk.strassennummer = strassen.id
+                JOIN t_strakatberichte          AS stb  ON stb.strakatid = stk.strakatid
+            WHERE
+                    stk.schachtnummer <> 0
+                AND stb.geloescht = 0
+                AND stk.schachtart <> 0                 -- keine Knickpunkte
+                AND schnam Is Not Null
+                AND stk.rw_gerinne_o Is Not Null
+                AND stk.hw_gerinne_o Is Not Null
+                AND substr(stb.atv_kuerzel, 1, 1) = 'D' AND substr(stb.atv_kuerzel, 2, 1) <> '-' 
+                AND (   (stb.untersuchungsrichtung = 0 AND stb.station_untersucher < 0.01) 
+                     OR (stb.untersuchungsrichtung = 1 AND stb.station_untersucher > stk.laenge * 0.9)
+                    ) 
+            )
+            INSERT INTO schaechte_untersucht (
+                schnam, durchm, baujahr, 
+                untersuchtag, untersucher,
+                wetter, strasse,
+                bewertungsart, bewertungstag, auftragsbezeichnung, datenart,
+                max_ZD, max_ZB, max_ZS,
+                kommentar, geop)
+            SELECT 
+                schnam, durchm, baujahr, 
+                untersuchtag, untersucher,
+                wetter, strasse,
+                bewertungsart, bewertungstag, auftragsbezeichnung, datenart, 
+                min(max_ZD) AS max_ZD, min(max_ZB) AS max_ZB, min(max_ZS) AS max_ZS, 
+                kommentar, geop
+            FROM schunters
+            GROUP BY schnam, untersuchtag
         """
 
         params = {"epsg": self.epsg}
         if not self.db_qkan.sql(sql, "strakat_import Schächte untersucht", params):
-            raise Exception(f"{self.__class__.__name__}: Fehler bei ")
+            raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Schächte untersucht")
 
         self.db_qkan.commit()
 
@@ -1801,6 +1854,93 @@ class ImportTask:
         """Import der Schachtschäden aus der STRAKAT-Tabelle t_strakatberichte"""
 
         sql = """
+            WITH untsch AS (
+                SELECT                                              -- Schacht oben
+                    stk.schacht_oben                AS untersuchsch,
+                    NULL                            AS id, 
+                    stb.datum                       AS untersuchtag,
+                    stb.bandnr                      AS bandnr,
+                    printf('%02u:%02u:%02u', 
+                        (videozaehler % 1000000 - (videozaehler % 10000)) / 10000 % 60, 
+                        (videozaehler % 10000 - (videozaehler % 100)) / 100 % 60, 
+                        videozaehler % 100 % 60)    AS videozaehler,
+                    NULL                            AS timecode,
+                    stb.atv_langtext                AS langtext,
+                    stb.atv_kuerzel                 AS kuerzel,
+                    stb.charakt1                    AS charakt1,
+                    stb.charakt2                    AS charakt2,                
+                    stb.quantnr1                    AS quantnr1,
+                    stb.quantnr2                    AS quantnr2,                
+                    stb.streckenschaden             AS streckenschaden,
+                    stb.fortsetzung                 AS streckenschaden_lfdnr,
+                    stb.pos_von                     AS pos_von, 
+                    stb.pos_bis                     AS pos_bis,
+                    NULL                            AS foto_dateiname,
+                    NULL                            AS film_dateiname,
+                    NULL                            AS ordner,
+                    NULL                            AS ordner_video,
+                    NULL                            AS filmtyp,
+                    NULL                            AS video_start,
+                    NULL                            AS video_ende,
+                    stb.skdichtheit                 AS ZD,
+                    stb.skbetriebssicherheit        AS ZB,
+                    stb.skstandsicherheit           AS ZS,
+                    stb.kommentar                   AS kommentar
+                FROM
+                    t_strakatkanal          AS stk
+                    JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
+                WHERE stk.laenge > 0.045
+                  AND stk.schachtnummer <> 0
+                  AND stb.geloescht = 0
+                  AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
+                  AND substr(stb.atv_kuerzel, 1, 1) = 'D' AND substr(stb.atv_kuerzel, 2, 1) <> '-' 
+                  AND (   (stb.untersuchungsrichtung = 1 AND stb.station_untersucher < 0.01) 
+                       OR (stb.untersuchungsrichtung = 0 AND stb.station_untersucher > stk.laenge * 0.9)
+                      ) 
+                UNION
+                SELECT                                              -- Schacht unten
+                    stk.schacht_unten               AS untersuchsch,
+                    NULL                            AS id, 
+                    stb.datum                       AS untersuchtag,
+                    stb.bandnr                      AS bandnr,
+                    printf('%02u:%02u:%02u', 
+                        (videozaehler % 1000000 - (videozaehler % 10000)) / 10000 % 60, 
+                        (videozaehler % 10000 - (videozaehler % 100)) / 100 % 60, 
+                        videozaehler % 100 % 60)    AS videozaehler,
+                    NULL                            AS timecode,
+                    stb.atv_langtext                AS langtext,
+                    stb.atv_kuerzel                 AS kuerzel,
+                    stb.charakt1                    AS charakt1,
+                    stb.charakt2                    AS charakt2,                
+                    stb.quantnr1                    AS quantnr1,
+                    stb.quantnr2                    AS quantnr2,                
+                    stb.streckenschaden             AS streckenschaden,
+                    stb.fortsetzung                 AS streckenschaden_lfdnr,
+                    stb.pos_von                     AS pos_von, 
+                    stb.pos_bis                     AS pos_bis,
+                    NULL                            AS foto_dateiname,
+                    NULL                            AS film_dateiname,
+                    NULL                            AS ordner,
+                    NULL                            AS ordner_video,
+                    NULL                            AS filmtyp,
+                    NULL                            AS video_start,
+                    NULL                            AS video_ende,
+                    stb.skdichtheit                 AS ZD,
+                    stb.skbetriebssicherheit        AS ZB,
+                    stb.skstandsicherheit           AS ZS,
+                    stb.kommentar                   AS kommentar
+                FROM
+                    t_strakatkanal          AS stk
+                    JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
+                WHERE stk.laenge > 0.045
+                  AND stk.schachtnummer <> 0
+                  AND stb.geloescht = 0
+                  AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
+                  AND substr(stb.atv_kuerzel, 1, 1) = 'D' AND substr(stb.atv_kuerzel, 2, 1) <> '-' 
+                  AND (   (stb.untersuchungsrichtung = 0 AND stb.station_untersucher < 0.01) 
+                       OR (stb.untersuchungsrichtung = 1 AND stb.station_untersucher > stk.laenge * 0.9)
+                      ) 
+            )
             INSERT INTO untersuchdat_schacht (
                 untersuchsch,
                 id, untersuchtag,
@@ -1812,44 +1952,17 @@ class ImportTask:
                 filmtyp, video_start, video_ende,
                 ZD, ZB, ZS, kommentar
             )
-            SELECT
-                stk.schacht_oben                AS untersuchsch,
-                NULL                            AS id, 
-                stb.datum                       AS untersuchtag,
-                stb.bandnr                      AS bandnr,
-                printf('%02u:%02u:%02u', 
-                    (videozaehler % 1000000 - (videozaehler % 10000)) / 10000 % 60, 
-                    (videozaehler % 10000 - (videozaehler % 100)) / 100 % 60, 
-                    videozaehler % 100 % 60)    AS videozaehler,
-                NULL                            AS timecode,
-                stb.atv_langtext                AS langtext,
-                stb.atv_kuerzel                 AS kuerzel,
-                stb.charakt1                    AS charakt1,
-                stb.charakt2                    AS charakt2,                
-                stb.quantnr1                    AS quantnr1,
-                stb.quantnr2                    AS quantnr2,                
-                stb.streckenschaden             AS streckenschaden,
-                stb.fortsetzung                 AS streckenschaden_lfdnr,
-                stb.pos_von                     AS pos_von, 
-                stb.pos_bis                     AS pos_bis,
-                NULL                            AS foto_dateiname,
-                NULL                            AS film_dateiname,
-                NULL                            AS ordner,
-                NULL                            AS ordner_video,
-                NULL                            AS filmtyp,
-                NULL                            AS video_start,
-                NULL                            AS video_ende,
-                stb.skdichtheit                 AS ZD,
-                stb.skbetriebssicherheit        AS ZB,
-                stb.skstandsicherheit           AS ZS,
-                stb.kommentar                   AS kommentar
-            FROM
-                t_strakatkanal          AS stk
-                JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
-            WHERE stk.laenge > 0.045 AND
-                  stk.schachtnummer <> 0 AND
-                  stb.geloescht = 0 AND
-                  stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
+            SELECT DISTINCT
+                untersuchsch,
+                id, untersuchtag,
+                bandnr, videozaehler, timecode, langtext, 
+                kuerzel, charakt1, charakt2, quantnr1, quantnr2,
+                streckenschaden, streckenschaden_lfdnr,
+                pos_von, pos_bis,
+                foto_dateiname, film_dateiname, ordner, ordner_video,
+                filmtyp, video_start, video_ende,
+                ZD, ZB, ZS, kommentar
+            FROM untsch 
         """
 
         params = {"epsg": self.epsg}
@@ -1857,6 +1970,8 @@ class ImportTask:
             raise Exception(f"{self.__class__.__name__}: Fehler bei ")
 
         self.db_qkan.commit()
+
+        self.db_qkan.setschadenstexte_schaechte()
 
         return True
 
@@ -1920,7 +2035,9 @@ class ImportTask:
                 JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
             WHERE  stk.laenge > 0.045 AND
                    stk.schachtnummer <> 0 AND
-                   stb.geloescht = 0
+                   stb.geloescht = 0 AND
+                   stb.hausanschlid = '00000000-0000-0000-0000-000000000000' AND
+                   (substr(stb.atv_kuerzel, 1, 1) <> 'D' OR substr(stb.atv_kuerzel, 2, 1) = '-') 
             GROUP BY stk.strakatid, stb.datum
         """
 
@@ -1988,7 +2105,8 @@ class ImportTask:
             WHERE stk.laenge > 0.045 AND
                   stk.schachtnummer <> 0 AND
                   stb.geloescht = 0 AND
-                  stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
+                  stb.hausanschlid = '00000000-0000-0000-0000-000000000000' AND
+                  (substr(stb.atv_kuerzel, 1, 1) <> 'D' OR substr(stb.atv_kuerzel, 2, 1) = '-')
         """
 
         if not self.db_qkan.sql(sql, "strakat_import Haltungsschäden"):

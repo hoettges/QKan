@@ -268,6 +268,18 @@ class QKanTools(QKanPlugin):
         # Fangradius für Anfang der Anbindungslinie
         self.dlgop.tf_fangradius.setText(str(QKan.config.fangradius))
 
+        # Abstand zwischen Zustandstexten
+        self.dlgop.tf_abstand_zustandstexte.setText(str(QKan.config.zustand.abstand_zustandstexte))
+
+        # Abstand zwischen Blöcken von Zustandstexten
+        self.dlgop.tf_abstand_zustandsbloecke.setText(str(QKan.config.zustand.abstand_zustandsbloecke))
+
+        # Stützstellen der Verbindungslinie zum Zustandstext
+        self.dlgop.tf_abstand_knoten_anf.setText(str(QKan.config.zustand.abstand_knoten_anf))
+        self.dlgop.tf_abstand_knoten_1.setText(str(QKan.config.zustand.abstand_knoten_1))
+        self.dlgop.tf_abstand_knoten_2.setText(str(QKan.config.zustand.abstand_knoten_2))
+        self.dlgop.tf_abstand_knoten_end.setText(str(QKan.config.zustand.abstand_knoten_end))
+
         # Mindestflächengröße
         self.dlgop.tf_mindestflaeche.setText(str(QKan.config.mindestflaeche))
 
@@ -309,6 +321,12 @@ class QKanTools(QKanPlugin):
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
             fangradius: float = float(self.dlgop.tf_fangradius.text())
+            abstand_zustandstexte: float = float(self.dlgop.tf_abstand_zustandstexte.text())
+            abstand_zustandsbloecke: float = float(self.dlgop.tf_abstand_zustandsbloecke.text())
+            abstand_knoten_anf: float = float(self.dlgop.tf_abstand_knoten_anf.text())
+            abstand_knoten_1: float = float(self.dlgop.tf_abstand_knoten_1.text())
+            abstand_knoten_2: float = float(self.dlgop.tf_abstand_knoten_2.text())
+            abstand_knoten_end: float = float(self.dlgop.tf_abstand_knoten_end.text())
             mindestflaeche: float = float(self.dlgop.tf_mindestflaeche.text())
             max_loops: int = int(self.dlgop.tf_max_loops.text())
             logeditor: str = self.dlgop.tf_logeditor.text().strip()
@@ -328,6 +346,12 @@ class QKanTools(QKanPlugin):
             if epsg:
                 QKan.config.epsg = epsg
             QKan.config.fangradius = fangradius
+            QKan.config.zustand.abstand_zustandstexte = abstand_zustandstexte
+            QKan.config.zustand.abstand_zustandsbloecke = abstand_zustandsbloecke
+            QKan.config.zustand.abstand_knoten_anf = abstand_knoten_anf
+            QKan.config.zustand.abstand_knoten_1 = abstand_knoten_1
+            QKan.config.zustand.abstand_knoten_2 = abstand_knoten_2
+            QKan.config.zustand.abstand_knoten_end = abstand_knoten_end
             QKan.config.max_loops = max_loops
             QKan.config.mindestflaeche = mindestflaeche
             QKan.config.tools.logeditor = logeditor

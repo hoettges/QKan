@@ -15,24 +15,24 @@ logger = get_logger("QKan.tools.zeige_schaeden")
 
 class ShowHaltungsschaeden(QDialog, form_class):
     """Zeigt Haltungsschäden an"""
-    def __init__(self, haltnam: str, schoben: str, schunten: str, untersuch_id: int = None):
+    def __init__(self, haltnam: str, schoben: str, schunten: str, untersuchtag: str = None):
         super(ShowHaltungsschaeden, self).__init__()
 
         self.haltnam = haltnam
         self.schoben = schoben
         self.schunten = schunten
-        self.untersuch_id = untersuch_id
+        self.untersuchtag = untersuchtag
         self.showschaedencolumns = QKan.config.zustand.showschaedencolumns      # evtl. ergänzen: Eingabe unter Optionen
 
-        self.setupUi(self)
+        # self.setupUi(self)
 
         self.iface = QKan.instance.iface
 
         self.show_selected()
 
-        self.showlist()
+        # self.showlist()
 
-        self.pb_showAll.clicked.connect(self.show_all)
+        # self.pb_showAll.clicked.connect(self.show_all)
 
     def show_all(self):
         """Aktualisiert die Schadensliste"""
@@ -253,7 +253,10 @@ class ShowHaltungsschaeden(QDialog, form_class):
         splitstr = ' AND untersuchhal = '
         layername = 'Untersuchungsdaten Haltung'
         project = QgsProject.instance()
-        layer = project.mapLayersByName(layername)[0]
+        if project.mapLayersByName(layername):
+            layer = project.mapLayersByName(layername)[0]
+        else:
+            return False
         # layer = iface.activeLayer()
         # layer.source()
         ren = layer.renderer()
@@ -278,16 +281,72 @@ class ShowHaltungsschaeden(QDialog, form_class):
             else:
                 baserule = None
                 logger.error('QKan-Fehler in ruleexpressions')
-            logger.info(f'Ausgewählte Haltung_untersucht: {self.untersuch_id}')
-            if self.untersuch_id is None:
+            # logger.info(f"Ausgewählte Haltung_untersucht, untersuchtag= '{self.untersuchtag}'")
+            if self.untersuchtag is None:
                 filter = baserule
             else:
-                filter = baserule + splitstr + f"'{self.haltnam}' AND ID = {self.untersuch_id}"
+                filter = baserule + splitstr + f"'{self.haltnam}' AND untersuchtag = '{self.untersuchtag}'"
             rule.setFilterExpression(filter)
             root_rule.appendChild(rule)
         #    layer.setRenderer(renderer)                            # notwendig?
         layer.triggerRepaint()
         self.iface.layerTreeView().refreshLayerSymbology(layer.id())
+
+class ShowSchachtschaeden():
+    """Zeigt Schachtschäden an"""
+    def __init__(self, schnam: str, untersuchtag: str = None):
+
+        self.schnam = schnam
+        self.untersuchtag = untersuchtag
+
+        self.iface = QKan.instance.iface
+
+        self.show_selected()
+
+    def show_selected(self):
+        """Setzt einen Filter auf ausgewählte Schaechte_untersucht"""
+        splitstr = ' AND untersuchsch = '
+        layername = 'Untersuchungsdaten Schacht'
+        project = QgsProject.instance()
+        if project.mapLayersByName(layername):
+            layer = project.mapLayersByName(layername)[0]
+        else:
+            return False
+        # layer = iface.activeLayer()
+        # layer.source()
+        ren = layer.renderer()
+        if ren.type() != 'RuleRenderer':
+            logger.warning("Fehler: Der Layer 'Schaechte untersucht' enthält keine regelbasierenden Symbole"
+                           "\nAktualisieren Sie das Projekt oder bearbeiten den Layer entsprechend.")
+            return False
+        try:
+            root_rule = ren.rootRule()
+        except BaseException as e:
+            logger.error("Fehler: Der Layer 'Schaechte untersucht' enthält keine regelbasierenden Symbole")
+            raise Exception(f"{self.__class__.__name__}")
+
+        for child in root_rule.children():
+            rule = root_rule.takeChild(child)
+            kat = rule.filterExpression()
+            ruleexpressions = kat.split(splitstr, 1)
+            if len(ruleexpressions) == 2:
+                baserule, fil = ruleexpressions
+            elif  len(ruleexpressions) == 1:
+                baserule = ruleexpressions[0]
+            else:
+                baserule = None
+                logger.error('QKan-Fehler in ruleexpressions')
+            # logger.info(f"Ausgewählte Schaechte_untersucht, untersuchtag= '{self.untersuchtag}'")
+            if self.untersuchtag is None:
+                filter = baserule
+            else:
+                filter = baserule + splitstr + f"'{self.schnam}' AND untersuchtag = '{self.untersuchtag}'"
+            rule.setFilterExpression(filter)
+            root_rule.appendChild(rule)
+        #    layer.setRenderer(renderer)                            # notwendig?
+        layer.triggerRepaint()
+        self.iface.layerTreeView().refreshLayerSymbology(layer.id())
+
 
 if __name__ == '__main__':
     form = ShowHaltungsschaeden('74115531', '74115531', '74115529')
