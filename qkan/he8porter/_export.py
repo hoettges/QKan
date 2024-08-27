@@ -217,7 +217,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.he_nr AS planungsstatus, 
                         coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                        kommentar AS kommentar,
+                        schaechte.kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
                       LEFT JOIN simulationsstatus AS st
@@ -258,7 +258,7 @@ class ExportTask:
                       schaechte.deckelhoehe AS hoehevollfuellung,
                       st.he_nr AS planungsstatus, 
                       coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                      kommentar AS kommentar,
+                      schaechte.kommentar AS kommentar,
                       SetSrid(schaechte.geop, -1) AS geometry
                     FROM schaechte
                     LEFT JOIN simulationsstatus AS st
@@ -312,7 +312,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.he_nr AS planungsstatus, 
                         coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                        kommentar AS kommentar,
+                        schaechte.kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS Geometry
                       FROM schaechte
                       LEFT JOIN simulationsstatus AS st
@@ -354,7 +354,7 @@ class ExportTask:
                       schaechte.deckelhoehe AS scheitelhoehe,
                       st.he_nr AS planungsstatus, 
                       coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                      kommentar AS kommentar,
+                      schaechte.kommentar AS kommentar,
                       SetSrid(schaechte.geop, -1) AS Geometry
                     FROM schaechte
                     LEFT JOIN simulationsstatus AS st

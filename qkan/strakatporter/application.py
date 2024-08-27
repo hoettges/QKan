@@ -58,6 +58,7 @@ class StrakatPorter(QKanPlugin):
             QKan.config.check_import.hausanschluesse = self.import_dlg.cb_hausanschluesse.isChecked()
             QKan.config.check_import.schachtschaeden = self.import_dlg.cb_schachtschaeden.isChecked()
             QKan.config.check_import.haltungsschaeden = self.import_dlg.cb_haltungsschaeden.isChecked()
+            QKan.config.check_import.hausanschlussschaeden = self.import_dlg.cb_hausanschlussschaeden.isChecked()
 
             QKan.config.strakat.maxdiff = float(self.import_dlg.tf_maxdist.text())
 

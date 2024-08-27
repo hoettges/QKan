@@ -86,12 +86,14 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
         self.button_box.helpRequested.connect(self.click_help)
-        #self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
-        #self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
+        self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
+        self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.strakat.import_dir)
+        self.tf_ordnerbild.setText(QKan.config.xml.ordner_bild)
+        self.tf_ordnervideo.setText(QKan.config.xml.ordner_video)
         # noinspection PyCallByClass,PyArgumentList
         self.pw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
@@ -103,6 +105,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_hausanschluesse.setChecked(QKan.config.check_import.hausanschluesse)
         self.cb_schachtschaeden.setChecked(QKan.config.check_import.schachtschaeden)
         self.cb_haltungsschaeden.setChecked(QKan.config.check_import.haltungsschaeden)
+        self.cb_hausanschlussschaeden.setChecked(QKan.config.check_import.hausanschlussschaeden)
 
         #self.cb_testmodus.setChecked(False)         # Standard: deaktiviert, vorher QKan.config.check_import.testmodus
 

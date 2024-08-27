@@ -37,6 +37,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
     pb_abstand_knoten_1Default: QPushButton
     pb_abstand_knoten_2Default: QPushButton
     pb_abstand_knoten_endDefault: QPushButton
+    pb_versatz_anschlusstexte: QPushButton
     pb_max_loopsDefault: QPushButton
     pb_mindestflaecheDefault: QPushButton
     pb_openLogfile: QPushButton
@@ -56,6 +57,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
     tf_abstand_knoten_1: QLineEdit
     tf_abstand_knoten_2: QLineEdit
     tf_abstand_knoten_end: QLineEdit
+    tf_versatz_anschlusstexte: QLineEdit
     tf_logeditor: QLineEdit
     tf_max_loops: QLineEdit
     tf_mindestflaeche: QLineEdit
@@ -95,6 +97,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
         self.tf_abstand_knoten_1.setText("1.0")
         self.tf_abstand_knoten_2.setText("1.5")
         self.tf_abstand_knoten_end.setText("4.0")
+        self.tf_versatz_anschlusstexte.setText("3.0")
 
     def click_reset_max_loops(self) -> None:
         self.tf_max_loops.setText("1000")

@@ -891,7 +891,7 @@ class ExportTask:
 
             sql = f"""
                 SELECT
-                    haltnam AS name, IIF(breite>20, breite/1000,breite ) AS breite, IIF(hoehe>20, hoehe/1000,hohe) AS hoehe
+                    haltnam AS name, IIF(breite>20., breite/1000.,breite ) AS breite, IIF(hoehe>20., hoehe/1000.,hoehe) AS hoehe
                 FROM
                     haltungen
                 WHERE lower(haltungstyp) = 'haltung'{auswahl}

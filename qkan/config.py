@@ -206,6 +206,7 @@ class CheckImport(ClassObject):
     hausanschluesse: bool = True
     schachtschaeden: bool = True
     haltungsschaeden: bool = True
+    hausanschlussschaeden: bool = True
     testmodus: bool = False
 
     # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
@@ -729,9 +730,9 @@ class ToolsConfig(ClassObject):
                 'geop': ['wkt_geom', 'geop'],
             },
             'entwaesserungsarten': {
-                'Mischwasser':      ['mischw*', 'mw', 'km', 'mk'],
-                'Schmutzwasser':    ['schmutzw*', 'sw', 'ks', 'sk'],
-                'Regenwasser':      ['regenw*', 'rw', 'kr', 'rk'],
+                'Mischwasser':      ['mischw*', 'mw', 'km', 'mk', 'km-kanal'],
+                'Schmutzwasser':    ['schmutzw*', 'sw', 'ks', 'sk', 'ks-kanal'],
+                'Regenwasser':      ['regenw*', 'rw', 'kr', 'rk', 'kr-kanal'],
                 'Rinnen/Gräben':    ['*rinne*', '*gräbe*', '*grabe*'],
                 'stillgelegt':      ['stillg*'],
                 'außer Betrieb':    ['*auße*', '*ausse*'],
@@ -790,6 +791,7 @@ class ZustandConfig(ClassObject):
     abstand_knoten_1: float = 1.0
     abstand_knoten_2: float = 1.5
     abstand_knoten_end: float = 4.0
+    versatz_anschlusstexte: float = 3.0             # Versatz der Zustandstexte relativ zu den Haltungen
     kriterienschaeden: dict = {'haltung': '[ABC][A-E][A-Z]', 'schacht': '[D][A-E][A-Z]'}
 
 

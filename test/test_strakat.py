@@ -26,8 +26,10 @@ class TestSTRAKATQKan(QgisTest):
         QKan.config.check_import.haltungen = True
         QKan.config.check_import.schaechte = True
         QKan.config.check_import.hausanschluesse = True
-        QKan.config.check_import.schachtschaeden = False
-        QKan.config.check_import.haltungsschaeden = False
+        QKan.config.check_import.schachtschaeden = True
+        QKan.config.check_import.haltungsschaeden = True
+        QKan.config.check_import.hausanschluesse = True
+        QKan.config.check_import.testmodus = True
 
         QKan.config.check_import.abflussparameter = False
         QKan.config.check_import.rohrprofile = False
@@ -38,9 +40,9 @@ class TestSTRAKATQKan(QgisTest):
         imp = StrakatPorter(iface())
         erg = imp._doimport()
 
-        LOGGER.debug("erg (Validate_MU_Import): %s", erg)
+        LOGGER.debug("erg (Validate_STRAKAT_Export): %s", erg)
         if not erg:
-            LOGGER.info("Fehler in TestMUQKan")
+            LOGGER.info("Fehler in TestSTRAKATQKan")
 
         del erg
 

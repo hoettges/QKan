@@ -150,7 +150,6 @@ def createdbtables(
         """ CREATE TABLE haltungen (
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
-            baujahr INT,
             schoben TEXT,                                   -- join schaechte.schnam
             schunten TEXT,                                  -- join schaechte.schnam
             hoehe REAL,                                     -- Profilhoehe (mm)
@@ -159,6 +158,7 @@ def createdbtables(
             aussendurchmesser REAL,
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
+            baujahr INT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             strasse TEXT,                                   -- für ISYBAU benötigt
             profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
@@ -319,7 +319,7 @@ def createdbtables(
             baujahr INTEGER,
             haltnam TEXT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
-            qzu REAL,
+            strasse TEXT                                    -- für ISYBAU benötigt,
             profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             material TEXT,                                  -- join material.bezeichnung
@@ -738,13 +738,13 @@ def createdbtables(
     # Tabelle wird nur für das Nachschlagefeld benötigt
 
     sql = """CREATE TABLE untersuchrichtung (
-        pk INTEGER PRIMARY KEY, 
-        bezeichnung TEXT, 
-        kuerzel TEXT, 
-        isybau TEXT,                        -- BFR Abwasser
-        m150 TEXT,                          -- DWA M150
-        m145 TEXT,                          -- DWA M145
-        bemerkung TEXT)"""
+            pk INTEGER PRIMARY KEY, 
+            bezeichnung TEXT, 
+            kuerzel TEXT, 
+            isybau TEXT,                        -- BFR Abwasser
+            m150 TEXT,                          -- DWA M150
+            m145 TEXT,                          -- DWA M145
+            bemerkung TEXT)"""
 
     try:
         cursl.execute(sql)

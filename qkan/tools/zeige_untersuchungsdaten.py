@@ -13,8 +13,9 @@ form_class, _ = loadUiType(os.path.join(os.path.dirname(__file__), 'res/qkan_sch
 
 logger = get_logger("QKan.tools.zeige_schaeden")
 
+
 class ShowHaltungsschaeden(QDialog, form_class):
-    """Zeigt Haltungsschäden an"""
+    """Zeigt Zustandsdaten an Haltungen selektiv an"""
     def __init__(self, haltnam: str, schoben: str, schunten: str, untersuchtag: str = None):
         super(ShowHaltungsschaeden, self).__init__()
 
@@ -292,8 +293,9 @@ class ShowHaltungsschaeden(QDialog, form_class):
         layer.triggerRepaint()
         self.iface.layerTreeView().refreshLayerSymbology(layer.id())
 
+
 class ShowSchachtschaeden():
-    """Zeigt Schachtschäden an"""
+    """Zeigt Zustandsdaten an Schächten selektiv an"""
     def __init__(self, schnam: str, untersuchtag: str = None):
 
         self.schnam = schnam
@@ -347,6 +349,61 @@ class ShowSchachtschaeden():
         layer.triggerRepaint()
         self.iface.layerTreeView().refreshLayerSymbology(layer.id())
 
+
+class ShowHausanschlussschaeden():
+    """Zeigt Zustandsdaten an Hausanschlussleitungen selektiv an"""
+    def __init__(self, untersuchleit: str, untersuchtag: str = None):
+
+        self.untersuchleit = untersuchleit
+        self.untersuchtag = untersuchtag
+
+        self.iface = QKan.instance.iface
+
+        self.show_selected()
+
+    def show_selected(self):
+        """Setzt einen Filter auf ausgewählte Hausanschlussleitungen_untersucht"""
+        splitstr = ' AND untersuchleit = '
+        layername = 'Untersuchungsdaten Hausanschlüsse'
+        project = QgsProject.instance()
+        if project.mapLayersByName(layername):
+            layer = project.mapLayersByName(layername)[0]
+        else:
+            return False
+        # layer = iface.activeLayer()
+        # layer.source()
+        ren = layer.renderer()
+        if ren.type() != 'RuleRenderer':
+            logger.warning("Fehler: Der Layer 'Hausanschlussleitungen untersucht' enthält keine regelbasierenden Symbole"
+                           "\nAktualisieren Sie das Projekt oder bearbeiten den Layer entsprechend.")
+            return False
+        try:
+            root_rule = ren.rootRule()
+        except BaseException as e:
+            logger.error("Fehler: Der Layer 'Hausanschlussleitungen untersucht' enthält keine regelbasierenden Symbole")
+            raise Exception(f"{self.__class__.__name__}")
+
+        for child in root_rule.children():
+            rule = root_rule.takeChild(child)
+            kat = rule.filterExpression()
+            ruleexpressions = kat.split(splitstr, 1)
+            if len(ruleexpressions) == 2:
+                baserule, fil = ruleexpressions
+            elif  len(ruleexpressions) == 1:
+                baserule = ruleexpressions[0]
+            else:
+                baserule = None
+                logger.error('QKan-Fehler in ruleexpressions')
+            # logger.info(f"Ausgewählte Hausanschlussleitungen_untersucht, untersuchtag= '{self.untersuchtag}'")
+            if self.untersuchtag is None:
+                filter = baserule
+            else:
+                filter = baserule + splitstr + f"'{self.untersuchleit}' AND untersuchtag = '{self.untersuchtag}'"
+            rule.setFilterExpression(filter)
+            root_rule.appendChild(rule)
+        #    layer.setRenderer(renderer)                            # notwendig?
+        layer.triggerRepaint()
+        self.iface.layerTreeView().refreshLayerSymbology(layer.id())
 
 if __name__ == '__main__':
     form = ShowHaltungsschaeden('74115531', '74115531', '74115529')

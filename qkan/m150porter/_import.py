@@ -1271,6 +1271,10 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        # Textpositionen für Schadenstexte berechnen
+
+        self.db_qkan.setschadenstexte_schaechte()
+
     def _auslaesse(self) -> None:
         def _iter() -> Iterator[Schacht]:
             # .//Auslaufbauwerk/../../.. nimmt AbwassertechnischeAnlage
@@ -2390,6 +2394,8 @@ class ImportTask:
         # Textpositionen für Schadenstexte berechnen
 
         self.db_qkan.commit()
+
+        self.db_qkan.setschadenstexte_anschlussleitungen()
 
     # def _wehre(self) -> None:
     #     # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.

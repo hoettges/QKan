@@ -13,7 +13,7 @@ class QKanPlugin:
         self.log = get_logger(f"QKan.{type(self).__name__}")
         self.default_dir = get_default_dir()
 
-        self.log.info("Initialised.")
+        self.log.debug("Initialised.")
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message: str) -> str:

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>430</height>
+    <height>470</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>620</width>
-    <height>430</height>
+    <height>470</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>620</width>
+    <height>470</height>
    </size>
   </property>
   <property name="baseSize">
@@ -181,7 +187,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>340</y>
+      <y>380</y>
       <width>431</width>
       <height>51</height>
      </rect>
@@ -203,7 +209,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>320</y>
+      <y>360</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -246,7 +252,7 @@
       <x>10</x>
       <y>120</y>
       <width>291</width>
-      <height>191</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="font">
@@ -484,7 +490,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>320</y>
+      <y>360</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -497,7 +503,7 @@
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>340</y>
+      <y>380</y>
       <width>151</width>
       <height>23</height>
      </rect>
@@ -521,7 +527,7 @@
       <x>320</x>
       <y>120</y>
       <width>291</width>
-      <height>191</height>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
@@ -738,6 +744,130 @@
       <string>Datum des Tages, an dem die Bewertung durchgeführt wird</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_38">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>180</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Stands.</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_37">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>180</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Betr.</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_36">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>200</y>
+       <width>121</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Zustandsklassen</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_39">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>180</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Dicht.</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="max_ZD">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>200</y>
+       <width>31</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zustandsklasse Dichtheit&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Zustandsklasse Dichtheit</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="max_ZS">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>200</y>
+       <width>31</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zustandsklasse Betriebssicherheit&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Zustandsklasse Betriebssicherheit</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="max_ZB">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>200</y>
+       <width>31</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zustandsklasse Betriebssicherheit&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Zustandsklasse Betriebssicherheit</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -746,7 +876,7 @@
      <x>0</x>
      <y>0</y>
      <width>620</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

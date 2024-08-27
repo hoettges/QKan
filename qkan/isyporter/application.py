@@ -204,7 +204,12 @@ class IsyPorter(QKanPlugin):
                 return False
 
             self.log.info("DB creation finished, starting importer")
-            imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.data_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video)
+            imp = ImportTask(
+                db_qkan,
+                QKan.config.xml.import_file,
+                QKan.config.xml.data_choice,
+                QKan.config.xml.ordner_bild,
+                QKan.config.xml.ordner_video)
             imp.run()
             del imp
 

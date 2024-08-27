@@ -104,9 +104,9 @@ def run(dbcon: DBConnection) -> bool:
         "schaechte_untersucht",
         [
             "schnam TEXT",
-            "bezugspunkt TEXT",
             "durchm REAL",
             "baujahr INTEGER",
+            "bezugspunkt TEXT",
             "id INTEGER                                      -- absolute Nummer der Inspektion",
             "untersuchtag TEXT",
             "untersucher TEXT",
@@ -224,7 +224,6 @@ def run(dbcon: DBConnection) -> bool:
         "anschlussleitungen",
         [
             "leitnam TEXT",
-            "haltnam TEXT",
             "schoben TEXT                                    -- join schaechte.schnam",
             "schunten TEXT                                   -- join schaechte.schnam",
             "hoehe REAL                                      -- Profilhoehe (m)",
@@ -234,6 +233,7 @@ def run(dbcon: DBConnection) -> bool:
             "sohleoben REAL                                  -- abweichende Sohlhöhe oben (m)",
             "sohleunten REAL                                 -- abweichende Sohlhöhe unten (m)",
             "baujahr INT",
+            "haltnam TEXT",
             "teilgebiet TEXT                                 -- join teilgebiet.tgnam",
             "strasse TEXT                                    -- für ISYBAU benötigt",
             "profilnam TEXT DEFAULT 'Kreisquerschnitt'       -- join profile.profilnam",
@@ -265,28 +265,28 @@ def run(dbcon: DBConnection) -> bool:
         )
 
     if not dbcon.alter_table(
-            "schaechte",
-            [
-                "schnam TEXT",
-                "sohlhoehe REAL",
-                "deckelhoehe REAL",
-                "durchm REAL",
-                "druckdicht INTEGER DEFAULT 0                    -- ist Druckleitung",
-                "ueberstauflaeche REAL DEFAULT 0",
-                "entwart TEXT DEFAULT 'Regenwasser' -- join entwaesserungsarten.bezeichnung",
-                "strasse TEXT",
-                "baujahr INT",
-                "teilgebiet TEXT -- join teilgebiet.tgnam",
-                "knotentyp TEXT -- join knotentypen.knotentyp",
-                "auslasstyp TEXT -- join auslasstypen.bezeichnung",
-                "schachttyp TEXT DEFAULT 'Schacht' -- join schachttypen.schachttyp",
-                "simstatus TEXT DEFAULT 'vorhanden' -- join simulationsstatus.bezeichnung",
-                "material TEXT",
-                "xsch REAL",
-                "ysch REAL",
-                "kommentar TEXT",
-                "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
-            ]
+        "schaechte",
+        [
+            "schnam TEXT",
+            "sohlhoehe REAL",
+            "deckelhoehe REAL",
+            "durchm REAL",
+            "druckdicht INTEGER DEFAULT 0                    -- ist Druckleitung",
+            "ueberstauflaeche REAL DEFAULT 0",
+            "entwart TEXT DEFAULT 'Regenwasser' -- join entwaesserungsarten.bezeichnung",
+            "strasse TEXT",
+            "baujahr INT",
+            "teilgebiet TEXT -- join teilgebiet.tgnam",
+            "knotentyp TEXT -- join knotentypen.knotentyp",
+            "auslasstyp TEXT -- join auslasstypen.bezeichnung",
+            "schachttyp TEXT DEFAULT 'Schacht' -- join schachttypen.schachttyp",
+            "simstatus TEXT DEFAULT 'vorhanden' -- join simulationsstatus.bezeichnung",
+            "material TEXT",
+            "xsch REAL",
+            "ysch REAL",
+            "kommentar TEXT",
+            "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
+        ]
     ):
         logger.error(
             f"Fehler bei Migration zu Version {VERSION}: "
@@ -435,7 +435,6 @@ def run(dbcon: DBConnection) -> bool:
             film_dateiname TEXT,
             ordner_bild TEXT,
             ordner_video TEXT,
-            richtung TEXT,
             filmtyp INTEGER,
             video_start INTEGER,
             video_ende INTEGER,
@@ -527,6 +526,19 @@ def run(dbcon: DBConnection) -> bool:
         if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "
                               f"Erstellen der Trigger"):
             return False
+
+    # Umwandeln von Rohrhöhe und -breite auf mm
+    sqls = [
+        "UPDATE haltungen SET hoehe = hoehe * 1000. WHERE hoehe < 15",
+        "UPDATE haltungen SET breite = breite * 1000. WHERE breite < 15",
+        "UPDATE haltungen SET aussendurchmesser = aussendurchmesser * 1000. WHERE aussendurchmesser < 15",
+        "UPDATE haltungen_untersucht SET hoehe = hoehe * 1000. WHERE hoehe < 15",
+        "UPDATE haltungen_untersucht SET breite = breite * 1000. WHERE breite < 15",
+        "UPDATE anschlussleitungen SET hoehe = hoehe * 1000. WHERE hoehe < 15",
+        "UPDATE anschlussleitungen SET breite = breite * 1000. WHERE breite < 15",
+        "UPDATE anschlussleitungen_untersucht SET hoehe = hoehe * 1000. WHERE hoehe < 15",
+        "UPDATE anschlussleitungen_untersucht SET breite = breite * 1000. WHERE breite < 15",
+    ]
 
     dbcon.commit()
 

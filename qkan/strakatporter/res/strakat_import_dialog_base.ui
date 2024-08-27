@@ -426,7 +426,7 @@
     <string comment="Pfad der Zieldatenbank"/>
    </property>
    <property name="title">
-    <string>Kanalnetz</string>
+    <string>Auswahl Kanalnetzdaten</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -452,16 +452,16 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungsdaten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Haltungen importieren</string>
+     <string>Haltungsdaten importieren</string>
     </property>
     <property name="whatsThis">
-     <string>Haltungen importieren</string>
+     <string>Haltungsdaten importieren</string>
     </property>
     <property name="accessibleDescription">
-     <string>Haltungen importieren</string>
+     <string>Haltungsdaten importieren</string>
     </property>
     <property name="text">
      <string>Haltungen</string>
@@ -485,16 +485,16 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schächte importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schachtdaten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Schächte importieren</string>
+     <string>Schachtdaten importieren</string>
     </property>
     <property name="whatsThis">
-     <string>Schächte importieren</string>
+     <string>Schachtdaten importieren</string>
     </property>
     <property name="accessibleDescription">
-     <string>Schächte importieren</string>
+     <string>Schachtdaten importieren</string>
     </property>
     <property name="text">
      <string>Schächte</string>
@@ -518,16 +518,16 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hausanschlussleitungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hausanschlussleitungsdaten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Hausanschlussleitungen importieren</string>
+     <string>Hausanschlussleitungsdaten importieren</string>
     </property>
     <property name="whatsThis">
-     <string>Hausanschlussleitungen importieren</string>
+     <string>Hausanschlussleitungsdaten importieren</string>
     </property>
     <property name="accessibleDescription">
-     <string>Hausanschlussleitungen importieren</string>
+     <string>Hausanschlussleitungsdaten importieren</string>
     </property>
     <property name="text">
      <string>Hausanschlüsse</string>
@@ -538,7 +538,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>260</y>
+     <y>300</y>
      <width>231</width>
      <height>61</height>
     </rect>
@@ -646,7 +646,7 @@ der Schachtnamen</string>
      <x>440</x>
      <y>160</y>
      <width>231</width>
-     <height>91</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="font">
@@ -661,7 +661,7 @@ der Schachtnamen</string>
     <string comment="Pfad der Zieldatenbank"/>
    </property>
    <property name="title">
-    <string>Schadensdaten</string>
+    <string>Auswahl Untersuchungsdaten</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -687,19 +687,19 @@ der Schachtnamen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schadensdaten zu Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Untersuchungsdaten zu Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Schadensdaten zu Haltungen importieren</string>
+     <string>Untersuchungsdaten zu Haltungen importieren</string>
     </property>
     <property name="whatsThis">
-     <string>Schadensdaten zu Haltungen importieren</string>
+     <string>Untersuchungsdaten zu Haltungen importieren</string>
     </property>
     <property name="accessibleDescription">
-     <string>Schadensdaten zu Haltungen importieren</string>
+     <string>Untersuchungsdaten zu Haltungen importieren</string>
     </property>
     <property name="text">
-     <string>Haltungsschäden</string>
+     <string>Haltungen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_schachtschaeden">
@@ -720,26 +720,29 @@ der Schachtnamen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schadensdaten zu Schächten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Untersuchungsdaten zu Schächten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Schadensdaten zu Schächten importieren</string>
+     <string>Untersuchungsdaten zu Schächten importieren</string>
+    </property>
+    <property name="whatsThis">
+     <string>Untersuchungsdaten zu Schächten importieren</string>
     </property>
     <property name="accessibleName">
-     <string>Schadensdaten zu Schächten importieren</string>
+     <string/>
     </property>
     <property name="accessibleDescription">
-     <string>Schadensdaten zu Schächten importieren</string>
+     <string>Untersuchungsdaten zu Schächten importieren</string>
     </property>
     <property name="text">
-     <string>Schachtschäden</string>
+     <string>Schächte</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_testmodus">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
+      <y>90</y>
       <width>201</width>
       <height>20</height>
      </rect>
@@ -754,19 +757,52 @@ der Schachtnamen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schadensdaten zu Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Testmodus aktivieren: Import der Untersuchungsdaten auf 20000 Elemente beschränken&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Schadensdaten zu Haltungen importieren</string>
+     <string>Testmodus: Nur 20000 Untersuchungsdatensätze</string>
     </property>
     <property name="whatsThis">
-     <string>Schadensdaten zu Haltungen importieren</string>
+     <string>Testmodus: Nur 20000 Untersuchungsdatensätze</string>
     </property>
     <property name="accessibleDescription">
-     <string>Schadensdaten zu Haltungen importieren</string>
+     <string>Testmodus: Nur 20000 Untersuchungsdatensätze</string>
     </property>
     <property name="text">
-     <string>Testmodus: Nur erste 1000</string>
+     <string>Testmodus: Nur erste 20000</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_hausanschlussschaeden">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Untersuchungsdaten zu Hausanschlüssen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Untersuchungsdaten zu Hausanschlüssen importieren</string>
+    </property>
+    <property name="whatsThis">
+     <string>Untersuchungsdaten zu Hausanschlüssen importieren</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Untersuchungsdaten zu Hausanschlüssen importieren</string>
+    </property>
+    <property name="text">
+     <string>Hausanschlüsse</string>
     </property>
    </widget>
   </widget>
