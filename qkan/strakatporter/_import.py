@@ -1933,9 +1933,10 @@ class ImportTask:
                     stb.fortsetzung                 AS streckenschaden_lfdnr,
                     stb.pos_von                     AS pos_von, 
                     stb.pos_bis                     AS pos_bis,
-                    :ordner_bild  || '\' || stb.foto_dateiname || '.jpg'
+                    :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                                  || stb.foto_dateiname || '.jpg'
                                                     AS foto_dateiname,
-                    :ordner_video || '\' || stb.foto_dateiname
+                    :ordner_video || '\\'  || stb.foto_dateiname
                                   || ' von '  || stk.schacht_oben
                                   || ' nach ' || stk.schacht_unten
                                   || ' - '    || strassen.name  || '.mpg' 
@@ -1977,9 +1978,10 @@ class ImportTask:
                     stb.fortsetzung                 AS streckenschaden_lfdnr,
                     stb.pos_von                     AS pos_von, 
                     stb.pos_bis                     AS pos_bis,
-                    :ordner_bild  || '\' || stb.foto_dateiname || '.jpg'
+                    :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                                  || stb.foto_dateiname || '.jpg'
                                                     AS foto_dateiname,
-                    :ordner_video || '\' || stb.foto_dateiname
+                    :ordner_video || '\\'  || stb.foto_dateiname
                                   || ' von '  || stk.schacht_oben
                                   || ' nach ' || stk.schacht_unten
                                   || ' - '    || strassen.name  || '.mpg' 
@@ -2174,12 +2176,13 @@ class ImportTask:
                 stb.fortsetzung                 AS streckenschaden_lfdnr,
                 stb.pos_von                     AS pos_von, 
                 stb.pos_bis                     AS pos_bis,
-                :ordner_bild  || '\' || stb.foto_dateiname || '.jpg'
+                    :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                                  || stb.foto_dateiname || '.jpg'
                                                 AS foto_dateiname,
-                :ordner_video || '\' || stb.foto_dateiname
-                              || ' von '  || stk.schacht_oben
-                              || ' nach ' || stk.schacht_unten
-                              || ' - '    || strassen.name  || '.mpg' 
+                    :ordner_video || '\\'  || stb.foto_dateiname
+                                  || ' von '  || stk.schacht_oben
+                                  || ' nach ' || stk.schacht_unten
+                                  || ' - '    || strassen.name  || '.mpg' 
                                                 AS film_dateiname,
                 stb.kommentar                   AS kommentar,
                 stb.skdichtheit                 AS ZD,
@@ -2342,9 +2345,10 @@ class ImportTask:
                     stb.fortsetzung                         AS streckenschaden_lfdnr,
                     stb.pos_von                             AS pos_von, 
                     stb.pos_bis                             AS pos_bis,
-                    :ordner_bild  || '\' || stb.foto_dateiname || '.jpg'
+                    :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                                  || stb.foto_dateiname || '.jpg'
                                                             AS foto_dateiname,
-                    :ordner_video || '\' || stb.foto_dateiname
+                    :ordner_video || '\\'  || stb.foto_dateiname
                                   || ' von '  || stk.schacht_oben
                                   || ' nach ' || stk.schacht_unten
                                   || ' - '    || strassen.name  || '.mpg' 
@@ -2399,3 +2403,36 @@ class ImportTask:
         logger.debug("setschadenstexte_anschlussleitungen"),
 
         return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

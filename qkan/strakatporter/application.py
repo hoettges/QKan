@@ -50,8 +50,8 @@ class StrakatPorter(QKanPlugin):
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.strakat.import_dir = self.import_dlg.tf_import.text()
 
-            QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
-            QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
+            QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text().replace('/', '\\')
+            QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text().replace('/', '\\')
 
             QKan.config.check_import.haltungen = self.import_dlg.cb_haltungen.isChecked()
             QKan.config.check_import.schaechte = self.import_dlg.cb_schaechte.isChecked()
@@ -106,9 +106,6 @@ class StrakatPorter(QKanPlugin):
 
         Einspringpunkt für Test
         """
-        QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
-        QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
-
         self.log.info("Opening QKan DB")
         with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
             if not db_qkan.connected:
