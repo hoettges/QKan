@@ -14,7 +14,9 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from typing import Dict, List, Optional, Union
 from pathlib import Path
 from xml.dom import minidom
-import time
+
+from qkan.utils import get_logger
+logger = get_logger("QKan.strakat.import")
 
 from PyQt5.QtWidgets import QTableWidgetItem
 
@@ -59,11 +61,11 @@ class Infos(QKanPlugin):
 
         self.stamm: Optional[Element] = None
         self.hydraulik_objekte: Optional[Element] = None
-        self.get_widget()
+        self.get_widget_1()
         self.get_widget_2()
         self.get_widget_3()
         self.get_widget_4()
-        self.canv = None
+        # self.canv_1 = None
 
 
     # noinspection PyPep8Naming
@@ -79,19 +81,19 @@ class Infos(QKanPlugin):
     def unload(self) -> None:
         self.info_dlg.close()
 
-    def get_widget(self):
+    def get_widget_1(self):
         """
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.info_dlg
-        self.dialog.fig = plt.figure()
+        self.dialog.fig_1 = plt.figure()
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
         qw = QWidget(self.dialog)
-        self.dialog.canv = FigureCanvas(self.dialog.fig)
+        self.dialog.canv_1 = FigureCanvas(self.dialog.fig_1)
 
-        self.dialog.verticalLayout.addWidget(self.dialog.canv)
-        self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv, qw, True))
+        self.dialog.verticalLayout.addWidget(self.dialog.canv_1)
+        self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv_1, qw, True))
 
     def get_widget_2(self):
         """
@@ -148,8 +150,8 @@ class Infos(QKanPlugin):
         self.info_dlg.select_date()
         if len(layers) > 0:
 
-            self.fig = self.dialog.fig
-            self.canv = self.dialog.canv
+            self.fig_1 = self.dialog.fig_1
+            self.canv_1 = self.dialog.canv_1
             self.fig_2 = self.dialog.fig_2
             self.canv_2 = self.dialog.canv_2
             self.fig_3 = self.dialog.fig_3
@@ -160,7 +162,7 @@ class Infos(QKanPlugin):
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
 
-            test = Info(self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, DBConnection())
+            test = Info(self.fig_1, self.canv_1, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, DBConnection())
             test.run(self.info_dlg.date.currentText())
 
             def on_click(self, event):
@@ -171,8 +173,8 @@ class Infos(QKanPlugin):
 
             self.info_dlg.show()
             version = qgs_version()
-            self.info_dlg.textBrowser_2.setText(str(version))
-            self.info_dlg.textBrowser_6.setText(str(test.anz_teilgeb))
+            self.info_dlg.tf_qkanversion.setText(str(version))
+            self.info_dlg.tf_anz_teilgeb.setText(str(test.anz_teilgeb))
 
             # Felder Haltungen
             if test.bew_art == 'DWA':
@@ -257,8 +259,8 @@ class Infos(QKanPlugin):
         self.info_dlg.select_date()
         if len(layers) > 0:
 
-            self.fig = self.dialog.fig
-            self.canv = self.dialog.canv
+            self.fig_1 = self.dialog.fig_1
+            self.canv_1 = self.dialog.canv_1
             self.fig_2 = self.dialog.fig_2
             self.canv_2 = self.dialog.canv_2
             self.fig_3 = self.dialog.fig_3
@@ -269,18 +271,18 @@ class Infos(QKanPlugin):
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
 
-            test = Info(self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, DBConnection())
+            test = Info(self.fig_1, self.canv_1, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, DBConnection())
             test.run(self.info_dlg.date.currentText())
             # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
             # self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
 
             self.info_dlg.show()
             version = qgs_version()
-            self.info_dlg.textBrowser_2.setText(str(version))
+            self.info_dlg.tf_qkanversion.setText(str(version))
             self.info_dlg.textBrowser_3.setText(str(test.anz_haltungen))
             self.info_dlg.textBrowser_4.setText(str(test.anz_schaechte))
             self.info_dlg.textBrowser_5.setText(str(test.laenge_haltungen))
-            self.info_dlg.textBrowser_6.setText(str(test.anz_teilgeb))
+            self.info_dlg.tf_anz_teilgeb.setText(str(test.anz_teilgeb))
 
             # Felder Haltungen
             if test.bew_art == 'DWA':
@@ -517,21 +519,21 @@ class Infos(QKanPlugin):
 
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
-            self.fig = self.dialog.fig
-            self.canv = self.dialog.canv
+            self.fig_1 = self.dialog.fig_1
+            self.canv_1 = self.dialog.canv_1
 
-            test = Info(self.fig, self.canv, DBConnection())
+            test = Info(self.fig_1, self.canv_1, DBConnection())
             test.run(self.info_dlg.date.currentText())
             # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
             # self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
 
             self.info_dlg.show()
             version = qgs_version()
-            self.info_dlg.textBrowser_2.setText(str(version))
+            self.info_dlg.tf_qkanversion.setText(str(version))
             self.info_dlg.textBrowser_3.setText(str(test.anz_haltungen))
             self.info_dlg.textBrowser_4.setText(str(test.anz_schaechte))
             self.info_dlg.textBrowser_5.setText(str(test.laenge_haltungen))
-            self.info_dlg.textBrowser_6.setText(str(test.anz_teilgeb))
+            self.info_dlg.tf_anz_teilgeb.setText(str(test.anz_teilgeb))
 
             # Felder Haltungen
             if test.bew_art == 'DWA':
@@ -746,5 +748,5 @@ class Infos(QKanPlugin):
             result = self.info_dlg.exec_()
 
         else:
-            warnung('Hinweis', 'Es ist kein Projekt geladen!')
+            logger.warning('Es ist kein Projekt geladen!')
 

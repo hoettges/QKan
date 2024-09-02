@@ -15,9 +15,7 @@ from qgis.PyQt.QtWidgets import (
     QTableWidget,
 )
 from qkan.database.qkan_utils import (
-    fehlermeldung,
     get_database_QKan,
-    get_editable_layers,
 )
 
 from qkan import QKan
@@ -34,7 +32,7 @@ class _Dialog(QDialog):
         self.setupUi(self)
         self.default_dir = str(default_dir)
         self.tr = tr
-        self.canv = None
+        self.canv_1 = None
 
 
 
@@ -44,8 +42,8 @@ INFO_CLASS, _ = uic.loadUiType(
 
 
 class InfoDialog(_Dialog, INFO_CLASS):  # type: ignore
-    textBrowser_2: QLineEdit
-    textBrowser_6: QLineEdit
+    tf_qkanversion: QLineEdit
+    tf_anz_teilgeb: QLineEdit
     textBrowser_7: QLineEdit
     textBrowser_8: QLineEdit
     textBrowser_9: QLineEdit
