@@ -95,17 +95,17 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_5">
+     <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>Infos Haltungen</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout"/>
+        <layout class="QVBoxLayout" name="verticalLayout_1"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_6">
+     <widget class="QWidget" name="tab_3">
       <attribute name="title">
        <string>Infos Schächte</string>
       </attribute>
@@ -115,7 +115,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_7">
+     <widget class="QWidget" name="tab_4">
       <attribute name="title">
        <string>Infos Zustandsklassen</string>
       </attribute>
@@ -125,7 +125,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tab_5">
       <attribute name="title">
        <string>SüWVO</string>
       </attribute>

@@ -527,19 +527,6 @@ def run(dbcon: DBConnection) -> bool:
                               f"Erstellen der Trigger"):
             return False
 
-    # Umwandeln von Rohrhöhe und -breite auf mm
-    sqls = [
-        "UPDATE haltungen SET hoehe = hoehe * 1000. WHERE hoehe < 15",
-        "UPDATE haltungen SET breite = breite * 1000. WHERE breite < 15",
-        "UPDATE haltungen SET aussendurchmesser = aussendurchmesser * 1000. WHERE aussendurchmesser < 15",
-        "UPDATE haltungen_untersucht SET hoehe = hoehe * 1000. WHERE hoehe < 15",
-        "UPDATE haltungen_untersucht SET breite = breite * 1000. WHERE breite < 15",
-        "UPDATE anschlussleitungen SET hoehe = hoehe * 1000. WHERE hoehe < 15",
-        "UPDATE anschlussleitungen SET breite = breite * 1000. WHERE breite < 15",
-        "UPDATE anschlussleitungen_untersucht SET hoehe = hoehe * 1000. WHERE hoehe < 15",
-        "UPDATE anschlussleitungen_untersucht SET breite = breite * 1000. WHERE breite < 15",
-    ]
-
     dbcon.commit()
 
     return True

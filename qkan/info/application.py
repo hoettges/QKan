@@ -92,8 +92,8 @@ class Infos(QKanPlugin):
         qw = QWidget(self.dialog)
         self.dialog.canv_1 = FigureCanvas(self.dialog.fig_1)
 
-        self.dialog.verticalLayout.addWidget(self.dialog.canv_1)
-        self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv_1, qw, True))
+        self.dialog.verticalLayout_1.addWidget(self.dialog.canv_1)
+        self.dialog.verticalLayout_1.addWidget(NavigationToolbar(self.dialog.canv_1, qw, True))
 
     def get_widget_2(self):
         """

@@ -154,7 +154,7 @@ class Info:
             figure=figure,
             sql=sql,
             title="Haltungen",
-            pos=511
+            pos=111
         )
 
         # if not self.db_qkan.sql(sql, "Dashboard - Haltungen nach Entwässerungsarten"):
