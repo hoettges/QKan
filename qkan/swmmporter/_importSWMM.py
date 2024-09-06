@@ -548,6 +548,8 @@ class ImportTask:
         y_start=0
         x_end=0
         y_end=0
+        xsch=0
+        ysch=0
 
         list = []
 
@@ -594,6 +596,7 @@ class ImportTask:
                                             MakePoint(?, ?, ?), ?)
                             WHERE haltnam = ?
                          """
+
 
                 paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
                             QKan.config.epsg, npt, name]

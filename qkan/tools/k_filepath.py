@@ -42,10 +42,10 @@ def setfilepath(
                 for root, dirs, files in os.walk(fotopath):
                     for file in files:
                         if file == bild_nam:
-                            bild = root
+                            bild = fotopath+root
 
                             # pfad in db erstzen
-                            sql = """Update untersuchdat_haltung set ordner_bild = ?
+                            sql = """Update untersuchdat_haltung set foto_dateiname = ?
                                                 WHERE untersuchdat_haltung.pk = ?;"""
                             data = (str(bild), attr[0])
 
@@ -72,10 +72,10 @@ def setfilepath(
                 for root, dirs, files in os.walk(videopath):
                     for file in files:
                         if file == video_nam:
-                            video = root
+                            video = videopath+root
 
                             # ordner_video in db ersetzen
-                            sql = """Update untersuchdat_haltung set ordner_video = ?
+                            sql = """Update untersuchdat_haltung set film_dateiname = ?
                                                     WHERE untersuchdat_haltung.pk = ?;"""
                             data = (video, attr[0])
 
@@ -104,10 +104,10 @@ def setfilepath(
             for root, dirs, files in os.walk(fotopath_2):
                 for file in files:
                     if file == bild_nam:
-                        bild = root
+                        bild = fotopath_2+root
 
                         # pfad in db erstzen
-                        sql = """Update untersuchdat_schacht set ordner = ?
+                        sql = """Update untersuchdat_schacht set foto_dateiname = ?
                                             WHERE untersuchdat_schacht.pk = ?;"""
                         data = (bild, attr[0])
 

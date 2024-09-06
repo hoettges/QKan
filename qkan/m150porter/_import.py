@@ -1188,7 +1188,7 @@ class ImportTask:
 
                 name = block.findtext("KG001", None)
                 untersuchtag = block.findtext("KI/KI104")
-                film_dateiname = block.findtext("KI/KI116", None)
+                film_dateiname = self.ordner_video+block.findtext("KI/KI116", None)
 
                 for _untersuchdat_schacht in block.findall("KI/KZ"):
 
@@ -1208,7 +1208,7 @@ class ImportTask:
                     pos_bis = _get_int(_untersuchdat_schacht, "KZ007", 0)
                     vertikale_lage =  _get_float(_untersuchdat_schacht, "KZ001", 0.0)
                     bereich = _untersuchdat_schacht.findtext("KZ013", None)
-                    foto_dateiname = _untersuchdat_schacht.findtext("KZ009", None)
+                    foto_dateiname = self.ordner_bild+_untersuchdat_schacht.findtext("KZ009", None)
 
                     ZD = _get_int(_untersuchdat_schacht, "KZ206", 63)
                     ZB = _get_int(_untersuchdat_schacht, "KZ208", 63)
@@ -1899,7 +1899,7 @@ class ImportTask:
                         streckenschaden_lfdnr = None
                     pos_von = _get_int(_untersuchdat, "HZ006", 0)
                     pos_bis = _get_int(_untersuchdat, "HZ007", 0)
-                    foto_dateiname = _untersuchdat.findtext("HZ009", None)
+                    foto_dateiname = self.ordner_bild+_untersuchdat.findtext("HZ009", None)
                     ZD = _get_int(_untersuchdat, "HZ206", 63)
                     ZB = _get_int(_untersuchdat, "HZ208", 63)
                     ZS = _get_int(_untersuchdat, "HZ207", 63)

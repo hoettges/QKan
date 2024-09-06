@@ -244,7 +244,7 @@ class SWMMPorter(QKanPlugin):
             # Write and load new project file, only if new project
             if QgsProject.instance().fileName() == '':
                 QKan.config.project.template = str(
-                    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+                    Path(pluginDirectory("qkan")) / "templates" / "projekt.qgs"
                 )
                 qgsadapt(
                     QKan.config.database.qkan,

@@ -1030,6 +1030,8 @@ class ExportTask:
             ext = str(extent)
             list = ext.replace('QgsRectangle:', '')
             list = list.replace(',', '')
+            list = list.replace('<', '')
+            list = list.replace('>', '')
 
             dataco += f"DIMENSIONS{list} \n"
             self.file.write(dataco)

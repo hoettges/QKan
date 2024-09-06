@@ -3,6 +3,7 @@ from qgis.utils import spatialite_connect
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 import numpy as np
 
 from qgis.core import (
@@ -33,6 +34,13 @@ class Info:
         self.canv_4 = canv_4
         self.fig_4 = fig_4
 
+        #variable für schatten
+        self.shadow = True
+        #variable für abstand (wedgeprops)
+        self.abstand = {"edgecolor" : "white",
+                      'linewidth': 2,
+                      'antialiased': True}
+
     def func(self, pct, allvals):
         if pct is not None and allvals is not None:
             try:
@@ -48,7 +56,7 @@ class Info:
         else:
             return ""
 
-    def _tableplot(self, figure, sql: str, title: str, pos:int):
+    def _tableplot(self, figure, sql: str, title: str, pos):
         "Erzeugt eine Tabelle mit Bezeichnungen, Längen und Anzahl und fügt sie als subplot einem tab zu"
 
         if not self.db_qkan.sql(sql, "Dashboard - {title}"):
@@ -68,6 +76,7 @@ class Info:
 
         # plt.figure(figure.number)
         new_plot = figure.add_subplot(pos)
+        figure.subplots_adjust(left=0.15, right=0.95, wspace=1.5, hspace=5)
 
         try:
             new_plot.table(
@@ -87,7 +96,58 @@ class Info:
 
         new_plot.set_title(title, fontsize=10, fontweight='bold', pad=20)
 
-    def _pieplot(self, sql, figure, title, pos:int):
+    def _tableplot_2(self, figure, sql: str, title: str, pos):
+        "Erzeugt eine Tabelle mit Bezeichnungen, Längen und Anzahl und fügt sie als subplot einem tab zu"
+
+        if not self.db_qkan.sql(sql, "Dashboard - {title}"):
+            raise Exception(f"{self.__class__.__name__}: SQL-Fehler")
+
+        data = self.db_qkan.fetchall()
+        l_bezeich = [el[0] for el in data]
+        t_values = [[el[1]] for el in data]
+
+        anzahl_ges = sum([el[1] for el in data])
+
+        t_values.append([anzahl_ges])
+        l_bezeich.append("Gesamt")
+
+        colLabels = ["Anzahl"]
+
+        # plt.figure(figure.number)
+        new_plot = figure.add_subplot(pos)
+
+        figure.subplots_adjust(left=0.15, right=0.95, wspace=1.5, hspace=5)
+
+        try:
+            new_plot.table(
+                cellText=t_values,
+                colLabels=colLabels,
+                rowLabels=l_bezeich,
+                loc='center'
+            )
+        except BaseException as e:
+            logger.error(
+                f'Fehler: {e}\n'
+                f'{t_values=}\n'
+                f'{l_bezeich=}\n'
+             )
+            raise  Exception(f"{self.__class__.__name__}: Fehler beim Erstellen der Tabelle")
+        new_plot.axis('off')
+
+        new_plot.set_title(title, fontsize=10, fontweight='bold', pad=20)
+
+    def _barofpie(self, figure, title, pos):
+
+            box = new_plot3.get_position()
+            new_plot3.set_position([box.x0 + 0.05, box.y0, box.width * 0.5, box.height * 0.75])
+            new_plot3.barh(y_pos, sonstiges_values, align='center')
+            new_plot3.set_yticks(y_pos)
+            new_plot3.set_yticklabels(sonstiges_names)
+            new_plot3.invert_yaxis()
+            new_plot3.set_xlabel('Durchmesser')
+            new_plot3.set_title('Details der Kategorie "Sonstiges"')
+
+    def _pieplot(self, sql, figure, title, pos):
         """Erzeugt ein Pie-Chart mit Bezeichnungen und Anzahl bzw. Länge und fügt sie als subplot einem tab zu"""
 
         if not self.db_qkan.sql(sql, "Dashboard - {title}"):
@@ -97,12 +157,50 @@ class Info:
         labels, values = [[el[i] for el in data] for i in range(2)]
 
         new_plot = figure.add_subplot(pos)
-        wedges, texts, autotexts = new_plot.pie(values, labels=labels, autopct=lambda pct: self.func(pct, values), radius=1.1)
+        figure.subplots_adjust(left=0.05, right=0.95, wspace=1.5, hspace=2)
+
+        wedges, texts, autotexts = new_plot.pie(values, labels=labels,  shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values), radius=1.1)
         # figure.tight_layout()
         new_plot.set_title(title)
+
+        # #bar of pie für "Sonstiges"
+        # l_bezeich = []
+        #
+        # for i in data:
+        #     i = str(i[0])
+        #     l_bezeich.append(i)
+        #
+        # data = {k: None for k in l_bezeich}
+        # if data.values() not in [None, 'None']:
+        #     iface.messageBar().pushMessage("Error",
+        #                                    str(data),
+        #                                    level=Qgis.Critical)
+        #
+        #     total = sum(data.values())
+        #     threshold = 0.1 * total
+        #     daten = {k: v for k, v in data.items() if v >= threshold}
+        #     sonstiges = {k: v for k, v in data.items() if v < threshold}
+        #
+        #     if sonstiges:
+        #         daten['Sonstiges'] = sum(sonstiges.values())
+        #     # Daten für das Kreisdiagramm
+        #     names = list(daten.keys())
+        #     values = list(daten.values())
+        #
+        #     if 'Sonstiges' in daten:
+        #         sonstiges_names = list(sonstiges.keys())
+        #         sonstiges_values = list(sonstiges.values())
+        #
+        #         y_pos = np.arange(len(sonstiges_values))
+        #
+        #         title = 'Sonstiges'
+        #         figure = figure
+        #         pos = gs[2]
+        #         self._barofpie(figure, title, pos)
+
         return wedges, texts, autotexts
 
-    def _barplot(self, sql, figure, title:str, xlabel:str, ylabel: str, pos:int):
+    def _barplot(self, sql, figure, title:str, xlabel:str, ylabel: str, pos):
         """Erzeugt ein Balkendiagramm mit Bezeichnungen und fügt sie als subplot einem tab zu"""
 
         if not self.db_qkan.sql(sql, "Dashboard - {title}"):
@@ -112,6 +210,7 @@ class Info:
         labels, values = [[el[i] for el in data] for i in range(2)]
 
         new_plot = figure.add_subplot(pos)
+        figure.subplots_adjust(left=0.05, right=0.95, wspace=1.5, hspace=2)
 
         y_pos = np.arange(len(values))
         box = new_plot.get_position()
@@ -132,6 +231,8 @@ class Info:
         figure = self.fig_4
         figure.clear()
 
+        gs = GridSpec(6, 1, figure=figure, wspace=0.15)
+
         # Infos Haltungen nach Entwässerungsarten ------------------------------------------------------
 
         sql = """
@@ -149,176 +250,82 @@ class Info:
             WHERE entwart NOT LIKE '%still%'
             ORDER BY gesamtlaenge DESC
         """
-
+        #pos=111
         self._tableplot(
             figure=figure,
             sql=sql,
-            title="Haltungen",
-            pos=111
+            title="Haltungen (Entwässerungsart)",
+            pos=gs[0]
         )
 
-        # if not self.db_qkan.sql(sql, "Dashboard - Haltungen nach Entwässerungsarten"):
-        #     raise Exception(f"{self.__class__.__name__}: SQL-Fehler")
-        #
-        # data = self.db_qkan.fetchall()
-        # l_bezeich = [el[0] for el in data]
-        # t_values = [[el[1], el[2]] for el in data]
-        #
-        # laenge_ges = sum([el[1] for el in data])
-        # anzahl_ges = sum([el[2] for el in data])
-        #
-        # t_values.append([laenge_ges, anzahl_ges])
-        # l_bezeich.append("Gesamt")
-        #
-        # try:
-        #     new_plot.table(
-        #         cellText=t_values,
-        #         colLabels=["km", "Anzahl"],
-        #         rowLabels=l_bezeich,
-        #         loc='center'
-        #     )
-        # except BaseException as e:
-        #     logger.error(
-        #         f'Fehler: {e}\n'
-        #         f'{t_values=}\n'
-        #         f'{l_bezeich=}\n'
-        #      )
-        #     raise  Exception(f"{self.__class__.__name__}: Fehler beim Erstellen der Tabelle")
-        # new_plot.axis('off')
-        #
-        # new_plot.set_title("Haltungen", fontsize=10, fontweight='bold', pad=20)
-        #
-        # # Tabelle anzeigen
-        # self.canv_4.draw()
-
-
         # #Infos Schächte nach Entwässerungsarten ------------------------------------------------------
-        # plt.figure(figure_4.number)
-        # new_plot = figure_4.add_subplot(512)
-        #
-        # # Tabelle mit Allgemeinen Informationen
-        #
-        # sql = """
-        #     WITH liste AS (
-        #         SELECT entwart, count() AS anzahl
-        #         FROM schaechte
-        #         GROUP BY entwart
-        #     )
-        #     SELECT *
-        #     FROM liste
-        #     WHERE entwart NOT LIKE '%still%'
-        #     ORDER BY anzahl DESC
-        # """
-        #
-        # if not self.db_qkan.sql(sql, "Dashboard - Schächte nach Entwässerungsarten"):
-        #     raise Exception(f"{self.__class__.__name__}: SQL-Fehler")
-        #
-        # data = self.db_qkan.fetchall()
-        # l_bezeich, l_anzahl = [[el[i] for el in data] for i in range(2)]
-        #
-        # anzahl_ges = sum(l_anzahl)
-        #
-        # l_bezeich.append("Gesamt")
-        # l_anzahl.append(anzahl_ges)
-        #
-        # new_plot.table(
-        #     cellText=[l_anzahl],
-        #     colLabels=l_bezeich,
-        #     rowLabels=["Anzahl"],
-        #     loc='center'
-        # )
-        # new_plot.axis('off')
-        # new_plot.set_title("Schächte", fontsize=10, fontweight='bold', pad=20)
-        #
-        # # Tabelle anzeigen
-        # self.canv_4.draw()
-        #
-        #
+        sql = """
+                    WITH liste AS (
+                        SELECT
+                            entwart,
+                            count() AS anzahl
+                        FROM schaechte
+                        WHERE entwart IS NOT NULL 
+                        GROUP BY entwart
+                    )
+                    SELECT *
+                    FROM liste
+                    WHERE entwart NOT LIKE '%still%'
+                """
+        # pos=111
+        self._tableplot_2(
+            figure=figure,
+            sql=sql,
+            title="Schaechte (Entwässerungsart)",
+            pos=gs[1]
+        )
+
+
         # #Infos Anschlussleitungen nach Entwässerungsarten -------------------------------------------
-        # plt.figure(figure_4.number)
-        # new_plot = figure_4.add_subplot(513)
-        #
-        # # Tabelle mit Allgemeinen Informationen
-        #
-        # sql = """
-        #     WITH liste AS (
-        #         SELECT
-        #             round(sum(iif(coalesce(laenge,0)=0,GLength(geom),laenge))/1000.,2) AS gesamtlaenge,
-        #             entwart,
-        #             count() AS anzahl
-        #         FROM anschlussleitungen
-        #         GROUP BY entwart
-        #     )
-        #     SELECT *
-        #     FROM liste
-        #     WHERE entwart NOT LIKE '%still%'
-        #     ORDER BY gesamtlaenge DESC
-        # """
-        #
-        # if not self.db_qkan.sql(sql, "Dashboard - Anschlussleitungen nach Entwässerungsarten"):
-        #     raise Exception(f"{self.__class__.__name__}: SQL-Fehler")
-        #
-        # data = self.db_qkan.fetchall()
-        # l_laengen, l_bezeich, l_anzahl = [[el[i] for el in data] for i in range(3)]
-        #
-        # laenge_ges = sum(l_laengen)
-        # anzahl_ges = sum(l_laengen)
-        #
-        # l_laengen.append(laenge_ges)
-        # l_bezeich.append("Gesamt")
-        # l_anzahl.append(anzahl_ges)
-        #
-        # new_plot.table(
-        #     cellText=[l_laengen, l_anzahl],
-        #     colLabels=l_bezeich,
-        #     rowLabels=["km", "Anzahl"],
-        #     loc='center'
-        # )
-        # new_plot.axis('off')
-        # new_plot.set_title("Anschlussleitungen", fontsize=10, fontweight='bold', pad=20)
-        # figure_4.tight_layout()
-        # # Tabelle anzeigen
-        # self.canv_4.draw()
-        #
-        #
-        # #infos Teilgebiete -------------------------------------------------------------------
-        # plt.figure(figure_4.number)
-        # new_plot = figure_4.add_subplot(514)
-        #
-        # sql = """
-        #     SELECT
-        #         coalesce(trim(teilgebiet), '') as tgb,
-        #         round(sum(iif(coalesce(laenge,0)=0,GLength(geom),laenge))/1000.,2) AS gesamtlaenge,
-        #         count() AS anzahl
-        #     FROM haltungen
-        #     GROUP BY tgb
-        # """
-        #
-        # if not self.db_qkan.sql(sql, "Dashboard - Teilgebiete"):
-        #     raise Exception(f"{self.__class__.__name__}: SQL-Fehler")
-        #
-        # data = self.db_qkan.fetchall()
-        # l_bezeich, l_laengen, l_anzahl = [[el[i] for el in data] for i in range(3)]
-        #
-        # laenge_ges = sum(l_laengen)
-        # anzahl_ges = sum(l_laengen)
-        #
-        # l_laengen.append(laenge_ges)
-        # l_bezeich.append("Gesamt")
-        # l_anzahl.append(anzahl_ges)
-        #
-        # new_plot.table(
-        #     cellText=[l_laengen, l_anzahl],
-        #     colLabels=l_bezeich,
-        #     rowLabels=["km", "Anzahl"],
-        #     loc='center'
-        # )
-        # new_plot.set_title("Name", fontsize=10, fontweight='bold', pad=20)
-        # new_plot.axis('off')
-        # figure_4.tight_layout()
-        #
-        # # Tabelle anzeigen
-        # self.canv_4.draw()
+
+        sql = """
+                    WITH liste AS (
+                        SELECT
+                            entwart,
+                            round(sum(iif(coalesce(laenge,0)=0,GLength(geom),laenge))/1000.,2) AS gesamtlaenge, 
+                            count() AS anzahl
+                        FROM anschlussleitungen
+                        WHERE entwart IS NOT NULL 
+                        GROUP BY entwart
+                    )
+                    SELECT *
+                    FROM liste
+                    WHERE entwart NOT LIKE '%still%'
+                    ORDER BY gesamtlaenge DESC
+                """
+        # pos=111
+        self._tableplot(
+            figure=figure,
+            sql=sql,
+            title="Anschlussleitungen (Entässerungsart)",
+            pos=gs[2]
+        )
+
+
+        #Infos Teilgebiete -------------------------------------------------------------------
+        sql = """
+                        SELECT
+                            coalesce(trim(teilgebiet), '') as tgb,
+                            round(sum(iif(coalesce(laenge,0)=0,GLength(geom),laenge))/1000.,2) AS gesamtlaenge, 
+                            count() AS anzahl
+                        FROM haltungen
+                        WHERE entwart IS NOT NULL 
+                        GROUP BY tgb
+                    
+                """
+        # pos=111
+        self._tableplot(
+            figure=figure,
+            sql=sql,
+            title="Haltungen Teilgebiete",
+            pos=gs[3]
+        )
+
 
     def handle_click(event, pie_wedges, run_script_callback):
         # TODO: Anpassen, sodass beim Anklicken der Grafik die jeweiligen Daten in QGIS ausgewählt werden!
@@ -333,6 +340,8 @@ class Info:
         # Karteikarte 2 initialisieren
         figure = self.fig_1
         figure.clear()
+
+        gs = GridSpec(2, 3, figure=figure, wspace=0.15)
 
         #Darstellung Haltungen nach Entwässerungsart bezogen auf km
 
@@ -350,12 +359,12 @@ class Info:
             WHERE gesamtlaenge > 0.1 AND entwart NOT LIKE '%still%'
             ORDER BY gesamtlaenge DESC
         """
-
+        #pos=231
         wedges, texts, autotexts = self._pieplot(
             sql=sql,
             figure=figure,
             title='Entwässerungsart',
-            pos=231
+            pos=gs[0]
         )
 
         #return self.canv_1, wedges
@@ -416,7 +425,7 @@ class Info:
             sql=sql,
             figure=figure,
             title='Baujahre',
-            pos=232
+            pos=gs[1]
         )
 
         # Darstellungen Haltungen nach Durchmesser
@@ -440,9 +449,9 @@ class Info:
             sql=sql,
             figure=figure,
             title='Gesamtlänge je Durchmesser',
-            ylabel='Durhcmesser bis mm',
+            ylabel='Durchmesser bis mm',
             xlabel='Gesamtlänge (km)',
-            pos=233
+            pos=gs[2]
         )
 
         # l_bezeich = []
@@ -527,15 +536,9 @@ class Info:
             title='Gesamtlänge nach Material',
             ylabel='Material',
             xlabel='Gesamtlänge (km)',
-            pos=234
+            pos=gs[3]
         )
 
-        #
-        #
-        #
-        #
-        #
-        #
         #
         #
         # l_bezeich = []
@@ -616,7 +619,7 @@ class Info:
             title='Gesamtlänge nach Rohrprofil',
             ylabel='Rohrprofil',
             xlabel='Gesamtlänge (km)',
-            pos=236
+            pos=gs[5]
         )
 
         #
@@ -723,7 +726,7 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot_2.pie(values, labels=names, autopct=lambda pct: self.func(pct, values))
+        new_plot_2.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot_2.set_title('Zustandsklasse Haltungen')
         figure_3.tight_layout()
         self.canv_3.draw()
@@ -763,7 +766,7 @@ class Info:
         values = list(data.values())
         # Plot
         new_plot_2 = figure_3.add_subplot(122)
-        new_plot_2.pie(values, labels=names, autopct=lambda pct: self.func(pct, values))
+        new_plot_2.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot_2.set_title('Zustandsklasse Schächte')
         figure_3.tight_layout()
         self.canv_3.draw()
@@ -802,10 +805,12 @@ class Info:
 
             data[i] = anz
 
+        if 'None' in data.keys():
+            del data['None']
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot_2.pie(values, labels=names, autopct=lambda pct: self.func(pct, values))
+        new_plot_2.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot_2.set_title('Entwässerungsart')
         figure_2.tight_layout()
         self.canv_2.draw()
@@ -833,11 +838,13 @@ class Info:
 
             data[i] = anz
 
+        if 'None' in data.keys():
+            del data['None']
         names = list(data.keys())
         values = list(data.values())
         # Plot
         new_plot = figure_2.add_subplot(132)
-        wedges, texts, autotexts = new_plot.pie(values, labels=names, autopct=lambda pct: self.func(pct, values))
+        wedges, texts, autotexts = new_plot.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot.set_title('Baujahr')
         figure_2.tight_layout()
         self.canv_2.draw()
@@ -865,12 +872,13 @@ class Info:
             anz = self.db_qkan.fetchall()[0][0]
 
             data[i] = anz
-
+        if 'None' in data.keys():
+            del data['None']
         names = list(data.keys())
         values = list(data.values())
         # Plot
         new_plot = figure_2.add_subplot(133)
-        wedges, texts, autotexts = new_plot.pie(values, labels=names, autopct=lambda pct: self.func(pct, values))
+        wedges, texts, autotexts = new_plot.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot.set_title('Material')
         figure_2.tight_layout()
         self.canv_2.draw()

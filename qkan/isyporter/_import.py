@@ -977,7 +977,7 @@ class ImportTask:
                     pos_bis = _get_int(_untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS))
                     vertikale_lage = _get_float(_untersuchdat_schacht.findtext("d:VertikaleLage", "0.0", self.NS))
                     bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", None, self.NS)
-                    foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", None, self.NS)
+                    foto_dateiname = self.ordner_bild+_untersuchdat_schacht.findtext("d:Fotodatei", None, self.NS)
 
                     ZD = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
                     ZS = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
@@ -1021,7 +1021,7 @@ class ImportTask:
 
                         name = _untersuchdat_schacht.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
 
-                        film_dateiname = _untersuchdat_schacht.findtext("d:Filmname", None, self.NS)
+                        film_dateiname = self.ordner_video+_untersuchdat_schacht.findtext("d:Filmname", None, self.NS)
 
                         bandnr = _get_int(_untersuchdat_schacht.findtext("d:Videoablagereferenz", 0, self.NS))
 
@@ -1983,7 +1983,7 @@ class ImportTask:
                         streckenschaden_lfdnr = _get_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
                         pos_von = _get_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
                         pos_bis = _get_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
-                        foto_dateiname = _untersuchdat.findtext("d:Fotodatei", None, self.NS)
+                        foto_dateiname = self.ordner_bild+_untersuchdat.findtext("d:Fotodatei", None, self.NS)
 
 
                         ZD = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
@@ -2034,7 +2034,7 @@ class ImportTask:
 
                         name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
 
-                        film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
+                        film_dateiname = self.ordner_video+_untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
 
                         bandnr = _get_int(_untersuchdat_haltung.findtext("d:Videoablagereferenz", 0, self.NS))
 
@@ -2269,7 +2269,7 @@ class ImportTask:
             simstatus = self.db_qkan.get_from_mapper(
                 anschlussleitung.simstatus,
                 self.mapper_simstatus,
-                'anschlussleitung',
+                'anschlussleitungen',
                 'simulationsstatus',
                 'bezeichnung',
                 'isybau',
@@ -2281,7 +2281,7 @@ class ImportTask:
             entwart = self.db_qkan.get_from_mapper(
                 anschlussleitung.entwart,
                 self.mapper_entwart,
-                'Anschlussleitungen',
+                'anschlussleitungen',
                 'entwaesserungsarten',
                 'bezeichnung',
                 'isybau',
@@ -2293,7 +2293,7 @@ class ImportTask:
             profilnam = self.db_qkan.get_from_mapper(
                 anschlussleitung.profilnam,
                 self.mapper_profile,
-                'Haltungen',
+                'anschlussleitungen',
                 'profile',
                 'profilnam',
                 'isybau',
@@ -2305,7 +2305,7 @@ class ImportTask:
             material = self.db_qkan.get_from_mapper(
                 anschlussleitung.material,
                 self.mapper_material,
-                'Anschlussleitung',
+                'anschlussleitungen',
                 'material',
                 'bezeichnung',
                 'isybau',
@@ -2791,7 +2791,7 @@ class ImportTask:
                                 _untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
                             pos_von = _get_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
                             pos_bis = _get_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
-                            foto_dateiname = _untersuchdat.findtext("d:Fotodatei", None, self.NS)
+                            foto_dateiname = self.ordner_bild+_untersuchdat.findtext("d:Fotodatei", None, self.NS)
 
                             ZD = _get_int(
                                 _untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
@@ -2842,7 +2842,7 @@ class ImportTask:
                     name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None,
                                                           self.NS)
 
-                    film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
+                    film_dateiname = self.ordner_video+_untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
 
                     bandnr = _get_int(_untersuchdat_haltung.findtext("d:Videoablagereferenz", 0, self.NS))
 
