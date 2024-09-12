@@ -1,7 +1,5 @@
-import logging
-import sys
+import sys, os
 import xml.etree.ElementTree as ElementTree
-from fnmatch import fnmatch
 from typing import Dict, Iterator, Tuple, Union
 
 from lxml import etree
@@ -977,7 +975,12 @@ class ImportTask:
                     pos_bis = _get_int(_untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS))
                     vertikale_lage = _get_float(_untersuchdat_schacht.findtext("d:VertikaleLage", "0.0", self.NS))
                     bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", None, self.NS)
-                    foto_dateiname = self.ordner_bild+_untersuchdat_schacht.findtext("d:Fotodatei", None, self.NS)
+
+                    _datei = _untersuchdat_schacht.findtext("d:Fotodatei", None, self.NS)
+                    if _datei is not None and self.ordner_bild is not None:
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                    else:
+                        foto_dateiname = None
 
                     ZD = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
                     ZS = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
@@ -1983,8 +1986,12 @@ class ImportTask:
                         streckenschaden_lfdnr = _get_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
                         pos_von = _get_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
                         pos_bis = _get_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
-                        foto_dateiname = self.ordner_bild+_untersuchdat.findtext("d:Fotodatei", None, self.NS)
 
+                        _datei = _untersuchdat.findtext("d:Fotodatei", None, self.NS)
+                        if _datei is not None and self.ordner_bild is not None:
+                            foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        else:
+                            foto_dateiname = None
 
                         ZD = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
                         ZS = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
@@ -2791,7 +2798,12 @@ class ImportTask:
                                 _untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
                             pos_von = _get_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
                             pos_bis = _get_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
-                            foto_dateiname = self.ordner_bild+_untersuchdat.findtext("d:Fotodatei", None, self.NS)
+
+                            _datei = _untersuchdat.findtext("d:Fotodatei", None, self.NS)
+                            if _datei is not None and self.ordner_bild is not None:
+                                foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                            else:
+                                foto_dateiname = None
 
                             ZD = _get_int(
                                 _untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))

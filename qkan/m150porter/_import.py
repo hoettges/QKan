@@ -1,4 +1,4 @@
-import re
+import re, os
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator
 
@@ -1158,9 +1158,6 @@ class ImportTask:
         def _iter() -> Iterator[Untersuchdat_schacht]:
             blocks = self.xml.findall("KG/KI/..")
 
-            ordner = self.ordner_bild
-            ordner_video = self.ordner_video
-
             logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(blocks)}")
 
             name = ""
@@ -1188,7 +1185,12 @@ class ImportTask:
 
                 name = block.findtext("KG001", None)
                 untersuchtag = block.findtext("KI/KI104")
-                film_dateiname = self.ordner_video+block.findtext("KI/KI116", None)
+
+                _datei = block.findtext("KI/KI116", None)
+                if _datei is not None and self.ordner_video is not None:
+                    film_dateiname = os.path.join(self.ordner_video, _datei)
+                else:
+                    film_dateiname = None
 
                 for _untersuchdat_schacht in block.findall("KI/KZ"):
 
@@ -1208,7 +1210,12 @@ class ImportTask:
                     pos_bis = _get_int(_untersuchdat_schacht, "KZ007", 0)
                     vertikale_lage =  _get_float(_untersuchdat_schacht, "KZ001", 0.0)
                     bereich = _untersuchdat_schacht.findtext("KZ013", None)
-                    foto_dateiname = self.ordner_bild+_untersuchdat_schacht.findtext("KZ009", None)
+
+                    _datei = _untersuchdat_schacht.findtext("KZ009", None)
+                    if _datei is not None and self.ordner_bild is not None:
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                    else:
+                        foto_dateiname = None
 
                     ZD = _get_int(_untersuchdat_schacht, "KZ206", 63)
                     ZB = _get_int(_untersuchdat_schacht, "KZ208", 63)
@@ -1236,7 +1243,7 @@ class ImportTask:
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
                     film_dateiname = film_dateiname,
-                    ordner = ordner,
+                    ordner = self.ordner_bild,
                     ZD=ZD,
                     ZB=ZB,
                     ZS=ZS,
@@ -1899,7 +1906,13 @@ class ImportTask:
                         streckenschaden_lfdnr = None
                     pos_von = _get_int(_untersuchdat, "HZ006", 0)
                     pos_bis = _get_int(_untersuchdat, "HZ007", 0)
-                    foto_dateiname = self.ordner_bild+_untersuchdat.findtext("HZ009", None)
+
+                    _datei = _untersuchdat.findtext("HZ009", None)
+                    if _datei is not None and self.ordner_bild is not None:
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                    else:
+                        foto_dateiname = None
+
                     ZD = _get_int(_untersuchdat, "HZ206", 63)
                     ZB = _get_int(_untersuchdat, "HZ208", 63)
                     ZS = _get_int(_untersuchdat, "HZ207", 63)
@@ -2325,7 +2338,13 @@ class ImportTask:
                         streckenschaden_lfdnr = None
                     pos_von = _get_int(_untersuchdat,"HZ006", 0)
                     pos_bis = _get_int(_untersuchdat,"HZ007", 0)
-                    foto_dateiname = _untersuchdat.findtext("HZ009", None)
+
+                    _datei = _untersuchdat.findtext("HZ009", None)
+                    if _datei is not None and self.ordner_bild is not None:
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                    else:
+                        foto_dateiname = None
+
                     ZD = _get_int(_untersuchdat,"HZ206", 63)
                     ZB = _get_int(_untersuchdat, "HZ208", 63)
                     ZS = _get_int(_untersuchdat,"HZ207", 63)
