@@ -878,7 +878,7 @@ class ImportTask:
             # Datensatz einfügen
             params = {'schnam': schacht_untersucht.schnam, 'xsch': schacht_untersucht.xsch,
                       'ysch': schacht_untersucht.ysch,
-                      'durchm': schacht_untersucht.durchm, 'kommentar': schacht_untersucht.kommentar, 'epsg': QKan.config.epsg}
+                      'durchm': schacht_untersucht.durchm, 'kommentar': schacht_untersucht.kommentar, 'geop': None, 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte_untersucht\n'
                          f'params: {params}')
@@ -1024,7 +1024,11 @@ class ImportTask:
 
                         name = _untersuchdat_schacht.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
 
-                        film_dateiname = self.ordner_video+_untersuchdat_schacht.findtext("d:Filmname", None, self.NS)
+                        _datei = _untersuchdat_schacht.findtext("d:Filmname", None, self.NS)
+                        if _datei is not None and self.ordner_bild is not None:
+                            film_dateiname = os.path.join(self.ordner_video, _datei)
+                        else:
+                            film_dateiname = None
 
                         bandnr = _get_int(_untersuchdat_schacht.findtext("d:Videoablagereferenz", 0, self.NS))
 
@@ -2041,7 +2045,11 @@ class ImportTask:
 
                         name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None, self.NS)
 
-                        film_dateiname = self.ordner_video+_untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
+                        _datei = _untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
+                        if _datei is not None and self.ordner_bild is not None:
+                            film_dateiname = os.path.join(self.ordner_video, _datei)
+                        else:
+                            film_dateiname = None
 
                         bandnr = _get_int(_untersuchdat_haltung.findtext("d:Videoablagereferenz", 0, self.NS))
 
@@ -2854,7 +2862,11 @@ class ImportTask:
                     name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", None,
                                                           self.NS)
 
-                    film_dateiname = self.ordner_video+_untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
+                    _datei = _untersuchdat_haltung.findtext("d:Filmname", None, self.NS)
+                    if _datei is not None and self.ordner_video is not None:
+                        film_dateiname = os.path.join(self.ordner_video, _datei)
+                    else:
+                        film_dateiname = None
 
                     bandnr = _get_int(_untersuchdat_haltung.findtext("d:Videoablagereferenz", 0, self.NS))
 

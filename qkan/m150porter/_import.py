@@ -1881,6 +1881,12 @@ class ImportTask:
                     #schoben = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenZulauf", None, self.NS)
                     #schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", None, self.NS)
 
+                _datei = block.findtext("HI/HI116", None)
+                if _datei is not None and self.ordner_video is not None:
+                    film_dateiname = os.path.join(self.ordner_video, _datei)
+                else:
+                    film_dateiname = None
+
 
                 for _untersuchdat in block.findall("HI/HZ"):
 
@@ -2313,6 +2319,12 @@ class ImportTask:
 
                 # schoben = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenZulauf", None, self.NS)
                 # schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", None, self.NS)
+
+                _datei = block.findtext("HI/HI116", None)
+                if _datei is not None and self.ordner_video is not None:
+                    film_dateiname = os.path.join(self.ordner_video, _datei)
+                else:
+                    film_dateiname = None
 
                 for _untersuchdat in block.findall("HI/HZ"):
 
