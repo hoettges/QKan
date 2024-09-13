@@ -49,7 +49,7 @@ class ExportTask:
         self.export_file = export_file
 
         # XML base
-        self.stamm: Optional[Element] = None
+
         self.hydraulik_objekte: Optional[Element] = None
 
 
@@ -57,19 +57,20 @@ class ExportTask:
         if (
             not getattr(QKan.config.check_export, "export_wehre", True)
             #or not self.hydraulik_objekte
-            or not self.stamm
+
         ):
             return
         sql = """
         SELECT
             haltnam,
-            schoben,
-            schunten,
-            sohleunten,
             sohleoben,
-            laenge,
+            schunten,
+            schoben,
             simstatus,
-            kommentar
+            kommentar,
+            entwart,
+            xschob,
+            yschob
         FROM haltungen WHERE haltungstyp = 'Wehr'
         """
 
@@ -79,31 +80,42 @@ class ExportTask:
         fortschritt("Export Wehre...", 0.5)
 
         for attr in self.db_qkan.fetchall():
-            obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
-            _create_children_text(
-                obj, {"HydObjektTyp": None, "Objektbezeichnung": attr[0]}
-            )
+            if attr[1] in [None, 'NULL']:
+                sohleoben = 0
+            else:
+                sohleoben = attr[1]
 
+            abw = SubElement(self.root,"KG")
             _create_children_text(
-                SubElement(obj, "Wehr"),
+                abw,
                 {
-                    "SchachtZulauf": attr[1],
-                    "SchachtAblauf": attr[2],
-                    "Schwellenhoehe": attr[4],
-                    "Kammerhoehe": attr[5],
-                    "LaengeWehrschwelle": attr[6],
+                    "KG001": attr[0],
+                    "KG211": sohleoben,
+                    "KG302": attr[6],
+                    "KG305": "B",
+                    "KG306": "ZPW",
+                    "KG309": attr[3],
+                    "KG999": attr[5],
                 },
             )
 
-            abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-            SubElementText(abw, "Objektbezeichnung", attr[0])
-            SubElement(abw, "Objektart", str(1))
-            SubElementText(abw, "Status", attr[10])
+            geo = SubElement(abw, "GO")
             _create_children_text(
-                SubElement(
-                    SubElement(SubElement(abw, "Knoten"), "Bauwerk"), "Wehr_Ueberlauf"
-                ),
-                {"LaengeWehrschwelle": attr[6]},
+                geo,
+                {
+                    "GO001": attr[0],
+
+                },
+            )
+
+            _create_children_text(
+                SubElement(geo, "GP"),
+                {
+                    "GO001": attr[0],
+                    "GP003": attr[7],
+                    "GP004": attr[8],
+                    "GP007": attr[1],
+                },
             )
 
         fortschritt("Wehre eingefügt", 0.10)
@@ -112,7 +124,7 @@ class ExportTask:
         if (
             not getattr(QKan.config.check_export, "export_pumpen", True)
             #or not self.hydraulik_objekte
-            or not self.stamm
+
         ):
             return
 
@@ -123,7 +135,10 @@ class ExportTask:
             schunten,
             schoben,
             simstatus,
-            kommentar
+            kommentar,
+            entwart,
+            xschob,
+            yschob
         FROM haltungen WHERE haltungstyp = 'Pumpe'
         """
 
@@ -133,18 +148,23 @@ class ExportTask:
         fortschritt("Export Pumpen...", 0.15)
 
         for attr in self.db_qkan.fetchall():
-            abw = SubElement(self.stamm, "KG")
+
+            if attr[1] in [None, 'NULL']:
+                sohleoben = 0
+            else:
+                sohleoben = attr[1]
+
+            abw = SubElement(self.root,"KG")
             _create_children_text(
                 abw,
                 {
                     "KG001": attr[0],
-                    "Objektart": str(2),
-                    "KG211": attr[1]-attr[2],
-                    "KG302": attr[5],
+                    "KG211": sohleoben,
+                    "KG302": attr[6],
                     "KG305": "B",
                     "KG306": "ZPW",
                     "KG309": attr[3],
-                    "KG999": attr[9],
+                    "KG999": attr[5],
                 },
             )
 
@@ -172,7 +192,7 @@ class ExportTask:
     def _export_auslaesse(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_auslaesse", True)
-            or not self.stamm
+
         ):
             return
 
@@ -202,12 +222,11 @@ class ExportTask:
 
         fortschritt("Export Auslässe...", 0.25)
         for attr in self.db_qkan.fetchall():
-            abw = SubElement(self.stamm, "KG")
+            abw = SubElement(self.root,"KG")
             _create_children_text(
                 abw,
                 {
                     "KG001": attr[0],
-                    "Objektart": str(2),
                     "KG211": attr[1] - attr[2],
                     "KG302": attr[5],
                     "KG303": attr[12],
@@ -240,7 +259,7 @@ class ExportTask:
     def _export_schaechte(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_schaechte", True)
-            or not self.stamm
+
         ):
             return
 
@@ -270,13 +289,22 @@ class ExportTask:
 
         fortschritt("Export Schächte...", 0.35)
         for attr in self.db_qkan.fetchall():
-            abw = SubElement(self.stamm, "KG")
+            if attr[1] in [None, 'NULL']:
+                sohleoben = 0
+            else:
+                sohleoben = attr[1]
+
+            if attr[2] in [None, 'NULL']:
+                sohleunten = 0
+            else:
+                sohleunten = attr[2]
+
+            abw = SubElement(self.root,"KG")
             _create_children_text(
                 abw,
                 {
                     "KG001": attr[0],
-                    "Objektart": str(2),
-                    "KG211": attr[1]-attr[2],
+                    "KG211": sohleoben-sohleunten,
                     "KG302": attr[5],
                     "KG303": attr[13],
                     "KG305": "S",
@@ -309,7 +337,7 @@ class ExportTask:
     def _export_schaechte_inspektion(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_schaechte", True)
-            or not self.stamm
+
         ):
             return
 
@@ -338,12 +366,11 @@ class ExportTask:
 
         fortschritt("Export Schächte...", 0.35)
         for attr in self.db_qkan.fetchall():
-            abw = SubElement(self.stamm, "KG")
+            abw = SubElement(self.root, "KG")
             _create_children_text(
                 abw,
                 {
                     "KG001": attr[0],
-                    "Objektart": str(2),
                     "KG211": attr[1]-attr[2],
                     "KG302": attr[5],
                     "KG305": "S",
@@ -376,7 +403,7 @@ class ExportTask:
     def _export_speicher(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_pumpen", True)
-            or not self.stamm
+
         ):
             return
 
@@ -406,7 +433,7 @@ class ExportTask:
 
         fortschritt("Export Speicherschächte...", 0.45)
         for attr in self.db_qkan.fetchall():
-            abw = SubElement(self.stamm, "KG")
+            abw = SubElement(self.root, "KG")
             _create_children_text(
                 abw,
                 {
@@ -445,7 +472,7 @@ class ExportTask:
         if (
             not getattr(QKan.config.check_export, "export_haltungen", True)
             #or not self.hydraulik_objekte
-            or not self.stamm
+
         ):
             return
 
@@ -487,7 +514,7 @@ class ExportTask:
 
         for attr in self.db_qkan.fetchall():
 
-            abw = SubElement(self.stamm, "HG")
+            abw = SubElement(self.root, "HG")
             _create_children_text(
                 abw,
                 {
@@ -505,7 +532,6 @@ class ExportTask:
                     "HG308": attr[22],
                     "HG309": attr[23],
                     "HG310": attr[5],
-                    "Status": attr[14],
                     "HG999": attr[15],
                 },
             )
@@ -548,7 +574,7 @@ class ExportTask:
         if (
             not getattr(QKan.config.check_export, "export_haltungen", True)
             #or not self.hydraulik_objekte
-            or not self.stamm
+
         ):
             return
 
@@ -586,7 +612,7 @@ class ExportTask:
 
         for attr in self.db_qkan.fetchall():
 
-            abw = SubElement(self.stamm, "HG")
+            abw = SubElement(self.root,"HG")
             _create_children_text(
                 abw,
                 {
@@ -601,7 +627,6 @@ class ExportTask:
                     "HG306": attr[4],
                     "HG307": attr[3],
                     "HG310": attr[5],
-                    "Status": attr[14],
                     "HG999": attr[15],
                 },
             )
@@ -644,7 +669,7 @@ class ExportTask:
         if (
             not getattr(QKan.config.check_export, "export_anschlussleitungen", True)
             #or not self.hydraulik_objekte
-            or not self.stamm
+
         ):
             return
 
@@ -658,8 +683,6 @@ class ExportTask:
                     anschlussleitungen.laenge,
                     anschlussleitungen.sohleoben,
                     anschlussleitungen.sohleunten,
-                    anschlussleitungen.deckeloben,
-                    anschlussleitungen.deckelunten,
                     anschlussleitungen.profilnam,
                     anschlussleitungen.material,
                     ea.m150,
@@ -686,26 +709,23 @@ class ExportTask:
         fortschritt("Export Anschlussleitungen...", 0.65)
 
         for attr in self.db_qkan.fetchall():
-            abw = SubElement(self.stamm, "HG")
+            abw = SubElement(self.root,"HG")
             _create_children_text(
                 abw,
                 {
                     "HG001": attr[0],
                     "HG003": attr[1],
                     "HG004": attr[2],
-                    "HG102": attr[9],
                     "HG301": 'L',
-                    "HG302": attr[11],
-                    "HG303": attr[21],
-                    "HG304": attr[10],
-                    "HG305": attr[8],
+                    "HG302": attr[9],
+                    "HG303": attr[19],
+                    "HG304": attr[8],
                     "HG306": attr[4],
                     "HG307": attr[3],
-                    "HG308": attr[23],
-                    "HG309": attr[24],
+                    "HG308": attr[21],
+                    "HG309": attr[22],
                     "HG310": attr[5],
-                    "Status": attr[14],
-                    "HG999": attr[15],
+                    "HG999": attr[13],
                 },
             )
 
@@ -723,8 +743,8 @@ class ExportTask:
                 geom,
                 {
                     "GP001": attr[1],
-                    "GP003": attr[16],
-                    "GP004": attr[17],
+                    "GP003": attr[14],
+                    "GP004": attr[15],
                     "GP007": attr[6],
                 },
             )
@@ -735,8 +755,8 @@ class ExportTask:
                 geom,
                 {
                     "GP001": attr[2],
-                    "GP003": attr[18],
-                    "GP004": attr[19],
+                    "GP003": attr[16],
+                    "GP004": attr[17],
                     "GP007": attr[7],
                 },
             )
@@ -759,50 +779,9 @@ class ExportTask:
         status_message.layout().addWidget(progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-
         # region Create XML structure
-        root = Element(
-            "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation", "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",}
+        self.root = Element("DATA", {"xmlns": "",}
         )
-        SubElementText(root, "Version", "2013-02")
-
-        admin_daten = SubElement(root, "Admindaten")
-        _create_children(
-            SubElement(admin_daten, "Liegenschaft"),
-            ["Liegenschaftsnummer", "Liegenschaftsbezeichnung"],
-        )
-
-        daten_kollektive = SubElement(root, "Datenkollektive")
-        _create_children_text(
-            daten_kollektive,
-            {
-                "Datenstatus": "2",
-                "Erstellungsdatum": str(date.today()),
-                "Kommentar": "Created with QKan's XML export module",
-            },
-        )
-        kennungen = SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
-        #je ein Kollektiv für Stammdaten und Zustandsdaten, die Kennung muss dort auftauchen
-        _create_children_text(
-            kennungen,
-            {
-                "Kennung": "STA01",
-                "Kollektivart": "1",
-            },
-        )
-
-        self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
-        _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
-
-        hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
-        _create_children_text(
-            hydro_kollektiv,
-            {"Kennung": "STA01", "Beschreibung": "Hydraulikdaten",},
-        )
-        rechen = SubElement(hydro_kollektiv, "Rechennetz")
-        SubElement(rechen, "Stammdatenkennung")
-        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
-        # endregion
 
         # Export
         self._export_wehre()
@@ -814,7 +793,7 @@ class ExportTask:
         self._export_anschlussleitungen()
 
         Path(self.export_file).write_text(
-            minidom.parseString(tostring(root)).toprettyxml(indent="  ")
+            minidom.parseString(tostring(self.root)).toprettyxml(indent="  ")
         )
 
         # Close connection

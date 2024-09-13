@@ -116,6 +116,7 @@ class Haltung_untersucht(ClassObject):
     kommentar: str = ""
     untersuchtag: str = ""
     untersucher: str = ""
+    untersuchrichtung: str = ""
     wetter: str = ""
     strasse: str = ""
     bewertungsart: str = ""
@@ -1188,7 +1189,7 @@ class ImportTask:
 
                 _datei = block.findtext("KI/KI116", None)
                 if _datei is not None and self.ordner_video is not None:
-                    film_dateiname = os.path.join(self.ordner_video, _datei)
+                    film_dateiname = os.path.join(self.ordner_video, _datei).replace("\\","/")
                 else:
                     film_dateiname = None
 
@@ -1213,7 +1214,7 @@ class ImportTask:
 
                     _datei = _untersuchdat_schacht.findtext("KZ009", None)
                     if _datei is not None and self.ordner_bild is not None:
-                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei).replace("\\","/")
                     else:
                         foto_dateiname = None
 
@@ -1747,9 +1748,20 @@ class ImportTask:
                     max_ZD = _get_int(_haltung, "HI206", 63)
                     max_ZB = _get_int(_haltung, "HI208", 63)
                     max_ZS = _get_int(_haltung, "HI207", 63)
+
+                    uricht = block.findtext("HI101", None)
+                    if uricht == "I":
+                        untersuchrichtung = "in Fließrichtung"
+                    elif uricht == "G":
+                        untersuchrichtung = "gegen Fließrichtung"
+                    else:
+                        logger.info(f"Untersuchungsdaten Haltung: Feld HI/HI101 fehlt oder falscher Wert: {uricht}")
+                        continue
+
                 else:
                     untersuchtag = None
                     untersucher = None
+                    uricht = None
                     wetter = ""
                     bewertungsart = None
                     bewertungstag = None
@@ -1770,6 +1782,7 @@ class ImportTask:
                     baujahr=baujahr,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
+                    untersuchrichtung=untersuchrichtung,
                     wetter=wetter,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
@@ -1799,7 +1812,7 @@ class ImportTask:
                       'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
                       'kommentar': haltung_untersucht.kommentar, 'baujahr': haltung_untersucht.baujahr,
                       'strasse': haltung_untersucht.strasse,
-                      'untersuchtag': haltung_untersucht.untersuchtag,
+                      'untersuchtag': haltung_untersucht.untersuchtag,'untersuchrichtung': haltung_untersucht.untersuchrichtung,
                       'untersucher': haltung_untersucht.untersucher, 'wetter': haltung_untersucht.wetter,
                       'bewertungsart': haltung_untersucht.bewertungsart, 'bewertungstag': haltung_untersucht.bewertungstag,
                       'datenart': haltung_untersucht.datenart, 'max_ZD': haltung_untersucht.max_ZD,
@@ -1883,7 +1896,7 @@ class ImportTask:
 
                 _datei = block.findtext("HI/HI116", None)
                 if _datei is not None and self.ordner_video is not None:
-                    film_dateiname = os.path.join(self.ordner_video, _datei)
+                    film_dateiname = os.path.join(self.ordner_video, _datei).replace("\\","/")
                 else:
                     film_dateiname = None
 
@@ -1915,7 +1928,7 @@ class ImportTask:
 
                     _datei = _untersuchdat.findtext("HZ009", None)
                     if _datei is not None and self.ordner_bild is not None:
-                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei).replace("\\","/")
                     else:
                         foto_dateiname = None
 
@@ -2322,7 +2335,7 @@ class ImportTask:
 
                 _datei = block.findtext("HI/HI116", None)
                 if _datei is not None and self.ordner_video is not None:
-                    film_dateiname = os.path.join(self.ordner_video, _datei)
+                    film_dateiname = os.path.join(self.ordner_video, _datei).replace("\\","/")
                 else:
                     film_dateiname = None
 
@@ -2353,7 +2366,7 @@ class ImportTask:
 
                     _datei = _untersuchdat.findtext("HZ009", None)
                     if _datei is not None and self.ordner_bild is not None:
-                        foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        foto_dateiname = os.path.join(self.ordner_bild, _datei).replace("\\","/")
                     else:
                         foto_dateiname = None
 

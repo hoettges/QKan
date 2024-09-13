@@ -76,7 +76,7 @@ class Info:
 
         # plt.figure(figure.number)
         new_plot = figure.add_subplot(pos)
-        figure.subplots_adjust(left=0.15, right=0.95, wspace=1.5, hspace=5)
+        #figure.subplots_adjust(left=0.15, right=0.95, wspace=1.5, hspace=5)
 
         try:
             new_plot.table(
@@ -116,7 +116,7 @@ class Info:
         # plt.figure(figure.number)
         new_plot = figure.add_subplot(pos)
 
-        figure.subplots_adjust(left=0.15, right=0.95, wspace=1.5, hspace=5)
+        #figure.subplots_adjust(left=0.15, right=0.95, wspace=1.5, hspace=5)
 
         try:
             new_plot.table(
@@ -136,18 +136,22 @@ class Info:
 
         new_plot.set_title(title, fontsize=10, fontweight='bold', pad=20)
 
-    def _barofpie(self, figure, title, pos):
+    def _barofpie(self, figure, title, values, pos):
 
-            box = new_plot3.get_position()
-            new_plot3.set_position([box.x0 + 0.05, box.y0, box.width * 0.5, box.height * 0.75])
-            new_plot3.barh(y_pos, sonstiges_values, align='center')
-            new_plot3.set_yticks(y_pos)
-            new_plot3.set_yticklabels(sonstiges_names)
-            new_plot3.invert_yaxis()
-            new_plot3.set_xlabel('Durchmesser')
-            new_plot3.set_title('Details der Kategorie "Sonstiges"')
+        new_plot = figure.add_subplot(pos)
+        y_pos = np.arange(len(values))
+        box = new_plot.get_position()
+        #new_plot.set_position([box.x0 + 0.05, box.y0, box.width * 0.5, box.height * 0.75])
+        new_plot.barh(y_pos, values, align='center')
+        new_plot.set_yticks(y_pos)
+        new_plot.set_yticklabels(values)
+        new_plot.invert_yaxis()
+        new_plot.set_xlabel('Durchmesser')
+        new_plot.set_title(title)
+        #TODO: Verbindungslinien zwischen plot und bar zeichnen
 
-    def _pieplot(self, sql, figure, title, pos):
+
+    def _pieplot(self, sql, figure, title, pos, pos2):
         """Erzeugt ein Pie-Chart mit Bezeichnungen und Anzahl bzw. Länge und fügt sie als subplot einem tab zu"""
 
         if not self.db_qkan.sql(sql, "Dashboard - {title}"):
@@ -156,47 +160,48 @@ class Info:
         data = self.db_qkan.fetchall()
         labels, values = [[el[i] for el in data] for i in range(2)]
 
+
         new_plot = figure.add_subplot(pos)
-        figure.subplots_adjust(left=0.05, right=0.95, wspace=1.5, hspace=2)
+        #figure.subplots_adjust(left=0.05, right=0.95, wspace=1.5, hspace=2)
 
         wedges, texts, autotexts = new_plot.pie(values, labels=labels,  shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values), radius=1.1)
         # figure.tight_layout()
         new_plot.set_title(title)
 
-        # #bar of pie für "Sonstiges"
-        # l_bezeich = []
-        #
-        # for i in data:
-        #     i = str(i[0])
-        #     l_bezeich.append(i)
-        #
-        # data = {k: None for k in l_bezeich}
-        # if data.values() not in [None, 'None']:
-        #     iface.messageBar().pushMessage("Error",
-        #                                    str(data),
-        #                                    level=Qgis.Critical)
-        #
-        #     total = sum(data.values())
-        #     threshold = 0.1 * total
-        #     daten = {k: v for k, v in data.items() if v >= threshold}
-        #     sonstiges = {k: v for k, v in data.items() if v < threshold}
-        #
-        #     if sonstiges:
-        #         daten['Sonstiges'] = sum(sonstiges.values())
-        #     # Daten für das Kreisdiagramm
-        #     names = list(daten.keys())
-        #     values = list(daten.values())
-        #
-        #     if 'Sonstiges' in daten:
-        #         sonstiges_names = list(sonstiges.keys())
-        #         sonstiges_values = list(sonstiges.values())
-        #
-        #         y_pos = np.arange(len(sonstiges_values))
-        #
-        #         title = 'Sonstiges'
-        #         figure = figure
-        #         pos = gs[2]
-        #         self._barofpie(figure, title, pos)
+        #bar of pie für "Sonstiges"
+        l_bezeich = []
+
+        for i in data:
+            i = str(i[0])
+            l_bezeich.append(i)
+
+        if values not in [None, 'None']:
+            total = sum(values)
+            threshold = 0.1 * total
+            dic={}
+            for key in labels:
+                for value in values:
+                    dic[key] = value
+                    values.remove(value)
+                    break
+
+            daten = {k: v for k, v in dic.items() if v >= threshold}
+            sonstiges = {k: v for k, v in dic.items() if v < threshold}
+
+            if sonstiges:
+                daten['Sonstiges'] = sum(sonstiges.values())
+                # Daten für das Kreisdiagramm
+                names = list(daten.keys())
+                values = list(daten.values())
+
+            if 'Sonstiges' in daten:
+                sonstiges_names = list(sonstiges.keys())
+                sonstiges_values = list(sonstiges.values())
+
+                y_pos = np.arange(len(sonstiges_values))
+
+                title = 'Sonstiges'
+                self._barofpie(figure, title, values, pos2)
 
         return wedges, texts, autotexts
 
@@ -210,7 +215,7 @@ class Info:
         labels, values = [[el[i] for el in data] for i in range(2)]
 
         new_plot = figure.add_subplot(pos)
-        figure.subplots_adjust(left=0.05, right=0.95, wspace=1.5, hspace=2)
+        #figure.subplots_adjust(left=0.05, right=0.95, wspace=1.5, hspace=2)
 
         y_pos = np.arange(len(values))
         box = new_plot.get_position()
@@ -341,7 +346,7 @@ class Info:
         figure = self.fig_1
         figure.clear()
 
-        gs = GridSpec(2, 3, figure=figure, wspace=0.15)
+        gs = GridSpec(2, 4, figure=figure, wspace=0.15)
 
         #Darstellung Haltungen nach Entwässerungsart bezogen auf km
 
@@ -364,7 +369,8 @@ class Info:
             sql=sql,
             figure=figure,
             title='Entwässerungsart',
-            pos=gs[0]
+            pos=gs[0],
+            pos2=gs[1]
         )
 
         #return self.canv_1, wedges
@@ -425,7 +431,8 @@ class Info:
             sql=sql,
             figure=figure,
             title='Baujahre',
-            pos=gs[1]
+            pos=gs[2],
+            pos2=gs[3]
         )
 
         # Darstellungen Haltungen nach Durchmesser
@@ -451,7 +458,7 @@ class Info:
             title='Gesamtlänge je Durchmesser',
             ylabel='Durchmesser bis mm',
             xlabel='Gesamtlänge (km)',
-            pos=gs[2]
+            pos=gs[4]
         )
 
         # l_bezeich = []
@@ -536,7 +543,7 @@ class Info:
             title='Gesamtlänge nach Material',
             ylabel='Material',
             xlabel='Gesamtlänge (km)',
-            pos=gs[3]
+            pos=gs[5]
         )
 
         #
@@ -619,40 +626,8 @@ class Info:
             title='Gesamtlänge nach Rohrprofil',
             ylabel='Rohrprofil',
             xlabel='Gesamtlänge (km)',
-            pos=gs[5]
+            pos=gs[6]
         )
-
-        #
-        #
-        # l_bezeich = []
-        # sql = """select DISTINCT profilnam from haltungen """
-        #
-        # if not self.db_qkan.sql(sql):
-        #     return
-        #
-        # for i in self.db_qkan.fetchall():
-        #     i = str(i[0])
-        #     l_bezeich.append(i)
-        #
-        # data = {k: None for k in l_bezeich}
-        #
-        # for i in data.keys():
-        #     sql = f"""select sum(laenge) from haltungen WHERE profilnam = '{i}'"""
-        #
-        #     if not self.db_qkan.sql(sql):
-        #         return
-        #
-        #     anz = self.db_qkan.fetchall()[0][0]
-        #
-        #     data[i] = anz
-        #
-        # names = list(data.keys())
-        # values = list(data.values())
-        # # Plot
-        # new_plot3 = figure.add_subplot(236)
-        # new_plot3.pie(values, labels=names, autopct=lambda pct: self.func(pct, values))
-        # new_plot3.set_title('Profilart')
-        # figure.tight_layout()
 
         self.canv_1.draw()
 
@@ -662,6 +637,8 @@ class Info:
         # Karteikarte 3 initialisieren
         figure_3 = self.fig_3
         figure_3.clear()
+
+        gs = GridSpec(2, 2, figure=figure_3, wspace=0.15, width_ratios=[2, 1])
 
         sql = """
             WITH liste AS (
@@ -685,16 +662,12 @@ class Info:
             title='Gesamtlänge nach Zustandsklassen',
             ylabel='Zustandsklasse',
             xlabel='Gesamtlänge (km)',
-            pos=121
+            pos=gs[0]
         )
 
 
-
-
-
-
         # plt.figure(figure_3.number)
-        new_plot_2 = figure_3.add_subplot(121)
+        new_plot_2 = figure_3.add_subplot(gs[1])
         l_bezeich = []
         sql = """select DISTINCT MIN(max_ZD,max_ZS,max_ZB) from haltungen_untersucht """
 
@@ -718,9 +691,6 @@ class Info:
 
                 data[i] = anz
 
-        #TODO: Verbesserung von Jörg einbauen
-        #sql = f"""select MIN(max_ZD,max_ZS,max_ZB) as minz, count() as anz from haltungen_untersucht WHERE GROUP BY minz"""
-
         if 'None' in data.keys():
             del data['None']
         names = list(data.keys())
@@ -728,7 +698,6 @@ class Info:
         # Plot
         new_plot_2.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot_2.set_title('Zustandsklasse Haltungen')
-        figure_3.tight_layout()
         self.canv_3.draw()
 
 
@@ -765,10 +734,9 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot_2 = figure_3.add_subplot(122)
+        new_plot_2 = figure_3.add_subplot(gs[3])
         new_plot_2.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot_2.set_title('Zustandsklasse Schächte')
-        figure_3.tight_layout()
         self.canv_3.draw()
 
 
@@ -776,7 +744,7 @@ class Info:
         figure_2 = self.fig_2
         figure_2.clear()
         # plt.figure(figure_2.number)
-        new_plot_2 = figure_2.add_subplot(131)
+        new_plot_2 = figure_2.add_subplot(141)
 
         l_bezeich = []
         sql = """select count() from schaechte"""
@@ -812,42 +780,80 @@ class Info:
         # Plot
         new_plot_2.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot_2.set_title('Entwässerungsart')
-        figure_2.tight_layout()
         self.canv_2.draw()
 
         # Darstellungen Schächte nach Baujahren
-        l_bezeich = []
-        sql = """select DISTINCT baujahr from schaechte """
 
-        if not self.db_qkan.sql(sql):
-            return
+        sql = """
+                            SELECT 
+                                CONCAT('bis ', FLOOR(baujahr / 5) * 5 + 4) AS baujahr_gruppe,
+                                count() AS summe_schaechte
+                            FROM 
+                                schaechte
+                            GROUP BY 
+                                FLOOR(baujahr / 5)
+                            ORDER BY 
+                                FLOOR(baujahr / 5);
+                            """
+        wedges, texts, autotexts = self._pieplot(
+            sql=sql,
+            figure=figure_2,
+            title='Baujahre',
+            pos=142,
+            pos2=143
+        )
 
-        for i in self.db_qkan.fetchall():
-            i = str(i[0])
-            l_bezeich.append(i)
+        # l_bezeich = []
+        # sql = """select DISTINCT baujahr from schaechte """
+        #
+        # if not self.db_qkan.sql(sql):
+        #     return
+        #
+        # for i in self.db_qkan.fetchall():
+        #     i = str(i[0])
+        #     l_bezeich.append(i)
+        #
+        # data = {k: None for k in l_bezeich}
+        #
+        # for i in data.keys():
+        #     sql = f"""select count() from schaechte WHERE baujahr = '{i}'"""
+        #
+        #     sql = """
+        #                 SELECT
+        #                         count(),
+        #                         iif(
+        #                             coalesce(baujahr, 0) = 0,
+        #                             ' ohne Baujahr',
+        #                             printf('bis %d', min(CAST(strftime('%Y', 'now') AS INT), ceil(baujahr/5.)*5.))) AS baujahr
+        #                     FROM schaechte
+        #                 GROUP BY baujahr
+        #                 ORDER BY baujahr
+        #             """
+        #     wedges, texts, autotexts = self._pieplot(
+        #         sql=sql,
+        #         figure=figure,
+        #         title='Baujahre',
+        #         pos=gs[1]
+        #     )
+        #
+        #     if not self.db_qkan.sql(sql):
+        #         return
+        #
+        #     anz = self.db_qkan.fetchall()[0][0]
+        #
+        #     data[i] = anz
+        #
+        # if 'None' in data.keys():
+        #     del data['None']
+        # names = list(data.keys())
+        # values = list(data.values())
+        # # Plot
+        # new_plot = figure_2.add_subplot(132)
+        # wedges, texts, autotexts = new_plot.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
+        # new_plot.set_title('Baujahr')
+        # self.canv_2.draw()
 
-        data = {k: None for k in l_bezeich}
 
-        for i in data.keys():
-            sql = f"""select count() from schaechte WHERE baujahr = '{i}'"""
-
-            if not self.db_qkan.sql(sql):
-                return
-
-            anz = self.db_qkan.fetchall()[0][0]
-
-            data[i] = anz
-
-        if 'None' in data.keys():
-            del data['None']
-        names = list(data.keys())
-        values = list(data.values())
-        # Plot
-        new_plot = figure_2.add_subplot(132)
-        wedges, texts, autotexts = new_plot.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
-        new_plot.set_title('Baujahr')
-        figure_2.tight_layout()
-        self.canv_2.draw()
 
 
         # Darstellung Schächte nach Material
@@ -877,10 +883,9 @@ class Info:
         names = list(data.keys())
         values = list(data.values())
         # Plot
-        new_plot = figure_2.add_subplot(133)
+        new_plot = figure_2.add_subplot(144)
         wedges, texts, autotexts = new_plot.pie(values, labels=names, shadow=self.shadow, wedgeprops=self.abstand, autopct=lambda pct: self.func(pct, values))
         new_plot.set_title('Material')
-        figure_2.tight_layout()
         self.canv_2.draw()
 
     def _suewvo(self):

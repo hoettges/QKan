@@ -86,7 +86,8 @@ class Infos(QKanPlugin):
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.info_dlg
-        self.dialog.fig_1 = plt.figure()
+        #layout='constrained' damit die Texte sich nicht überschneiden!
+        self.dialog.fig_1 = plt.figure(layout='constrained')
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
         qw = QWidget(self.dialog)
@@ -100,7 +101,7 @@ class Infos(QKanPlugin):
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.info_dlg
-        self.dialog.fig_2 = plt.figure()
+        self.dialog.fig_2 = plt.figure(layout='constrained')
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
         qw = QWidget(self.dialog)
@@ -114,7 +115,7 @@ class Infos(QKanPlugin):
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.info_dlg
-        self.dialog.fig_3 = plt.figure()
+        self.dialog.fig_3 = plt.figure(layout='constrained')
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
         qw = QWidget(self.dialog)
@@ -128,7 +129,7 @@ class Infos(QKanPlugin):
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.info_dlg
-        self.dialog.fig_4 = plt.figure()
+        self.dialog.fig_4 = plt.figure(layout='constrained')
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
         qw = QWidget(self.dialog)

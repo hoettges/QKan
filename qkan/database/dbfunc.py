@@ -1305,7 +1305,7 @@ class DBConnection:
                   uh.station IS NOT NULL AND
                   hu.geom IS NOT NULL AND
                   abs(uh.station) < 10000 AND
-                  uh.untersuchrichtung IS NOT NULL
+                  hu.untersuchrichtung IS NOT NULL
             GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station"""
 
@@ -1729,7 +1729,7 @@ class DBConnection:
 
         sql = """SELECT
             uh.pk, hu.pk AS id,
-            CASE uh.untersuchrichtung
+            CASE hu.untersuchrichtung
                 WHEN 'in Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'gegen Fließrichtung'    THEN uh.station
                                            ELSE uh.station END        AS station
@@ -1745,7 +1745,7 @@ class DBConnection:
                   uh.station IS NOT NULL AND
                   hu.geom IS NOT NULL AND
                   abs(uh.station) < 10000 AND
-                  uh.untersuchrichtung IS NOT NULL
+                  hu.untersuchrichtung IS NOT NULL
             GROUP BY hu.leitnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station"""
 
