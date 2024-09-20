@@ -46,12 +46,10 @@ def SubElementText(parent: Element, name: str, text: Union[str, int]) -> Element
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan: DBConnection, export_file: str, vorlage: str, check):
+    def __init__(self, db_qkan: DBConnection, export_file: str, vorlage: str):
         self.db_qkan = db_qkan
         self.export_file = export_file
         self.vorlage = vorlage
-
-        self.check = check
 
         # XML base
         self.stamm: Optional[Element] = None
@@ -80,6 +78,8 @@ class ExportTask:
                 schunten,
                 sohleunten,
                 sohleoben,
+                hoehe,
+                breite,
                 laenge,
                 simstatus,
                 kommentar
@@ -100,23 +100,23 @@ class ExportTask:
                 _create_children_text(
                     SubElement(obj, "Wehr"),
                     {
-                        "SchachtZulauf": attr[1],
-                        "SchachtAblauf": attr[2],
-                        "Schwellenhoehe": attr[4],
-                        "Kammerhoehe": attr[5],
-                        "LaengeWehrschwelle": attr[6],
+                        "SchachtZulauf": attr[1],                               # schoben
+                        "SchachtAblauf": attr[2],                               # schunten
+                        "Schwellenhoehe": attr[4],                              # sohleoben
+                        "Kammerhoehe": attr[5],                                 # hoehe
+                        "LaengeWehrschwelle": attr[7],                          # laenge
                     },
                 )
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-                SubElementText(abw, "Objektbezeichnung", attr[0])
-                SubElement(abw, "Objektart", str(1))
-                SubElementText(abw, "Status", attr[10])
+                SubElementText(abw, "Objektbezeichnung", attr[0])               # haltnam
+                SubElementText(abw, "Objektart", "1")
+                SubElementText(abw, "Status", attr[8])                          # simstatus
                 _create_children_text(
                     SubElement(
                         SubElement(SubElement(abw, "Knoten"), "Bauwerk"), "Wehr_Ueberlauf"
                     ),
-                    {"LaengeWehrschwelle": attr[6]},
+                    {"LaengeWehrschwelle": attr[7]},                            # laenge
                 )
 
             fortschritt("Wehre eingefügt", 0.10)
@@ -1099,44 +1099,27 @@ class ExportTask:
             self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
             # endregion
 
-            # Export
-            if self.check['cb_wehr']:
-                self._export_wehre()
-            if self.check['cb_pumpe']:
-                self._export_pumpen()
-            if self.check['cb_auslaesse']:
-                self._export_auslaesse()
-            if self.check['cb_schaechte']:
-                self._export_schaechte()
-            if self.check['cb_speicher']:
-                self._export_speicher()
-            if self.check['cb_haltung']:
-                self._export_haltungen()
-            if self.check['cb_leitung']:
-                self._export_anschlussleitungen()
+        # Export
+        if QKan.config.check_export.wehre:
+            self._export_wehre()
+        if QKan.config.check_export.pumpen:
+            self._export_pumpen()
+        if QKan.config.check_export.auslaesse:
+            self._export_auslaesse()
+        if QKan.config.check_export.schaechte:
+            self._export_schaechte()
+        if QKan.config.check_export.speicher:
+            self._export_speicher()
+        if QKan.config.check_export.haltungen:
+            self._export_haltungen()
+        if QKan.config.check_export.anschlussleitungen:
+            self._export_anschlussleitungen()
+
+        if self.vorlage == "":
 
             Path(self.export_file).write_text(
                 minidom.parseString(tostring(root)).toprettyxml(indent="  ")
             )
-
-        if self.vorlage != "":
-
-            # Export
-            if self.check['cb_wehr']:
-                self._export_wehre()
-            if self.check['cb_pumpe']:
-                self._export_pumpen()
-            if self.check['cb_auslaesse']:
-                self._export_auslaesse()
-            if self.check['cb_schaechte']:
-                self._export_schaechte()
-            if self.check['cb_speicher']:
-                self._export_speicher()
-            if self.check['cb_haltung']:
-                self._export_haltungen()
-            if self.check['cb_leitung']:
-                self._export_anschlussleitungen()
-
 
         # Close connection
         del self.db_qkan

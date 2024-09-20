@@ -785,16 +785,22 @@ class Info:
         # Darstellungen Schächte nach Baujahren
 
         sql = """
-                            SELECT 
-                                CONCAT('bis ', FLOOR(baujahr / 5) * 5 + 4) AS baujahr_gruppe,
-                                count() AS summe_schaechte
-                            FROM 
-                                schaechte
-                            GROUP BY 
-                                FLOOR(baujahr / 5)
-                            ORDER BY 
-                                FLOOR(baujahr / 5);
-                            """
+            WITH liste AS (
+                SELECT 
+                    iif(coalesce(baujahr, 0) = 0,
+                        ' ohne Baujahr',
+                        printf('bis %d', min(CAST(strftime('%Y', 'now') AS INT), ceil(baujahr/5.)*5.))
+                    )               AS baujahr_gruppe
+                FROM 
+                    schaechte
+            )
+            SELECT
+                baujahr_gruppe,
+                count() AS anzahl_schaechte
+            FROM liste
+            GROUP BY baujahr_gruppe
+            ORDER BY baujahr_gruppe;
+        """
         wedges, texts, autotexts = self._pieplot(
             sql=sql,
             figure=figure_2,

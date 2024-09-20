@@ -1380,6 +1380,15 @@ class ImportTask:
         if not self.db_qkan.sql(sql, "strakat_import Referenzliste simulationsstatus"):
             return False
 
+        # Referenztabelle Eigentum
+
+        sql = """INSERT INTO eigentum (name, kommentar)
+                 SELECT text, 'Importiert aus STRAKAT'
+                 FROM t_reflists
+                 WHERE tabtyp = 'eigentum'"""
+        if not self.db_qkan.sql(sql, "strakat_import Referenzliste eigentum"):
+            return False
+
         self.db_qkan.commit()
 
         return True
@@ -1489,9 +1498,14 @@ class ImportTask:
                 SELECT n1 AS id, text, kurz
                 FROM t_reflists
                 WHERE tabtyp = 'entwaesserungsgebiet'
+            ),
+            eigentum AS (
+                SELECT n1 AS id, text, kurz
+                FROM t_reflists
+                WHERE tabtyp = 'eigentum'
             )
             INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, strasse, material, 
-                                durchm, entwart, schachttyp, knotentyp, baujahr, teilgebiet,
+                                durchm, entwart, schachttyp, knotentyp, baujahr, eigentum, teilgebiet,
                                 kommentar, geop, geom)
             SELECT
                 stk.schacht_oben                            AS schnam,
@@ -1517,6 +1531,7 @@ class ImportTask:
                 'Schacht'                                   AS schachttyp,
                 k2t.text                                    AS knotentyp,
                 stk.baujahr                                 AS baujahr,
+                eg.text                                     AS eigentum,
                 k2g.text                                    AS teilgebiet,
                 CASE WHEN count(*) > 1
                 THEN printf('Schacht in STRAKAT %s mal vorhanden', count(*))
@@ -1538,6 +1553,8 @@ class ImportTask:
                 ON stk.e_gebiet = k2g.id
                 LEFT JOIN schaechte AS sd
                 ON sd.schnam = stk.schacht_oben
+                LEFT JOIN eigentum AS eg
+                ON eg.id = stk.eigentum 
             WHERE
                     stk.schachtnummer <> 0
                 AND stk.schachtart <> 0                 -- keine Knickpunkte
@@ -1595,12 +1612,17 @@ class ImportTask:
                 SELECT n1 AS id, text, kurz
                 FROM t_reflists
                 WHERE tabtyp = 'entwaesserungsgebiet'
+            ),
+            eigentum AS (
+                SELECT n1 AS id, text, kurz
+                FROM t_reflists
+                WHERE tabtyp = 'eigentum'
             )
             INSERT INTO haltungen (haltnam, schoben, schunten, laenge, 
                 xschob, yschob, xschun, yschun, 
                 breite, hoehe, 
                 sohleoben, sohleunten, 
-                profilnam, entwart, druckdicht, material, strasse, teilgebiet,  
+                profilnam, entwart, druckdicht, material, strasse, eigentum, teilgebiet,  
                 haltungstyp, baujahr, simstatus, kommentar, geom)
             SELECT
                 stk.haltungsname                        AS haltnam,
@@ -1624,6 +1646,7 @@ class ImportTask:
                     THEN substr(strassen.name, INSTR(strassen.name,' ')+1)
                     ELSE strassen.name
                 END                                     AS strasse,
+                eg.text                                 AS eigentum,
                 k2g.text                                AS teilgebiet,
                 'Haltung'                               AS haltungstyp,
                 stk.baujahr                             AS baujahr,
@@ -1642,6 +1665,7 @@ class ImportTask:
                 JOIN knotenart      AS k2t  ON stk.schachtart = k2t.id
                 JOIN gebiet         AS k2g  ON stk.e_gebiet = k2g.id
                 LEFT JOIN haltungen         ON haltungen.haltnam = stk.haltungsname
+                LEFT JOIN eigentum  AS eg   ON eg.id = stk.eigentum 
             WHERE stk.laenge > 0.045
               AND stk.schachtnummer <> 0                         -- nicht geloescht
               AND stk.schachtart <> 0
@@ -2062,7 +2086,7 @@ class ImportTask:
                 xschob, yschob, xschun, yschun, 
                 breite, hoehe, 
                 strasse, 
-                baujahr, untersuchtag, untersucher, 
+                baujahr, untersuchtag, untersucher, untersuchrichtung, 
                 wetter,
                 bewertungsart, bewertungstag, datenart, 
                 max_ZD, max_ZB, max_ZS, 
@@ -2085,6 +2109,7 @@ class ImportTask:
                 stk.baujahr                     AS baujahr,
                 stb.datum                       AS untersuchtag,
                 stb.untersucher                 AS untersucher,
+                stb.untersuchungsrichtung       AS untersuchrichtung,
                 CASE WHEN instr(lower(stb.wetter), 'trock') + 
                            instr(lower(stb.wetter), 'kein Nied') > 0 THEN 1
                       WHEN instr(lower(stb.wetter), 'reg')       > 0 THEN 2
@@ -2110,7 +2135,8 @@ class ImportTask:
                 ON hu.haltnam = stk.haltungsname AND
                    hu.schoben = stk.schacht_oben AND
                    hu.schunten = stk.schacht_unten AND
-                   hu.untersuchtag = stb.datum
+                   hu.untersuchtag = stb.datum AND
+                   hu.untersuchrichtung = stb.untersuchungsrichtung
             WHERE  stk.laenge > 0.045 AND
                    stk.schachtnummer <> 0 AND
                    stb.geloescht = 0 AND
@@ -2143,7 +2169,7 @@ class ImportTask:
             )
             INSERT INTO untersuchdat_haltung (
                 untersuchhal, schoben, schunten,
-                id, untersuchtag, untersuchrichtung,
+                id, untersuchtag,
                 inspektionslaenge, bandnr, videozaehler, station, timecode,
                 langtext, kuerzel, charakt1, charakt2, quantnr1, quantnr2,
                 streckenschaden, streckenschaden_lfdnr,
@@ -2157,10 +2183,6 @@ class ImportTask:
                 stk.schacht_unten               AS schunten,
                 NULL                            AS id, 
                 stb.datum                       AS untersuchtag,
-                CASE stb.untersuchungsrichtung
-                WHEN 0 THEN 'gegen Fließrichtung'
-                WHEN 1 THEN 'in Fließrichtung'
-                ELSE NULL END                   AS untersuchrichtung, 
                 stk.laenge                      AS inspektionslaenge,
                 stb.bandnr                      AS bandnr,
                 stb.videozaehler                AS videozaehler,
@@ -2241,10 +2263,11 @@ class ImportTask:
                 Trim(sha.haschun)                   AS schunten,
                 sha.rohrbreite                      AS hoehe,
                 sha.rohrbreite                      AS breite,
-                GLength(sha.geom)                    AS laenge,
+                GLength(sha.geom)                   AS laenge,
                 NULL                                AS id,
                 stb.datum                           AS untersuchtag,
                 stb.untersucher                     AS untersucher,
+                stb.untersuchungsrichtung           AS untersuchrichtung,
                 CASE WHEN instr(lower(stb.wetter), 'trock') + 
                            instr(lower(stb.wetter), 'kein Nied') > 0 THEN 1
                       WHEN instr(lower(stb.wetter), 'reg')       > 0 THEN 2
@@ -2266,7 +2289,7 @@ class ImportTask:
             )
             INSERT INTO anschlussleitungen_untersucht (
             leitnam, schoben, schunten, hoehe, breite, laenge, 
-            id, untersuchtag, untersucher, wetter,
+            id, untersuchtag, untersucher, untersuchrichtung, wetter,
             bewertungstag, datenart, max_ZD, max_ZB, max_ZS,
             kommentar, geom
             )
@@ -2280,6 +2303,7 @@ class ImportTask:
                 lu.id,
                 lu.untersuchtag,
                 lu.untersucher,
+                lu.untersuchrichtung,
                 lu.wetter,
                 lu.bewertungstag,
                 lu.datenart,
@@ -2290,7 +2314,8 @@ class ImportTask:
                 lu.geom
             FROM
                 lu
-                LEFT JOIN anschlussleitungen_untersucht AS la USING (leitnam, schoben, schunten, untersuchtag) 
+                LEFT JOIN anschlussleitungen_untersucht AS la 
+                USING (leitnam, schoben, schunten, untersuchtag, untersuchrichtung) 
             WHERE la.pk IS NULL
         """
 
@@ -2326,10 +2351,6 @@ class ImportTask:
                     sha.haschun                             AS schunten,
                     NULL                                    AS id, 
                     stb.datum                               AS untersuchtag,
-                    CASE stb.untersuchungsrichtung
-                    WHEN 0 THEN 'gegen Fließrichtung'
-                    WHEN 1 THEN 'in Fließrichtung'
-                    ELSE NULL END                           AS untersuchrichtung, 
                     NULL                                    AS inspektionslaenge,
                     stb.bandnr                              AS bandnr,
                     stb.videozaehler                        AS videozaehler,
@@ -2366,7 +2387,7 @@ class ImportTask:
             )
             INSERT INTO untersuchdat_anschlussleitung (
                 untersuchleit, schoben, schunten,
-                id, untersuchtag, untersuchrichtung,
+                id, untersuchtag,
                 inspektionslaenge, bandnr, videozaehler, station, timecode,
                 langtext, kuerzel, charakt1, charakt2, quantnr1, quantnr2,
                 streckenschaden, streckenschaden_lfdnr,
@@ -2376,7 +2397,7 @@ class ImportTask:
             )
             SELECT 
                 ua.untersuchleit, ua.schoben, ua.schunten,
-                ua.id, ua.untersuchtag, ua.untersuchrichtung,
+                ua.id, ua.untersuchtag,
                 ua.inspektionslaenge, ua.bandnr, ua.videozaehler, ua.station, ua.timecode,
                 ua.langtext, ua.kuerzel, ua.charakt1, ua.charakt2, ua.quantnr1, ua.quantnr2,
                 ua.streckenschaden, ua.streckenschaden_lfdnr,

@@ -178,7 +178,6 @@ class Anschlussleitung(ClassObject):
     sohleunten: float = 0.0
     deckeloben: float = 0.0
     deckelunten: float = 0.0
-    profilnam: str = ""
     entwart: str = ""
     material: str = ""
     baujahr: int = 0
@@ -708,7 +707,7 @@ class ImportTask:
                     baujahr=baujahr,
                     knotentyp=knoten_typ,
                     schachttyp=schachttyp,
-                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
+                    simstatus=block.findtext("d:Status", None, self.NS),
                     material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
@@ -1111,7 +1110,7 @@ class ImportTask:
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
                     material=block.findtext("d:Knoten/d:Bauwerk/d:Auslaufbauwerk/d:Material", None, self.NS),
-                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
+                    simstatus=block.findtext("d:Status", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -1261,7 +1260,7 @@ class ImportTask:
                     entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     knotentyp=knoten_typ,
-                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
+                    simstatus=block.findtext("d:Status", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -1398,7 +1397,7 @@ class ImportTask:
                     entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                     strasse=block.findtext("d:Lage/d:Strassenname", None, self.NS),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
+                    simstatus=block.findtext("d:Status", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                     aussendurchmesser=aussendurchmesser,
                     profilauskleidung=profilauskleidung,
@@ -2115,7 +2114,7 @@ class ImportTask:
             )
             logger.debug(f"Anzahl Anschlussleitungen: {len(blocks)}")
 
-            schoben, schunten, profilnam = ("",) * 3
+            schoben, schunten = ("",) * 2
             (
                 sohleoben,
                 sohleunten,
@@ -2147,7 +2146,7 @@ class ImportTask:
                         material = _haltung.findtext("d:Material", None, self.NS)
 
                         for profil in _haltung.findall("d:Profil", self.NS):
-                            profilnam = profil.findtext("d:Profilart", None, self.NS)
+                            # profilnam = profil.findtext("d:Profilart", None, self.NS)     # nicht in QKan verwaltet
                             hoehe = (
                                 _get_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
 
@@ -2222,10 +2221,9 @@ class ImportTask:
                         sohleunten=sohleunten,
                         deckeloben=deckeloben,
                         deckelunten=deckelunten,
-                        profilnam=profilnam,
                         entwart=block.findtext("d:Entwaesserungsart", None, self.NS),
                         ks=1.5,  # in Hydraulikdaten enthalten.
-                        simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
+                        simstatus=block.findtext("d:Status", None, self.NS),
                         kommentar=block.findtext("d:Kommentar", "-", self.NS),
                         xschob=xschob,
                         yschob=yschob,
@@ -2304,18 +2302,18 @@ class ImportTask:
                 'kuerzel',
             )
 
-            # Profile
-            profilnam = self.db_qkan.get_from_mapper(
-                anschlussleitung.profilnam,
-                self.mapper_profile,
-                'anschlussleitungen',
-                'profile',
-                'profilnam',
-                'isybau',
-                'kommentar',
-                'kuerzel',
-            )
-
+            # # Profile
+            # profilnam = self.db_qkan.get_from_mapper(
+            #     anschlussleitung.profilnam,
+            #     self.mapper_profile,
+            #     'anschlussleitungen',
+            #     'profile',
+            #     'profilnam',
+            #     'isybau',
+            #     'kommentar',
+            #     'kuerzel',
+            # )
+            #
             # Material
             material = self.db_qkan.get_from_mapper(
                 anschlussleitung.material,
@@ -2334,7 +2332,7 @@ class ImportTask:
                       'laenge': anschlussleitung.laenge, 'material': material, 'baujahr': anschlussleitung.baujahr,
                       'sohleoben': anschlussleitung.sohleoben, 'sohleunten': anschlussleitung.sohleunten,
                       'deckeloben': anschlussleitung.deckeloben, 'deckelunten': anschlussleitung.deckelunten,
-                      'profilnam': profilnam, 'entwart': entwart,
+                      'entwart': entwart,
                       'ks': anschlussleitung.ks, 'simstatus': simstatus,
                       'kommentar': anschlussleitung.kommentar, 'xschob': anschlussleitung.xschob,
                       'xschun': anschlussleitung.xschun, 'yschob': anschlussleitung.yschob,
@@ -2504,7 +2502,7 @@ class ImportTask:
 
             logger.debug(f"Anzahl Anschlussleitungen: {len(blocks)}")
 
-            schoben, schunten, profilnam = ("",) * 3
+            schoben, schunten = ("",) * 2
             (
                 sohleoben,
                 sohleunten,
@@ -3003,7 +3001,7 @@ class ImportTask:
             for block in blocks:
                 yield Pumpe(
                     pnam=block.findtext("d:Objektbezeichnung", None, self.NS),
-                    simstatus=_get_int(block.findtext("d:Status", None, self.NS)),
+                    simstatus=block.findtext("d:Status", None, self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 

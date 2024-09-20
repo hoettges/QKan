@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>650</width>
-    <height>400</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -51,7 +51,7 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>331</x>
+      <x>340</x>
       <y>240</y>
       <width>81</width>
       <height>16</height>
@@ -80,10 +80,10 @@
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>330</x>
       <y>260</y>
-      <width>321</width>
-      <height>110</height>
+      <width>281</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -104,8 +104,8 @@
      <rect>
       <x>10</x>
       <y>240</y>
-      <width>291</width>
-      <height>131</height>
+      <width>301</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="font">
@@ -122,7 +122,7 @@
       <rect>
        <x>119</x>
        <y>30</y>
-       <width>151</width>
+       <width>161</width>
        <height>20</height>
       </rect>
      </property>
@@ -169,7 +169,7 @@
       <rect>
        <x>120</x>
        <y>60</y>
-       <width>151</width>
+       <width>161</width>
        <height>22</height>
       </rect>
      </property>
@@ -193,8 +193,8 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>90</y>
-       <width>151</width>
+       <y>120</y>
+       <width>161</width>
        <height>23</height>
       </rect>
      </property>
@@ -237,7 +237,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>90</y>
+       <y>120</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -252,13 +252,57 @@
       <string>Erstelldatum</string>
      </property>
     </widget>
+    <widget class="QComboBox" name="eigentum">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>90</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri','sans-serif';&quot;&gt;Eigentümer&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Eigentümer</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Eigentümer</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>631</width>
+      <width>621</width>
       <height>191</height>
      </rect>
     </property>
@@ -397,7 +441,7 @@
     <widget class="QLineEdit" name="ueberstauflaeche">
      <property name="geometry">
       <rect>
-       <x>470</x>
+       <x>450</x>
        <y>60</y>
        <width>120</width>
        <height>20</height>
@@ -495,9 +539,9 @@
     <widget class="QLabel" name="label_28">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>580</x>
        <y>60</y>
-       <width>41</width>
+       <width>31</width>
        <height>21</height>
       </rect>
      </property>
@@ -514,7 +558,7 @@
     <widget class="QLabel" name="label_42">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>310</x>
        <y>60</y>
        <width>131</width>
        <height>21</height>
@@ -634,7 +678,7 @@
     <widget class="QCheckBox" name="druckdicht">
      <property name="geometry">
       <rect>
-       <x>470</x>
+       <x>450</x>
        <y>120</y>
        <width>70</width>
        <height>21</height>
@@ -659,7 +703,7 @@
     <widget class="QComboBox" name="entwart">
      <property name="geometry">
       <rect>
-       <x>470</x>
+       <x>450</x>
        <y>30</y>
        <width>141</width>
        <height>22</height>
@@ -684,7 +728,7 @@
     <widget class="QLabel" name="label_41">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>310</x>
        <y>120</y>
        <width>130</width>
        <height>21</height>
@@ -703,7 +747,7 @@
     <widget class="QLineEdit" name="strasse">
      <property name="geometry">
       <rect>
-       <x>470</x>
+       <x>450</x>
        <y>90</y>
        <width>141</width>
        <height>20</height>
@@ -725,7 +769,7 @@
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>310</x>
        <y>90</y>
        <width>131</width>
        <height>21</height>
@@ -744,7 +788,7 @@
     <widget class="QLabel" name="label_40">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>310</x>
        <y>30</y>
        <width>131</width>
        <height>21</height>

@@ -706,7 +706,6 @@ class DBConnection:
                 "baujahr",
                 "haltnam",
                 "teilgebiet",
-                "profilnam",
                 "entwart",
                 "material",
                 "profilauskleidung",
@@ -736,7 +735,7 @@ class DBConnection:
                   (leitnam, schoben, schunten,
                    hoehe, breite, laenge, aussendurchmesser,
                    sohleoben, sohleunten, baujahr, haltnam,
-                   teilgebiet, profilnam, 
+                   teilgebiet, 
                    entwart, material, profilauskleidung, innenmaterial, ks, anschlusstyp, 
                    simstatus, kommentar, createdat,  
                    geom)
@@ -746,7 +745,7 @@ class DBConnection:
                   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :aussendurchmesser,
                   :sohleoben, :sohleunten, :baujahr, :haltnam,
-                  :teilgebiet, coalesce(:profilnam, 'Kreisquerschnitt'), 
+                  :teilgebiet, 
                   coalesce(:entwart, 'Regenwasser'), :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), 
                   :anschlusstyp, coalesce(:simstatus, 'vorhanden'), :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), 
@@ -1289,7 +1288,7 @@ class DBConnection:
 
         sql = """SELECT
             uh.pk, hu.pk AS id,
-            CASE coalesce(uh.untersuchrichtung, hu.untersuchrichtung)
+            CASE hu.untersuchrichtung
                 WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
                 WHEN 'in Fließrichtung'    THEN uh.station
                                            ELSE uh.station END        AS station
@@ -1574,8 +1573,6 @@ class DBConnection:
         me = array('B', [0] * sj)  # markiert den Endbereich, in dem nur pe verwendet wird
         po = array('d', [0.0] * sj)  # Für ma: pa, für me: pe, sonst: (pa+pe)/2.
 
-        # Abstände der Knickpunkte von der Anschlussleitung
-        versatz = QKan.config.zustand.versatz_anschlusstexte
         abst = [
             QKan.config.zustand.abstand_knoten_anf,
             QKan.config.zustand.abstand_knoten_1,
@@ -1665,10 +1662,24 @@ class DBConnection:
                     xv = -yu
                     yv = xu
 
+                # Abstände der Knickpunkte von der Anschlussleitung, damit diese nicht über die Haltung geschrieben
+                # werden. Besonderheit: Zunächst werden die Texte um versatz verschoben, weiter weg wird der Versatz
+                # wenn möglich verringert.
+                versatz = QKan.config.zustand.versatz_anschlusstexte - (tdist)
+                st1_akt = 0                     # Position des letzten Textes, um sicherzustellen, dass die unter-
+                                                # schiedlichen Abstände tdist und bdist erhalten bleiben
                 for i in range(ianf, iend):
                     pk = data_uh[i][0]
                     st0 = data_uh[i][2]
-                    st1 = po[i - ianf] + versatz
+                    st1_vor = st1_akt           # Speichern der vorherigen (nicht versetzten) Position
+                    st1_akt =  po[i - ianf]
+                    # Feststellen, ob zwischen der vorherigen und der aktuellen Position ein vergrößerter Abstand vorlag
+                    if st1_akt - st1_vor < tdist + 0.001:
+                        vdist = tdist
+                    else:
+                        vdist = tdist + bdist
+                    st1_ver = max(versatz + vdist, st1_akt)
+                    versatz = st1_ver
                     # Der Anfangspunkt liegt auf der Anschlussleitung im Abstand st0 vom Anfangspunkt
                     leitobj = QgsGeometry()
                     leitobj.fromWkb(bytes.fromhex(geom_wkb.hex()))
@@ -1681,10 +1692,10 @@ class DBConnection:
                         p1 = QgsPoint(x1, y1)
                     x2 = xa + xu * st0 + xv * abst[1]
                     y2 = ya + yu * st0 + yv * abst[1]
-                    x3 = xa + xu * st1 + xv * abst[2]
-                    y3 = ya + yu * st1 + yv * abst[2]
-                    x4 = xa + xu * st1 + xv * abst[3]
-                    y4 = ya + yu * st1 + yv * abst[3]
+                    x3 = xa + xu * st1_ver + xv * abst[2]
+                    y3 = ya + yu * st1_ver + yv * abst[2]
+                    x4 = xa + xu * st1_ver + xv * abst[3]
+                    y4 = ya + yu * st1_ver + yv * abst[3]
                     geoobj = QgsGeometry.asWkb(
                         QgsGeometry.fromPolyline([p1, QgsPoint(x2, y2), QgsPoint(x3, y3), QgsPoint(x4, y4)]))
                     sql = "UPDATE untersuchdat_anschlussleitung SET geom = GeomFromWKB(?, ?) WHERE pk = ? AND geom IS NULL"

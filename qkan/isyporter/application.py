@@ -52,64 +52,59 @@ class IsyPorter(QKanPlugin):
         self.database_qkan, _ = get_database_QKan()
         if self.database_qkan:
             self.export_dlg.tf_database.setText(self.database_qkan)
+        else:
+            self.log.error("Bitte zunächst ein Projekt öffnen!")
+            raise Exception(f"{self.__class__.__name__}: {self.database_qkan}")
 
         if self.export_dlg.exec_():
-            export_file = self.export_dlg.tf_export.text()
-            vorlage = self.export_dlg.tf_export_2.text()
-            self.database_qkan = self.export_dlg.tf_database.text()
 
             # Save to config
             QKan.config.database.qkan = str(self.database_qkan)
-            QKan.config.xml.export_file = export_file
+            QKan.config.xml.export_file = self.export_dlg.tf_export.text()
+            QKan.config.xml.vorlage = self.export_dlg.tf_export_2.text()
 
-            QKan.config.check_export.export_schaechte = (
+            QKan.config.check_export.schaechte = (
                 self.export_dlg.cb_export_schaechte.isChecked()
             )
-            QKan.config.check_export.export_auslaesse = (
+            QKan.config.check_export.auslaesse = (
                 self.export_dlg.cb_export_auslaesse.isChecked()
             )
-            QKan.config.check_export.export_speicher = (
+            QKan.config.check_export.speicher = (
                 self.export_dlg.cb_export_speicher.isChecked()
             )
-            QKan.config.check_export.export_haltungen = (
+            QKan.config.check_export.haltungen = (
                 self.export_dlg.cb_export_haltungen.isChecked()
             )
-            QKan.config.check_export.export_anschlussleitungen = (
+            QKan.config.check_export.anschlussleitungen = (
                 self.export_dlg.cb_export_anschlussleitungen.isChecked()
             )
-            QKan.config.check_export.export_pumpen = (
+            QKan.config.check_export.pumpen = (
                 self.export_dlg.cb_export_pumpen.isChecked()
             )
-            QKan.config.check_export.export_wehre = (
+            QKan.config.check_export.wehre = (
                 self.export_dlg.cb_export_wehre.isChecked()
             )
 
             QKan.config.save()
 
-            check = {}
-            check['cb_schaechte'] = self.export_dlg.cb_export_schaechte.isChecked()
-            check['cb_auslaesse'] = self.export_dlg.cb_export_auslaesse.isChecked()
-            check['cb_speicher'] = self.export_dlg.cb_export_speicher.isChecked()
-            check['cb_haltung'] = self.export_dlg.cb_export_haltungen.isChecked()
-            check['cb_leitung'] = self.export_dlg.cb_export_anschlussleitungen.isChecked()
-            check['cb_pumpe'] = self.export_dlg.cb_export_pumpen.isChecked()
-            check['cb_wehr'] = self.export_dlg.cb_export_wehre.isChecked()
+            self._doexport()
 
-            with DBConnection(dbname=self.database_qkan) as db_qkan:
-                if not db_qkan.connected:
-                    fehlermeldung(
-                        "Fehler im XML-Export",
-                        f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-                    )
-                    self.iface.messageBar().pushMessage(
-                        "Fehler im XML-Export",
-                        f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-                        level=Qgis.Critical,
-                    )
-                    return
+    def _doexport(self):
+        """Start des Export in eine M150-XML-Datei
 
-                # Run export
-                ExportTask(db_qkan, export_file, vorlage, check).run()
+        Einspringpunkt für Test
+        """
+
+        with DBConnection(dbname=QKan.config.database.qkan) as db_qkan:
+            if not db_qkan.connected:
+                self.log.error(
+                    "Fehler im XML-Export\n"
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                )
+                raise Exception(f"{self.__class__.__name__}: {QKan.config.database.qkan} wurde nicht gefunden!")
+
+            # Run export
+            ExportTask(db_qkan, QKan.config.xml.export_file, QKan.config.xml.vorlage).run()
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""

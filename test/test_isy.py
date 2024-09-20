@@ -6,39 +6,37 @@ from pathlib import Path
 from qgis.testing import unittest
 
 from qkan import QKan
-from qkan.m150porter.application import M150Porter
+from qkan.isyporter.application import IsyPorter
 from qkan.tools.k_dbAdapt import dbAdapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestM150QKan(QgisTest):
+class TestISYQKan(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_m150Import.zip") as z:
+        with ZipFile(BASE_DATA / "test_isybau_aj_import.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        # QKan.config.database.qkan = str(BASE_WORK / "alsdorf.sqlite")
-        # QKan.config.xml.import_file = str(BASE_WORK / "Alsdorf_Test_mit Zustand_25832.xml")
-        QKan.config.database.qkan = str(BASE_WORK / "lemgo.sqlite")
-        QKan.config.xml.import_file = str(BASE_WORK / "Lemgo_test_DWA-M_150.XML")
+        QKan.config.database.qkan = str(BASE_WORK / "test.sqlite")
+        QKan.config.xml.import_file = str(BASE_WORK / "Datenausgabe ISYBAU-2017_29-01-21.xml")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
         QKan.config.epsg = 25832
 
-        imp = M150Porter(iface())
+        imp = IsyPorter(iface())
         erg = imp._doimport()
 
-        LOGGER.debug("erg (Validate_M150_Import): %s", erg)
+        LOGGER.debug("erg (Validate_ISY_Import): %s", erg)
         if not erg:
             LOGGER.info("Fehler in Test150QKan")
         # self.assertTrue(False, "Fehlernachricht")
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestQKanM150(QgisTest):
+class TestQKanISY(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -74,14 +72,14 @@ class TestQKanM150(QgisTest):
         QKan.config.check_export.update = False
         QKan.config.check_export.synch = False
 
-        imp = M150Porter(iface())
-        erg = imp._doexport()
+        exp = IsyPorter(iface())
+        erg = exp._doexport()
 
-        LOGGER.debug(f"erg (Validate_M150_export): {erg}")
+        LOGGER.debug(f"erg (Validate_ISY_export): {erg}")
         if not erg:
-            LOGGER.info("Fehler in TestQKanM150")
+            LOGGER.info("Fehler in TestQKanISY")
 
-        del imp
+        del exp
         # self.assertTrue(False, "Fehlernachricht")
 
 

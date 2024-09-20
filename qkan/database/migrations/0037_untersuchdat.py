@@ -174,6 +174,7 @@ def run(dbcon: DBConnection) -> bool:
     sqls = [
         """SELECT AddGeometryColumn('untersuchdat_schacht','geom',{},'LINESTRING',2);""".format(QKan.config.epsg),
         """SELECT CreateSpatialIndex('untersuchdat_schacht','geom')""",
+        """UPDATE untersuchdat_schacht SET geom = geop"""
     ]
     for sql in sqls:
         if not dbcon.sql(sql, f"migration 0037, Version {VERSION}: "

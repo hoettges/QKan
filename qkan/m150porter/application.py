@@ -5,7 +5,7 @@ from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, eval_node_types
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -15,7 +15,6 @@ from .application_dialog import ExportDialog, ImportDialog
 
 # noinspection PyUnresolvedReferences
 from . import resources  # noqa: F401
-
 
 class M150Porter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
@@ -86,21 +85,24 @@ class M150Porter(QKanPlugin):
 
             QKan.config.save()
 
-            with DBConnection(self.database_name) as db_qkan:
-                if not db_qkan.connected:
-                    fehlermeldung(
-                        "Fehler im XML-Export",
-                        f"QKan-Datenbank {self.database_name} wurde nicht gefunden!\nAbbruch!",
-                    )
-                    self.iface.messageBar().pushMessage(
-                        "Fehler im XML-Export",
-                        f"QKan-Datenbank {self.database_name} wurde nicht gefunden!\nAbbruch!",
-                        level=Qgis.Critical,
-                    )
-                    return
+            self._doexport()
 
-                # Run export
-                ExportTask(db_qkan, export_file).run()
+    def _doexport(self):
+        """Start des Export in eine M150-XML-Datei
+
+        Einspringpunkt für Test
+        """
+
+        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+            if not db_qkan.connected:
+                self.log.error(
+                    "Fehler im XML-Export\n"
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                )
+                raise Exception(f"{self.__class__.__name__}: {QKan.config.database.qkan} wurde nicht gefunden!")
+
+            # Run export
+            ExportTask(db_qkan, QKan.config.xml.export_file).run()
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
@@ -172,10 +174,6 @@ class M150Porter(QKanPlugin):
 
         Einspringpunkt für Test
         """
-        #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
-        QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-        QKan.config.xml.ordner_bild = self.import_dlg.tf_ordnerbild.text()
-        QKan.config.xml.ordner_video = self.import_dlg.tf_ordnervideo.text()
 
         self.log.info("Creating DB")
         with DBConnection(
@@ -203,6 +201,8 @@ class M150Porter(QKanPlugin):
             )
             imp.run()
             del imp
+
+            eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 
             # Write and load new project file, only if new project
             if QgsProject.instance().fileName() == '':

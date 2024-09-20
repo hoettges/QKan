@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>510</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>640</width>
-    <height>510</height>
+    <height>560</height>
    </size>
   </property>
   <property name="baseSize">
@@ -315,9 +315,9 @@
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>370</y>
-      <width>321</width>
+      <x>330</x>
+      <y>410</y>
+      <width>281</width>
       <height>111</height>
      </rect>
     </property>
@@ -337,8 +337,8 @@
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>350</y>
+      <x>340</x>
+      <y>390</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -381,7 +381,7 @@
       <x>10</x>
       <y>150</y>
       <width>621</width>
-      <height>191</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="font">
@@ -768,7 +768,7 @@
       </font>
      </property>
      <property name="text">
-      <string>m </string>
+      <string>mm</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="aussendurchmesser">
@@ -797,7 +797,7 @@
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>90</y>
+       <y>120</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -816,7 +816,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>90</y>
+       <y>120</y>
        <width>161</width>
        <height>20</height>
       </rect>
@@ -838,7 +838,7 @@
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>120</y>
+       <y>150</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -857,7 +857,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>120</y>
+       <y>150</y>
        <width>161</width>
        <height>20</height>
       </rect>
@@ -878,8 +878,8 @@
     <widget class="QCheckBox" name="druckdicht">
      <property name="geometry">
       <rect>
-       <x>320</x>
-       <y>160</y>
+       <x>40</x>
+       <y>180</y>
        <width>101</width>
        <height>17</height>
       </rect>
@@ -906,8 +906,8 @@
     <widget class="QCheckBox" name="transport">
      <property name="geometry">
       <rect>
-       <x>440</x>
-       <y>160</y>
+       <x>160</x>
+       <y>180</y>
        <width>151</width>
        <height>17</height>
       </rect>
@@ -934,14 +934,55 @@
       <string>Transportleitung</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_64">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>90</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Rohrmaterial</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="material">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>90</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rohrmaterial&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Rohrmaterial</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
-      <width>281</width>
-      <height>131</height>
+      <y>380</y>
+      <width>301</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="font">
@@ -980,7 +1021,7 @@
       <rect>
        <x>120</x>
        <y>30</y>
-       <width>140</width>
+       <width>161</width>
        <height>20</height>
       </rect>
      </property>
@@ -1027,7 +1068,7 @@
       <rect>
        <x>120</x>
        <y>60</y>
-       <width>140</width>
+       <width>161</width>
        <height>20</height>
       </rect>
      </property>
@@ -1051,7 +1092,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>90</y>
+       <y>120</y>
        <width>91</width>
        <height>21</height>
       </rect>
@@ -1070,8 +1111,8 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>90</y>
-       <width>140</width>
+       <y>120</y>
+       <width>161</width>
        <height>20</height>
       </rect>
      </property>
@@ -1088,6 +1129,50 @@
       <string>dd.MM.yyyy HH:mm:ss</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Eigentümer</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="eigentum">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>90</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri','sans-serif';&quot;&gt;Eigentümer&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Eigentümer</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1096,7 +1181,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

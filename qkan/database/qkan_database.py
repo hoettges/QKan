@@ -159,6 +159,7 @@ def createdbtables(
             sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
             sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
             baujahr INT,
+            eigentum TEXT,                                  -- join eigentum.name
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             strasse TEXT,                                   -- für ISYBAU benötigt
             profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
@@ -252,7 +253,7 @@ def createdbtables(
         """CREATE TABLE untersuchdat_haltung (
             pk INTEGER PRIMARY KEY,
             untersuchhal TEXT,
-            untersuchrichtung TEXT,
+         -- untersuchrichtung TEXT,
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,                                     -- absolute Nummer der Inspektion
@@ -366,6 +367,7 @@ def createdbtables(
             id INTEGER,                                     -- absolute Nummer der Inspektion
             untersuchtag TEXT,
             untersucher TEXT,
+            untersuchrichtung TEXT,
             wetter INTEGER DEFAULT 0,
             bewertungsart TEXT,
             bewertungstag TEXT,
@@ -401,7 +403,7 @@ def createdbtables(
         """CREATE TABLE untersuchdat_anschlussleitung (
             pk INTEGER PRIMARY KEY,
             untersuchleit TEXT,
-            untersuchrichtung TEXT,
+         -- untersuchrichtung TEXT,
             schoben TEXT,                                   -- join schaechte.schnam 
             schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,                                     -- absolute Nummer der Inspektion
@@ -466,6 +468,7 @@ def createdbtables(
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
             baujahr INTEGER,
+            eigentum TEXT,                                  -- join eigentum.name
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
             knotentyp TEXT,                                 -- join knotentypen.knotentyp
             auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
@@ -1650,6 +1653,24 @@ def createdbtables(
         consl.close()
         return False
 
+    consl.commit()
+
+    # Eigentum ----------------------------------------------------------------
+
+    sql = """CREATE TABLE eigentum (
+    pk INTEGER PRIMARY KEY,
+    name TEXT, 
+    kommentar TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "eigentum" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
     consl.commit()
 
     # Hilfstabelle für den DYNA-Export -----------------------------------------

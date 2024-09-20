@@ -39,7 +39,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_export: QLineEdit
     tf_export_2: QLineEdit
 
-    pb_database: QPushButton
     pb_export: QPushButton
     pb_export_2: QPushButton
 
@@ -60,7 +59,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         super().__init__(default_dir, tr, parent)
 
         # Attach events
-        self.pb_database.clicked.connect(self.select_database)
         self.pb_export.clicked.connect(self.select_export)
         self.pb_export_2.clicked.connect(self.select_vorlage)
 

@@ -73,7 +73,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>391</width>
+      <width>431</width>
       <height>21</height>
      </rect>
     </property>
@@ -87,27 +87,6 @@
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktuell zu bearbeitende QKan-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_database">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>40</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>...</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">

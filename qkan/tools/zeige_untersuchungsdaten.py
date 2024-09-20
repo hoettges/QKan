@@ -100,7 +100,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
                       coalesce(laenge, 0) > 0.05 AND
                       uh.station IS NOT NULL AND
                       abs(uh.station) < 10000 AND
-                      coalesce(uh.untersuchrichtung, hu.untersuchrichtung) IS NOT NULL AND
+                      hu.untersuchrichtung IS NOT NULL AND
                       hu.haltnam = :haltnam AND
                       hu.schoben = :schoben AND
                       hu.schunten = :schunten
@@ -141,7 +141,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
                           coalesce(hu.laenge, 0) > 0.05 AND
                           uh.station IS NOT NULL AND
                           abs(uh.station) < 10000 AND
-                          coalesce(uh.untersuchrichtung, hu.untersuchrichtung) IS NOT NULL AND
+                          hu.untersuchrichtung IS NOT NULL AND
                           hu.haltnam = :haltnam AND
                           hu.schoben = :schoben AND
                           hu.schunten = :schunten
@@ -152,7 +152,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
                 hs AS (
                     SELECT
                         hu.haltnam, hu.schoben, hu.schunten,
-                        CASE coalesce(uh.untersuchrichtung, hu.untersuchrichtung)
+                        CASE hu.untersuchrichtung
                             WHEN 'gegen Fließrichtung' THEN round(hu.laenge - uh.station, 2)
                             WHEN 'in Fließrichtung'    THEN round(uh.station, 2)
                                                        ELSE round(uh.station, 2) END        AS station,
@@ -168,7 +168,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
                               coalesce(hu.laenge, 0) > 0.05 AND
                               uh.station IS NOT NULL AND
                               abs(uh.station) < 10000 AND
-                              coalesce(uh.untersuchrichtung, hu.untersuchrichtung) IS NOT NULL AND
+                              hu.untersuchrichtung IS NOT NULL AND
                               hu.haltnam = :haltnam AND
                               hu.schoben = :schoben AND
                               hu.schunten = :schunten
@@ -189,7 +189,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
                             substr('  ' || printf('%s', uh.charakt1), 2) ||
                             substr('  ' || printf('%s', uh.charakt2), 2)
                         ELSE '' END                                                     AS text,
-                    CASE coalesce(uh.untersuchrichtung, hu.untersuchrichtung)
+                    CASE hu.untersuchrichtung
                         WHEN 'gegen Fließrichtung' THEN round(hu.laenge - uh.station, 2)
                         WHEN 'in Fließrichtung'    THEN round(uh.station, 2)
                                                    ELSE round(uh.station, 2) END        AS station
@@ -204,7 +204,7 @@ class ShowHaltungsschaeden(QDialog, form_class):
                           coalesce(hu.laenge, 0) > 0.05 AND
                           uh.station IS NOT NULL AND
                           abs(uh.station) < 10000 AND
-                          coalesce(uh.untersuchrichtung, hu.untersuchrichtung) IS NOT NULL AND
+                          hu.untersuchrichtung IS NOT NULL AND
                           hu.haltnam = :haltnam AND
                           hu.schoben = :schoben AND
                           hu.schunten = :schunten

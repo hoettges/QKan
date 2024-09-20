@@ -153,7 +153,7 @@ class He8Porter(QKanPlugin):
                     + "nach Ziel: {QKan.config.he8.export_file}\n",
                 )
 
-        """Attach SQLite-Database with HE8 Data"""
+        # Attach SQLite-Database with HE8 Data
         sql = f'ATTACH DATABASE "{QKan.config.he8.export_file}" AS he'
 
         # Für Test muss noch die Datenbankverbindung hergestellt werden
@@ -271,7 +271,9 @@ class He8Porter(QKanPlugin):
         """
 
         self.log.info("Creating DB")
-        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+        with DBConnection(
+                dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
+        ) as db_qkan:
             if not db_qkan.connected:
                 fehlermeldung(
                     "Fehler im HE8-Import",
@@ -292,13 +294,6 @@ class He8Porter(QKanPlugin):
                 )
                 return False
 
-            #
-            # sql = 'SELECT count(*) AS anz FROM he.Rohr'
-            # db_qkan.sql(sql)
-            # datatest = db_qkan.fetchone()
-            # self.log.debug(f"Testdaten:\n{datatest}")
-            #
-            #
             self.log.info("DB creation finished, starting importer")
             imp = ImportTask(db_qkan)
             imp.run()
