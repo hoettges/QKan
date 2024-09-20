@@ -83,6 +83,10 @@ class LaengsTask:
         except AttributeError:
             pass
 
+    def closeEvent(self, event):
+        # Stop the animation when the window is closed
+        self.anim.event_source.stop()
+        event.accept()
 
     def slider(self):
         """Ändern der frames der Animation"""
@@ -450,6 +454,14 @@ class LaengsTask:
         #self.anim.frames = range(self.anf, len(zeit))
         self.anim.event_source.frames = range(self.anf, len(zeit))
         self.anim.event_source.stop()
+
+        # # TODO: update animation
+        # if self.horizontalSlider_3.sliderMoved():
+        #     self.anim.event_source.stop()
+        #     self.anim = animation.FuncAnimation(figure, animate,
+        #                                         frames=range(self.horizontalSlider_3.tickPosition(), len(zeit)),
+        #                                         interval=geschw,
+        #                                         blit=False)
 
         try:
             self.anim.event_source.start()
@@ -920,11 +932,11 @@ class LaengsTask:
             iface.messageBar().pushMessage("Fehler", 'Es sind keine maximalen Wasserstände vorhanden!', level=Qgis.Critical)
         else:
             if len(y_liste) > 0 and table == 'schaechte':
-                new_plot.plot(x_deckel_neu, y_liste, color="blue", label='maximaler Wasserstand')
+                new_plot.plot(x_deckel_neu, y_liste, linestyle="dotted", color="blue", label='maximaler Wasserstand')
 
             if len(y_liste) > 0 and table == 'haltungen':
 
-                new_plot.plot(x_deckel[::2], y_liste, color="blue", label='maximaler Wasserstand')
+                new_plot.plot(x_deckel[::2], y_liste, linestyle="dotted", color="blue", label='maximaler Wasserstand')
 
         # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
         y1 = [i for i in y_sohle if i != 0]
@@ -1928,7 +1940,7 @@ class LaengsTask:
                 liste2.append(y)
         logger.debug(f'zeichnen.ausgewaehlt.3: {liste}')
         logger.debug(f'route: {route}')
-        # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
+        #route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         x_sohle = []
         y_sohle = []
         x_sohle2 = []
@@ -2215,6 +2227,18 @@ class LaengsTask:
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
             self.anim.event_source.stop()
+
+            # TODO: update animation
+
+
+            # slider = interact(update, val=widget.IntSlider(min=1, max=15, value=7))
+            #
+            # def anim2():
+            #     animation.FuncAnimation(figure, animate,
+            #                                     frames=range(horizontalSlider_3.value(), len(zeit)),
+            #                                     interval=geschw,
+            #                                     blit=False)
+
             try:
                 self.anim.event_source.start()
                 self.pushButton_4.setText('Stop')
@@ -2353,6 +2377,15 @@ class LaengsTask:
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
             self.anim.event_source.stop()
+
+            # # TODO: update animation
+            # anim2 = animation.FuncAnimation(figure, animate,
+            #                                      frames=range(horizontalSlider_3.value(), len(zeit)),
+            #                                      interval=geschw,
+            #                                      blit=False)
+            #
+            # horizontalSlider_3.sliderReleased.connect(anim2)
+
             try:
                 self.anim.event_source.start()
                 self.pushButton_4.setText('Stop')

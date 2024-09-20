@@ -192,6 +192,8 @@ class Wehr(ClassObject):
     uebeiwert: float
     simstatus: str = ""
     kommentar: str = ""
+    entwart: str = ""
+    baujahr: int = 0
     geom: QByteArray = None
 
 class Pumpe(ClassObject):
@@ -202,11 +204,14 @@ class Pumpe(ClassObject):
     volanf: float = 0.0
     volges: float = 0.0
     sohle: float = 0.0
+    laenge: float
     steuersch: str = ""
     einschalthoehe: float = 0.0
     ausschalthoehe: float = 0.0
     simstatus: str = ""
     kommentar: str = ""
+    baujahr: int = 0
+    entwart: str = ""
     geom: QByteArray = None
 
 
@@ -508,13 +513,11 @@ class ImportTask:
             self._auslaesse()                               ;self.progress_bar.setValue(20)
             #self._speicher()
             self._haltungen()                               ;self.progress_bar.setValue(30)
-            # self._haltunggeom()                             ;self.progress_bar.setValue(35)
-            #self._wehre()
+            self._wehre()
             self._pumpen()                                  ;self.progress_bar.setValue(40)
         # if getattr(QKan.config.xml, "import_haus", True):
         if QKan.config.xml.import_haus:
             self._anschlussleitungen()                      ;self.progress_bar.setValue(50)
-            # self._anschlussleitunggeom()                    ;self.progress_bar.setValue(55)
         # if getattr(QKan.config.xml, "import_zustand", True):
         if QKan.config.xml.import_zustand:
             self._schaechte_untersucht()                    ;self.progress_bar.setValue(65)
@@ -1399,7 +1402,7 @@ class ImportTask:
 
             params = {'schnam': auslass.schnam,
                       'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe, 'baujahr': auslass.baujahr,
-                      'durchm': auslass.durchm, 'entwart': entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
+                      'durchm': auslass.durchm, 'entwart': entwart, 'strasse': auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass',
                       'geop': auslass.geop, 'geom': auslass.geom, 'epsg': QKan.config.epsg}
 
@@ -2441,78 +2444,109 @@ class ImportTask:
 
         self.db_qkan.setschadenstexte_anschlussleitungen()
 
-    # def _wehre(self) -> None:
-    #     # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.
-    #     # Bei Wehren stehen alle wesentlichen Daten im Hydraulikdatenkollektiv, weshalb im Gegensatz zu den
-    #     # Haltungsdaten keine Stammdaten verarbeitet werden.
-    #
-    #     def _iter() -> Iterator[Wehr]:
-    #         blocks = self.xml.findall(
-    #             "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-    #             "d:HydraulikObjekte/d:HydraulikObjekt/d:Wehr/..",
-    #             self.NS,
-    #         )
-    #         logger.debug(f"Anzahl HydraulikObjekte_Wehre: {len(blocks)}")
-    #
-    #         schoben, schunten, wehrtyp = ("",) * 3
-    #         schwellenhoehe, kammerhoehe, laenge, uebeiwert = (0.0,) * 4
-    #         for block in blocks:
-    #             # TODO: Does <HydraulikObjekt> even contain multiple <Wehr>?
-    #             for _wehr in block.findall("d:Wehr", self.NS):
-    #                 schoben = _wehr.findtext("d:SchachtZulauf", None, self.NS)
-    #                 schunten = _wehr.findtext("d:SchachtAblauf", None, self.NS)
-    #                 wehrtyp = _wehr.findtext("d:WehrTyp", None, self.NS)
-    #
-    #                 schwellenhoehe = _get_float(
-    #                     _wehr.findtext("d:Schwellenhoehe", 0.0, self.NS)
-    #                 )
-    #                 laenge = _get_float(
-    #                     _wehr.findtext("d:LaengeWehrschwelle", 0.0, self.NS)
-    #                 )
-    #                 kammerhoehe = _get_float(_wehr.findtext("d:Kammerhoehe", 0.0, self.NS))
-    #
-    #                 # Überfallbeiwert der Wehr Kante (abhängig von Form der Kante)
-    #                 uebeiwert = _get_float(
-    #                     _wehr.findtext("d:Ueberfallbeiwert", 0.0, self.NS)
-    #                 )
-    #
-    #             yield Wehr(
-    #                 wnam=block.findtext("d:Objektbezeichnung", None, self.NS),
-    #                 schoben=schoben,
-    #                 schunten=schunten,
-    #                 wehrtyp=wehrtyp,
-    #                 schwellenhoehe=schwellenhoehe,
-    #                 kammerhoehe=kammerhoehe,
-    #                 laenge=laenge,
-    #                 uebeiwert=uebeiwert,
-    #             )
-    #
-    #     for wehr in _iter():
-    #         # geom = geo_hydro()
-    #
-    #         # Bei den Wehren muessen im Gegensatz zu den Haltungen die
-    #         # Koordinaten aus den Schachtdaten entnommen werden.
-    #         # Dies ist in QKan einfach, da auch Auslaesse und Speicher in der
-    #         # Tabelle "schaechte" gespeichert werden.
-    #
-    #         sql = f"""
-    #             INSERT INTO wehre_data
-    #                             (wnam, schoben, schunten, wehrtyp, schwellenhoehe, kammerhoehe, laenge, uebeiwert)
-    #             SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.schwellenhoehe},
-    #                     {wehr.kammerhoehe}, {wehr.laenge}, {wehr.uebeiwert}
-    #             FROM schaechte AS SCHOB, schaechte AS SCHUN
-    #             WHERE SCHOB.schnam = '{wehr.schoben}' AND SCHUN.schnam = '{wehr.schunten}'
-    #             """
-    #
-    #         if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
-    #             return None
-    #
-    #     if not self.db_qkan.sql(
-    #         "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
-    #     ):
-    #         return None
-    #
-    #     self.db_qkan.commit()
+    def _wehre(self) -> None:
+
+        def _iter() -> Iterator[Wehr]:
+            blocks = self.xml.findall("KG[KG306='ZVB']")
+            logger.debug(f"Anzahl Wehre: {len(blocks)}")
+
+            wnam=""
+            schoben= ""
+            schunten = ""
+
+            for block in blocks:
+                # wnam, knotentyp, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+
+                wnam = block.findtext("KG001", None)
+
+                baujahr = block.findtext("KG303", None)
+
+                kommentar = block.findtext("KG999", None)
+
+                laenge = 5.0
+
+                #In QKan sind Wehre in der Tabelle haltungen gespeichert.
+                _, geom, sohlhoehe, deckelhoehe = self._get_KG_GO(block, wnam, True)
+
+
+                # smp = block.find("GO/GP")
+                #
+                # if smp is None:
+                #     fehlermeldung(
+                #         "Fehler beim XML-Import: Pumpen",
+                #         f'Keine Geometrie "SMP" für Pumpe {pnam}',
+                #     )
+                #     xsch, ysch, sohlhoehe = (0.0,) * 3
+                # else:
+                #     xsch = _get_float(smp, "GP003")
+                #     if xsch is None:
+                #         xsch = _get_float(smp, "GP005", 0.0)
+                #
+                #     ysch = _get_float(smp, "GP004")
+                #     if ysch is None:
+                #         ysch = _get_float(smp, "GP006", 0.0)
+                #
+                #     sohlhoehe = _get_float(smp, "GP007", 0.0)
+
+                yield Wehr(
+                    wnam=wnam,
+                    schoben=wnam,
+                    schunten=None,
+                    sohle=sohlhoehe,
+                    geom=geom,
+                    laenge=laenge,
+                    baujahr=baujahr,
+                    simstatus=block.findtext("KG401", None),
+                    entwart=block.findtext("KG302", None),
+                    kommentar=kommentar
+                )
+
+
+        for wehr in _iter():
+
+            # Simulationsstatus
+            simstatus = self.db_qkan.get_from_mapper(
+                wehr.simstatus,
+                self.mapper_simstatus,
+                'anschlussleitung',
+                'simulationsstatus',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
+
+            # Entwässerungsart
+            entwart = self.db_qkan.get_from_mapper(
+                wehr.entwart,
+                self.mapper_entwart,
+                'Anschlussleitungen',
+                'entwaesserungsarten',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
+
+            sql = f"""
+                INSERT INTO haltungen
+                                (wnam, schoben, schunten, haltungstyp,
+                                 laenge, kommentar, baujahr, simstatus, entwart)
+                SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', 'Wehr', {wehr.laenge}, {wehr.kommentar}, {wehr.baujahr},
+                {simstatus},{entwart}
+                FROM schaechte AS SCHOB, schaechte AS SCHUN
+                WHERE SCHOB.schnam = '{wehr.schoben}' AND SCHUN.schnam = '{wehr.schunten}'
+                """
+
+            if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
+                return None
+
+        if not self.db_qkan.sql(
+            "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
+        ):
+            return None
+
+        self.db_qkan.commit()
 
     def _pumpen(self) -> None:
 
@@ -2541,7 +2575,13 @@ class ImportTask:
 
                 pnam = block.findtext("KG001", None)
 
-                # In QKan sind Pumpen in der Tabelle haltungen gespeichert.
+                baujahr = block.findtext("KG303", None)
+
+                kommentar = block.findtext("KG999", None)
+
+                laenge = 5.0
+
+                # TODO: In QKan sind Pumpen in der Tabelle haltungen gespeichert.
                 _, geom, sohlhoehe, deckelhoehe = self._get_KG_GO(block, pnam, True)
 
                 # smp = block.find("GO/GP")
@@ -2567,46 +2607,45 @@ class ImportTask:
                     pnam=pnam,
                     schoben=pnam,
                     schunten=None,
-                    # pumpentyp=pumpentyp,
-                    volanf=volanf,
-                    volges=volges,
-                    sohle=sohlhoehe,
-                    steuersch=steuersch,
+                    laenge=laenge,
+                    baujahr=baujahr,
+                    kommentar=kommentar,
+                    simstatus=block.findtext("KG401", None),
+                    entwart=block.findtext("KG302", None),
                     geom=geom,
                 )
 
 
         for pumpe in _iter():
-            # geom = geo_hydro()
 
-            # if str(pumpe.pumpentyp) in self.mapper_pump:
-            #     pumpentyp = self.mapper_pump[str(pumpe.pumpentyp)]
-            # else:
-            #     pumpentyp = "{}_he".format(pumpe.pumpentyp)
-            #     self.mapper_pump[str(pumpe.pumpentyp)] = pumpentyp
-            #     if not self.db_qkan.sql(
-            #         "INSERT INTO pumpentypen (bezeichnung) Values (?)",
-            #         "xml_import Pumpe [1]",
-            #         parameters=(pumpe.pumpentyp,),
-            #     ):
-            #         break
+            # Simulationsstatus
+            simstatus = self.db_qkan.get_from_mapper(
+                pumpe.simstatus,
+                self.mapper_simstatus,
+                'anschlussleitung',
+                'simulationsstatus',
+                'bezeichnung',
+                'm150',
+                'kommentar',
+                'kuerzel',
+            )
 
-            # Bei den Pumpen muessen im Gegensatz zu den Haltungen die
-            # Koordinaten aus den Schachtdaten entnommen werden.
-            # Dies ist in QKan einfach, da auch Auslaesse und Speicher
-            # in der Tabelle "schaechte" gespeichert werden.
+            # Entwässerungsart
+            entwart = self.db_qkan.get_from_mapper(
+                pumpe.entwart,
+                self.mapper_entwart,
+                'Anschlussleitungen',
+                'entwaesserungsarten',
+                'bezeichnung',
+                'm150',
+                'bemerkung',
+                'kuerzel',
+            )
 
-            # sql = f"""
-            #                INSERT INTO haltungen
-            #                    (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar)
-            #                SELECT :pnam, :schoben, :schunten, :sohle, :pumpentyp, :simstatus, :kommentar
-            #                FROM schaechte AS SCHOB, schaechte AS SCHUN
-            #                WHERE SCHOB.schnam = :schoben AND SCHUN.schnam = :schunten"""
 
             params = {'haltnam': pumpe.pnam, 'schoben': pumpe.schoben, 'schunten': pumpe.schunten,
-                      'sohle': pumpe.sohle,
-                      'haltungtyp': 'Pumpe',                        # dient dazu, das Verbindungselement als Pumpe zu klassifizieren
-                      'simstatus': pumpe.simstatus, 'kommentar': pumpe.kommentar,
+                      'haltungtyp': 'Pumpe', 'laenge': pumpe.laenge, 'baujahr': pumpe.baujahr,
+                      'simstatus': pumpe.simstatus, 'kommentar': pumpe.kommentar, 'entwart': entwart,
                       'geom': pumpe.geom, 'epsg': QKan.config.epsg}
             # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
             #     return None
