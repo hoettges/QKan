@@ -4,7 +4,7 @@ from qgis.core import QgsProject
 from qgis.utils import pluginDirectory
 import os
 
-VERSION = "3.3.9"  # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
+VERSION = "3.4.1"  # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
 
 logger = get_logger("QKan.database.migrations")
 
@@ -69,7 +69,7 @@ def run(dbcon: DBConnection) -> bool:
 
     # Neue Tabelle Eigentum
 
-    sql = """CREATE TABLE eigentum (
+    sql = """CREATE TABLE IF NOT EXISTS eigentum (
     pk INTEGER PRIMARY KEY,
     name TEXT, 
     kommentar TEXT)"""
@@ -153,22 +153,5 @@ def run(dbcon: DBConnection) -> bool:
         )
 
     dbcon.commit()
-
-    project = QgsProject.instance()
-    layerobjects = project.mapLayersByName("Haltungen")
-    for layer in layerobjects:
-
-        stfile = os.path.join(
-            pluginDirectory("qkan"), "database/migrations/haltungen_mm.qml"
-        )
-        try:
-            layer.loadNamedStyle(stfile)
-        except:
-            logger.error('Fehler in migration 0038: Stildatei konnte nicht geladen werden.')
-            raise Exception(f"{__name__}")
-
-    logger.info('Die Projektdatei wurde angepasst: Im Layer "Haltungen" wurden die Einheiten von m auf mm umgestellt.'
-        '\n\nBitte speichern Sie die Projektdatei!'
-    )
 
     return True

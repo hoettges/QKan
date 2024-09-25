@@ -207,7 +207,7 @@ Layer hinzuladen</string>
      <string>Formularanbindungen auf QKan-Standard setzen</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_adaptTableLookups">
+   <widget class="QCheckBox" name="cb_adaptLayerstyles">
     <property name="geometry">
      <rect>
       <x>30</x>

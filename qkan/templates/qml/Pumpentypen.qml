@@ -1,12 +1,12 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" version="3.22.4-Białowieża" minScale="0" maxScale="0" readOnly="0" styleCategories="AllStyleCategories">
+<qgis hasScaleBasedVisibilityFlag="0" version="3.22.4-Białowieża" maxScale="0" readOnly="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Temporal|Legend|Notes" minScale="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal durationField="" enabled="0" startField="" fixedDuration="0" startExpression="" endExpression="" mode="0" accumulate="0" durationUnit="min" limitMode="0" endField="">
+  <temporal limitMode="0" startField="" endField="" enabled="0" accumulate="0" durationField="" startExpression="" durationUnit="min" endExpression="" mode="0" fixedDuration="0">
     <fixedRange>
       <start></start>
       <end></end>
@@ -14,24 +14,22 @@
   </temporal>
   <customproperties>
     <Option type="Map">
-      <Option value="0" name="embeddedWidgets/count" type="QString"/>
+      <Option type="List" name="dualview/previewExpressions">
+        <Option type="QString" value="&quot;bezeichnung&quot;"/>
+      </Option>
+      <Option type="int" name="embeddedWidgets/count" value="0"/>
       <Option name="variableNames"/>
       <Option name="variableValues"/>
     </Option>
   </customproperties>
-  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
-    <activeChecks/>
-    <checkConfiguration/>
-  </geometryOptions>
   <legend type="default-vector" showLabelLegend="0"/>
-  <referencedLayers/>
   <fieldConfiguration>
     <field name="pk" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option type="QString" name="IsMultiline" value="0"/>
+            <Option type="QString" name="UseHtml" value="0"/>
           </Option>
         </config>
       </editWidget>
@@ -40,8 +38,8 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option type="QString" name="IsMultiline" value="0"/>
+            <Option type="QString" name="UseHtml" value="0"/>
           </Option>
         </config>
       </editWidget>
@@ -50,43 +48,43 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option type="QString" name="IsMultiline" value="0"/>
+            <Option type="QString" name="UseHtml" value="0"/>
           </Option>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias field="pk" name="" index="0"/>
-    <alias field="bezeichnung" name="Bezeichnung" index="1"/>
-    <alias field="he_nr" name="NR (HYSTEM-EXTRAN)" index="2"/>
+    <alias index="0" field="pk" name=""/>
+    <alias index="1" field="bezeichnung" name="Bezeichnung"/>
+    <alias index="2" field="he_nr" name="NR (HYSTEM-EXTRAN)"/>
   </aliases>
   <defaults>
-    <default field="pk" applyOnUpdate="0" expression=""/>
-    <default field="bezeichnung" applyOnUpdate="0" expression=""/>
-    <default field="he_nr" applyOnUpdate="0" expression=""/>
+    <default expression="" field="pk" applyOnUpdate="0"/>
+    <default expression="" field="bezeichnung" applyOnUpdate="0"/>
+    <default expression="" field="he_nr" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
-    <constraint field="bezeichnung" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="he_nr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint constraints="3" field="pk" unique_strength="2" notnull_strength="2" exp_strength="0"/>
+    <constraint constraints="0" field="bezeichnung" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint constraints="0" field="he_nr" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint field="pk" exp="" desc=""/>
-    <constraint field="bezeichnung" exp="" desc=""/>
-    <constraint field="he_nr" exp="" desc=""/>
+    <constraint desc="" exp="" field="pk"/>
+    <constraint desc="" exp="" field="bezeichnung"/>
+    <constraint desc="" exp="" field="he_nr"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column name="pk" type="field" hidden="0" width="-1"/>
-      <column name="bezeichnung" type="field" hidden="0" width="-1"/>
-      <column name="he_nr" type="field" hidden="0" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column width="-1" type="field" hidden="0" name="pk"/>
+      <column width="-1" type="field" hidden="0" name="bezeichnung"/>
+      <column width="-1" type="field" hidden="0" name="he_nr"/>
+      <column width="-1" type="actions" hidden="1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -94,7 +92,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\qkan_pumpentypen.ui</editform>
+  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\qkan_pumpentypen.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -118,9 +116,9 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field name="bezeichnung" editable="1"/>
-    <field name="he_nr" editable="1"/>
-    <field name="pk" editable="1"/>
+    <field editable="1" name="bezeichnung"/>
+    <field editable="1" name="he_nr"/>
+    <field editable="1" name="pk"/>
   </editable>
   <labelOnTop>
     <field name="bezeichnung" labelOnTop="0"/>
@@ -128,9 +126,9 @@ def my_form_open(dialog, layer, feature):
     <field name="pk" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
-    <field name="bezeichnung" reuseLastValue="0"/>
-    <field name="he_nr" reuseLastValue="0"/>
-    <field name="pk" reuseLastValue="0"/>
+    <field reuseLastValue="0" name="bezeichnung"/>
+    <field reuseLastValue="0" name="he_nr"/>
+    <field reuseLastValue="0" name="pk"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>

@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" version="3.22.4-Białowieża" maxScale="0" readOnly="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Temporal|Legend|Notes" minScale="0">
+<qgis hasScaleBasedVisibilityFlag="0" version="3.22.4-Białowieża" maxScale="0" readOnly="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Temporal|Legend|Notes" minScale="1e+08">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
@@ -15,7 +15,7 @@
   <customproperties>
     <Option type="Map">
       <Option type="List" name="dualview/previewExpressions">
-        <Option type="QString" value="&quot;schachttyp&quot;"/>
+        <Option type="QString" value="&quot;name&quot;"/>
       </Option>
       <Option type="int" name="embeddedWidgets/count" value="0"/>
       <Option name="variableNames"/>
@@ -27,19 +27,26 @@
     <field name="pk" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="name" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
           <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="schachttyp" configurationFlags="None">
+    <field name="kommentar" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
+            <Option type="bool" name="IsMultiline" value="false"/>
+            <Option type="bool" name="UseHtml" value="false"/>
           </Option>
         </config>
       </editWidget>
@@ -47,19 +54,23 @@
   </fieldConfiguration>
   <aliases>
     <alias index="0" field="pk" name=""/>
-    <alias index="1" field="schachttyp" name="Name"/>
+    <alias index="1" field="name" name="Eigentümer"/>
+    <alias index="2" field="kommentar" name="Kommentar"/>
   </aliases>
   <defaults>
     <default expression="" field="pk" applyOnUpdate="0"/>
-    <default expression="" field="schachttyp" applyOnUpdate="0"/>
+    <default expression="" field="name" applyOnUpdate="0"/>
+    <default expression="" field="kommentar" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint constraints="3" field="pk" unique_strength="2" notnull_strength="2" exp_strength="0"/>
-    <constraint constraints="0" field="schachttyp" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint constraints="3" field="pk" unique_strength="1" notnull_strength="1" exp_strength="0"/>
+    <constraint constraints="0" field="name" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint constraints="0" field="kommentar" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="schachttyp"/>
+    <constraint desc="" exp="" field="name"/>
+    <constraint desc="" exp="" field="kommentar"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
@@ -68,7 +79,8 @@
   <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
       <column width="-1" type="field" hidden="0" name="pk"/>
-      <column width="-1" type="field" hidden="0" name="schachttyp"/>
+      <column width="-1" type="field" hidden="0" name="name"/>
+      <column width="-1" type="field" hidden="0" name="kommentar"/>
       <column width="-1" type="actions" hidden="1"/>
     </columns>
   </attributetableconfig>
@@ -77,7 +89,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\forms</editform>
+  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\qkan_eigentum.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -101,20 +113,23 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
+    <field editable="1" name="kommentar"/>
+    <field editable="1" name="name"/>
     <field editable="1" name="pk"/>
-    <field editable="1" name="schachttyp"/>
   </editable>
   <labelOnTop>
+    <field name="kommentar" labelOnTop="0"/>
+    <field name="name" labelOnTop="0"/>
     <field name="pk" labelOnTop="0"/>
-    <field name="schachttyp" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
+    <field reuseLastValue="0" name="kommentar"/>
+    <field reuseLastValue="0" name="name"/>
     <field reuseLastValue="0" name="pk"/>
-    <field reuseLastValue="0" name="schachttyp"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>
-  <previewExpression>"schachttyp"</previewExpression>
+  <previewExpression>"name"</previewExpression>
   <mapTip></mapTip>
   <layerGeometryType>4</layerGeometryType>
 </qgis>

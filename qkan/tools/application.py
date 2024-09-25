@@ -2,13 +2,15 @@
 Flaechenzuordnungen
 Diverse Tools zur QKan-Datenbank
 """
-
+import logging
 import os
 from typing import Optional, cast
+import shutil
 
 from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
+from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
@@ -575,7 +577,7 @@ class QKanTools(QKanPlugin):
         project = QgsProject.instance()
 
         if project.count() == 0:
-            warnung("Benutzerfehler: ", "Es ist kein Projekt geladen.")
+            logging.warning("Es ist kein Projekt geladen.")
             return
 
         # Formularfelder setzen -------------------------------------------------------------------------
@@ -602,7 +604,7 @@ class QKanTools(QKanPlugin):
             self.db_is_uptodate = db_qkan.isCurrentVersion
 
         if not self.db_is_uptodate:
-            fehlermeldung("Versionskontrolle", "Die QKan-Datenbank ist nicht aktuell")
+            logging.error("Versionskontrolle: Die QKan-Datenbank ist nicht aktuell")
             return
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
@@ -629,8 +631,8 @@ class QKanTools(QKanPlugin):
         self.dlgla.cb_adaptKBS.setChecked(adapt_kbs)
 
         # Checkbox "Wertbeziehungungen in Tabellen"
-        adapt_table_lookups = QKan.config.adapt.table_lookups
-        self.dlgla.cb_adaptTableLookups.setChecked(adapt_table_lookups)
+        adapt_layerstyles = QKan.config.adapt.adapt_layerstyles
+        self.dlgla.cb_adaptLayerstyles.setChecked(adapt_layerstyles)
 
         # Checkbox "Formularanbindungen"
         adapt_forms = QKan.config.adapt.forms
@@ -683,7 +685,7 @@ class QKanTools(QKanPlugin):
             self.database_name = self.dlgla.tf_qkanDB.text()
             adapt_db = self.dlgla.cb_adaptDB.isChecked()
             adapt_macros = self.dlgla.cb_adaptMacros.isChecked()
-            adapt_table_lookups = self.dlgla.cb_adaptTableLookups.isChecked()
+            adapt_layerstyles = self.dlgla.cb_adaptLayerstyles.isChecked()
             adapt_forms = self.dlgla.cb_adaptForms.isChecked()
             adapt_kbs = self.dlgla.cb_adaptKBS.isChecked()
             update_node_type = self.dlgla.cb_updateNodetype.isChecked()
@@ -712,7 +714,7 @@ class QKanTools(QKanPlugin):
             QKan.config.adapt.kbs = adapt_kbs
             QKan.config.adapt.selected_layers = adapt_selected
             QKan.config.adapt.macros = adapt_macros
-            QKan.config.adapt.table_lookups = adapt_table_lookups
+            QKan.config.adapt.adapt_layerstyles = adapt_layerstyles
             QKan.config.adapt.update_node_type = update_node_type
             QKan.config.adapt.zoom_all = zoom_alles
             QKan.config.database.qkan = cast(str, self.database_name)
@@ -727,7 +729,7 @@ class QKanTools(QKanPlugin):
                     "{self.projectTemplate}",
                     {adapt_macros},
                     {adapt_db},
-                    {adapt_table_lookups},
+                    {adapt_layerstyles},
                     {adapt_forms},
                     {adapt_kbs},
                     {update_node_type},
@@ -742,7 +744,7 @@ class QKanTools(QKanPlugin):
                 self.projectTemplate,
                 adapt_macros,
                 adapt_db,
-                adapt_table_lookups,
+                adapt_layerstyles,
                 adapt_forms,
                 adapt_kbs,
                 update_node_type,
@@ -774,38 +776,37 @@ class QKanTools(QKanPlugin):
                 meldung("Information", "QKan-Datenbank ist aktuell")
                 return
 
+        project = QgsProject.instance()
+        project_file = project.absoluteFilePath()
+        self.dlgdb.tf_projectFile.setText(project_file)
+
+        # Sicherungskopien
+        self.dlgdb.cb_dbBackup.setChecked(True)
+        self.dlgdb.cb_qgsBackup.setChecked(True)
+
         # Falls Projektdatei geändert wurde, Gruppe zum Speichern der Projektdatei anzeigen
         # noinspection PyArgumentList
-        project = QgsProject.instance()
-        project_is_dirty = project.isDirty()
-        self.dlgdb.gb_updateQkanDB.setEnabled(project_is_dirty)
-
-        self.log.debug("QKan.tools.application.run_dbAdapt: before dlgdb.show()")
+        # project = QgsProject.instance()
+        # project_is_dirty = project.isDirty()
+        # self.dlgdb.gb_updateQkanDB.setEnabled(project_is_dirty)
 
         # show the dialog
         self.dlgdb.show()
 
-        self.log.debug("QKan.tools.application.run_dbAdapt: before dlgdb.exec_()")
-
         # Run the dialog event loop
         result = self.dlgdb.exec_()
-
-        self.log.debug("QKan.tools.application.run_dbAdapt: after dlgdb.exec_()")
 
         # See if OK was pressed
         if result:
 
             self.database_name = self.dlgdb.tf_qkanDB.text()
             project_file: str = self.dlgdb.tf_projectFile.text()
+            writeDbBackup = self.dlgdb.cb_dbBackup.isChecked()
+            writeQgsBackup = self.dlgdb.cb_dbBackup.isChecked()
 
             # Konfigurationsdaten schreiben -----------------------------
             QKan.config.database.qkan = cast(str, self.database_name)
-
-            if project_is_dirty:
-                QKan.config.project.file = project_file
-            else:
-                project_file = ""
-
+            QKan.config.project.file = project_file
             QKan.config.save()
 
             # Modulaufruf in Logdatei schreiben
@@ -818,11 +819,37 @@ class QKanTools(QKanPlugin):
                 )"""
             )
 
+            version = qgs_version()
+            if writeDbBackup:
+                fpath, ext = os.path.splitext(self.database_name)
+                dbBackupFilePath = f'{fpath}_{version}{ext}'
+                shutil.copyfile(self.database_name, dbBackupFilePath)
+
+            if writeQgsBackup:
+                fpath, ext = os.path.splitext(project_file)
+                dbBackupFilePath = f'{fpath}_{version}{ext}'
+                shutil.copyfile(project_file, dbBackupFilePath)
+
             dbAdapt(
                 cast(str, self.database_name),
                 project_file,
                 project,
             )
+
+            layersadapt(
+                database_QKan=cast(str, self.database_name),
+                projectTemplate=os.path.join(pluginDirectory("qkan"), "templates/Projekt.qgs"),
+                anpassen_ProjektMakros=True,
+                anpassen_Datenbankanbindung=False,
+                anpassen_Layerstile=True,
+                anpassen_Formulare=True,
+                anpassen_Projektionssystem=False,
+                aktualisieren_Schachttypen=False,
+                zoom_alles=False,
+                fehlende_layer_ergaenzen=False,
+                anpassen_auswahl=enums.SelectedLayers.ALL,
+            )
+
 
     def run_help(self) -> None:
 

@@ -36,7 +36,7 @@ class TestLinkfl(QgisTest):
         #     projectTemplate="",
         #     anpassen_ProjektMakros=False,
         #     anpassen_Datenbankanbindung=False,
-        #     anpassen_Wertebeziehungen_in_Tabellen=False,
+        #     anpassen_Layerstile=False,
         #     anpassen_Formulare=False,
         #     anpassen_Projektionssystem=False,
         #     aktualisieren_Schachttypen=False,

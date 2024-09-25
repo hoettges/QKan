@@ -342,7 +342,8 @@ class AdaptConfig(ClassObject):
     kbs: bool = True
     qkan_db_update: bool = True
     selected_layers: enums.SelectedLayers = enums.SelectedLayers.ALL
-    table_lookups: bool = True
+    table_lookups: bool = True                  # deprecated
+    adapt_layerstyles: bool = True              # replaces table_lookups
     update_node_type: bool = True
     zoom_all: bool = True
 
@@ -730,23 +731,23 @@ class ToolsConfig(ClassObject):
                 'geop': ['wkt_geom', 'geop'],
             },
             'entwaesserungsarten': {
+                'stillgelegt':      ['*stillg*'],
+                'außer Betrieb':    ['*auße*betr*', '*ausse*betr*'],
+                'verdämmert': ['*verdämm*', '*verdaemm*', '*verd\xe4mm*'],
+                'fiktiv': ['fikt*'],
+                'rückgebaut': ['zurückgeb*', 'zurueckgeb*', 'zur\xfcckgeb*', 'rückgeb*', 'rueckgeb*', '*r\xfcckgeb*'],
                 'Mischwasser':      ['mischw*', 'mw', 'km', 'mk', 'km-kanal'],
                 'Schmutzwasser':    ['schmutzw*', 'sw', 'ks', 'sk', 'ks-kanal'],
                 'Regenwasser':      ['regenw*', 'rw', 'kr', 'rk', 'kr-kanal'],
                 'Rinnen/Gräben':    ['*rinne*', '*gräbe*', '*grabe*'],
-                'stillgelegt':      ['stillg*'],
-                'außer Betrieb':    ['*auße*', '*ausse*'],
-                'verdämmert': ['verdämm*', 'verdaemm*'],
-                'fiktiv': ['fikti*'],
-                'rückgebaut': ['zurückgeb*', 'zurueckgeb*', 'rückgeb*', 'rueckgeb*'],
             },
             'simulationsstatus': {
-                'außer Betrieb': ['außer b*'],
+                'außer Betrieb': ['*auße*betr*', '*ausse*betr*'],
                 'geplant': ['planu*', 'geplan*', 'in planu*'],
-                'stillgelegt': ['stillgel*'],
-                'verdämmert': ['verdämm*', 'verd\xe4mm*', 'verdaemm*'],
+                'stillgelegt': ['*stillg*'],
+                'verdämmert': ['*verdämm*', '*verdaemm*', '*verd\xe4mm*'],
                 'fiktiv': ['fikt*'],
-                'rückgebaut': ['*rückgeb*', '*rueckgeb*', '*r\xfcckgeb*'],
+                'rückgebaut': ['zurückgeb*', 'zurueckgeb*', 'zur\xfcckgeb*', 'rückgeb*', 'rueckgeb*', '*r\xfcckgeb*'],
             },
         }
 

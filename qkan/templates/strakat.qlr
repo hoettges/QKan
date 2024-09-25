@@ -1,0 +1,2947 @@
+<!DOCTYPE qgis-layer-definition>
+<qlr>
+  <layer-tree-group expanded="1" name="" checked="Qt::Checked">
+    <customproperties>
+      <Option/>
+    </customproperties>
+    <layer-tree-group mutually-exclusive="1" mutually-exclusive-child="0" expanded="1" name="STRAKAT" checked="Qt::Checked">
+      <customproperties>
+        <Option/>
+      </customproperties>
+      <layer-tree-layer id="t_strakat_Schachtoben_43534d18_a881_452c_a8f4_b61029b42145" source="dbname='C:/projekte/Juelich/qkan/b240916/juelich.sqlite' table=&quot;t_strakatkanal&quot; (geop)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Schachtoben" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0">
+        <customproperties>
+          <Option/>
+        </customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer id="t_strakat_Kanal_20a72d07_5c1a_482f_9556_1d63108f3cc8" source="dbname='C:/projekte/Juelich/qkan/b240916/juelich.sqlite' table=&quot;t_strakatkanal&quot; (geom)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Kanal" checked="Qt::Unchecked" providerKey="spatialite" legend_split_behavior="0">
+        <customproperties>
+          <Option/>
+        </customproperties>
+      </layer-tree-layer>
+    </layer-tree-group>
+  </layer-tree-group>
+  <maplayers>
+    <maplayer refreshOnNotifyEnabled="0" legendPlaceholderImage="" autoRefreshEnabled="0" wkbType="Point" hasScaleBasedVisibilityFlag="0" symbologyReferenceScale="-1" maxScale="0" simplifyAlgorithm="0" simplifyDrawingHints="0" simplifyMaxScale="1" simplifyDrawingTol="1" autoRefreshTime="0" readOnly="0" refreshOnNotifyMessage="" labelsEnabled="1" geometry="Point" styleCategories="AllStyleCategories" simplifyLocal="1" minScale="100000000" type="vector">
+      <extent>
+        <xmin>309372.05099999997764826</xmin>
+        <ymin>5640376.35400000028312206</ymin>
+        <xmax>320022.41600000002654269</xmax>
+        <ymax>5650842.5580000001937151</ymax>
+      </extent>
+      <wgs84extent>
+        <xmin>6.28442414351734246</xmin>
+        <ymin>50.88356752695649021</ymin>
+        <xmax>6.44114400213047933</xmax>
+        <ymax>50.98100742964301446</ymax>
+      </wgs84extent>
+      <id>t_strakat_Schachtoben_43534d18_a881_452c_a8f4_b61029b42145</id>
+      <datasource>dbname='../../../../../../../../../../../../projekte/Juelich/qkan/b240916/juelich.sqlite' table="t_strakatkanal" (geop)</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>t_strakat Schachtoben</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt>PROJCRS["ETRS89 / UTM zone 32N",BASEGEOGCRS["ETRS89",ENSEMBLE["European Terrestrial Reference System 1989 ensemble",MEMBER["European Terrestrial Reference Frame 1989"],MEMBER["European Terrestrial Reference Frame 1990"],MEMBER["European Terrestrial Reference Frame 1991"],MEMBER["European Terrestrial Reference Frame 1992"],MEMBER["European Terrestrial Reference Frame 1993"],MEMBER["European Terrestrial Reference Frame 1994"],MEMBER["European Terrestrial Reference Frame 1996"],MEMBER["European Terrestrial Reference Frame 1997"],MEMBER["European Terrestrial Reference Frame 2000"],MEMBER["European Terrestrial Reference Frame 2005"],MEMBER["European Terrestrial Reference Frame 2014"],ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[0.1]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4258]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Engineering survey, topographic mapping."],AREA["Europe between 6°E and 12°E: Austria; Belgium; Denmark - onshore and offshore; Germany - onshore and offshore; Norway including - onshore and offshore; Spain - offshore."],BBOX[38.76,6,84.33,12]],ID["EPSG",25832]]</wkt>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type></type>
+        <title></title>
+        <abstract></abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links/>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt></wkt>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial maxz="0" crs="" minx="0" minz="0" maxy="0" miny="0" dimensions="2" maxx="0"/>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="">spatialite</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <dataDependencies/>
+      <expressionfields/>
+      <map-layer-style-manager current="default">
+        <map-layer-style name="default"/>
+      </map-layer-style-manager>
+      <auxiliaryLayer/>
+      <metadataUrls/>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+        <Private>0</Private>
+      </flags>
+      <temporal durationUnit="min" endField="" endExpression="" enabled="0" startField="" durationField="" startExpression="" fixedDuration="0" mode="0" accumulate="0" limitMode="0">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <renderer-v2 forceraster="0" symbollevels="0" referencescale="-1" type="singleSymbol" enableorderby="0">
+        <symbols>
+          <symbol clip_to_extent="1" force_rhr="0" name="0" alpha="1" type="marker">
+            <data_defined_properties>
+              <Option type="Map">
+                <Option value="" name="name" type="QString"/>
+                <Option name="properties"/>
+                <Option value="collection" name="type" type="QString"/>
+              </Option>
+            </data_defined_properties>
+            <layer pass="0" class="SimpleMarker" enabled="1" locked="0">
+              <Option type="Map">
+                <Option value="0" name="angle" type="QString"/>
+                <Option value="square" name="cap_style" type="QString"/>
+                <Option value="141,90,153,255" name="color" type="QString"/>
+                <Option value="1" name="horizontal_anchor_point" type="QString"/>
+                <Option value="bevel" name="joinstyle" type="QString"/>
+                <Option value="circle" name="name" type="QString"/>
+                <Option value="0,0" name="offset" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                <Option value="MM" name="offset_unit" type="QString"/>
+                <Option value="35,35,35,255" name="outline_color" type="QString"/>
+                <Option value="solid" name="outline_style" type="QString"/>
+                <Option value="0" name="outline_width" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="outline_width_map_unit_scale" type="QString"/>
+                <Option value="MM" name="outline_width_unit" type="QString"/>
+                <Option value="diameter" name="scale_method" type="QString"/>
+                <Option value="2" name="size" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="size_map_unit_scale" type="QString"/>
+                <Option value="MM" name="size_unit" type="QString"/>
+                <Option value="1" name="vertical_anchor_point" type="QString"/>
+              </Option>
+              <prop k="angle" v="0"/>
+              <prop k="cap_style" v="square"/>
+              <prop k="color" v="141,90,153,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="circle"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="35,35,35,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" name="name" type="QString"/>
+                  <Option name="properties"/>
+                  <Option value="collection" name="type" type="QString"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <labeling type="simple">
+        <settings calloutType="simple">
+          <text-style allowHtml="0" textOpacity="1" fontLetterSpacing="0" isExpression="1" fieldName="format('%1 (art: %2)', haltungsname, schachtart)" fontKerning="1" fontItalic="0" namedStyle="Regular" previewBkgrdColor="255,255,255,255" fontWordSpacing="0" blendMode="0" fontFamily="Open Sans" fontWeight="50" useSubstitutions="0" fontSizeUnit="Point" fontSizeMapUnitScale="3x:0,0,0,0,0,0" capitalization="0" textColor="164,113,88,255" textOrientation="horizontal" fontSize="12" fontStrikeout="0" multilineHeight="1" legendString="Aa" fontUnderline="0">
+            <families/>
+            <text-buffer bufferJoinStyle="128" bufferSizeUnits="MM" bufferColor="250,250,250,255" bufferSize="1" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferNoFill="1" bufferBlendMode="0" bufferDraw="1" bufferOpacity="1"/>
+            <text-mask maskedSymbolLayers="" maskEnabled="0" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskJoinStyle="128" maskOpacity="1" maskSize="0" maskType="0" maskSizeUnits="MM"/>
+            <background shapeSVGFile="" shapeRadiiX="0" shapeRotationType="0" shapeRadiiMapUnitScale="3x:0,0,0,0,0,0" shapeOpacity="1" shapeSizeY="0" shapeType="0" shapeBorderWidthMapUnitScale="3x:0,0,0,0,0,0" shapeSizeUnit="Point" shapeOffsetY="0" shapeSizeX="0" shapeFillColor="255,255,255,255" shapeBorderWidthUnit="Point" shapeBlendMode="0" shapeRadiiUnit="Point" shapeBorderColor="128,128,128,255" shapeRotation="0" shapeSizeMapUnitScale="3x:0,0,0,0,0,0" shapeDraw="0" shapeOffsetUnit="Point" shapeOffsetX="0" shapeSizeType="0" shapeBorderWidth="0" shapeOffsetMapUnitScale="3x:0,0,0,0,0,0" shapeRadiiY="0" shapeJoinStyle="64">
+              <symbol clip_to_extent="1" force_rhr="0" name="markerSymbol" alpha="1" type="marker">
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+                <layer pass="0" class="SimpleMarker" enabled="1" locked="0">
+                  <Option type="Map">
+                    <Option value="0" name="angle" type="QString"/>
+                    <Option value="square" name="cap_style" type="QString"/>
+                    <Option value="255,158,23,255" name="color" type="QString"/>
+                    <Option value="1" name="horizontal_anchor_point" type="QString"/>
+                    <Option value="bevel" name="joinstyle" type="QString"/>
+                    <Option value="circle" name="name" type="QString"/>
+                    <Option value="0,0" name="offset" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="offset_unit" type="QString"/>
+                    <Option value="35,35,35,255" name="outline_color" type="QString"/>
+                    <Option value="solid" name="outline_style" type="QString"/>
+                    <Option value="0" name="outline_width" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="outline_width_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="outline_width_unit" type="QString"/>
+                    <Option value="diameter" name="scale_method" type="QString"/>
+                    <Option value="2" name="size" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="size_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="size_unit" type="QString"/>
+                    <Option value="1" name="vertical_anchor_point" type="QString"/>
+                  </Option>
+                  <prop k="angle" v="0"/>
+                  <prop k="cap_style" v="square"/>
+                  <prop k="color" v="255,158,23,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="35,35,35,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="diameter"/>
+                  <prop k="size" v="2"/>
+                  <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option value="" name="name" type="QString"/>
+                      <Option name="properties"/>
+                      <Option value="collection" name="type" type="QString"/>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+              <symbol clip_to_extent="1" force_rhr="0" name="fillSymbol" alpha="1" type="fill">
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+                <layer pass="0" class="SimpleFill" enabled="1" locked="0">
+                  <Option type="Map">
+                    <Option value="3x:0,0,0,0,0,0" name="border_width_map_unit_scale" type="QString"/>
+                    <Option value="255,255,255,255" name="color" type="QString"/>
+                    <Option value="bevel" name="joinstyle" type="QString"/>
+                    <Option value="0,0" name="offset" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="offset_unit" type="QString"/>
+                    <Option value="128,128,128,255" name="outline_color" type="QString"/>
+                    <Option value="no" name="outline_style" type="QString"/>
+                    <Option value="0" name="outline_width" type="QString"/>
+                    <Option value="Point" name="outline_width_unit" type="QString"/>
+                    <Option value="solid" name="style" type="QString"/>
+                  </Option>
+                  <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="color" v="255,255,255,255"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="128,128,128,255"/>
+                  <prop k="outline_style" v="no"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_unit" v="Point"/>
+                  <prop k="style" v="solid"/>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option value="" name="name" type="QString"/>
+                      <Option name="properties"/>
+                      <Option value="collection" name="type" type="QString"/>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+            </background>
+            <shadow shadowRadius="1.5" shadowColor="0,0,0,255" shadowRadiusMapUnitScale="3x:0,0,0,0,0,0" shadowOffsetGlobal="1" shadowBlendMode="6" shadowOffsetUnit="MM" shadowRadiusAlphaOnly="0" shadowOpacity="0.69999999999999996" shadowOffsetAngle="135" shadowRadiusUnit="MM" shadowScale="100" shadowOffsetMapUnitScale="3x:0,0,0,0,0,0" shadowDraw="0" shadowUnder="0" shadowOffsetDist="1"/>
+            <dd_properties>
+              <Option type="Map">
+                <Option value="" name="name" type="QString"/>
+                <Option name="properties"/>
+                <Option value="collection" name="type" type="QString"/>
+              </Option>
+            </dd_properties>
+            <substitutions/>
+          </text-style>
+          <text-format autoWrapLength="0" decimals="3" addDirectionSymbol="0" rightDirectionSymbol=">" reverseDirectionSymbol="0" useMaxLineLengthForAutoWrap="1" leftDirectionSymbol="&lt;" placeDirectionSymbol="0" plussign="0" wrapChar="" multilineAlign="3" formatNumbers="0"/>
+          <placement preserveRotation="1" quadOffset="4" placement="6" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" overrunDistanceUnit="MM" polygonPlacementFlags="2" repeatDistance="0" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" offsetType="1" offsetUnits="MM" overrunDistance="0" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" priority="5" distUnits="MM" rotationUnit="AngleDegrees" layerType="PointGeometry" xOffset="0" geometryGeneratorEnabled="0" distMapUnitScale="3x:0,0,0,0,0,0" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" lineAnchorType="0" geometryGenerator="" yOffset="0" centroidInside="0" repeatDistanceUnits="MM" rotationAngle="0" fitInPolygonOnly="0" centroidWhole="0" maxCurvedCharAngleIn="25" placementFlags="10" lineAnchorClipping="0" lineAnchorPercent="0.5" geometryGeneratorType="PointGeometry" dist="0" maxCurvedCharAngleOut="-25"/>
+          <rendering maxNumLabels="2000" fontMaxPixelSize="10000" zIndex="0" limitNumLabels="0" fontMinPixelSize="3" obstacle="1" drawLabels="1" labelPerPart="0" displayAll="0" scaleVisibility="0" obstacleFactor="1" fontLimitPixelSize="0" minFeatureSize="0" scaleMax="0" upsidedownLabels="0" mergeLines="0" obstacleType="1" scaleMin="0" unplacedVisibility="0"/>
+          <dd_properties>
+            <Option type="Map">
+              <Option value="" name="name" type="QString"/>
+              <Option name="properties"/>
+              <Option value="collection" name="type" type="QString"/>
+            </Option>
+          </dd_properties>
+          <callout type="simple">
+            <Option type="Map">
+              <Option value="pole_of_inaccessibility" name="anchorPoint" type="QString"/>
+              <Option value="0" name="blendMode" type="int"/>
+              <Option name="ddProperties" type="Map">
+                <Option value="" name="name" type="QString"/>
+                <Option name="properties"/>
+                <Option value="collection" name="type" type="QString"/>
+              </Option>
+              <Option value="false" name="drawToAllParts" type="bool"/>
+              <Option value="0" name="enabled" type="QString"/>
+              <Option value="point_on_exterior" name="labelAnchorPoint" type="QString"/>
+              <Option value="&lt;symbol clip_to_extent=&quot;1&quot; force_rhr=&quot;0&quot; name=&quot;symbol&quot; alpha=&quot;1&quot; type=&quot;line&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;0&quot; name=&quot;align_dash_pattern&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;square&quot; name=&quot;capstyle&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;5;2&quot; name=&quot;customdash&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;customdash_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;bevel&quot; name=&quot;joinstyle&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;60,60,60,255&quot; name=&quot;line_color&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;solid&quot; name=&quot;line_style&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0.3&quot; name=&quot;line_width&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;line_width_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;offset&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;offset_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;ring_filter&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;trim_distance_end&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;trim_distance_start&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;use_custom_dash&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_end_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;trim_distance_start&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_start_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_start_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>" name="lineSymbol" type="QString"/>
+              <Option value="0" name="minLength" type="double"/>
+              <Option value="3x:0,0,0,0,0,0" name="minLengthMapUnitScale" type="QString"/>
+              <Option value="MM" name="minLengthUnit" type="QString"/>
+              <Option value="0" name="offsetFromAnchor" type="double"/>
+              <Option value="3x:0,0,0,0,0,0" name="offsetFromAnchorMapUnitScale" type="QString"/>
+              <Option value="MM" name="offsetFromAnchorUnit" type="QString"/>
+              <Option value="0" name="offsetFromLabel" type="double"/>
+              <Option value="3x:0,0,0,0,0,0" name="offsetFromLabelMapUnitScale" type="QString"/>
+              <Option value="MM" name="offsetFromLabelUnit" type="QString"/>
+            </Option>
+          </callout>
+        </settings>
+      </labeling>
+      <customproperties>
+        <Option type="Map">
+          <Option name="dualview/previewExpressions" type="List">
+            <Option value="format_number(nummer, 0) + ':  ' + schacht_oben +  ' -> (' +&#xa;&quot;haltungsname&quot; + ') -> ' + schacht_unten" type="QString"/>
+          </Option>
+          <Option value="0" name="embeddedWidgets/count" type="int"/>
+          <Option name="variableNames"/>
+          <Option name="variableValues"/>
+        </Option>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory minimumSize="0" direction="0" rotationOffset="270" opacity="1" spacing="5" backgroundColor="#ffffff" labelPlacementMethod="XHeight" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeType="MM" showAxis="1" lineSizeScale="3x:0,0,0,0,0,0" barWidth="5" penColor="#000000" penAlpha="255" width="15" sizeType="MM" penWidth="0" minScaleDenominator="0" scaleBasedVisibility="0" height="15" enabled="0" backgroundAlpha="255" spacingUnit="MM" scaleDependency="Area" diagramOrientation="Up" sizeScale="3x:0,0,0,0,0,0" maxScaleDenominator="1e+08">
+          <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" label="" color="#000000"/>
+          <axisSymbol>
+            <symbol clip_to_extent="1" force_rhr="0" name="" alpha="1" type="line">
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" name="name" type="QString"/>
+                  <Option name="properties"/>
+                  <Option value="collection" name="type" type="QString"/>
+                </Option>
+              </data_defined_properties>
+              <layer pass="0" class="SimpleLine" enabled="1" locked="0">
+                <Option type="Map">
+                  <Option value="0" name="align_dash_pattern" type="QString"/>
+                  <Option value="square" name="capstyle" type="QString"/>
+                  <Option value="5;2" name="customdash" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="customdash_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="customdash_unit" type="QString"/>
+                  <Option value="0" name="dash_pattern_offset" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="dash_pattern_offset_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="dash_pattern_offset_unit" type="QString"/>
+                  <Option value="0" name="draw_inside_polygon" type="QString"/>
+                  <Option value="bevel" name="joinstyle" type="QString"/>
+                  <Option value="35,35,35,255" name="line_color" type="QString"/>
+                  <Option value="solid" name="line_style" type="QString"/>
+                  <Option value="0.26" name="line_width" type="QString"/>
+                  <Option value="MM" name="line_width_unit" type="QString"/>
+                  <Option value="0" name="offset" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="offset_unit" type="QString"/>
+                  <Option value="0" name="ring_filter" type="QString"/>
+                  <Option value="0" name="trim_distance_end" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="trim_distance_end_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="trim_distance_end_unit" type="QString"/>
+                  <Option value="0" name="trim_distance_start" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="trim_distance_start_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="trim_distance_start_unit" type="QString"/>
+                  <Option value="0" name="tweak_dash_pattern_on_corners" type="QString"/>
+                  <Option value="0" name="use_custom_dash" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="width_map_unit_scale" type="QString"/>
+                </Option>
+                <prop k="align_dash_pattern" v="0"/>
+                <prop k="capstyle" v="square"/>
+                <prop k="customdash" v="5;2"/>
+                <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="customdash_unit" v="MM"/>
+                <prop k="dash_pattern_offset" v="0"/>
+                <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="dash_pattern_offset_unit" v="MM"/>
+                <prop k="draw_inside_polygon" v="0"/>
+                <prop k="joinstyle" v="bevel"/>
+                <prop k="line_color" v="35,35,35,255"/>
+                <prop k="line_style" v="solid"/>
+                <prop k="line_width" v="0.26"/>
+                <prop k="line_width_unit" v="MM"/>
+                <prop k="offset" v="0"/>
+                <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="offset_unit" v="MM"/>
+                <prop k="ring_filter" v="0"/>
+                <prop k="trim_distance_end" v="0"/>
+                <prop k="trim_distance_end_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="trim_distance_end_unit" v="MM"/>
+                <prop k="trim_distance_start" v="0"/>
+                <prop k="trim_distance_start_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="trim_distance_start_unit" v="MM"/>
+                <prop k="tweak_dash_pattern_on_corners" v="0"/>
+                <prop k="use_custom_dash" v="0"/>
+                <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+              </layer>
+            </symbol>
+          </axisSymbol>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings priority="0" showAll="1" placement="0" obstacle="0" linePlacementFlags="18" zIndex="0" dist="0">
+        <properties>
+          <Option type="Map">
+            <Option value="" name="name" type="QString"/>
+            <Option name="properties"/>
+            <Option value="collection" name="type" type="QString"/>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
+        <activeChecks/>
+        <checkConfiguration/>
+      </geometryOptions>
+      <legend showLabelLegend="0" type="default-vector"/>
+      <referencedLayers/>
+      <fieldConfiguration>
+        <field name="pk" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="nummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_gerinne_o" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_gerinne_o" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_gerinne_u" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_gerinne_u" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_rohranfang" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_rohranfang" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_rohrende" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_rohrende" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer1" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer2" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer3" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer4" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer5" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer6" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer7" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer8" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer1" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer2" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer3" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer4" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer5" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schacht_oben" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schacht_unten" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="haltungsname" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rohrbreite_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rohrhoehe___v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="flaechenfactor_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="deckel_oben_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="deckel_unten_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_oben___v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_unten__v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="s_sohle_oben_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss1" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss2" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss3" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss4" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss5" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss6" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss7" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss8" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="kanalart" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="profilart_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="material_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="e_gebiet" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="strassennummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schachtnummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schachtart" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="berichtsnummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="laenge" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schachtmaterial" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="oberflaeche" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="baujahr" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="wasserschutz" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="eigentum" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="naechste_halt" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rueckadresse" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="mark" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="strakatid" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="geom" configurationFlags="None">
+          <editWidget type="Binary">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias index="0" field="pk" name=""/>
+        <alias index="1" field="nummer" name=""/>
+        <alias index="2" field="rw_gerinne_o" name=""/>
+        <alias index="3" field="hw_gerinne_o" name=""/>
+        <alias index="4" field="rw_gerinne_u" name=""/>
+        <alias index="5" field="hw_gerinne_u" name=""/>
+        <alias index="6" field="rw_rohranfang" name=""/>
+        <alias index="7" field="hw_rohranfang" name=""/>
+        <alias index="8" field="rw_rohrende" name=""/>
+        <alias index="9" field="hw_rohrende" name=""/>
+        <alias index="10" field="zuflussnummer1" name=""/>
+        <alias index="11" field="zuflussnummer2" name=""/>
+        <alias index="12" field="zuflussnummer3" name=""/>
+        <alias index="13" field="zuflussnummer4" name=""/>
+        <alias index="14" field="zuflussnummer5" name=""/>
+        <alias index="15" field="zuflussnummer6" name=""/>
+        <alias index="16" field="zuflussnummer7" name=""/>
+        <alias index="17" field="zuflussnummer8" name=""/>
+        <alias index="18" field="abflussnummer1" name=""/>
+        <alias index="19" field="abflussnummer2" name=""/>
+        <alias index="20" field="abflussnummer3" name=""/>
+        <alias index="21" field="abflussnummer4" name=""/>
+        <alias index="22" field="abflussnummer5" name=""/>
+        <alias index="23" field="schacht_oben" name=""/>
+        <alias index="24" field="schacht_unten" name=""/>
+        <alias index="25" field="haltungsname" name=""/>
+        <alias index="26" field="rohrbreite_v" name=""/>
+        <alias index="27" field="rohrhoehe___v" name=""/>
+        <alias index="28" field="flaechenfactor_v" name=""/>
+        <alias index="29" field="deckel_oben_v" name=""/>
+        <alias index="30" field="deckel_unten_v" name=""/>
+        <alias index="31" field="sohle_oben___v" name=""/>
+        <alias index="32" field="sohle_unten__v" name=""/>
+        <alias index="33" field="s_sohle_oben_v" name=""/>
+        <alias index="34" field="sohle_zufluss1" name=""/>
+        <alias index="35" field="sohle_zufluss2" name=""/>
+        <alias index="36" field="sohle_zufluss3" name=""/>
+        <alias index="37" field="sohle_zufluss4" name=""/>
+        <alias index="38" field="sohle_zufluss5" name=""/>
+        <alias index="39" field="sohle_zufluss6" name=""/>
+        <alias index="40" field="sohle_zufluss7" name=""/>
+        <alias index="41" field="sohle_zufluss8" name=""/>
+        <alias index="42" field="kanalart" name=""/>
+        <alias index="43" field="profilart_v" name=""/>
+        <alias index="44" field="material_v" name=""/>
+        <alias index="45" field="e_gebiet" name=""/>
+        <alias index="46" field="strassennummer" name=""/>
+        <alias index="47" field="schachtnummer" name=""/>
+        <alias index="48" field="schachtart" name=""/>
+        <alias index="49" field="berichtsnummer" name=""/>
+        <alias index="50" field="laenge" name=""/>
+        <alias index="51" field="schachtmaterial" name=""/>
+        <alias index="52" field="oberflaeche" name=""/>
+        <alias index="53" field="baujahr" name=""/>
+        <alias index="54" field="wasserschutz" name=""/>
+        <alias index="55" field="eigentum" name=""/>
+        <alias index="56" field="naechste_halt" name=""/>
+        <alias index="57" field="rueckadresse" name=""/>
+        <alias index="58" field="mark" name=""/>
+        <alias index="59" field="strakatid" name=""/>
+        <alias index="60" field="geom" name=""/>
+      </aliases>
+      <defaults>
+        <default field="pk" expression="" applyOnUpdate="0"/>
+        <default field="nummer" expression="" applyOnUpdate="0"/>
+        <default field="rw_gerinne_o" expression="" applyOnUpdate="0"/>
+        <default field="hw_gerinne_o" expression="" applyOnUpdate="0"/>
+        <default field="rw_gerinne_u" expression="" applyOnUpdate="0"/>
+        <default field="hw_gerinne_u" expression="" applyOnUpdate="0"/>
+        <default field="rw_rohranfang" expression="" applyOnUpdate="0"/>
+        <default field="hw_rohranfang" expression="" applyOnUpdate="0"/>
+        <default field="rw_rohrende" expression="" applyOnUpdate="0"/>
+        <default field="hw_rohrende" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer1" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer2" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer3" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer4" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer5" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer6" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer7" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer8" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer1" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer2" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer3" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer4" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer5" expression="" applyOnUpdate="0"/>
+        <default field="schacht_oben" expression="" applyOnUpdate="0"/>
+        <default field="schacht_unten" expression="" applyOnUpdate="0"/>
+        <default field="haltungsname" expression="" applyOnUpdate="0"/>
+        <default field="rohrbreite_v" expression="" applyOnUpdate="0"/>
+        <default field="rohrhoehe___v" expression="" applyOnUpdate="0"/>
+        <default field="flaechenfactor_v" expression="" applyOnUpdate="0"/>
+        <default field="deckel_oben_v" expression="" applyOnUpdate="0"/>
+        <default field="deckel_unten_v" expression="" applyOnUpdate="0"/>
+        <default field="sohle_oben___v" expression="" applyOnUpdate="0"/>
+        <default field="sohle_unten__v" expression="" applyOnUpdate="0"/>
+        <default field="s_sohle_oben_v" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss1" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss2" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss3" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss4" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss5" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss6" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss7" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss8" expression="" applyOnUpdate="0"/>
+        <default field="kanalart" expression="" applyOnUpdate="0"/>
+        <default field="profilart_v" expression="" applyOnUpdate="0"/>
+        <default field="material_v" expression="" applyOnUpdate="0"/>
+        <default field="e_gebiet" expression="" applyOnUpdate="0"/>
+        <default field="strassennummer" expression="" applyOnUpdate="0"/>
+        <default field="schachtnummer" expression="" applyOnUpdate="0"/>
+        <default field="schachtart" expression="" applyOnUpdate="0"/>
+        <default field="berichtsnummer" expression="" applyOnUpdate="0"/>
+        <default field="laenge" expression="" applyOnUpdate="0"/>
+        <default field="schachtmaterial" expression="" applyOnUpdate="0"/>
+        <default field="oberflaeche" expression="" applyOnUpdate="0"/>
+        <default field="baujahr" expression="" applyOnUpdate="0"/>
+        <default field="wasserschutz" expression="" applyOnUpdate="0"/>
+        <default field="eigentum" expression="" applyOnUpdate="0"/>
+        <default field="naechste_halt" expression="" applyOnUpdate="0"/>
+        <default field="rueckadresse" expression="" applyOnUpdate="0"/>
+        <default field="mark" expression="" applyOnUpdate="0"/>
+        <default field="strakatid" expression="" applyOnUpdate="0"/>
+        <default field="geom" expression="" applyOnUpdate="0"/>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" unique_strength="1" exp_strength="0" field="pk" notnull_strength="1"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="nummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_gerinne_o" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_gerinne_o" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_gerinne_u" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_gerinne_u" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_rohranfang" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_rohranfang" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_rohrende" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_rohrende" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer1" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer2" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer3" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer4" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer5" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer6" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer7" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer8" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer1" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer2" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer3" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer4" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer5" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schacht_oben" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schacht_unten" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="haltungsname" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rohrbreite_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rohrhoehe___v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="flaechenfactor_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="deckel_oben_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="deckel_unten_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_oben___v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_unten__v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="s_sohle_oben_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss1" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss2" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss3" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss4" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss5" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss6" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss7" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss8" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="kanalart" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="profilart_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="material_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="e_gebiet" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="strassennummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schachtnummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schachtart" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="berichtsnummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="laenge" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schachtmaterial" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="oberflaeche" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="baujahr" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="wasserschutz" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="eigentum" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="naechste_halt" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rueckadresse" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="mark" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="strakatid" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="geom" notnull_strength="0"/>
+      </constraints>
+      <constraintExpressions>
+        <constraint field="pk" desc="" exp=""/>
+        <constraint field="nummer" desc="" exp=""/>
+        <constraint field="rw_gerinne_o" desc="" exp=""/>
+        <constraint field="hw_gerinne_o" desc="" exp=""/>
+        <constraint field="rw_gerinne_u" desc="" exp=""/>
+        <constraint field="hw_gerinne_u" desc="" exp=""/>
+        <constraint field="rw_rohranfang" desc="" exp=""/>
+        <constraint field="hw_rohranfang" desc="" exp=""/>
+        <constraint field="rw_rohrende" desc="" exp=""/>
+        <constraint field="hw_rohrende" desc="" exp=""/>
+        <constraint field="zuflussnummer1" desc="" exp=""/>
+        <constraint field="zuflussnummer2" desc="" exp=""/>
+        <constraint field="zuflussnummer3" desc="" exp=""/>
+        <constraint field="zuflussnummer4" desc="" exp=""/>
+        <constraint field="zuflussnummer5" desc="" exp=""/>
+        <constraint field="zuflussnummer6" desc="" exp=""/>
+        <constraint field="zuflussnummer7" desc="" exp=""/>
+        <constraint field="zuflussnummer8" desc="" exp=""/>
+        <constraint field="abflussnummer1" desc="" exp=""/>
+        <constraint field="abflussnummer2" desc="" exp=""/>
+        <constraint field="abflussnummer3" desc="" exp=""/>
+        <constraint field="abflussnummer4" desc="" exp=""/>
+        <constraint field="abflussnummer5" desc="" exp=""/>
+        <constraint field="schacht_oben" desc="" exp=""/>
+        <constraint field="schacht_unten" desc="" exp=""/>
+        <constraint field="haltungsname" desc="" exp=""/>
+        <constraint field="rohrbreite_v" desc="" exp=""/>
+        <constraint field="rohrhoehe___v" desc="" exp=""/>
+        <constraint field="flaechenfactor_v" desc="" exp=""/>
+        <constraint field="deckel_oben_v" desc="" exp=""/>
+        <constraint field="deckel_unten_v" desc="" exp=""/>
+        <constraint field="sohle_oben___v" desc="" exp=""/>
+        <constraint field="sohle_unten__v" desc="" exp=""/>
+        <constraint field="s_sohle_oben_v" desc="" exp=""/>
+        <constraint field="sohle_zufluss1" desc="" exp=""/>
+        <constraint field="sohle_zufluss2" desc="" exp=""/>
+        <constraint field="sohle_zufluss3" desc="" exp=""/>
+        <constraint field="sohle_zufluss4" desc="" exp=""/>
+        <constraint field="sohle_zufluss5" desc="" exp=""/>
+        <constraint field="sohle_zufluss6" desc="" exp=""/>
+        <constraint field="sohle_zufluss7" desc="" exp=""/>
+        <constraint field="sohle_zufluss8" desc="" exp=""/>
+        <constraint field="kanalart" desc="" exp=""/>
+        <constraint field="profilart_v" desc="" exp=""/>
+        <constraint field="material_v" desc="" exp=""/>
+        <constraint field="e_gebiet" desc="" exp=""/>
+        <constraint field="strassennummer" desc="" exp=""/>
+        <constraint field="schachtnummer" desc="" exp=""/>
+        <constraint field="schachtart" desc="" exp=""/>
+        <constraint field="berichtsnummer" desc="" exp=""/>
+        <constraint field="laenge" desc="" exp=""/>
+        <constraint field="schachtmaterial" desc="" exp=""/>
+        <constraint field="oberflaeche" desc="" exp=""/>
+        <constraint field="baujahr" desc="" exp=""/>
+        <constraint field="wasserschutz" desc="" exp=""/>
+        <constraint field="eigentum" desc="" exp=""/>
+        <constraint field="naechste_halt" desc="" exp=""/>
+        <constraint field="rueckadresse" desc="" exp=""/>
+        <constraint field="mark" desc="" exp=""/>
+        <constraint field="strakatid" desc="" exp=""/>
+        <constraint field="geom" desc="" exp=""/>
+      </constraintExpressions>
+      <expressionfields/>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;schachtart&quot;" sortOrder="0">
+        <columns>
+          <column name="pk" width="-1" hidden="0" type="field"/>
+          <column name="nummer" width="-1" hidden="0" type="field"/>
+          <column name="rw_gerinne_o" width="-1" hidden="0" type="field"/>
+          <column name="hw_gerinne_o" width="-1" hidden="0" type="field"/>
+          <column name="rw_gerinne_u" width="-1" hidden="0" type="field"/>
+          <column name="hw_gerinne_u" width="-1" hidden="0" type="field"/>
+          <column name="rw_rohranfang" width="-1" hidden="0" type="field"/>
+          <column name="hw_rohranfang" width="-1" hidden="0" type="field"/>
+          <column name="rw_rohrende" width="-1" hidden="0" type="field"/>
+          <column name="hw_rohrende" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer1" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer2" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer3" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer4" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer5" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer6" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer7" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer8" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer1" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer2" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer3" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer4" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer5" width="-1" hidden="0" type="field"/>
+          <column name="schacht_oben" width="-1" hidden="0" type="field"/>
+          <column name="schacht_unten" width="-1" hidden="0" type="field"/>
+          <column name="haltungsname" width="-1" hidden="0" type="field"/>
+          <column name="rohrbreite_v" width="-1" hidden="0" type="field"/>
+          <column name="rohrhoehe___v" width="-1" hidden="0" type="field"/>
+          <column name="flaechenfactor_v" width="-1" hidden="0" type="field"/>
+          <column name="deckel_oben_v" width="-1" hidden="0" type="field"/>
+          <column name="deckel_unten_v" width="-1" hidden="0" type="field"/>
+          <column name="sohle_oben___v" width="-1" hidden="0" type="field"/>
+          <column name="sohle_unten__v" width="-1" hidden="0" type="field"/>
+          <column name="s_sohle_oben_v" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss1" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss2" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss3" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss4" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss5" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss6" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss7" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss8" width="-1" hidden="0" type="field"/>
+          <column name="kanalart" width="-1" hidden="0" type="field"/>
+          <column name="profilart_v" width="-1" hidden="0" type="field"/>
+          <column name="material_v" width="-1" hidden="0" type="field"/>
+          <column name="e_gebiet" width="-1" hidden="0" type="field"/>
+          <column name="strassennummer" width="-1" hidden="0" type="field"/>
+          <column name="schachtnummer" width="153" hidden="0" type="field"/>
+          <column name="schachtart" width="-1" hidden="0" type="field"/>
+          <column name="berichtsnummer" width="-1" hidden="0" type="field"/>
+          <column name="laenge" width="-1" hidden="0" type="field"/>
+          <column name="schachtmaterial" width="-1" hidden="0" type="field"/>
+          <column name="oberflaeche" width="-1" hidden="0" type="field"/>
+          <column name="baujahr" width="-1" hidden="0" type="field"/>
+          <column name="wasserschutz" width="-1" hidden="0" type="field"/>
+          <column name="eigentum" width="-1" hidden="0" type="field"/>
+          <column name="naechste_halt" width="-1" hidden="0" type="field"/>
+          <column name="rueckadresse" width="-1" hidden="0" type="field"/>
+          <column name="strakatid" width="-1" hidden="0" type="field"/>
+          <column name="geom" width="-1" hidden="0" type="field"/>
+          <column name="mark" width="-1" hidden="0" type="field"/>
+          <column width="-1" hidden="1" type="actions"/>
+        </columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <storedexpressions/>
+      <editform tolerant="1"></editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable>
+        <field name="abflussnummer1" editable="1"/>
+        <field name="abflussnummer2" editable="1"/>
+        <field name="abflussnummer3" editable="1"/>
+        <field name="abflussnummer4" editable="1"/>
+        <field name="abflussnummer5" editable="1"/>
+        <field name="baujahr" editable="1"/>
+        <field name="berichtsnummer" editable="1"/>
+        <field name="deckel_oben_v" editable="1"/>
+        <field name="deckel_unten_v" editable="1"/>
+        <field name="e_gebiet" editable="1"/>
+        <field name="eigentum" editable="1"/>
+        <field name="flaechenfactor_v" editable="1"/>
+        <field name="geom" editable="1"/>
+        <field name="haltungsname" editable="1"/>
+        <field name="hw_gerinne_o" editable="1"/>
+        <field name="hw_gerinne_u" editable="1"/>
+        <field name="hw_rohranfang" editable="1"/>
+        <field name="hw_rohrende" editable="1"/>
+        <field name="kanalart" editable="1"/>
+        <field name="laenge" editable="1"/>
+        <field name="mark" editable="1"/>
+        <field name="material_v" editable="1"/>
+        <field name="naechste_halt" editable="1"/>
+        <field name="nummer" editable="1"/>
+        <field name="oberflaeche" editable="1"/>
+        <field name="pk" editable="1"/>
+        <field name="profilart_v" editable="1"/>
+        <field name="rohrbreite_v" editable="1"/>
+        <field name="rohrhoehe___v" editable="1"/>
+        <field name="rueckadresse" editable="1"/>
+        <field name="rw_gerinne_o" editable="1"/>
+        <field name="rw_gerinne_u" editable="1"/>
+        <field name="rw_rohranfang" editable="1"/>
+        <field name="rw_rohrende" editable="1"/>
+        <field name="s_sohle_oben_v" editable="1"/>
+        <field name="schacht_oben" editable="1"/>
+        <field name="schacht_unten" editable="1"/>
+        <field name="schachtart" editable="1"/>
+        <field name="schachtmaterial" editable="1"/>
+        <field name="schachtnummer" editable="1"/>
+        <field name="sohle_oben___v" editable="1"/>
+        <field name="sohle_unten__v" editable="1"/>
+        <field name="sohle_zufluss1" editable="1"/>
+        <field name="sohle_zufluss2" editable="1"/>
+        <field name="sohle_zufluss3" editable="1"/>
+        <field name="sohle_zufluss4" editable="1"/>
+        <field name="sohle_zufluss5" editable="1"/>
+        <field name="sohle_zufluss6" editable="1"/>
+        <field name="sohle_zufluss7" editable="1"/>
+        <field name="sohle_zufluss8" editable="1"/>
+        <field name="strakatid" editable="1"/>
+        <field name="strassennummer" editable="1"/>
+        <field name="wasserschutz" editable="1"/>
+        <field name="zuflussnummer1" editable="1"/>
+        <field name="zuflussnummer2" editable="1"/>
+        <field name="zuflussnummer3" editable="1"/>
+        <field name="zuflussnummer4" editable="1"/>
+        <field name="zuflussnummer5" editable="1"/>
+        <field name="zuflussnummer6" editable="1"/>
+        <field name="zuflussnummer7" editable="1"/>
+        <field name="zuflussnummer8" editable="1"/>
+      </editable>
+      <labelOnTop>
+        <field labelOnTop="0" name="abflussnummer1"/>
+        <field labelOnTop="0" name="abflussnummer2"/>
+        <field labelOnTop="0" name="abflussnummer3"/>
+        <field labelOnTop="0" name="abflussnummer4"/>
+        <field labelOnTop="0" name="abflussnummer5"/>
+        <field labelOnTop="0" name="baujahr"/>
+        <field labelOnTop="0" name="berichtsnummer"/>
+        <field labelOnTop="0" name="deckel_oben_v"/>
+        <field labelOnTop="0" name="deckel_unten_v"/>
+        <field labelOnTop="0" name="e_gebiet"/>
+        <field labelOnTop="0" name="eigentum"/>
+        <field labelOnTop="0" name="flaechenfactor_v"/>
+        <field labelOnTop="0" name="geom"/>
+        <field labelOnTop="0" name="haltungsname"/>
+        <field labelOnTop="0" name="hw_gerinne_o"/>
+        <field labelOnTop="0" name="hw_gerinne_u"/>
+        <field labelOnTop="0" name="hw_rohranfang"/>
+        <field labelOnTop="0" name="hw_rohrende"/>
+        <field labelOnTop="0" name="kanalart"/>
+        <field labelOnTop="0" name="laenge"/>
+        <field labelOnTop="0" name="mark"/>
+        <field labelOnTop="0" name="material_v"/>
+        <field labelOnTop="0" name="naechste_halt"/>
+        <field labelOnTop="0" name="nummer"/>
+        <field labelOnTop="0" name="oberflaeche"/>
+        <field labelOnTop="0" name="pk"/>
+        <field labelOnTop="0" name="profilart_v"/>
+        <field labelOnTop="0" name="rohrbreite_v"/>
+        <field labelOnTop="0" name="rohrhoehe___v"/>
+        <field labelOnTop="0" name="rueckadresse"/>
+        <field labelOnTop="0" name="rw_gerinne_o"/>
+        <field labelOnTop="0" name="rw_gerinne_u"/>
+        <field labelOnTop="0" name="rw_rohranfang"/>
+        <field labelOnTop="0" name="rw_rohrende"/>
+        <field labelOnTop="0" name="s_sohle_oben_v"/>
+        <field labelOnTop="0" name="schacht_oben"/>
+        <field labelOnTop="0" name="schacht_unten"/>
+        <field labelOnTop="0" name="schachtart"/>
+        <field labelOnTop="0" name="schachtmaterial"/>
+        <field labelOnTop="0" name="schachtnummer"/>
+        <field labelOnTop="0" name="sohle_oben___v"/>
+        <field labelOnTop="0" name="sohle_unten__v"/>
+        <field labelOnTop="0" name="sohle_zufluss1"/>
+        <field labelOnTop="0" name="sohle_zufluss2"/>
+        <field labelOnTop="0" name="sohle_zufluss3"/>
+        <field labelOnTop="0" name="sohle_zufluss4"/>
+        <field labelOnTop="0" name="sohle_zufluss5"/>
+        <field labelOnTop="0" name="sohle_zufluss6"/>
+        <field labelOnTop="0" name="sohle_zufluss7"/>
+        <field labelOnTop="0" name="sohle_zufluss8"/>
+        <field labelOnTop="0" name="strakatid"/>
+        <field labelOnTop="0" name="strassennummer"/>
+        <field labelOnTop="0" name="wasserschutz"/>
+        <field labelOnTop="0" name="zuflussnummer1"/>
+        <field labelOnTop="0" name="zuflussnummer2"/>
+        <field labelOnTop="0" name="zuflussnummer3"/>
+        <field labelOnTop="0" name="zuflussnummer4"/>
+        <field labelOnTop="0" name="zuflussnummer5"/>
+        <field labelOnTop="0" name="zuflussnummer6"/>
+        <field labelOnTop="0" name="zuflussnummer7"/>
+        <field labelOnTop="0" name="zuflussnummer8"/>
+      </labelOnTop>
+      <reuseLastValue>
+        <field name="abflussnummer1" reuseLastValue="0"/>
+        <field name="abflussnummer2" reuseLastValue="0"/>
+        <field name="abflussnummer3" reuseLastValue="0"/>
+        <field name="abflussnummer4" reuseLastValue="0"/>
+        <field name="abflussnummer5" reuseLastValue="0"/>
+        <field name="baujahr" reuseLastValue="0"/>
+        <field name="berichtsnummer" reuseLastValue="0"/>
+        <field name="deckel_oben_v" reuseLastValue="0"/>
+        <field name="deckel_unten_v" reuseLastValue="0"/>
+        <field name="e_gebiet" reuseLastValue="0"/>
+        <field name="eigentum" reuseLastValue="0"/>
+        <field name="flaechenfactor_v" reuseLastValue="0"/>
+        <field name="geom" reuseLastValue="0"/>
+        <field name="haltungsname" reuseLastValue="0"/>
+        <field name="hw_gerinne_o" reuseLastValue="0"/>
+        <field name="hw_gerinne_u" reuseLastValue="0"/>
+        <field name="hw_rohranfang" reuseLastValue="0"/>
+        <field name="hw_rohrende" reuseLastValue="0"/>
+        <field name="kanalart" reuseLastValue="0"/>
+        <field name="laenge" reuseLastValue="0"/>
+        <field name="mark" reuseLastValue="0"/>
+        <field name="material_v" reuseLastValue="0"/>
+        <field name="naechste_halt" reuseLastValue="0"/>
+        <field name="nummer" reuseLastValue="0"/>
+        <field name="oberflaeche" reuseLastValue="0"/>
+        <field name="pk" reuseLastValue="0"/>
+        <field name="profilart_v" reuseLastValue="0"/>
+        <field name="rohrbreite_v" reuseLastValue="0"/>
+        <field name="rohrhoehe___v" reuseLastValue="0"/>
+        <field name="rueckadresse" reuseLastValue="0"/>
+        <field name="rw_gerinne_o" reuseLastValue="0"/>
+        <field name="rw_gerinne_u" reuseLastValue="0"/>
+        <field name="rw_rohranfang" reuseLastValue="0"/>
+        <field name="rw_rohrende" reuseLastValue="0"/>
+        <field name="s_sohle_oben_v" reuseLastValue="0"/>
+        <field name="schacht_oben" reuseLastValue="0"/>
+        <field name="schacht_unten" reuseLastValue="0"/>
+        <field name="schachtart" reuseLastValue="0"/>
+        <field name="schachtmaterial" reuseLastValue="0"/>
+        <field name="schachtnummer" reuseLastValue="0"/>
+        <field name="sohle_oben___v" reuseLastValue="0"/>
+        <field name="sohle_unten__v" reuseLastValue="0"/>
+        <field name="sohle_zufluss1" reuseLastValue="0"/>
+        <field name="sohle_zufluss2" reuseLastValue="0"/>
+        <field name="sohle_zufluss3" reuseLastValue="0"/>
+        <field name="sohle_zufluss4" reuseLastValue="0"/>
+        <field name="sohle_zufluss5" reuseLastValue="0"/>
+        <field name="sohle_zufluss6" reuseLastValue="0"/>
+        <field name="sohle_zufluss7" reuseLastValue="0"/>
+        <field name="sohle_zufluss8" reuseLastValue="0"/>
+        <field name="strakatid" reuseLastValue="0"/>
+        <field name="strassennummer" reuseLastValue="0"/>
+        <field name="wasserschutz" reuseLastValue="0"/>
+        <field name="zuflussnummer1" reuseLastValue="0"/>
+        <field name="zuflussnummer2" reuseLastValue="0"/>
+        <field name="zuflussnummer3" reuseLastValue="0"/>
+        <field name="zuflussnummer4" reuseLastValue="0"/>
+        <field name="zuflussnummer5" reuseLastValue="0"/>
+        <field name="zuflussnummer6" reuseLastValue="0"/>
+        <field name="zuflussnummer7" reuseLastValue="0"/>
+        <field name="zuflussnummer8" reuseLastValue="0"/>
+      </reuseLastValue>
+      <dataDefinedFieldProperties/>
+      <widgets/>
+      <previewExpression>format('%1 (art: %2)', haltungsname, schachtart)</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+    <maplayer refreshOnNotifyEnabled="0" legendPlaceholderImage="" autoRefreshEnabled="0" wkbType="LineString" hasScaleBasedVisibilityFlag="0" symbologyReferenceScale="-1" maxScale="0" simplifyAlgorithm="0" simplifyDrawingHints="1" simplifyMaxScale="1" simplifyDrawingTol="1" autoRefreshTime="0" readOnly="0" refreshOnNotifyMessage="" labelsEnabled="1" geometry="Line" styleCategories="AllStyleCategories" simplifyLocal="1" minScale="100000000" type="vector">
+      <extent>
+        <xmin>309372.05099999997764826</xmin>
+        <ymin>5640376.35400000028312206</ymin>
+        <xmax>320022.45600000000558794</xmax>
+        <ymax>5650842.5580000001937151</ymax>
+      </extent>
+      <wgs84extent>
+        <xmin>6.28442414351734246</xmin>
+        <ymin>50.88356752695649021</ymin>
+        <xmax>6.44114457022990106</xmax>
+        <ymax>50.98100744214510627</ymax>
+      </wgs84extent>
+      <id>t_strakat_Kanal_20a72d07_5c1a_482f_9556_1d63108f3cc8</id>
+      <datasource>dbname='../../../../../../../../../../../../projekte/Juelich/qkan/b240916/juelich.sqlite' table="t_strakatkanal" (geom)</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>t_strakat Kanal</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt>PROJCRS["ETRS89 / UTM zone 32N",BASEGEOGCRS["ETRS89",ENSEMBLE["European Terrestrial Reference System 1989 ensemble",MEMBER["European Terrestrial Reference Frame 1989"],MEMBER["European Terrestrial Reference Frame 1990"],MEMBER["European Terrestrial Reference Frame 1991"],MEMBER["European Terrestrial Reference Frame 1992"],MEMBER["European Terrestrial Reference Frame 1993"],MEMBER["European Terrestrial Reference Frame 1994"],MEMBER["European Terrestrial Reference Frame 1996"],MEMBER["European Terrestrial Reference Frame 1997"],MEMBER["European Terrestrial Reference Frame 2000"],MEMBER["European Terrestrial Reference Frame 2005"],MEMBER["European Terrestrial Reference Frame 2014"],ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[0.1]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4258]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Engineering survey, topographic mapping."],AREA["Europe between 6°E and 12°E: Austria; Belgium; Denmark - onshore and offshore; Germany - onshore and offshore; Norway including - onshore and offshore; Spain - offshore."],BBOX[38.76,6,84.33,12]],ID["EPSG",25832]]</wkt>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type></type>
+        <title></title>
+        <abstract></abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links/>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt></wkt>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial maxz="0" crs="" minx="0" minz="0" maxy="0" miny="0" dimensions="2" maxx="0"/>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="">spatialite</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <dataDependencies/>
+      <expressionfields/>
+      <map-layer-style-manager current="default">
+        <map-layer-style name="default"/>
+      </map-layer-style-manager>
+      <auxiliaryLayer/>
+      <metadataUrls/>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+        <Private>0</Private>
+      </flags>
+      <temporal durationUnit="min" endField="" endExpression="" enabled="0" startField="" durationField="" startExpression="" fixedDuration="0" mode="0" accumulate="0" limitMode="0">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <renderer-v2 forceraster="0" symbollevels="0" referencescale="-1" type="singleSymbol" enableorderby="0">
+        <symbols>
+          <symbol clip_to_extent="1" force_rhr="0" name="0" alpha="0.6" type="line">
+            <data_defined_properties>
+              <Option type="Map">
+                <Option value="" name="name" type="QString"/>
+                <Option name="properties"/>
+                <Option value="collection" name="type" type="QString"/>
+              </Option>
+            </data_defined_properties>
+            <layer pass="0" class="SimpleLine" enabled="1" locked="0">
+              <Option type="Map">
+                <Option value="0" name="align_dash_pattern" type="QString"/>
+                <Option value="round" name="capstyle" type="QString"/>
+                <Option value="1;0.5" name="customdash" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="customdash_map_unit_scale" type="QString"/>
+                <Option value="MM" name="customdash_unit" type="QString"/>
+                <Option value="0" name="dash_pattern_offset" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="dash_pattern_offset_map_unit_scale" type="QString"/>
+                <Option value="MM" name="dash_pattern_offset_unit" type="QString"/>
+                <Option value="0" name="draw_inside_polygon" type="QString"/>
+                <Option value="round" name="joinstyle" type="QString"/>
+                <Option value="255,158,23,255" name="line_color" type="QString"/>
+                <Option value="solid" name="line_style" type="QString"/>
+                <Option value="0.26" name="line_width" type="QString"/>
+                <Option value="RenderMetersInMapUnits" name="line_width_unit" type="QString"/>
+                <Option value="0" name="offset" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                <Option value="MM" name="offset_unit" type="QString"/>
+                <Option value="0" name="ring_filter" type="QString"/>
+                <Option value="0" name="trim_distance_end" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="trim_distance_end_map_unit_scale" type="QString"/>
+                <Option value="MM" name="trim_distance_end_unit" type="QString"/>
+                <Option value="0" name="trim_distance_start" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="trim_distance_start_map_unit_scale" type="QString"/>
+                <Option value="MM" name="trim_distance_start_unit" type="QString"/>
+                <Option value="0" name="tweak_dash_pattern_on_corners" type="QString"/>
+                <Option value="0" name="use_custom_dash" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="width_map_unit_scale" type="QString"/>
+              </Option>
+              <prop k="align_dash_pattern" v="0"/>
+              <prop k="capstyle" v="round"/>
+              <prop k="customdash" v="1;0.5"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="MM"/>
+              <prop k="dash_pattern_offset" v="0"/>
+              <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="dash_pattern_offset_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="round"/>
+              <prop k="line_color" v="255,158,23,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="0.26"/>
+              <prop k="line_width_unit" v="RenderMetersInMapUnits"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="trim_distance_end" v="0"/>
+              <prop k="trim_distance_end_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="trim_distance_end_unit" v="MM"/>
+              <prop k="trim_distance_start" v="0"/>
+              <prop k="trim_distance_start_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="trim_distance_start_unit" v="MM"/>
+              <prop k="tweak_dash_pattern_on_corners" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" name="name" type="QString"/>
+                  <Option name="properties" type="Map">
+                    <Option name="outlineWidth" type="Map">
+                      <Option value="true" name="active" type="bool"/>
+                      <Option value="rohrbreite_v /1000.0" name="expression" type="QString"/>
+                      <Option value="3" name="type" type="int"/>
+                    </Option>
+                  </Option>
+                  <Option value="collection" name="type" type="QString"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+            <layer pass="0" class="MarkerLine" enabled="1" locked="0">
+              <Option type="Map">
+                <Option value="4" name="average_angle_length" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="average_angle_map_unit_scale" type="QString"/>
+                <Option value="MM" name="average_angle_unit" type="QString"/>
+                <Option value="3" name="interval" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="interval_map_unit_scale" type="QString"/>
+                <Option value="MM" name="interval_unit" type="QString"/>
+                <Option value="0" name="offset" type="QString"/>
+                <Option value="0" name="offset_along_line" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="offset_along_line_map_unit_scale" type="QString"/>
+                <Option value="MM" name="offset_along_line_unit" type="QString"/>
+                <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                <Option value="MM" name="offset_unit" type="QString"/>
+                <Option value="centralpoint" name="placement" type="QString"/>
+                <Option value="0" name="ring_filter" type="QString"/>
+                <Option value="1" name="rotate" type="QString"/>
+              </Option>
+              <prop k="average_angle_length" v="4"/>
+              <prop k="average_angle_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="average_angle_unit" v="MM"/>
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="placement" v="centralpoint"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="rotate" v="1"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" name="name" type="QString"/>
+                  <Option name="properties"/>
+                  <Option value="collection" name="type" type="QString"/>
+                </Option>
+              </data_defined_properties>
+              <symbol clip_to_extent="1" force_rhr="0" name="@0@1" alpha="1" type="marker">
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+                <layer pass="0" class="SimpleMarker" enabled="1" locked="0">
+                  <Option type="Map">
+                    <Option value="0" name="angle" type="QString"/>
+                    <Option value="square" name="cap_style" type="QString"/>
+                    <Option value="255,127,0,255" name="color" type="QString"/>
+                    <Option value="1" name="horizontal_anchor_point" type="QString"/>
+                    <Option value="bevel" name="joinstyle" type="QString"/>
+                    <Option value="filled_arrowhead" name="name" type="QString"/>
+                    <Option value="0,0" name="offset" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                    <Option value="RenderMetersInMapUnits" name="offset_unit" type="QString"/>
+                    <Option value="35,35,35,255" name="outline_color" type="QString"/>
+                    <Option value="solid" name="outline_style" type="QString"/>
+                    <Option value="0" name="outline_width" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="outline_width_map_unit_scale" type="QString"/>
+                    <Option value="RenderMetersInMapUnits" name="outline_width_unit" type="QString"/>
+                    <Option value="diameter" name="scale_method" type="QString"/>
+                    <Option value="2" name="size" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="size_map_unit_scale" type="QString"/>
+                    <Option value="RenderMetersInMapUnits" name="size_unit" type="QString"/>
+                    <Option value="1" name="vertical_anchor_point" type="QString"/>
+                  </Option>
+                  <prop k="angle" v="0"/>
+                  <prop k="cap_style" v="square"/>
+                  <prop k="color" v="255,127,0,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="filled_arrowhead"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+                  <prop k="outline_color" v="35,35,35,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="RenderMetersInMapUnits"/>
+                  <prop k="scale_method" v="diameter"/>
+                  <prop k="size" v="2"/>
+                  <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="RenderMetersInMapUnits"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option value="" name="name" type="QString"/>
+                      <Option name="properties" type="Map">
+                        <Option name="size" type="Map">
+                          <Option value="true" name="active" type="bool"/>
+                          <Option value="max(rohrbreite_v /500.0, 1)" name="expression" type="QString"/>
+                          <Option value="3" name="type" type="int"/>
+                        </Option>
+                      </Option>
+                      <Option value="collection" name="type" type="QString"/>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <labeling type="simple">
+        <settings calloutType="simple">
+          <text-style allowHtml="0" textOpacity="1" fontLetterSpacing="0" isExpression="1" fieldName="schacht_oben + ' - ' + &#xd;&#xa;format('(%1 | %2 | %3) -> %4 -> (%5 - %6 - %7)', zuflussnummer1, zuflussnummer2, zuflussnummer3, nummer, abflussnummer1, abflussnummer2, abflussnummer3) + ' - ' + schacht_unten" fontKerning="1" fontItalic="0" namedStyle="Standard" previewBkgrdColor="255,255,255,255" fontWordSpacing="0" blendMode="0" fontFamily="Lucida Sans" fontWeight="50" useSubstitutions="0" fontSizeUnit="Point" fontSizeMapUnitScale="3x:0,0,0,0,0,0" capitalization="0" textColor="160,16,217,255" textOrientation="horizontal" fontSize="12" fontStrikeout="0" multilineHeight="1" legendString="Aa" fontUnderline="0">
+            <families/>
+            <text-buffer bufferJoinStyle="128" bufferSizeUnits="MM" bufferColor="250,250,250,255" bufferSize="1" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferNoFill="1" bufferBlendMode="0" bufferDraw="1" bufferOpacity="1"/>
+            <text-mask maskedSymbolLayers="" maskEnabled="0" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskJoinStyle="128" maskOpacity="1" maskSize="0" maskType="0" maskSizeUnits="MM"/>
+            <background shapeSVGFile="" shapeRadiiX="0" shapeRotationType="0" shapeRadiiMapUnitScale="3x:0,0,0,0,0,0" shapeOpacity="1" shapeSizeY="0" shapeType="0" shapeBorderWidthMapUnitScale="3x:0,0,0,0,0,0" shapeSizeUnit="Point" shapeOffsetY="0" shapeSizeX="0" shapeFillColor="255,255,255,255" shapeBorderWidthUnit="Point" shapeBlendMode="0" shapeRadiiUnit="Point" shapeBorderColor="128,128,128,255" shapeRotation="0" shapeSizeMapUnitScale="3x:0,0,0,0,0,0" shapeDraw="0" shapeOffsetUnit="Point" shapeOffsetX="0" shapeSizeType="0" shapeBorderWidth="0" shapeOffsetMapUnitScale="3x:0,0,0,0,0,0" shapeRadiiY="0" shapeJoinStyle="64">
+              <symbol clip_to_extent="1" force_rhr="0" name="markerSymbol" alpha="1" type="marker">
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+                <layer pass="0" class="SimpleMarker" enabled="1" locked="0">
+                  <Option type="Map">
+                    <Option value="0" name="angle" type="QString"/>
+                    <Option value="square" name="cap_style" type="QString"/>
+                    <Option value="232,113,141,255" name="color" type="QString"/>
+                    <Option value="1" name="horizontal_anchor_point" type="QString"/>
+                    <Option value="bevel" name="joinstyle" type="QString"/>
+                    <Option value="circle" name="name" type="QString"/>
+                    <Option value="0,0" name="offset" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="offset_unit" type="QString"/>
+                    <Option value="35,35,35,255" name="outline_color" type="QString"/>
+                    <Option value="solid" name="outline_style" type="QString"/>
+                    <Option value="0" name="outline_width" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="outline_width_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="outline_width_unit" type="QString"/>
+                    <Option value="diameter" name="scale_method" type="QString"/>
+                    <Option value="2" name="size" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="size_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="size_unit" type="QString"/>
+                    <Option value="1" name="vertical_anchor_point" type="QString"/>
+                  </Option>
+                  <prop k="angle" v="0"/>
+                  <prop k="cap_style" v="square"/>
+                  <prop k="color" v="232,113,141,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="35,35,35,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="diameter"/>
+                  <prop k="size" v="2"/>
+                  <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option value="" name="name" type="QString"/>
+                      <Option name="properties"/>
+                      <Option value="collection" name="type" type="QString"/>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+              <symbol clip_to_extent="1" force_rhr="0" name="fillSymbol" alpha="1" type="fill">
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+                <layer pass="0" class="SimpleFill" enabled="1" locked="0">
+                  <Option type="Map">
+                    <Option value="3x:0,0,0,0,0,0" name="border_width_map_unit_scale" type="QString"/>
+                    <Option value="255,255,255,255" name="color" type="QString"/>
+                    <Option value="bevel" name="joinstyle" type="QString"/>
+                    <Option value="0,0" name="offset" type="QString"/>
+                    <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                    <Option value="MM" name="offset_unit" type="QString"/>
+                    <Option value="128,128,128,255" name="outline_color" type="QString"/>
+                    <Option value="no" name="outline_style" type="QString"/>
+                    <Option value="0" name="outline_width" type="QString"/>
+                    <Option value="Point" name="outline_width_unit" type="QString"/>
+                    <Option value="solid" name="style" type="QString"/>
+                  </Option>
+                  <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="color" v="255,255,255,255"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="128,128,128,255"/>
+                  <prop k="outline_style" v="no"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_unit" v="Point"/>
+                  <prop k="style" v="solid"/>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option value="" name="name" type="QString"/>
+                      <Option name="properties"/>
+                      <Option value="collection" name="type" type="QString"/>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+            </background>
+            <shadow shadowRadius="1.5" shadowColor="0,0,0,255" shadowRadiusMapUnitScale="3x:0,0,0,0,0,0" shadowOffsetGlobal="1" shadowBlendMode="6" shadowOffsetUnit="MM" shadowRadiusAlphaOnly="0" shadowOpacity="0.69999999999999996" shadowOffsetAngle="135" shadowRadiusUnit="MM" shadowScale="100" shadowOffsetMapUnitScale="3x:0,0,0,0,0,0" shadowDraw="0" shadowUnder="0" shadowOffsetDist="1"/>
+            <dd_properties>
+              <Option type="Map">
+                <Option value="" name="name" type="QString"/>
+                <Option name="properties"/>
+                <Option value="collection" name="type" type="QString"/>
+              </Option>
+            </dd_properties>
+            <substitutions/>
+          </text-style>
+          <text-format autoWrapLength="0" decimals="3" addDirectionSymbol="0" rightDirectionSymbol=">" reverseDirectionSymbol="0" useMaxLineLengthForAutoWrap="1" leftDirectionSymbol="&lt;" placeDirectionSymbol="0" plussign="0" wrapChar="" multilineAlign="0" formatNumbers="0"/>
+          <placement preserveRotation="1" quadOffset="4" placement="2" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" overrunDistanceUnit="MM" polygonPlacementFlags="2" repeatDistance="0" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" offsetType="0" offsetUnits="MM" overrunDistance="0" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" priority="5" distUnits="MM" rotationUnit="AngleDegrees" layerType="LineGeometry" xOffset="0" geometryGeneratorEnabled="0" distMapUnitScale="3x:0,0,0,0,0,0" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" lineAnchorType="0" geometryGenerator="" yOffset="0" centroidInside="0" repeatDistanceUnits="MM" rotationAngle="0" fitInPolygonOnly="0" centroidWhole="0" maxCurvedCharAngleIn="25" placementFlags="9" lineAnchorClipping="0" lineAnchorPercent="0.5" geometryGeneratorType="PointGeometry" dist="0" maxCurvedCharAngleOut="-25"/>
+          <rendering maxNumLabels="2000" fontMaxPixelSize="10000" zIndex="0" limitNumLabels="0" fontMinPixelSize="3" obstacle="1" drawLabels="1" labelPerPart="0" displayAll="0" scaleVisibility="0" obstacleFactor="1" fontLimitPixelSize="0" minFeatureSize="0" scaleMax="0" upsidedownLabels="0" mergeLines="0" obstacleType="1" scaleMin="0" unplacedVisibility="0"/>
+          <dd_properties>
+            <Option type="Map">
+              <Option value="" name="name" type="QString"/>
+              <Option name="properties"/>
+              <Option value="collection" name="type" type="QString"/>
+            </Option>
+          </dd_properties>
+          <callout type="simple">
+            <Option type="Map">
+              <Option value="pole_of_inaccessibility" name="anchorPoint" type="QString"/>
+              <Option value="0" name="blendMode" type="int"/>
+              <Option name="ddProperties" type="Map">
+                <Option value="" name="name" type="QString"/>
+                <Option name="properties"/>
+                <Option value="collection" name="type" type="QString"/>
+              </Option>
+              <Option value="false" name="drawToAllParts" type="bool"/>
+              <Option value="0" name="enabled" type="QString"/>
+              <Option value="point_on_exterior" name="labelAnchorPoint" type="QString"/>
+              <Option value="&lt;symbol clip_to_extent=&quot;1&quot; force_rhr=&quot;0&quot; name=&quot;symbol&quot; alpha=&quot;1&quot; type=&quot;line&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;0&quot; name=&quot;align_dash_pattern&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;square&quot; name=&quot;capstyle&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;5;2&quot; name=&quot;customdash&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;customdash_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;bevel&quot; name=&quot;joinstyle&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;60,60,60,255&quot; name=&quot;line_color&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;solid&quot; name=&quot;line_style&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0.3&quot; name=&quot;line_width&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;line_width_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;offset&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;offset_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;ring_filter&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;trim_distance_end&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;trim_distance_start&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;use_custom_dash&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_end_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;trim_distance_start&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_start_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_start_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>" name="lineSymbol" type="QString"/>
+              <Option value="0" name="minLength" type="double"/>
+              <Option value="3x:0,0,0,0,0,0" name="minLengthMapUnitScale" type="QString"/>
+              <Option value="MM" name="minLengthUnit" type="QString"/>
+              <Option value="0" name="offsetFromAnchor" type="double"/>
+              <Option value="3x:0,0,0,0,0,0" name="offsetFromAnchorMapUnitScale" type="QString"/>
+              <Option value="MM" name="offsetFromAnchorUnit" type="QString"/>
+              <Option value="0" name="offsetFromLabel" type="double"/>
+              <Option value="3x:0,0,0,0,0,0" name="offsetFromLabelMapUnitScale" type="QString"/>
+              <Option value="MM" name="offsetFromLabelUnit" type="QString"/>
+            </Option>
+          </callout>
+        </settings>
+      </labeling>
+      <customproperties>
+        <Option type="Map">
+          <Option name="dualview/previewExpressions" type="List">
+            <Option value="&quot;haltungsname&quot;" type="QString"/>
+          </Option>
+          <Option value="0" name="embeddedWidgets/count" type="int"/>
+          <Option name="variableNames" type="invalid"/>
+          <Option name="variableValues" type="invalid"/>
+        </Option>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory minimumSize="0" direction="0" rotationOffset="270" opacity="1" spacing="5" backgroundColor="#ffffff" labelPlacementMethod="XHeight" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeType="MM" showAxis="1" lineSizeScale="3x:0,0,0,0,0,0" barWidth="5" penColor="#000000" penAlpha="255" width="15" sizeType="MM" penWidth="0" minScaleDenominator="0" scaleBasedVisibility="0" height="15" enabled="0" backgroundAlpha="255" spacingUnit="MM" scaleDependency="Area" diagramOrientation="Up" sizeScale="3x:0,0,0,0,0,0" maxScaleDenominator="1e+08">
+          <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" label="" color="#000000"/>
+          <axisSymbol>
+            <symbol clip_to_extent="1" force_rhr="0" name="" alpha="1" type="line">
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" name="name" type="QString"/>
+                  <Option name="properties"/>
+                  <Option value="collection" name="type" type="QString"/>
+                </Option>
+              </data_defined_properties>
+              <layer pass="0" class="SimpleLine" enabled="1" locked="0">
+                <Option type="Map">
+                  <Option value="0" name="align_dash_pattern" type="QString"/>
+                  <Option value="square" name="capstyle" type="QString"/>
+                  <Option value="5;2" name="customdash" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="customdash_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="customdash_unit" type="QString"/>
+                  <Option value="0" name="dash_pattern_offset" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="dash_pattern_offset_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="dash_pattern_offset_unit" type="QString"/>
+                  <Option value="0" name="draw_inside_polygon" type="QString"/>
+                  <Option value="bevel" name="joinstyle" type="QString"/>
+                  <Option value="35,35,35,255" name="line_color" type="QString"/>
+                  <Option value="solid" name="line_style" type="QString"/>
+                  <Option value="0.26" name="line_width" type="QString"/>
+                  <Option value="MM" name="line_width_unit" type="QString"/>
+                  <Option value="0" name="offset" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="offset_unit" type="QString"/>
+                  <Option value="0" name="ring_filter" type="QString"/>
+                  <Option value="0" name="trim_distance_end" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="trim_distance_end_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="trim_distance_end_unit" type="QString"/>
+                  <Option value="0" name="trim_distance_start" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="trim_distance_start_map_unit_scale" type="QString"/>
+                  <Option value="MM" name="trim_distance_start_unit" type="QString"/>
+                  <Option value="0" name="tweak_dash_pattern_on_corners" type="QString"/>
+                  <Option value="0" name="use_custom_dash" type="QString"/>
+                  <Option value="3x:0,0,0,0,0,0" name="width_map_unit_scale" type="QString"/>
+                </Option>
+                <prop k="align_dash_pattern" v="0"/>
+                <prop k="capstyle" v="square"/>
+                <prop k="customdash" v="5;2"/>
+                <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="customdash_unit" v="MM"/>
+                <prop k="dash_pattern_offset" v="0"/>
+                <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="dash_pattern_offset_unit" v="MM"/>
+                <prop k="draw_inside_polygon" v="0"/>
+                <prop k="joinstyle" v="bevel"/>
+                <prop k="line_color" v="35,35,35,255"/>
+                <prop k="line_style" v="solid"/>
+                <prop k="line_width" v="0.26"/>
+                <prop k="line_width_unit" v="MM"/>
+                <prop k="offset" v="0"/>
+                <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="offset_unit" v="MM"/>
+                <prop k="ring_filter" v="0"/>
+                <prop k="trim_distance_end" v="0"/>
+                <prop k="trim_distance_end_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="trim_distance_end_unit" v="MM"/>
+                <prop k="trim_distance_start" v="0"/>
+                <prop k="trim_distance_start_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <prop k="trim_distance_start_unit" v="MM"/>
+                <prop k="tweak_dash_pattern_on_corners" v="0"/>
+                <prop k="use_custom_dash" v="0"/>
+                <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option value="" name="name" type="QString"/>
+                    <Option name="properties"/>
+                    <Option value="collection" name="type" type="QString"/>
+                  </Option>
+                </data_defined_properties>
+              </layer>
+            </symbol>
+          </axisSymbol>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings priority="0" showAll="1" placement="2" obstacle="0" linePlacementFlags="18" zIndex="0" dist="0">
+        <properties>
+          <Option type="Map">
+            <Option value="" name="name" type="QString"/>
+            <Option name="properties"/>
+            <Option value="collection" name="type" type="QString"/>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
+        <activeChecks/>
+        <checkConfiguration/>
+      </geometryOptions>
+      <legend showLabelLegend="0" type="default-vector"/>
+      <referencedLayers/>
+      <fieldConfiguration>
+        <field name="pk" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="nummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_gerinne_o" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_gerinne_o" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_gerinne_u" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_gerinne_u" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_rohranfang" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_rohranfang" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rw_rohrende" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="hw_rohrende" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer1" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer2" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer3" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer4" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer5" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer6" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer7" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="zuflussnummer8" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer1" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer2" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer3" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer4" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="abflussnummer5" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schacht_oben" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schacht_unten" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="haltungsname" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rohrbreite_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rohrhoehe___v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="flaechenfactor_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="deckel_oben_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="deckel_unten_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_oben___v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_unten__v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="s_sohle_oben_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss1" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss2" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss3" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss4" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss5" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss6" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss7" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="sohle_zufluss8" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="kanalart" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="profilart_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="material_v" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="e_gebiet" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="strassennummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schachtnummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schachtart" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="berichtsnummer" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="laenge" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="schachtmaterial" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="oberflaeche" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="baujahr" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="wasserschutz" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="eigentum" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="naechste_halt" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rueckadresse" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="mark" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="strakatid" configurationFlags="None">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="geop" configurationFlags="None">
+          <editWidget type="Binary">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias index="0" field="pk" name=""/>
+        <alias index="1" field="nummer" name=""/>
+        <alias index="2" field="rw_gerinne_o" name=""/>
+        <alias index="3" field="hw_gerinne_o" name=""/>
+        <alias index="4" field="rw_gerinne_u" name=""/>
+        <alias index="5" field="hw_gerinne_u" name=""/>
+        <alias index="6" field="rw_rohranfang" name=""/>
+        <alias index="7" field="hw_rohranfang" name=""/>
+        <alias index="8" field="rw_rohrende" name=""/>
+        <alias index="9" field="hw_rohrende" name=""/>
+        <alias index="10" field="zuflussnummer1" name=""/>
+        <alias index="11" field="zuflussnummer2" name=""/>
+        <alias index="12" field="zuflussnummer3" name=""/>
+        <alias index="13" field="zuflussnummer4" name=""/>
+        <alias index="14" field="zuflussnummer5" name=""/>
+        <alias index="15" field="zuflussnummer6" name=""/>
+        <alias index="16" field="zuflussnummer7" name=""/>
+        <alias index="17" field="zuflussnummer8" name=""/>
+        <alias index="18" field="abflussnummer1" name=""/>
+        <alias index="19" field="abflussnummer2" name=""/>
+        <alias index="20" field="abflussnummer3" name=""/>
+        <alias index="21" field="abflussnummer4" name=""/>
+        <alias index="22" field="abflussnummer5" name=""/>
+        <alias index="23" field="schacht_oben" name=""/>
+        <alias index="24" field="schacht_unten" name=""/>
+        <alias index="25" field="haltungsname" name=""/>
+        <alias index="26" field="rohrbreite_v" name=""/>
+        <alias index="27" field="rohrhoehe___v" name=""/>
+        <alias index="28" field="flaechenfactor_v" name=""/>
+        <alias index="29" field="deckel_oben_v" name=""/>
+        <alias index="30" field="deckel_unten_v" name=""/>
+        <alias index="31" field="sohle_oben___v" name=""/>
+        <alias index="32" field="sohle_unten__v" name=""/>
+        <alias index="33" field="s_sohle_oben_v" name=""/>
+        <alias index="34" field="sohle_zufluss1" name=""/>
+        <alias index="35" field="sohle_zufluss2" name=""/>
+        <alias index="36" field="sohle_zufluss3" name=""/>
+        <alias index="37" field="sohle_zufluss4" name=""/>
+        <alias index="38" field="sohle_zufluss5" name=""/>
+        <alias index="39" field="sohle_zufluss6" name=""/>
+        <alias index="40" field="sohle_zufluss7" name=""/>
+        <alias index="41" field="sohle_zufluss8" name=""/>
+        <alias index="42" field="kanalart" name=""/>
+        <alias index="43" field="profilart_v" name=""/>
+        <alias index="44" field="material_v" name=""/>
+        <alias index="45" field="e_gebiet" name=""/>
+        <alias index="46" field="strassennummer" name=""/>
+        <alias index="47" field="schachtnummer" name=""/>
+        <alias index="48" field="schachtart" name=""/>
+        <alias index="49" field="berichtsnummer" name=""/>
+        <alias index="50" field="laenge" name=""/>
+        <alias index="51" field="schachtmaterial" name=""/>
+        <alias index="52" field="oberflaeche" name=""/>
+        <alias index="53" field="baujahr" name=""/>
+        <alias index="54" field="wasserschutz" name=""/>
+        <alias index="55" field="eigentum" name=""/>
+        <alias index="56" field="naechste_halt" name=""/>
+        <alias index="57" field="rueckadresse" name=""/>
+        <alias index="58" field="mark" name=""/>
+        <alias index="59" field="strakatid" name=""/>
+        <alias index="60" field="geop" name=""/>
+      </aliases>
+      <defaults>
+        <default field="pk" expression="" applyOnUpdate="0"/>
+        <default field="nummer" expression="" applyOnUpdate="0"/>
+        <default field="rw_gerinne_o" expression="" applyOnUpdate="0"/>
+        <default field="hw_gerinne_o" expression="" applyOnUpdate="0"/>
+        <default field="rw_gerinne_u" expression="" applyOnUpdate="0"/>
+        <default field="hw_gerinne_u" expression="" applyOnUpdate="0"/>
+        <default field="rw_rohranfang" expression="" applyOnUpdate="0"/>
+        <default field="hw_rohranfang" expression="" applyOnUpdate="0"/>
+        <default field="rw_rohrende" expression="" applyOnUpdate="0"/>
+        <default field="hw_rohrende" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer1" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer2" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer3" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer4" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer5" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer6" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer7" expression="" applyOnUpdate="0"/>
+        <default field="zuflussnummer8" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer1" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer2" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer3" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer4" expression="" applyOnUpdate="0"/>
+        <default field="abflussnummer5" expression="" applyOnUpdate="0"/>
+        <default field="schacht_oben" expression="" applyOnUpdate="0"/>
+        <default field="schacht_unten" expression="" applyOnUpdate="0"/>
+        <default field="haltungsname" expression="" applyOnUpdate="0"/>
+        <default field="rohrbreite_v" expression="" applyOnUpdate="0"/>
+        <default field="rohrhoehe___v" expression="" applyOnUpdate="0"/>
+        <default field="flaechenfactor_v" expression="" applyOnUpdate="0"/>
+        <default field="deckel_oben_v" expression="" applyOnUpdate="0"/>
+        <default field="deckel_unten_v" expression="" applyOnUpdate="0"/>
+        <default field="sohle_oben___v" expression="" applyOnUpdate="0"/>
+        <default field="sohle_unten__v" expression="" applyOnUpdate="0"/>
+        <default field="s_sohle_oben_v" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss1" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss2" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss3" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss4" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss5" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss6" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss7" expression="" applyOnUpdate="0"/>
+        <default field="sohle_zufluss8" expression="" applyOnUpdate="0"/>
+        <default field="kanalart" expression="" applyOnUpdate="0"/>
+        <default field="profilart_v" expression="" applyOnUpdate="0"/>
+        <default field="material_v" expression="" applyOnUpdate="0"/>
+        <default field="e_gebiet" expression="" applyOnUpdate="0"/>
+        <default field="strassennummer" expression="" applyOnUpdate="0"/>
+        <default field="schachtnummer" expression="" applyOnUpdate="0"/>
+        <default field="schachtart" expression="" applyOnUpdate="0"/>
+        <default field="berichtsnummer" expression="" applyOnUpdate="0"/>
+        <default field="laenge" expression="" applyOnUpdate="0"/>
+        <default field="schachtmaterial" expression="" applyOnUpdate="0"/>
+        <default field="oberflaeche" expression="" applyOnUpdate="0"/>
+        <default field="baujahr" expression="" applyOnUpdate="0"/>
+        <default field="wasserschutz" expression="" applyOnUpdate="0"/>
+        <default field="eigentum" expression="" applyOnUpdate="0"/>
+        <default field="naechste_halt" expression="" applyOnUpdate="0"/>
+        <default field="rueckadresse" expression="" applyOnUpdate="0"/>
+        <default field="mark" expression="" applyOnUpdate="0"/>
+        <default field="strakatid" expression="" applyOnUpdate="0"/>
+        <default field="geop" expression="" applyOnUpdate="0"/>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" unique_strength="1" exp_strength="0" field="pk" notnull_strength="1"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="nummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_gerinne_o" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_gerinne_o" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_gerinne_u" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_gerinne_u" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_rohranfang" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_rohranfang" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rw_rohrende" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="hw_rohrende" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer1" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer2" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer3" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer4" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer5" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer6" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer7" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="zuflussnummer8" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer1" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer2" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer3" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer4" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="abflussnummer5" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schacht_oben" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schacht_unten" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="haltungsname" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rohrbreite_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rohrhoehe___v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="flaechenfactor_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="deckel_oben_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="deckel_unten_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_oben___v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_unten__v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="s_sohle_oben_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss1" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss2" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss3" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss4" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss5" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss6" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss7" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="sohle_zufluss8" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="kanalart" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="profilart_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="material_v" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="e_gebiet" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="strassennummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schachtnummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schachtart" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="berichtsnummer" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="laenge" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="schachtmaterial" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="oberflaeche" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="baujahr" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="wasserschutz" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="eigentum" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="naechste_halt" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="rueckadresse" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="mark" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="strakatid" notnull_strength="0"/>
+        <constraint constraints="0" unique_strength="0" exp_strength="0" field="geop" notnull_strength="0"/>
+      </constraints>
+      <constraintExpressions>
+        <constraint field="pk" desc="" exp=""/>
+        <constraint field="nummer" desc="" exp=""/>
+        <constraint field="rw_gerinne_o" desc="" exp=""/>
+        <constraint field="hw_gerinne_o" desc="" exp=""/>
+        <constraint field="rw_gerinne_u" desc="" exp=""/>
+        <constraint field="hw_gerinne_u" desc="" exp=""/>
+        <constraint field="rw_rohranfang" desc="" exp=""/>
+        <constraint field="hw_rohranfang" desc="" exp=""/>
+        <constraint field="rw_rohrende" desc="" exp=""/>
+        <constraint field="hw_rohrende" desc="" exp=""/>
+        <constraint field="zuflussnummer1" desc="" exp=""/>
+        <constraint field="zuflussnummer2" desc="" exp=""/>
+        <constraint field="zuflussnummer3" desc="" exp=""/>
+        <constraint field="zuflussnummer4" desc="" exp=""/>
+        <constraint field="zuflussnummer5" desc="" exp=""/>
+        <constraint field="zuflussnummer6" desc="" exp=""/>
+        <constraint field="zuflussnummer7" desc="" exp=""/>
+        <constraint field="zuflussnummer8" desc="" exp=""/>
+        <constraint field="abflussnummer1" desc="" exp=""/>
+        <constraint field="abflussnummer2" desc="" exp=""/>
+        <constraint field="abflussnummer3" desc="" exp=""/>
+        <constraint field="abflussnummer4" desc="" exp=""/>
+        <constraint field="abflussnummer5" desc="" exp=""/>
+        <constraint field="schacht_oben" desc="" exp=""/>
+        <constraint field="schacht_unten" desc="" exp=""/>
+        <constraint field="haltungsname" desc="" exp=""/>
+        <constraint field="rohrbreite_v" desc="" exp=""/>
+        <constraint field="rohrhoehe___v" desc="" exp=""/>
+        <constraint field="flaechenfactor_v" desc="" exp=""/>
+        <constraint field="deckel_oben_v" desc="" exp=""/>
+        <constraint field="deckel_unten_v" desc="" exp=""/>
+        <constraint field="sohle_oben___v" desc="" exp=""/>
+        <constraint field="sohle_unten__v" desc="" exp=""/>
+        <constraint field="s_sohle_oben_v" desc="" exp=""/>
+        <constraint field="sohle_zufluss1" desc="" exp=""/>
+        <constraint field="sohle_zufluss2" desc="" exp=""/>
+        <constraint field="sohle_zufluss3" desc="" exp=""/>
+        <constraint field="sohle_zufluss4" desc="" exp=""/>
+        <constraint field="sohle_zufluss5" desc="" exp=""/>
+        <constraint field="sohle_zufluss6" desc="" exp=""/>
+        <constraint field="sohle_zufluss7" desc="" exp=""/>
+        <constraint field="sohle_zufluss8" desc="" exp=""/>
+        <constraint field="kanalart" desc="" exp=""/>
+        <constraint field="profilart_v" desc="" exp=""/>
+        <constraint field="material_v" desc="" exp=""/>
+        <constraint field="e_gebiet" desc="" exp=""/>
+        <constraint field="strassennummer" desc="" exp=""/>
+        <constraint field="schachtnummer" desc="" exp=""/>
+        <constraint field="schachtart" desc="" exp=""/>
+        <constraint field="berichtsnummer" desc="" exp=""/>
+        <constraint field="laenge" desc="" exp=""/>
+        <constraint field="schachtmaterial" desc="" exp=""/>
+        <constraint field="oberflaeche" desc="" exp=""/>
+        <constraint field="baujahr" desc="" exp=""/>
+        <constraint field="wasserschutz" desc="" exp=""/>
+        <constraint field="eigentum" desc="" exp=""/>
+        <constraint field="naechste_halt" desc="" exp=""/>
+        <constraint field="rueckadresse" desc="" exp=""/>
+        <constraint field="mark" desc="" exp=""/>
+        <constraint field="strakatid" desc="" exp=""/>
+        <constraint field="geop" desc="" exp=""/>
+      </constraintExpressions>
+      <expressionfields/>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column name="pk" width="-1" hidden="0" type="field"/>
+          <column name="nummer" width="-1" hidden="0" type="field"/>
+          <column name="rw_gerinne_o" width="-1" hidden="0" type="field"/>
+          <column name="hw_gerinne_o" width="-1" hidden="0" type="field"/>
+          <column name="rw_gerinne_u" width="-1" hidden="0" type="field"/>
+          <column name="hw_gerinne_u" width="-1" hidden="0" type="field"/>
+          <column name="rw_rohranfang" width="-1" hidden="0" type="field"/>
+          <column name="hw_rohranfang" width="-1" hidden="0" type="field"/>
+          <column name="rw_rohrende" width="-1" hidden="0" type="field"/>
+          <column name="hw_rohrende" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer1" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer2" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer3" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer4" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer5" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer6" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer7" width="-1" hidden="0" type="field"/>
+          <column name="zuflussnummer8" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer1" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer2" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer3" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer4" width="-1" hidden="0" type="field"/>
+          <column name="abflussnummer5" width="-1" hidden="0" type="field"/>
+          <column name="schacht_oben" width="-1" hidden="0" type="field"/>
+          <column name="schacht_unten" width="-1" hidden="0" type="field"/>
+          <column name="haltungsname" width="-1" hidden="0" type="field"/>
+          <column name="rohrbreite_v" width="-1" hidden="0" type="field"/>
+          <column name="rohrhoehe___v" width="-1" hidden="0" type="field"/>
+          <column name="flaechenfactor_v" width="-1" hidden="0" type="field"/>
+          <column name="deckel_oben_v" width="-1" hidden="0" type="field"/>
+          <column name="deckel_unten_v" width="-1" hidden="0" type="field"/>
+          <column name="sohle_oben___v" width="-1" hidden="0" type="field"/>
+          <column name="sohle_unten__v" width="-1" hidden="0" type="field"/>
+          <column name="s_sohle_oben_v" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss1" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss2" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss3" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss4" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss5" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss6" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss7" width="-1" hidden="0" type="field"/>
+          <column name="sohle_zufluss8" width="-1" hidden="0" type="field"/>
+          <column name="kanalart" width="-1" hidden="0" type="field"/>
+          <column name="profilart_v" width="-1" hidden="0" type="field"/>
+          <column name="material_v" width="-1" hidden="0" type="field"/>
+          <column name="e_gebiet" width="-1" hidden="0" type="field"/>
+          <column name="strassennummer" width="-1" hidden="0" type="field"/>
+          <column name="schachtnummer" width="-1" hidden="0" type="field"/>
+          <column name="schachtart" width="-1" hidden="0" type="field"/>
+          <column name="berichtsnummer" width="-1" hidden="0" type="field"/>
+          <column name="laenge" width="-1" hidden="0" type="field"/>
+          <column name="schachtmaterial" width="-1" hidden="0" type="field"/>
+          <column name="oberflaeche" width="-1" hidden="0" type="field"/>
+          <column name="baujahr" width="-1" hidden="0" type="field"/>
+          <column name="wasserschutz" width="-1" hidden="0" type="field"/>
+          <column name="eigentum" width="-1" hidden="0" type="field"/>
+          <column name="naechste_halt" width="-1" hidden="0" type="field"/>
+          <column name="rueckadresse" width="-1" hidden="0" type="field"/>
+          <column name="strakatid" width="-1" hidden="0" type="field"/>
+          <column name="geop" width="-1" hidden="0" type="field"/>
+          <column name="mark" width="-1" hidden="0" type="field"/>
+          <column width="-1" hidden="1" type="actions"/>
+        </columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <storedexpressions/>
+      <editform tolerant="1"></editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable>
+        <field name="abflussnummer1" editable="1"/>
+        <field name="abflussnummer2" editable="1"/>
+        <field name="abflussnummer3" editable="1"/>
+        <field name="abflussnummer4" editable="1"/>
+        <field name="abflussnummer5" editable="1"/>
+        <field name="baujahr" editable="1"/>
+        <field name="berichtsnummer" editable="1"/>
+        <field name="deckel_oben_v" editable="1"/>
+        <field name="deckel_unten_v" editable="1"/>
+        <field name="e_gebiet" editable="1"/>
+        <field name="eigentum" editable="1"/>
+        <field name="flaechenfactor_v" editable="1"/>
+        <field name="geop" editable="1"/>
+        <field name="haltungsname" editable="1"/>
+        <field name="hw_gerinne_o" editable="1"/>
+        <field name="hw_gerinne_u" editable="1"/>
+        <field name="hw_rohranfang" editable="1"/>
+        <field name="hw_rohrende" editable="1"/>
+        <field name="kanalart" editable="1"/>
+        <field name="laenge" editable="1"/>
+        <field name="mark" editable="1"/>
+        <field name="material_v" editable="1"/>
+        <field name="naechste_halt" editable="1"/>
+        <field name="nummer" editable="1"/>
+        <field name="oberflaeche" editable="1"/>
+        <field name="pk" editable="1"/>
+        <field name="profilart_v" editable="1"/>
+        <field name="rohrbreite_v" editable="1"/>
+        <field name="rohrhoehe___v" editable="1"/>
+        <field name="rueckadresse" editable="1"/>
+        <field name="rw_gerinne_o" editable="1"/>
+        <field name="rw_gerinne_u" editable="1"/>
+        <field name="rw_rohranfang" editable="1"/>
+        <field name="rw_rohrende" editable="1"/>
+        <field name="s_sohle_oben_v" editable="1"/>
+        <field name="schacht_oben" editable="1"/>
+        <field name="schacht_unten" editable="1"/>
+        <field name="schachtart" editable="1"/>
+        <field name="schachtmaterial" editable="1"/>
+        <field name="schachtnummer" editable="1"/>
+        <field name="sohle_oben___v" editable="1"/>
+        <field name="sohle_unten__v" editable="1"/>
+        <field name="sohle_zufluss1" editable="1"/>
+        <field name="sohle_zufluss2" editable="1"/>
+        <field name="sohle_zufluss3" editable="1"/>
+        <field name="sohle_zufluss4" editable="1"/>
+        <field name="sohle_zufluss5" editable="1"/>
+        <field name="sohle_zufluss6" editable="1"/>
+        <field name="sohle_zufluss7" editable="1"/>
+        <field name="sohle_zufluss8" editable="1"/>
+        <field name="strakatid" editable="1"/>
+        <field name="strassennummer" editable="1"/>
+        <field name="wasserschutz" editable="1"/>
+        <field name="zuflussnummer1" editable="1"/>
+        <field name="zuflussnummer2" editable="1"/>
+        <field name="zuflussnummer3" editable="1"/>
+        <field name="zuflussnummer4" editable="1"/>
+        <field name="zuflussnummer5" editable="1"/>
+        <field name="zuflussnummer6" editable="1"/>
+        <field name="zuflussnummer7" editable="1"/>
+        <field name="zuflussnummer8" editable="1"/>
+      </editable>
+      <labelOnTop>
+        <field labelOnTop="0" name="abflussnummer1"/>
+        <field labelOnTop="0" name="abflussnummer2"/>
+        <field labelOnTop="0" name="abflussnummer3"/>
+        <field labelOnTop="0" name="abflussnummer4"/>
+        <field labelOnTop="0" name="abflussnummer5"/>
+        <field labelOnTop="0" name="baujahr"/>
+        <field labelOnTop="0" name="berichtsnummer"/>
+        <field labelOnTop="0" name="deckel_oben_v"/>
+        <field labelOnTop="0" name="deckel_unten_v"/>
+        <field labelOnTop="0" name="e_gebiet"/>
+        <field labelOnTop="0" name="eigentum"/>
+        <field labelOnTop="0" name="flaechenfactor_v"/>
+        <field labelOnTop="0" name="geop"/>
+        <field labelOnTop="0" name="haltungsname"/>
+        <field labelOnTop="0" name="hw_gerinne_o"/>
+        <field labelOnTop="0" name="hw_gerinne_u"/>
+        <field labelOnTop="0" name="hw_rohranfang"/>
+        <field labelOnTop="0" name="hw_rohrende"/>
+        <field labelOnTop="0" name="kanalart"/>
+        <field labelOnTop="0" name="laenge"/>
+        <field labelOnTop="0" name="mark"/>
+        <field labelOnTop="0" name="material_v"/>
+        <field labelOnTop="0" name="naechste_halt"/>
+        <field labelOnTop="0" name="nummer"/>
+        <field labelOnTop="0" name="oberflaeche"/>
+        <field labelOnTop="0" name="pk"/>
+        <field labelOnTop="0" name="profilart_v"/>
+        <field labelOnTop="0" name="rohrbreite_v"/>
+        <field labelOnTop="0" name="rohrhoehe___v"/>
+        <field labelOnTop="0" name="rueckadresse"/>
+        <field labelOnTop="0" name="rw_gerinne_o"/>
+        <field labelOnTop="0" name="rw_gerinne_u"/>
+        <field labelOnTop="0" name="rw_rohranfang"/>
+        <field labelOnTop="0" name="rw_rohrende"/>
+        <field labelOnTop="0" name="s_sohle_oben_v"/>
+        <field labelOnTop="0" name="schacht_oben"/>
+        <field labelOnTop="0" name="schacht_unten"/>
+        <field labelOnTop="0" name="schachtart"/>
+        <field labelOnTop="0" name="schachtmaterial"/>
+        <field labelOnTop="0" name="schachtnummer"/>
+        <field labelOnTop="0" name="sohle_oben___v"/>
+        <field labelOnTop="0" name="sohle_unten__v"/>
+        <field labelOnTop="0" name="sohle_zufluss1"/>
+        <field labelOnTop="0" name="sohle_zufluss2"/>
+        <field labelOnTop="0" name="sohle_zufluss3"/>
+        <field labelOnTop="0" name="sohle_zufluss4"/>
+        <field labelOnTop="0" name="sohle_zufluss5"/>
+        <field labelOnTop="0" name="sohle_zufluss6"/>
+        <field labelOnTop="0" name="sohle_zufluss7"/>
+        <field labelOnTop="0" name="sohle_zufluss8"/>
+        <field labelOnTop="0" name="strakatid"/>
+        <field labelOnTop="0" name="strassennummer"/>
+        <field labelOnTop="0" name="wasserschutz"/>
+        <field labelOnTop="0" name="zuflussnummer1"/>
+        <field labelOnTop="0" name="zuflussnummer2"/>
+        <field labelOnTop="0" name="zuflussnummer3"/>
+        <field labelOnTop="0" name="zuflussnummer4"/>
+        <field labelOnTop="0" name="zuflussnummer5"/>
+        <field labelOnTop="0" name="zuflussnummer6"/>
+        <field labelOnTop="0" name="zuflussnummer7"/>
+        <field labelOnTop="0" name="zuflussnummer8"/>
+      </labelOnTop>
+      <reuseLastValue>
+        <field name="abflussnummer1" reuseLastValue="0"/>
+        <field name="abflussnummer2" reuseLastValue="0"/>
+        <field name="abflussnummer3" reuseLastValue="0"/>
+        <field name="abflussnummer4" reuseLastValue="0"/>
+        <field name="abflussnummer5" reuseLastValue="0"/>
+        <field name="baujahr" reuseLastValue="0"/>
+        <field name="berichtsnummer" reuseLastValue="0"/>
+        <field name="deckel_oben_v" reuseLastValue="0"/>
+        <field name="deckel_unten_v" reuseLastValue="0"/>
+        <field name="e_gebiet" reuseLastValue="0"/>
+        <field name="eigentum" reuseLastValue="0"/>
+        <field name="flaechenfactor_v" reuseLastValue="0"/>
+        <field name="geop" reuseLastValue="0"/>
+        <field name="haltungsname" reuseLastValue="0"/>
+        <field name="hw_gerinne_o" reuseLastValue="0"/>
+        <field name="hw_gerinne_u" reuseLastValue="0"/>
+        <field name="hw_rohranfang" reuseLastValue="0"/>
+        <field name="hw_rohrende" reuseLastValue="0"/>
+        <field name="kanalart" reuseLastValue="0"/>
+        <field name="laenge" reuseLastValue="0"/>
+        <field name="mark" reuseLastValue="0"/>
+        <field name="material_v" reuseLastValue="0"/>
+        <field name="naechste_halt" reuseLastValue="0"/>
+        <field name="nummer" reuseLastValue="0"/>
+        <field name="oberflaeche" reuseLastValue="0"/>
+        <field name="pk" reuseLastValue="0"/>
+        <field name="profilart_v" reuseLastValue="0"/>
+        <field name="rohrbreite_v" reuseLastValue="0"/>
+        <field name="rohrhoehe___v" reuseLastValue="0"/>
+        <field name="rueckadresse" reuseLastValue="0"/>
+        <field name="rw_gerinne_o" reuseLastValue="0"/>
+        <field name="rw_gerinne_u" reuseLastValue="0"/>
+        <field name="rw_rohranfang" reuseLastValue="0"/>
+        <field name="rw_rohrende" reuseLastValue="0"/>
+        <field name="s_sohle_oben_v" reuseLastValue="0"/>
+        <field name="schacht_oben" reuseLastValue="0"/>
+        <field name="schacht_unten" reuseLastValue="0"/>
+        <field name="schachtart" reuseLastValue="0"/>
+        <field name="schachtmaterial" reuseLastValue="0"/>
+        <field name="schachtnummer" reuseLastValue="0"/>
+        <field name="sohle_oben___v" reuseLastValue="0"/>
+        <field name="sohle_unten__v" reuseLastValue="0"/>
+        <field name="sohle_zufluss1" reuseLastValue="0"/>
+        <field name="sohle_zufluss2" reuseLastValue="0"/>
+        <field name="sohle_zufluss3" reuseLastValue="0"/>
+        <field name="sohle_zufluss4" reuseLastValue="0"/>
+        <field name="sohle_zufluss5" reuseLastValue="0"/>
+        <field name="sohle_zufluss6" reuseLastValue="0"/>
+        <field name="sohle_zufluss7" reuseLastValue="0"/>
+        <field name="sohle_zufluss8" reuseLastValue="0"/>
+        <field name="strakatid" reuseLastValue="0"/>
+        <field name="strassennummer" reuseLastValue="0"/>
+        <field name="wasserschutz" reuseLastValue="0"/>
+        <field name="zuflussnummer1" reuseLastValue="0"/>
+        <field name="zuflussnummer2" reuseLastValue="0"/>
+        <field name="zuflussnummer3" reuseLastValue="0"/>
+        <field name="zuflussnummer4" reuseLastValue="0"/>
+        <field name="zuflussnummer5" reuseLastValue="0"/>
+        <field name="zuflussnummer6" reuseLastValue="0"/>
+        <field name="zuflussnummer7" reuseLastValue="0"/>
+        <field name="zuflussnummer8" reuseLastValue="0"/>
+      </reuseLastValue>
+      <dataDefinedFieldProperties/>
+      <widgets/>
+      <previewExpression> haltungsname  + ' - ' + &#xd;
+format('Schachtart %1, Kanalart %2)', schachtart, kanalart)</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+  </maplayers>
+</qlr>

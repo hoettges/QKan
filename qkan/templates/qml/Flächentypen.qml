@@ -27,50 +27,21 @@
     <field name="pk" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="bezeichnung" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="he_nr" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="mu_nr" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="kp_nr" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option type="QString" name="IsMultiline" value="0"/>
-            <Option type="QString" name="UseHtml" value="0"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
@@ -79,29 +50,21 @@
     <alias index="0" field="pk" name=""/>
     <alias index="1" field="bezeichnung" name="Bezeichnung"/>
     <alias index="2" field="he_nr" name="NR (HYSTEM-EXTRAN)"/>
-    <alias index="3" field="mu_nr" name="NR (Mike Urban)"/>
-    <alias index="4" field="kp_nr" name="NR (Kanal++)"/>
   </aliases>
   <defaults>
     <default expression="" field="pk" applyOnUpdate="0"/>
     <default expression="" field="bezeichnung" applyOnUpdate="0"/>
     <default expression="" field="he_nr" applyOnUpdate="0"/>
-    <default expression="" field="mu_nr" applyOnUpdate="0"/>
-    <default expression="" field="kp_nr" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint constraints="3" field="pk" unique_strength="2" notnull_strength="2" exp_strength="0"/>
     <constraint constraints="0" field="bezeichnung" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint constraints="0" field="he_nr" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint constraints="0" field="mu_nr" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint constraints="0" field="kp_nr" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint desc="" exp="" field="pk"/>
     <constraint desc="" exp="" field="bezeichnung"/>
     <constraint desc="" exp="" field="he_nr"/>
-    <constraint desc="" exp="" field="mu_nr"/>
-    <constraint desc="" exp="" field="kp_nr"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
@@ -112,8 +75,6 @@
       <column width="-1" type="field" hidden="0" name="pk"/>
       <column width="-1" type="field" hidden="0" name="bezeichnung"/>
       <column width="-1" type="field" hidden="0" name="he_nr"/>
-      <column width="-1" type="field" hidden="0" name="mu_nr"/>
-      <column width="-1" type="field" hidden="0" name="kp_nr"/>
       <column width="-1" type="actions" hidden="1"/>
     </columns>
   </attributetableconfig>
@@ -122,7 +83,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\qkan_auslasstypen.ui</editform>
+  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\forms</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -148,22 +109,16 @@ def my_form_open(dialog, layer, feature):
   <editable>
     <field editable="1" name="bezeichnung"/>
     <field editable="1" name="he_nr"/>
-    <field editable="1" name="kp_nr"/>
-    <field editable="1" name="mu_nr"/>
     <field editable="1" name="pk"/>
   </editable>
   <labelOnTop>
     <field name="bezeichnung" labelOnTop="0"/>
     <field name="he_nr" labelOnTop="0"/>
-    <field name="kp_nr" labelOnTop="0"/>
-    <field name="mu_nr" labelOnTop="0"/>
     <field name="pk" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
     <field reuseLastValue="0" name="bezeichnung"/>
     <field reuseLastValue="0" name="he_nr"/>
-    <field reuseLastValue="0" name="kp_nr"/>
-    <field reuseLastValue="0" name="mu_nr"/>
     <field reuseLastValue="0" name="pk"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>

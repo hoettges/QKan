@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" simplifyAlgorithm="0" symbologyReferenceScale="-1" simplifyDrawingTol="1" version="3.22.4-Białowieża" simplifyDrawingHints="0" maxScale="100000" labelsEnabled="1" readOnly="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Temporal|Legend|Notes" minScale="100000000" simplifyMaxScale="1" simplifyLocal="1">
+<qgis hasScaleBasedVisibilityFlag="0" simplifyAlgorithm="0" symbologyReferenceScale="-1" simplifyDrawingTol="1" version="3.22.4-Białowieża" simplifyDrawingHints="0" maxScale="0" labelsEnabled="1" readOnly="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Temporal|Legend|Notes" minScale="100000000" simplifyMaxScale="1" simplifyLocal="1">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
@@ -14,7 +14,7 @@
   </temporal>
   <renderer-v2 forceraster="0" enableorderby="0" type="singleSymbol" referencescale="-1" symbollevels="0">
     <symbols>
-      <symbol force_rhr="0" type="fill" alpha="1" clip_to_extent="1" name="0">
+      <symbol force_rhr="0" type="marker" alpha="1" clip_to_extent="1" name="0">
         <data_defined_properties>
           <Option type="Map">
             <Option type="QString" name="name" value=""/>
@@ -22,31 +22,47 @@
             <Option type="QString" name="type" value="collection"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" class="SimpleFill" enabled="1" locked="0">
+        <layer pass="0" class="SimpleMarker" enabled="1" locked="0">
           <Option type="Map">
-            <Option type="QString" name="border_width_map_unit_scale" value="3x:0,0,0,0,0,0"/>
-            <Option type="QString" name="color" value="153,150,145,255"/>
+            <Option type="QString" name="angle" value="45"/>
+            <Option type="QString" name="cap_style" value="square"/>
+            <Option type="QString" name="color" value="255,127,0,255"/>
+            <Option type="QString" name="horizontal_anchor_point" value="1"/>
             <Option type="QString" name="joinstyle" value="bevel"/>
+            <Option type="QString" name="name" value="arrow"/>
             <Option type="QString" name="offset" value="0,0"/>
             <Option type="QString" name="offset_map_unit_scale" value="3x:0,0,0,0,0,0"/>
             <Option type="QString" name="offset_unit" value="MM"/>
             <Option type="QString" name="outline_color" value="0,0,0,255"/>
             <Option type="QString" name="outline_style" value="solid"/>
-            <Option type="QString" name="outline_width" value="0.26"/>
+            <Option type="QString" name="outline_width" value="0"/>
+            <Option type="QString" name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0"/>
             <Option type="QString" name="outline_width_unit" value="MM"/>
-            <Option type="QString" name="style" value="solid"/>
+            <Option type="QString" name="scale_method" value="diameter"/>
+            <Option type="QString" name="size" value="8"/>
+            <Option type="QString" name="size_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+            <Option type="QString" name="size_unit" value="MM"/>
+            <Option type="QString" name="vertical_anchor_point" value="1"/>
           </Option>
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="153,150,145,255" k="color"/>
+          <prop v="45" k="angle"/>
+          <prop v="square" k="cap_style"/>
+          <prop v="255,127,0,255" k="color"/>
+          <prop v="1" k="horizontal_anchor_point"/>
           <prop v="bevel" k="joinstyle"/>
+          <prop v="arrow" k="name"/>
           <prop v="0,0" k="offset"/>
           <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
           <prop v="MM" k="offset_unit"/>
           <prop v="0,0,0,255" k="outline_color"/>
           <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
+          <prop v="0" k="outline_width"/>
+          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
           <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+          <prop v="diameter" k="scale_method"/>
+          <prop v="8" k="size"/>
+          <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
+          <prop v="MM" k="size_unit"/>
+          <prop v="1" k="vertical_anchor_point"/>
           <data_defined_properties>
             <Option type="Map">
               <Option type="QString" name="name" value=""/>
@@ -62,9 +78,9 @@
   </renderer-v2>
   <labeling type="simple">
     <settings calloutType="simple">
-      <text-style fontKerning="1" textOrientation="horizontal" fontSize="0" fontItalic="0" fontWordSpacing="0" isExpression="0" fontWeight="50" fontUnderline="0" textColor="51,160,44,255" fontLetterSpacing="0" allowHtml="0" namedStyle="Standard" legendString="Aa" fontSizeMapUnitScale="3x:0,0,0,0,0,0" blendMode="0" fontSizeUnit="Point" multilineHeight="1" useSubstitutions="0" capitalization="0" fontStrikeout="0" previewBkgrdColor="255,255,255,255" textOpacity="1" fontFamily="MS Shell Dlg 2" fieldName="schnam">
+      <text-style fontKerning="1" textOrientation="horizontal" fontSize="10" fontItalic="0" fontWordSpacing="0" isExpression="0" fontWeight="75" fontUnderline="1" textColor="168,81,0,255" fontLetterSpacing="0" allowHtml="0" namedStyle="Bold" legendString="Aa" fontSizeMapUnitScale="3x:0,0,0,0,0,0" blendMode="0" fontSizeUnit="Point" multilineHeight="1" useSubstitutions="0" capitalization="0" fontStrikeout="0" previewBkgrdColor="255,255,255,255" textOpacity="1" fontFamily="MS Shell Dlg 2" fieldName="schnam">
         <families/>
-        <text-buffer bufferSize="1" bufferBlendMode="0" bufferSizeUnits="MM" bufferNoFill="0" bufferColor="255,255,255,255" bufferJoinStyle="64" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferDraw="1" bufferOpacity="1"/>
+        <text-buffer bufferSize="1" bufferBlendMode="0" bufferSizeUnits="MM" bufferNoFill="0" bufferColor="255,255,255,255" bufferJoinStyle="128" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferDraw="1" bufferOpacity="1"/>
         <text-mask maskType="0" maskEnabled="0" maskJoinStyle="128" maskedSymbolLayers="" maskOpacity="1" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskSize="0" maskSizeUnits="MM"/>
         <background shapeOffsetMapUnitScale="3x:0,0,0,0,0,0" shapeBlendMode="0" shapeJoinStyle="64" shapeSizeY="0" shapeDraw="0" shapeRotationType="0" shapeBorderColor="128,128,128,255" shapeType="0" shapeRadiiMapUnitScale="3x:0,0,0,0,0,0" shapeFillColor="255,255,255,255" shapeBorderWidthUnit="MM" shapeSizeMapUnitScale="3x:0,0,0,0,0,0" shapeSizeX="0" shapeRadiiUnit="MM" shapeRotation="0" shapeSVGFile="" shapeRadiiX="0" shapeBorderWidthMapUnitScale="3x:0,0,0,0,0,0" shapeSizeType="0" shapeRadiiY="0" shapeOffsetX="0" shapeBorderWidth="0" shapeOpacity="1" shapeSizeUnit="MM" shapeOffsetY="0" shapeOffsetUnit="MM">
           <symbol force_rhr="0" type="marker" alpha="1" clip_to_extent="1" name="markerSymbol">
@@ -79,7 +95,7 @@
               <Option type="Map">
                 <Option type="QString" name="angle" value="0"/>
                 <Option type="QString" name="cap_style" value="square"/>
-                <Option type="QString" name="color" value="152,125,183,255"/>
+                <Option type="QString" name="color" value="145,82,45,255"/>
                 <Option type="QString" name="horizontal_anchor_point" value="1"/>
                 <Option type="QString" name="joinstyle" value="bevel"/>
                 <Option type="QString" name="name" value="circle"/>
@@ -99,7 +115,7 @@
               </Option>
               <prop v="0" k="angle"/>
               <prop v="square" k="cap_style"/>
-              <prop v="152,125,183,255" k="color"/>
+              <prop v="145,82,45,255" k="color"/>
               <prop v="1" k="horizontal_anchor_point"/>
               <prop v="bevel" k="joinstyle"/>
               <prop v="circle" k="name"/>
@@ -178,9 +194,9 @@
         </dd_properties>
         <substitutions/>
       </text-style>
-      <text-format leftDirectionSymbol="&lt;" addDirectionSymbol="0" autoWrapLength="0" plussign="0" useMaxLineLengthForAutoWrap="1" rightDirectionSymbol=">" placeDirectionSymbol="0" reverseDirectionSymbol="0" wrapChar="" multilineAlign="0" formatNumbers="0" decimals="3"/>
-      <placement offsetType="0" placement="1" distMapUnitScale="3x:0,0,0,0,0,0" rotationAngle="0" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" rotationUnit="AngleDegrees" overrunDistanceUnit="MM" centroidWhole="0" xOffset="1" preserveRotation="1" maxCurvedCharAngleOut="-20" geometryGeneratorType="PointGeometry" fitInPolygonOnly="0" yOffset="-1" quadOffset="2" layerType="PolygonGeometry" maxCurvedCharAngleIn="20" repeatDistance="0" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" overrunDistance="0" lineAnchorClipping="0" centroidInside="0" repeatDistanceUnits="MM" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" offsetUnits="MapUnit" distUnits="MM" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" polygonPlacementFlags="2" geometryGenerator="" geometryGeneratorEnabled="0" dist="1" priority="5" lineAnchorPercent="0" lineAnchorType="0" placementFlags="10"/>
-      <rendering scaleMin="1" upsidedownLabels="0" scaleMax="250" labelPerPart="0" displayAll="0" scaleVisibility="1" minFeatureSize="0" drawLabels="1" obstacleFactor="1" zIndex="0" unplacedVisibility="0" fontMaxPixelSize="10000" obstacle="1" limitNumLabels="0" fontMinPixelSize="3" maxNumLabels="2000" fontLimitPixelSize="0" obstacleType="0" mergeLines="0"/>
+      <text-format leftDirectionSymbol="&lt;" addDirectionSymbol="0" autoWrapLength="0" plussign="0" useMaxLineLengthForAutoWrap="1" rightDirectionSymbol=">" placeDirectionSymbol="0" reverseDirectionSymbol="0" wrapChar="" multilineAlign="3" formatNumbers="0" decimals="3"/>
+      <placement offsetType="0" placement="6" distMapUnitScale="3x:0,0,0,0,0,0" rotationAngle="0" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" rotationUnit="AngleDegrees" overrunDistanceUnit="MM" centroidWhole="0" xOffset="0" preserveRotation="1" maxCurvedCharAngleOut="-25" geometryGeneratorType="PointGeometry" fitInPolygonOnly="0" yOffset="0" quadOffset="4" layerType="PointGeometry" maxCurvedCharAngleIn="25" repeatDistance="0" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" overrunDistance="0" lineAnchorClipping="0" centroidInside="0" repeatDistanceUnits="MM" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" offsetUnits="MapUnit" distUnits="MM" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" polygonPlacementFlags="2" geometryGenerator="" geometryGeneratorEnabled="0" dist="3" priority="7" lineAnchorPercent="0" lineAnchorType="0" placementFlags="10"/>
+      <rendering scaleMin="1" upsidedownLabels="0" scaleMax="20000" labelPerPart="0" displayAll="0" scaleVisibility="1" minFeatureSize="0" drawLabels="1" obstacleFactor="1" zIndex="0" unplacedVisibility="0" fontMaxPixelSize="10000" obstacle="1" limitNumLabels="0" fontMinPixelSize="3" maxNumLabels="2000" fontLimitPixelSize="0" obstacleType="0" mergeLines="0"/>
       <dd_properties>
         <Option type="Map">
           <Option type="QString" name="name" value=""/>
@@ -387,11 +403,22 @@
       </editWidget>
     </field>
     <field name="auslasstyp" configurationFlags="None">
-      <editWidget type="TextEdit">
+      <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option type="bool" name="IsMultiline" value="false"/>
-            <Option type="bool" name="UseHtml" value="false"/>
+            <Option type="bool" name="AllowMulti" value="false"/>
+            <Option type="bool" name="AllowNull" value="true"/>
+            <Option type="QString" name="Description" value=""/>
+            <Option type="QString" name="FilterExpression" value=""/>
+            <Option type="QString" name="Key" value="bezeichnung"/>
+            <Option type="QString" name="Layer" value="auslasstypen20161201095045204"/>
+            <Option type="QString" name="LayerName" value="Auslasstypen"/>
+            <Option type="QString" name="LayerProviderName" value="spatialite"/>
+            <Option type="QString" name="LayerSource" value="dbname='juelich.sqlite' table=&quot;auslasstypen&quot;"/>
+            <Option type="int" name="NofColumns" value="1"/>
+            <Option type="bool" name="OrderByValue" value="false"/>
+            <Option type="bool" name="UseCompleter" value="true"/>
+            <Option type="QString" name="Value" value="bezeichnung"/>
           </Option>
         </config>
       </editWidget>
@@ -485,7 +512,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="geop" configurationFlags="None">
+    <field name="geom" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -498,7 +525,10 @@
     <field name="x" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="QString" name="IsMultiline" value="false"/>
+            <Option type="QString" name="UseHtml" value="false"/>
+          </Option>
         </config>
       </editWidget>
     </field>
@@ -532,7 +562,7 @@
     <alias index="18" field="ysch" name=""/>
     <alias index="19" field="kommentar" name="Kommentar"/>
     <alias index="20" field="createdat" name="bearbeitet"/>
-    <alias index="21" field="geop" name=""/>
+    <alias index="21" field="geom" name=""/>
     <alias index="22" field="x" name=""/>
     <alias index="23" field="y" name=""/>
   </aliases>
@@ -550,15 +580,15 @@
     <default expression="" field="eigentum" applyOnUpdate="0"/>
     <default expression="" field="teilgebiet" applyOnUpdate="0"/>
     <default expression="'Normalschacht'" field="knotentyp" applyOnUpdate="0"/>
-    <default expression="" field="auslasstyp" applyOnUpdate="0"/>
-    <default expression="'Schacht'" field="schachttyp" applyOnUpdate="0"/>
+    <default expression="frei" field="auslasstyp" applyOnUpdate="0"/>
+    <default expression="'Auslass'" field="schachttyp" applyOnUpdate="0"/>
     <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
     <default expression="" field="material" applyOnUpdate="0"/>
     <default expression="" field="xsch" applyOnUpdate="0"/>
     <default expression="" field="ysch" applyOnUpdate="0"/>
     <default expression="" field="kommentar" applyOnUpdate="0"/>
     <default expression=" format_date( now(), 'yyyy-MM-dd HH:mm:ss')" field="createdat" applyOnUpdate="0"/>
-    <default expression="" field="geop" applyOnUpdate="0"/>
+    <default expression="" field="geom" applyOnUpdate="0"/>
     <default expression="" field="x" applyOnUpdate="0"/>
     <default expression="" field="y" applyOnUpdate="0"/>
   </defaults>
@@ -584,7 +614,7 @@
     <constraint constraints="0" field="ysch" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint constraints="0" field="kommentar" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint constraints="0" field="createdat" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint constraints="0" field="geop" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint constraints="0" field="geom" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint constraints="0" field="x" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint constraints="0" field="y" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
@@ -610,18 +640,20 @@
     <constraint desc="" exp="" field="ysch"/>
     <constraint desc="" exp="" field="kommentar"/>
     <constraint desc="" exp="" field="createdat"/>
-    <constraint desc="" exp="" field="geop"/>
+    <constraint desc="" exp="" field="geom"/>
     <constraint desc="" exp="" field="x"/>
     <constraint desc="" exp="" field="y"/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="x(centroid($geometry))" type="6" subType="0" comment="" length="-1" typeName="double precision" name="x" precision="0"/>
-    <field expression="y(centroid($geometry))" type="6" subType="0" comment="" length="-1" typeName="double precision" name="y" precision="0"/>
+    <field expression="$x" type="6" subType="0" comment="" length="-1" typeName="double precision" name="x" precision="0"/>
+    <field expression="$y" type="6" subType="0" comment="" length="-1" typeName="double precision" name="y" precision="0"/>
+    <field expression="$x" type="6" subType="0" comment="" length="0" typeName="" name="x" precision="0"/>
+    <field expression="$y" type="6" subType="0" comment="" length="0" typeName="" name="y" precision="0"/>
   </expressionfields>
   <attributeactions>
     <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" sortExpression="&quot;pk&quot;" actionWidgetStyle="dropDown">
     <columns>
       <column width="-1" type="field" hidden="0" name="pk"/>
       <column width="-1" type="field" hidden="0" name="schnam"/>
@@ -631,17 +663,17 @@
       <column width="-1" type="field" hidden="0" name="deckelhoehe"/>
       <column width="-1" type="field" hidden="0" name="durchm"/>
       <column width="-1" type="field" hidden="0" name="druckdicht"/>
+      <column width="-1" type="field" hidden="0" name="ueberstauflaeche"/>
       <column width="-1" type="field" hidden="0" name="entwart"/>
       <column width="-1" type="field" hidden="0" name="strasse"/>
-      <column width="-1" type="field" hidden="0" name="simstatus"/>
-      <column width="-1" type="field" hidden="0" name="createdat"/>
-      <column width="-1" type="field" hidden="0" name="geop"/>
-      <column width="-1" type="actions" hidden="1"/>
-      <column width="-1" type="field" hidden="0" name="ueberstauflaeche"/>
       <column width="-1" type="field" hidden="0" name="knotentyp"/>
       <column width="-1" type="field" hidden="0" name="auslasstyp"/>
       <column width="-1" type="field" hidden="0" name="schachttyp"/>
+      <column width="-1" type="field" hidden="0" name="simstatus"/>
       <column width="-1" type="field" hidden="0" name="kommentar"/>
+      <column width="-1" type="field" hidden="0" name="createdat"/>
+      <column width="-1" type="field" hidden="0" name="geom"/>
+      <column width="-1" type="actions" hidden="1"/>
       <column width="-1" type="field" hidden="0" name="teilgebiet"/>
       <column width="-1" type="field" hidden="0" name="x"/>
       <column width="-1" type="field" hidden="0" name="material"/>
@@ -655,20 +687,22 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\qkan_schaechte.ui</editform>
+  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\qkan_auslaesse.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
   <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
-QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
+QGIS forms can have a Python function that is called when the form is
+opened.
 
-Hier kann dem Formular Extra-Logik hinzugefügt werden.
+Use this function to add extra logic to your forms.
 
-Der Name der Funktion wird im Feld "Python-Init-Function" angegeben.
-Ein Beispiel:
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
 """
-from PyQt4.QtGui import QWidget
+from qgis.PyQt.QtWidgets import QWidget
 
 def my_form_open(dialog, layer, feature):
 	geom = feature.geometry()
@@ -685,7 +719,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="durchm"/>
     <field editable="1" name="eigentum"/>
     <field editable="1" name="entwart"/>
-    <field editable="1" name="geop"/>
+    <field editable="1" name="geom"/>
     <field editable="1" name="istauslass"/>
     <field editable="1" name="istspeicher"/>
     <field editable="1" name="knotentyp"/>
@@ -713,7 +747,7 @@ def my_form_open(dialog, layer, feature):
     <field name="durchm" labelOnTop="0"/>
     <field name="eigentum" labelOnTop="0"/>
     <field name="entwart" labelOnTop="0"/>
-    <field name="geop" labelOnTop="0"/>
+    <field name="geom" labelOnTop="0"/>
     <field name="istauslass" labelOnTop="0"/>
     <field name="istspeicher" labelOnTop="0"/>
     <field name="knotentyp" labelOnTop="0"/>
@@ -741,7 +775,7 @@ def my_form_open(dialog, layer, feature):
     <field reuseLastValue="0" name="durchm"/>
     <field reuseLastValue="0" name="eigentum"/>
     <field reuseLastValue="0" name="entwart"/>
-    <field reuseLastValue="0" name="geop"/>
+    <field reuseLastValue="0" name="geom"/>
     <field reuseLastValue="0" name="knotentyp"/>
     <field reuseLastValue="0" name="kommentar"/>
     <field reuseLastValue="0" name="material"/>
@@ -762,5 +796,5 @@ def my_form_open(dialog, layer, feature):
   <widgets/>
   <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
   <mapTip></mapTip>
-  <layerGeometryType>2</layerGeometryType>
+  <layerGeometryType>0</layerGeometryType>
 </qgis>

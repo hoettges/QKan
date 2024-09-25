@@ -36,7 +36,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
     cb_adaptMacros: QCheckBox
     cb_adaptForms: QCheckBox
     cb_adaptKBS: QCheckBox
-    cb_adaptTableLookups: QCheckBox
+    cb_adaptLayerstyles: QCheckBox
     cb_applyQKanTemplate: QCheckBox
     cb_completeLayers: QCheckBox
     cb_qkanDBUpdate: QCheckBox
@@ -63,7 +63,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
         self.button_box.helpRequested.connect(self.click_help)
         # self.cb_adaptForms.clicked.connect(self.click_adapt_forms)
-        self.cb_adaptTableLookups.clicked.connect(self.click_adapt_table_lookups)
+        self.cb_adaptLayerstyles.clicked.connect(self.click_adapt_layerstyles)
         self.cb_adaptKBS.clicked.connect(self.click_adapt_kbs)
         self.cb_applyQKanTemplate.clicked.connect(self.click_apply_template)
 
@@ -71,7 +71,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
         self.cb_adaptDB.setChecked(True)  # automatisch aktivieren
         super().select_qkan_db()
 
-    def click_adapt_table_lookups(self) -> None:
+    def click_adapt_layerstyles(self) -> None:
         self.enable_project_template_group()
 
     def click_adapt_kbs(self) -> None:
@@ -100,7 +100,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
         abhängig von den angeklickten Checkbuttons
         """
 
-        checked = self.cb_adaptTableLookups.isChecked()
+        checked = self.cb_adaptLayerstyles.isChecked()
         self.gb_projectTemplate.setEnabled(checked)
 
     def select_project_template(self) -> None:
@@ -109,7 +109,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
         self.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren
         self.click_apply_template()  # Auswirkungen auslösen
 
-        if self.cb_adaptTableLookups.isChecked():
+        if self.cb_adaptLayerstyles.isChecked():
             template_dir = QKan.template_dir
         else:
             if self.db_qkan:

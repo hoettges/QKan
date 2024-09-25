@@ -100,11 +100,11 @@ def load_plausiaction(layer):
 
 
 def layersadapt(
-    database_QKan: str,
+    database_QKan: [str, None],
     projectTemplate: str,
     anpassen_ProjektMakros: bool,
     anpassen_Datenbankanbindung: bool,
-    anpassen_Wertebeziehungen_in_Tabellen: bool,
+    anpassen_Layerstile: bool,
     anpassen_Formulare: bool,
     anpassen_Projektionssystem: bool,
     aktualisieren_Schachttypen: bool,
@@ -112,14 +112,14 @@ def layersadapt(
     fehlende_layer_ergaenzen: bool,
     anpassen_auswahl: enums.SelectedLayers,
 ) -> None:
-    """Anpassen von Projektlayern an den QKan-Standard
-    Voraussetzungen: keine
+    """Projektlayer werden an den QKan-Standard angepasst.
+    Voraussetzungen: Geladenes QKan-Projekt oder Einstellung, dass nur Formulare angepasst werden.
 
     :database_QKan:                                 Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
     :projectTemplate:                               Vorlage-Projektdatei für die anzupassenden Layereigenschaften
     :anpassen_ProjektMakros:                        Projektmakros werden angepasst
     :anpassen_Datenbankanbindung:                   Datenbankanbindungen werden angepasst
-    :anpassen_Wertebeziehungen_in_Tabellen:         Wertebeziehungen werden angepasst
+    :anpassen_Layerstile:                           Layerstile werden mit den qml-Dateien aus dem Verzeichnis templates/qml aktualisiert
     :anpassen_Formulare:                            Formulare werden anpasst
     :anpassen_Projektionssystem:                    Projektionssystem wird angepasst
     :aktualisieren_Schachttypen:                    Knotentypen in schaechte.knotentyp setzen
@@ -135,41 +135,29 @@ def layersadapt(
 
     iface = QKan.instance.iface
 
-    if database_QKan:
+    if database_QKan is not None:
         dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
 
         if not dbQK.connected:
-            fehlermeldung(
-                "Programmfehler in QKan.tools.k_layersadapt.layersadapt()",
-                "Datenbank konnte nicht verbunden werden",
-            )
-            return
+            errormsg = "Programmfehler in QKan.tools.k_layersadapt.layersadapt()\n" + \
+            "Datenbank konnte nicht verbunden werden"
+            logger.error(errormsg)
+            raise Exception(f"{__name__}: {errormsg}")
 
         actversion = dbQK.actversion
         logger.debug("actversion: {}".format(actversion))
-
-        if not (
-            anpassen_Formulare
-            or anpassen_Projektionssystem
-            or anpassen_Wertebeziehungen_in_Tabellen
-            or aktualisieren_Schachttypen
-            or fehlende_layer_ergaenzen
-        ):
-            del dbQK
-            return
     else:
         if (anpassen_ProjektMakros
             or anpassen_Datenbankanbindung
-            or anpassen_Wertebeziehungen_in_Tabellen
-            or not anpassen_Formulare
             or anpassen_Projektionssystem
             or aktualisieren_Schachttypen
             or zoom_alles
             or fehlende_layer_ergaenzen
         ):
-            logger.error("Interner Fehler: Aufruf von k_layersadapt ohne Datenbankanbindung darf nur "
-                         "Formularanbindung durchführen")
-            return
+            errormsg = "Interner Fehler: Aufruf von k_layersadapt ohne Anpassung der Datenbankanbindung darf nur " + \
+                       "Formularanbindung und/oder Layeranpassung durchführen"
+            logger.error(errormsg)
+            raise Exception(f"{__name__}: {errormsg}")
         dbQK = None                                # Bei Korrektur der Formularanbindung keine Datenbankanbindung
 
     # -----------------------------------------------------------------------------------------------------
@@ -177,14 +165,6 @@ def layersadapt(
 
     # noinspection PyArgumentList
     project = QgsProject.instance()
-
-    if project.count() == 0:
-        fehlermeldung("Benutzerfehler: ", "Es ist kein Projekt geladen.")
-        del dbQK
-        return
-
-    # Projekt auf aktuelle Version setzen. Es werden keine Layer geändert.
-    qgs_actual_version()
 
     # Vorlage-Projektdatei. Falls Standard oder keine Vorgabe, wird die Standard-Projektdatei verwendet
 
@@ -319,110 +299,106 @@ def layersadapt(
             )
             return
 
-        layer = layerobjects[0]
+        for layer in layerobjects:
+            # Mehrere Layer mit gleichem Namen werden gleich behandelt
 
-        # Nachfolgende Variable werden an verschiedenen Stellen benötigt
-        table, geom, sql, _ = qkanLayers[layername]
+            # Nachfolgende Variable werden an verschiedenen Stellen benötigt
+            table, geom, sql, _ = qkanLayers[layername]
 
-        if anpassen_Wertebeziehungen_in_Tabellen:
-            qlsnam = os.path.join(templateDir, "qml",
-                                  "{}_wertebeziehungen.qml".format(layername.replace('/', '_')))
-            if os.path.exists(qlsnam):
-                layer.loadNamedStyle(qlsnam)
-                logger.debug("Layerstil geladen (2): {}".format(qlsnam))
-            if layer.name() == 'Plausibilitätsprüfungen':
-                load_plausisql(dbQK)
-                logger.debug("Plausibilitätsprüfungen mit Datei 'Plausibilitaetspruefungen.sql' ergänzt.")
+            if anpassen_Layerstile:
+                qlsnam = os.path.join(templateDir, "qml",
+                                      "{}.qml".format(layername.replace('/', '_')))
+                if os.path.exists(qlsnam):
+                    layer.loadNamedStyle(qlsnam)
+                    layer.triggerRepaint()
+                    logger.debug("Layerstil geladen (2): {}".format(qlsnam))
+                if layer.name() == 'Plausibilitätsprüfungen' and dbQK is not None:
+                    load_plausisql(dbQK)
+                    logger.debug("Plausibilitätsprüfungen mit Datei 'Plausibilitaetspruefungen.sql' ergänzt.")
 
-            # nachfolgende Zeilen sind nicht notwendig, da in Projektdatei schon enthalten:
-            # elif layer.name() == 'Fehlerliste':
-            #     load_plausiaction(layer)
-            #     logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
+                # nachfolgende Zeilen sind nicht notwendig, da in Projektdatei schon enthalten:
+                # elif layer.name() == 'Fehlerliste':
+                #     load_plausiaction(layer)
+                #     logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
 
-        if anpassen_ProjektMakros:
-            nodes = qgsxml.findall("properties/Macros")
-            for node in nodes:
-                macros = node.findtext("pythonCode")
-            project.writeEntry("Macros", "/pythonCode", macros)
-
-        if anpassen_Datenbankanbindung:
-            if geom != "":
-                # Vektorlayer
-                newdatasource = (
-                    "dbname='{dbname}' table=\"{table}\" ({geom}) sql={sql}".format(
-                        dbname=database_QKan, table=table, geom=geom, sql=sql
-                    )
-                )
-            else:
-                # Tabellenlayer
-                newdatasource = "dbname='{dbname}' table=\"{table}\" sql={sql}".format(
-                    dbname=database_QKan, table=table, sql=sql
-                )
-            layer.setDataSource(
-                newdatasource, layername, enums.QKanDBChoice.SPATIALITE.value
-            )
-            logger.debug("\nAnbindung neue QKanDB: {}\n".format(newdatasource))
-
-        if anpassen_Projektionssystem:
-            # epsg-Code des Layers an angebundene Tabelle anpassen
-            logger.debug("anpassen_Projektionssystem...")
-            logger.debug("Prüfe KBS von Tabelle {}".format(table))
-            if geom != "":
-                # Nur für Vektorlayer
-                sql = """SELECT srid
-                        FROM geom_cols_ref_sys
-                        WHERE Lower(f_table_name) = Lower(?)
-                        AND Lower(f_geometry_column) = Lower(?)"""
-                if not dbQK.sql(
-                    sql, "db_qkan: k_layersadapt (3)", parameters=(table, geom)
-                ):
-                    del dbQK
-                    return
-
-                data = dbQK.fetchone()
-                if data is not None:
-                    epsg = data[0]
-                else:
-                    logger.debug("\nTabelle hat kein KBS: {}\n".format(table))
-
-                crs = QgsCoordinateReferenceSystem.fromEpsgId(epsg)
-                if crs.isValid():
-                    layer.setCrs(crs)
-                    logger.debug(
-                        'KBS angepasst für Tabelle "{0:} auf {1:}"'.format(
-                            table, crs.postgisSrid()
+            if anpassen_Datenbankanbindung:
+                if geom != "":
+                    # Vektorlayer
+                    newdatasource = (
+                        "dbname='{dbname}' table=\"{table}\" ({geom}) sql={sql}".format(
+                            dbname=database_QKan, table=table, geom=geom, sql=sql
                         )
                     )
                 else:
-                    fehlermeldung(
-                        "Fehler bei Festlegung des Koordinatensystems!",
-                        "Layer {}".format(layername),
+                    # Tabellenlayer
+                    newdatasource = "dbname='{dbname}' table=\"{table}\" sql={sql}".format(
+                        dbname=database_QKan, table=table, sql=sql
                     )
+                layer.setDataSource(
+                    newdatasource, layername, enums.QKanDBChoice.SPATIALITE.value
+                )
+                logger.debug("\nAnbindung neue QKanDB: {}\n".format(newdatasource))
 
-        if anpassen_Formulare:
-            tagLayer = (
-                f"projectlayers/maplayer[layername='{layername}'][provider='spatialite']"
-            )
-            qgsLayers = qgsxml.findall(tagLayer)
-            if len(qgsLayers) == 0:
-                logger.info(
-                    "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
-                        layername
+            if anpassen_Projektionssystem:
+                # epsg-Code des Layers an angebundene Tabelle anpassen
+                logger.debug("anpassen_Projektionssystem...")
+                logger.debug("Prüfe KBS von Tabelle {}".format(table))
+                if geom != "":
+                    # Nur für Vektorlayer
+                    sql = """SELECT srid
+                            FROM geom_cols_ref_sys
+                            WHERE Lower(f_table_name) = Lower(?)
+                            AND Lower(f_geometry_column) = Lower(?)"""
+                    if not dbQK.sql(
+                        sql, "db_qkan: k_layersadapt (3)", parameters=(table, geom)
+                    ):
+                        del dbQK
+                        return
+
+                    data = dbQK.fetchone()
+                    if data is not None:
+                        epsg = data[0]
+                    else:
+                        logger.debug("\nTabelle hat kein KBS: {}\n".format(table))
+
+                    crs = QgsCoordinateReferenceSystem.fromEpsgId(epsg)
+                    if crs.isValid():
+                        layer.setCrs(crs)
+                        logger.debug(
+                            'KBS angepasst für Tabelle "{0:} auf {1:}"'.format(
+                                table, crs.postgisSrid()
+                            )
+                        )
+                    else:
+                        fehlermeldung(
+                            "Fehler bei Festlegung des Koordinatensystems!",
+                            "Layer {}".format(layername),
+                        )
+
+            if anpassen_Formulare:
+                tagLayer = (
+                    f"projectlayers/maplayer[layername='{layername}'][provider='spatialite']"
+                )
+                qgsLayers = qgsxml.findall(tagLayer)
+                if len(qgsLayers) == 0:
+                    logger.info(
+                        "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
+                            layername
+                        )
                     )
-                )
-                continue  # Layer ist in Projekt-Templatenicht vorhanden...
-            else:
-                logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
+                    continue  # Layer ist in Projekt-Templatenicht vorhanden...
+                else:
+                    logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
 
-            for qgslay in qgsLayers:
-                formpath = qgslay.findtext("./editform") or ""
-                form = cast(str, os.path.basename(formpath))
-                editFormConfig = layer.editFormConfig()
-                editFormConfig.setUiForm(os.path.join(formsDir, form))
-                layer.setEditFormConfig(editFormConfig)
-                logger.debug(
-                    f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
-                )
+                for qgslay in qgsLayers:
+                    formpath = qgslay.findtext("./editform") or ""
+                    form = cast(str, os.path.basename(formpath))
+                    editFormConfig = layer.editFormConfig()
+                    editFormConfig.setUiForm(os.path.join(formsDir, form))
+                    layer.setEditFormConfig(editFormConfig)
+                    logger.debug(
+                        f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
+                    )
 
     if layerNotInProjektMeldung:
         meldung(
@@ -433,9 +409,16 @@ def layersadapt(
     # meldung(u'Information zu den Layern', u'Es wurden Layer gefunden, die nicht zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
 
     # Projektmakros
-    rltext = "properties/Macros/pythonCode"
-    macrotext = qgsxml.findtext(rltext)
-    project.writeEntry("Macros", "/pythonCode", macrotext)
+    if anpassen_ProjektMakros:
+        nodes = qgsxml.findall("properties/Macros")
+        for node in nodes:
+            macros = node.findtext("pythonCode")
+        project.writeEntry("Macros", "/pythonCode", macros)
+
+    # Code war doppeot:
+    # rltext = "properties/Macros/pythonCode"
+    # macrotext = qgsxml.findtext(rltext)
+    # project.writeEntry("Macros", "/pythonCode", macrotext)
 
     if aktualisieren_Schachttypen:
         # Schachttypen auswerten
@@ -462,8 +445,8 @@ def layersadapt(
     del qgsxml
     del dbQK
 
-    # Todo:
-    #  - Sicherungskopie der Datenbank, falls Versionsupdate
+    # Projekt auf aktuelle Version setzen. Es werden keine Layer geändert.
+    # qgs_actual_version()
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen

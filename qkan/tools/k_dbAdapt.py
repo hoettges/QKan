@@ -72,5 +72,5 @@ def dbAdapt(
 
     del dbQK
 
-    if projectFile:
-        qkan_project.clear()
+    # if projectFile:
+    #     qkan_project.clear()

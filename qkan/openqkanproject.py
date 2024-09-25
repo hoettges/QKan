@@ -44,7 +44,7 @@ def initQKanProject():
         projectTemplate=projectTemplate,
         anpassen_ProjektMakros=False,
         anpassen_Datenbankanbindung=False,
-        anpassen_Wertebeziehungen_in_Tabellen=False,
+        anpassen_Layerstile=False,
         anpassen_Formulare=True,
         anpassen_Projektionssystem=False,
         aktualisieren_Schachttypen=False,

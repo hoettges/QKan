@@ -7,7 +7,6 @@ from qgis.testing import unittest
 from qkan import QKan
 from qkan.surfaceTools.surfaceTool import SurfaceTask
 from qkan.tools.k_dbAdapt import dbAdapt
-from qgis.core import QgsApplication
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
