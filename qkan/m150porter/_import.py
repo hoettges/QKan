@@ -2542,7 +2542,7 @@ class ImportTask:
                 return None
 
         if not self.db_qkan.sql(
-            "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
+            "UPDATE haltungen SET geom = geom WHERE haltungstyp = 'Wehr'", 'xml_import Wehre [1a]'
         ):
             return None
 

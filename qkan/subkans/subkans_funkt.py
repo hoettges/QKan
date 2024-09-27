@@ -1,13 +1,6 @@
 import os
 from datetime import datetime
 
-from qgis.core import (
-    QgsProject,
-    QgsVectorLayer,
-    QgsDataSourceUri,
-)
-from qgis.utils import spatialite_connect
-
 from qkan.utils import get_logger
 from math import pi, floor, ceil
 
@@ -77,7 +70,7 @@ class Subkans_funkt:
             return floor(expoN) / 10 ** decimals
         return ceil(expoN) / 10 ** decimals
 
-    def round_up(self, n, decimals=1):
+    def round_up(self, n, decimals=2):
         expoN = n * 10 ** decimals
         return ceil(expoN) / 10 ** decimals
 
@@ -254,7 +247,6 @@ class Subkans_funkt:
         x = os.path.dirname(os.path.abspath(__file__))
         vlayer.loadNamedStyle(x + '/haltungen_untersucht_bewertung_dwa.qml')
         QgsProject.instance().addMapLayer(vlayer)
-
 
     def einzelfallbetrachtung_haltung(self):
 
@@ -5125,6 +5117,8 @@ class Subkans_funkt:
                     elif int(i[27]) == 5:
                         kg = 0.0
                     # i[27] Zustandsbewertung
+
+                    #TODO: statt i[28] nuss huer stg bzw.stg_neu nach der punktschaden prüfung eingesetzt werden!
                     zustand.append(kg*float(i[28]))
 
                 if len(zustand) > 0:
@@ -5197,7 +5191,7 @@ class Subkans_funkt:
             entf_list = []
             dat = curs.fetchall()
             for attr in dat:
-                # testen, ob die streckenschaden sich überlagern
+                #TODO: testen, ob die streckenschaden sich überlagern
                 stg = 1
                 # Klassengewichte
                 if int(attr[27]) == 0:
@@ -5213,7 +5207,7 @@ class Subkans_funkt:
                 elif int(attr[27]) == 5:
                     kg = 0.0
 
-                # streckenschaden überlagern anhand von kg*stg?
+                # streckenschaden überlagern anhand von kg*stg und vorher prüfen ob der strreckenschaden kleiner ist als punktschaden
 
                 # auf überlagerungen prüfen!
                 # überall wo die Streckenschäden an der gleichen position sind stg*kg vergleichen und nur den schwersten behalten
@@ -5252,7 +5246,6 @@ class Subkans_funkt:
 
                 vergl = [values[index] for index in overlapping_indices]
 
-
                 zustand = []
                 for i in vergl:
                     if int(i[27]) == 0:
@@ -5282,8 +5275,6 @@ class Subkans_funkt:
                             # pk von dem element welches entfernt werden soll
                             entf_list.append(vergl[entf][0])
                         x += 1
-
-
 
             # Datenbank anweisung um die Elemente zu löschen
             for i in entf_list:
@@ -6128,7 +6119,7 @@ class Subkans_funkt:
 
                 # sg in tabelle schreiben
                 sql = """UPDATE substanz_haltung_bewertung SET Schadensgewicht_S = ? WHERE substanz_haltung_bewertung.pk = ?"""
-                data = (self.round_up(sg, 1), attr[0])
+                data = (self.round_up(sg, 2), attr[0])
 
                 curs.execute(sql, data)
 
@@ -6142,10 +6133,10 @@ class Subkans_funkt:
                    substanz_haltung_bewertung.pk,
                    substanz_haltung_bewertung.untersuchhal,
                    SUM(substanz_haltung_bewertung.Schadensgewicht),
-				   haltungen.haltnam,
-                   haltungen.laenge,
+                    haltungen_untersucht.haltnam,
+                    haltungen_untersucht.laenge,
                    haltungen_substanz_bewertung.pk
-                FROM substanz_haltung_bewertung, haltungen, haltungen_substanz_bewertung WHERE  haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen.haltnam
+                FROM substanz_haltung_bewertung, haltungen_untersucht, haltungen_substanz_bewertung WHERE  haltungen_untersucht.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen_untersucht.haltnam
                 GROUP BY untersuchhal;"""
 
         data = ()
@@ -6199,10 +6190,10 @@ class Subkans_funkt:
                                substanz_haltung_bewertung.pk,
                                substanz_haltung_bewertung.untersuchhal,
                                SUM(substanz_haltung_bewertung.Schadensgewicht_D),
-            				   haltungen.haltnam,
-                               haltungen.laenge,
+                                haltungen_untersucht.haltnam,
+                               haltungen_untersucht.laenge,
                                haltungen_substanz_bewertung.pk
-                            FROM substanz_haltung_bewertung, haltungen, haltungen_substanz_bewertung WHERE  haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen.haltnam
+                            FROM substanz_haltung_bewertung, haltungen_untersucht, haltungen_substanz_bewertung WHERE  haltungen_untersucht.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen_untersucht.haltnam
                             GROUP BY untersuchhal;"""
 
             data = ()
@@ -6254,10 +6245,10 @@ class Subkans_funkt:
                        substanz_haltung_bewertung.pk,
                        substanz_haltung_bewertung.untersuchhal,
                        SUM(substanz_haltung_bewertung.Schadensgewicht_B),
-                       haltungen.haltnam,
-                       haltungen.laenge,
+                       haltungen_untersucht.haltnam,
+                       haltungen_untersucht.laenge,
                        haltungen_substanz_bewertung.pk
-                    FROM substanz_haltung_bewertung, haltungen, haltungen_substanz_bewertung WHERE  haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen.haltnam
+                    FROM substanz_haltung_bewertung, haltungen_untersucht, haltungen_substanz_bewertung WHERE  haltungen_untersucht.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen_untersucht.haltnam
                     GROUP BY untersuchhal;"""
 
             data = ()
@@ -6309,10 +6300,10 @@ class Subkans_funkt:
                            substanz_haltung_bewertung.pk,
                            substanz_haltung_bewertung.untersuchhal,
                            SUM(substanz_haltung_bewertung.Schadensgewicht_S),
-                           haltungen.haltnam,
-                           haltungen.laenge,
+                           haltungen_untersucht.haltnam,
+                           haltungen_untersucht.laenge,
                            haltungen_substanz_bewertung.pk
-                        FROM substanz_haltung_bewertung, haltungen, haltungen_substanz_bewertung WHERE  haltungen.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen.haltnam
+                        FROM substanz_haltung_bewertung, haltungen_untersucht, haltungen_substanz_bewertung WHERE  haltungen_untersucht.haltnam = substanz_haltung_bewertung.untersuchhal AND haltungen_substanz_bewertung.haltnam=haltungen_untersucht.haltnam
                         GROUP BY untersuchhal;"""
 
             data = ()

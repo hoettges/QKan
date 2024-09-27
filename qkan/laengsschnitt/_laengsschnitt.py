@@ -3,6 +3,7 @@ import datetime
 import matplotlib.animation as animation
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import matplotlib.widgets as widget
 import pywintypes
 import win32com.client
 from PyQt5 import QtCore
@@ -46,6 +47,7 @@ class LaengsTask:
         self.horizontalSlider_3 = horizontalSlider_3
         self.geschw_2 = geschw_2
         self.anf = 0
+        #self.plugin_instance = plugin_instance
 
         self.db_erg = spatialite_connect(self.db_erg)
         self.db_erg_curs = self.db_erg.cursor()
@@ -56,10 +58,8 @@ class LaengsTask:
         self.geschw_2.sliderReleased.connect(self.slider_2)
         self.geschw = self.geschw_2.value()*10
 
-
     def run(self) -> bool:
         self.zeichnen()
-
 
     def stop(self):
         if self.pushButton_4.text() == 'Stop':
@@ -75,7 +75,6 @@ class LaengsTask:
             except AttributeError:
                 pass
 
-
     def stop_slider(self):
         try:
             self.anim.event_source.stop()
@@ -87,6 +86,9 @@ class LaengsTask:
         # Stop the animation when the window is closed
         self.anim.event_source.stop()
         event.accept()
+
+        # TODO:Plugin informieren, dass das Fenster geschlossen wurde
+        #self.plugin_instance.window_closed(self)
 
     def slider(self):
         """Ändern der frames der Animation"""
@@ -374,7 +376,7 @@ class LaengsTask:
             x_deckel_neu = []
 
             for i in x_deckel:
-                if i not in x_deckel_neu:
+                if round(i,2) not in x_deckel_neu:
                     x_deckel_neu.append(i)
 
             for schacht, xkoordinate in zip(liste, x_deckel_neu):
@@ -909,7 +911,7 @@ class LaengsTask:
         y_label_neu = []
 
         for i in x_deckel:
-            if i not in x_deckel_neu:
+            if round(i,2) not in x_deckel_neu:
                 x_deckel_neu.append(i)
 
         for i in name:
@@ -965,7 +967,7 @@ class LaengsTask:
             x_deckel.pop(x)
 
         plt.vlines(x_deckel, y_sohle, y_deckel_n, color="red", linestyles='solid', label='Schacht', linewidth=5)
-        plt.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht', linewidth=5)
+        plt.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='fiktiver Schacht', linewidth=5)
 
 
         x_min = -0.5
@@ -977,12 +979,14 @@ class LaengsTask:
         y=[y_min, y_min]
         plt.hlines(y_min, x_min, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min, x_min-60, x_max+5, color="grey", linestyles='solid')
-        plt.hlines(y_min-0.6 , x_min - 60, x_max+5, color="grey", linestyles='solid')
+        plt.hlines(y_min-0.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min - 1.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min - 1.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min - 2.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min - 2.6, x_min - 60, x_max+5, color="grey", linestyles='solid')
         plt.hlines(y_min - 3.1, x_min - 60, x_max+5, color="grey", linestyles='solid')
+
+        #plt.axis('off')
 
         plt.annotate("Deckelhöhe [m ü. NHN]", (x_min-55, y_min-0.4), textcoords="offset points", xytext=(-10, 0), ha='left')
         plt.annotate("Schachtname", (x_min - 55, y_min - 0.9), textcoords="offset points", xytext=(-10, 0),
@@ -1009,23 +1013,24 @@ class LaengsTask:
 
         for i, j, x, y in zip(x_deckel_neu, name_neu, z_deckel_neu, z_sohle_neu):
             #plt.vlines(i, y_min, y_min-3.1, color="grey", linestyles='solid')
-            plt.vlines(ffloat(i, 2), y_min-2.1, y_min -3.1, color="grey", linestyles='solid')
 
-            plt.annotate(ffloat(x, 2), (i + 0.1, y_min - 0.4), ha='center')
+            plt.vlines(round(i, 2), y_min-2.1, y_min -3.1, color="grey", linestyles='solid')
+
+            plt.annotate(round(x, 2), (i + 0.1, y_min - 0.4), ha='center')
 
             plt.annotate(j, (i +0.1, y_min - 0.9), ha='center')
 
-            plt.annotate(ffloat(y, 2), (i +0.1, y_min - 1.4), ha='center')
+            plt.annotate(round(y, 2), (i +0.1, y_min - 1.4), ha='center')
 
         x = 0
 
         for i, j in zip(x_deckel_neu, z_sohle_h):
-            # so verschieben, dass die TExte passend stehen
+            # so verschieben, dass die Texte passend stehen
             if x % 2:
-                plt.annotate(ffloat(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                plt.annotate(round(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
                               ha='center')
             else:
-                plt.annotate(ffloat(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
+                plt.annotate(round(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
                               ha='center')
             x += 1
 
@@ -1051,8 +1056,11 @@ class LaengsTask:
 
         plt.xlabel('Länge [m]')
         plt.ylabel('Höhe [m NHN]')
-        new_plot.legend()
-        plt.tight_layout()
+        new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
+
+        #TODO: tight_layout geht nicht!
+        self.fig.tight_layout(pad=1.08)
         # plt.table(cellText=data, rowLabels=rows, colLabels=columns, loc='bottom', bbox=[0.0, -0.65, 1, 0.45], cellLoc='center')
         # plt.subplots_adjust(top=0.98,
         #                      bottom=0.4,
@@ -1401,7 +1409,7 @@ class LaengsTask:
         x_deckel_neu = []
 
         for i in x_deckel:
-            if i not in x_deckel_neu:
+            if round(i,2) not in x_deckel_neu:
                 x_deckel_neu.append(i)
 
         # deckelkoordinaten
@@ -1760,7 +1768,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=h)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
             if self.ausgabe == 'Geschwindigkeit':
                 plt.xlabel('Zeit')
@@ -1774,7 +1783,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=h)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
             if self.ausgabe == 'Auslastung':
                 plt.xlabel('Zeit')
@@ -1788,7 +1798,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=h)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
             if self.ausgabe == 'Wassertiefe':
                 plt.xlabel('Zeit')
@@ -1802,7 +1813,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=h)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
         if table == 'schaechte':
             if self.ausgabe == 'Zufluss':
@@ -1817,7 +1829,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=s)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
 
 
@@ -1833,7 +1846,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=s)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
             if self.ausgabe == 'Wassertiefe':
                 plt.xlabel('Zeit')
@@ -1847,7 +1861,8 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=s)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
 
             if self.ausgabe == 'Durchfluss':
                 plt.xlabel('Zeit')
@@ -1861,7 +1876,10 @@ class LaengsTask:
                     new_plot.plot(x_liste, y_liste, label=s)
                     new_plot.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
-                    new_plot.legend()
+                    new_plot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+          fancybox=True, shadow=True, ncol=5)
+
+        figure.tight_layout(pad=1.08)
 
 
     def laengs(self):
@@ -2155,6 +2173,10 @@ class LaengsTask:
             horizontalSlider_3.setMinimum(0)
             horizontalSlider_3.setMaximum(len(zeit))
 
+            self.horizontalSlider_3 = widget.Slider('',
+                                                                0, len(zeit))
+            self.horizontalSlider_3.on_changed(self.set_pos)
+
             y_sohle_2 = []
             y_deckel_3 = []
             x_deckel_2 = []
@@ -2194,7 +2216,7 @@ class LaengsTask:
                 y_label_neu = []
 
                 for i in x_deckel:
-                    if i not in x_deckel_neu:
+                    if round(i,2) not in x_deckel_neu:
                         x_deckel_neu.append(i)
 
                 for i in name:
@@ -2214,7 +2236,7 @@ class LaengsTask:
 
                 new_plot.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht',
                                 linewidth=5)
-                new_plot.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht',
+                new_plot.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='fiktiver Schacht',
                                 linewidth=5)
 
                 new_plot.plot(x_liste[t], y_liste[t], color="blue", label='Wasserstand')  # plot the line
@@ -2222,7 +2244,12 @@ class LaengsTask:
                 timestamp = zeit[t]
                 time = timestamp.strftime("%d.%m.%Y %H:%M:%S")[:-3]
                 label_4.setText(time)
-                horizontalSlider_3.setValue(t)
+                self.t=t
+                return self.t
+
+            def set_pos(self, t):
+                self.t = int(self.horizontalSlider_3.val)
+                self.anim(self.t)
 
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
@@ -2250,8 +2277,9 @@ class LaengsTask:
             x_deckel_neu = []
 
             for i in x_deckel:
-                if i not in x_deckel_neu:
+                if round(i,2) not in x_deckel_neu:
                     x_deckel_neu.append(i)
+
 
             for schacht, xkoordinate in zip(liste, x_deckel_neu):
                 sql = 'SELECT wasserstand,zeitpunkt FROM lau_gl_s WHERE KNOTEN=?'
@@ -2304,6 +2332,10 @@ class LaengsTask:
             horizontalSlider_3.setMinimum(0)
             horizontalSlider_3.setMaximum(len(zeit))
 
+            self.horizontalSlider_3 = widget.Slider('',
+                                                    0, len(zeit))
+            self.horizontalSlider_3.on_changed(self.set_pos)
+
             y_sohle_2 = []
             y_deckel_3 = []
             x_deckel_2 = []
@@ -2344,7 +2376,7 @@ class LaengsTask:
                 y_label_neu = []
 
                 for i in x_deckel:
-                    if i not in x_deckel_neu:
+                    if round(i,2) not in x_deckel_neu:
                         x_deckel_neu.append(i)
 
                 for i in name:
@@ -2364,7 +2396,7 @@ class LaengsTask:
 
                 new_plot.vlines(x_deckel, y_sohle, y_deckel_n, color="red", linestyles='solid', label='Schacht',
                                 linewidth=5)
-                new_plot.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht',
+                new_plot.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='fiktiver Schacht',
                                 linewidth=5)
 
                 new_plot.plot(x_liste[t], y_liste[t], color="blue", label='Wasserstand')  # plot the line
@@ -2372,7 +2404,7 @@ class LaengsTask:
                 timestamp = zeit[t]
                 time = timestamp.strftime("%d.%m.%Y %H:%M:%S")[:-3]
                 label_4.setText(time)
-                horizontalSlider_3.setValue(t)
+                self.horizontalSlider_3.setValue(t)
 
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
@@ -2391,6 +2423,7 @@ class LaengsTask:
                 self.pushButton_4.setText('Stop')
             except AttributeError:
                 pass
+        figure.tight_layout(pad=1.08)
 
         self.pushButton_4.setDefault(True)
         QtCore.QTimer.singleShot(100, self.pushButton_4.setFocus)

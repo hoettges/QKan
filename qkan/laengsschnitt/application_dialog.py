@@ -80,6 +80,7 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         # Attach events
         self.pushButton.clicked.connect(self.export_cad)
         self.pushButton_2.clicked.connect(self.refresh)
+        self.checkBox.stateChanged.connect(self.check)
         self.pushButton_3.clicked.connect(self.show_selection)
         self.pushButton_5.clicked.connect(self.ganglinie)
         self.pushButton_6.clicked.connect(self.animiert_laengs)
@@ -132,7 +133,9 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
     def clicked(self):
         self.max = True
 
-    #einfügen button stop , slider
+    def check(self):
+        if self.checkBox.isChecked():
+            self.refresh()
 
     def export_cad(self):
         self.db_erg = self.lineEdit_4.text()
@@ -175,5 +178,3 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.db_erg = self.lineEdit_4.text()
         self.animiert_laengs_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl,
                            self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
-
-

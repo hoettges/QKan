@@ -24,6 +24,8 @@ class Laengsschnitt(QKanPlugin):
         self.db_qkan: DBConnection = None
         self.auswahl={}
 
+        self.windows = []
+
 
     def refresh_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab,
                          features, db_erg, ausgabe, max, label_4, pushButton_4, horizontalSlider_3, geschw_2):
@@ -81,13 +83,23 @@ class Laengsschnitt(QKanPlugin):
         else:
             self.laengs_dlg.close()
 
+    def window_closed(self, window):
+        """Setzt das Fenster auf None, wenn es geschlossen wird."""
+
+        #TODO mit verfolgen wie viele fenster offen sind! und beim schließen die Anmiation stoppen
+        if window in self.windows:
+            self.windows.remove(window)
+
     def get_widget(self):
         """
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.laengs_dlg
-        self.dialog.fig = plt.figure()
+        #self.dialog.fig = plt.figure()
         #in der self.fig können die Matplotlib sachen angezeigt werden
+
+        self.dialog.fig = plt.figure(layout='constrained')
+        self.dialog.fig.tight_layout()
 
         qw = QWidget(self.dialog)
         self.dialog.canv = FigureCanvas(self.dialog.fig)
@@ -100,8 +112,10 @@ class Laengsschnitt(QKanPlugin):
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.laengs_dlg
-        self.dialog.fig_2 = plt.figure()
+        #self.dialog.fig_2 = plt.figure()
         #in der self.fig können die Matplotlib sachen angezeigt werden
+        self.dialog.fig_2 = plt.figure(layout='constrained')
+        self.dialog.fig.tight_layout()
 
         qw = QWidget(self.dialog)
         self.dialog.canv_2 = FigureCanvas(self.dialog.fig_2)
@@ -114,8 +128,10 @@ class Laengsschnitt(QKanPlugin):
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
         self.dialog = self.laengs_dlg
-        self.dialog.fig_3 = plt.figure()
+        #self.dialog.fig_3 = plt.figure()
         #in der self.fig können die Matplotlib sachen angezeigt werden
+        self.dialog.fig_3 = plt.figure(layout='constrained')
+        self.dialog.fig.tight_layout()
 
         qw = QWidget(self.dialog)
         self.dialog.canv_3 = FigureCanvas(self.dialog.fig_3)
@@ -189,3 +205,9 @@ class Laengsschnitt(QKanPlugin):
                        self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4,
                        self.pushButton_4, self.horizontalSlider_3, self.geschw_2
                        ).run()
+
+            # window.show()
+            #
+            # # Speichere das Fenster in der Liste
+            # self.windows.append(window)
+
