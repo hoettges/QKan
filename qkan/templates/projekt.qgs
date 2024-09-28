@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="Hoettges" saveUserFull="Höttges, Jörg" projectname="QKan Version 3.4.1" version="3.22.4-Białowieża" saveDateTime="2024-09-24T13:31:56">
+<qgis saveUser="Hoettges" saveUserFull="Höttges, Jörg" projectname="QKan Version 3.4.2" version="3.22.4-Białowieża" saveDateTime="2024-09-24T13:31:56">
   <homePath path=""/>
-  <title>QKan Version 3.4.1</title>
+  <title>QKan Version 3.4.2</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -36534,23 +36534,23 @@ def my_form_open(dialog, layer, feature):
       <filterByMap type="bool">false</filterByMap>
     </Legend>
     <Macros>
-      <pythonCode type="QString">from qkan.openqkanproject import initQKanProject&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-def openProject():&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-    """Check actual version of database and project file"""&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-    try:&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        initQKanProject()&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-    except ImportError:&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        import traceback&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        traceback.print_exc()&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        QgsMessageLog.logMessage(&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-            message=msg, level=Qgis.Info,&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        )&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-def saveProject():&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-    pass&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-def closeProject():&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-    pass&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
+      <pythonCode type="QString">from qkan.openqkanproject import initQKanProject
+def openProject():
+    """Check actual version of database and project file"""
+    try:
+        initQKanProject()
+    except ImportError:
+        import traceback
+        traceback.print_exc()
+        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."
+        QgsMessageLog.logMessage(
+            message=msg, level=Qgis.Info,
+        )
+        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)
+def saveProject():
+    pass
+def closeProject():
+    pass
       </pythonCode>
     </Macros>
     <Measure>
@@ -36666,7 +36666,7 @@ def closeProject():&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan Version 3.4.1</title>
+    <title>QKan Version 3.4.2</title>
     <abstract></abstract>
     <contact>
       <name></name>

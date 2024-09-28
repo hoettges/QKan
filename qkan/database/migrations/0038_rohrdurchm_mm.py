@@ -1,10 +1,7 @@
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger
-from qgis.core import QgsProject
-from qgis.utils import pluginDirectory
-import os
 
-VERSION = "3.4.1"  # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
+VERSION = "3.4.2"  # must be higher than previous one and correspond with qkan_database.py: __dbVersion__
 
 logger = get_logger("QKan.database.migrations")
 
