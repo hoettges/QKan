@@ -3,13 +3,17 @@ import datetime
 import matplotlib.animation as animation
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import matplotlib.widgets as widget
+from matplotlib.widgets import Slider
 import pywintypes
 import win32com.client
 from PyQt5 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from qgis.core import Qgis
 from qgis.utils import iface, spatialite_connect
+import numpy as np
+import mpl_toolkits.axes_grid1
+import matplotlib.widgets
+
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import ffloat
@@ -20,7 +24,6 @@ from ..utils import get_logger
 logger = get_logger("QKan.laengs.import")
 
 # TODO: mit einpflegen, dass die Geländehöhe von meheren DGM Layern angezeigt wird
-
 
 class LaengsTask:
     def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure,
@@ -47,13 +50,14 @@ class LaengsTask:
         self.horizontalSlider_3 = horizontalSlider_3
         self.geschw_2 = geschw_2
         self.anf = 0
+        self.anim = None
         #self.plugin_instance = plugin_instance
 
         self.db_erg = spatialite_connect(self.db_erg)
         self.db_erg_curs = self.db_erg.cursor()
 
         self.pushButton_4.clicked.connect(self.stop)
-        self.horizontalSlider_3.sliderReleased.connect(self.slider)
+        #self.horizontalSlider_3.sliderReleased.connect(self.slider)
         self.horizontalSlider_3.sliderPressed.connect(self.stop_slider)
         self.geschw_2.sliderReleased.connect(self.slider_2)
         self.geschw = self.geschw_2.value()*10
@@ -452,7 +456,7 @@ class LaengsTask:
                 y_deckel_n.pop(x)
                 x_deckel.pop(x)
 
-        self.anf = self.horizontalSlider_3.value()
+        #self.anf = self.horizontalSlider_3.value()
         #self.anim.frames = range(self.anf, len(zeit))
         self.anim.event_source.frames = range(self.anf, len(zeit))
         self.anim.event_source.stop()
@@ -489,6 +493,8 @@ class LaengsTask:
     def zeichnen(self):
         """Längsschnitt in das Fenster zeichnen"""
         figure = self.fig
+        figure.set_size_inches(11.5, 5)
+        figure.tight_layout()
         figure.clear()
         plt.figure(figure.number)
         new_plot = figure.add_subplot(111)
@@ -505,7 +511,6 @@ class LaengsTask:
 
         #mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
         _, table, _, _ = get_qkanlayer_attributes(x)
-
 
         #selektierte elemente anzeigen
         self.selected = layer.selectedFeatures()
@@ -1895,9 +1900,94 @@ class LaengsTask:
         plt.clf()
         plt.figure(figure.number)
 
-
-        #ax = figure.add_subplot(1, 1, 1)
+        # ax = figure.add_subplot(1, 1, 1)
         new_plot = figure.add_subplot(111)
+
+        # #neu
+        #
+        # interval = 100  # ms, time between animation frames
+        # loop_len = 5.0  # seconds per loop
+        # scale = interval / 1000 / loop_len
+        #
+        # def update_slider(val):
+        #     global is_manual
+        #     is_manual = True
+        #     update(val)
+        #
+        # def update(val):
+        #     # update curve
+        #     l.set_ydata(val * np.sin(t))
+        #     # redraw canvas while idle
+        #     fig.canvas.draw_idle()
+        #
+        # def update_plot(num):
+        #     global is_manual
+        #     if is_manual:
+        #         return l,  # don't change
+        #
+        #     val = (samp.val + scale) % samp.valmax
+        #     samp.set_val(val)
+        #     is_manual = False  # the above line called update_slider, so we need to reset this
+        #     return l,
+        #
+        # def on_click(event):
+        #     # Check where the click happened
+        #     (xm, ym), (xM, yM) = samp.label.clipbox.get_points()
+        #     if xm < event.x < xM and ym < event.y < yM:
+        #         # Event happened within the slider, ignore since it is handled in update_slider
+        #         return
+        #     else:
+        #         # user clicked somewhere else on canvas = unpause
+        #         global is_manual
+        #         is_manual = False
+        #
+        # # call update function on slider value change
+        # samp.on_changed(update_slider)
+        #
+        # fig.canvas.mpl_connect('button_press_event', on_click)
+        #
+        # ani = animation.FuncAnimation(fig, update_plot, interval=interval)
+        #
+        # #neu
+
+        # Animation controls
+        is_manual = False  # True if user has taken control of the animation
+        interval = geschw  # ms, time between animation frames
+        loop_len = 5.0  # seconds per loop
+        scale = interval / 1000 / loop_len
+
+        def update_slider(val):
+            global is_manual
+            is_manual = True
+            update(val)
+
+        def update(val):
+            # update curve
+            #l.set_ydata(val * np.sin(t))
+            # redraw canvas while idle
+            figure.canvas.draw_idle()
+
+        def update_plot(num):
+            global is_manual
+            #if is_manual:
+             #   return l,  # don't change
+
+            val = (horizontalSlider_3.val + scale) % horizontalSlider_3.valmax
+            horizontalSlider_3.set_val(val)
+            is_manual = False  # the above line called update_slider, so we need to reset this
+           # return l,
+
+        def on_click(event):
+            # Check where the click happened
+            (xm, ym), (xM, yM) = horizontalSlider_3.label.clipbox.get_points()
+            if xm < event.x < xM and ym < event.y < yM:
+                # Event happened within the slider, ignore since it is handled in update_slider
+                return
+            else:
+                # user clicked somewhere else on canvas = unpause
+                global is_manual
+                is_manual = False
+
 
         #aktuellen layer auswählen
         layer = iface.activeLayer()
@@ -2173,9 +2263,6 @@ class LaengsTask:
             horizontalSlider_3.setMinimum(0)
             horizontalSlider_3.setMaximum(len(zeit))
 
-            self.horizontalSlider_3 = widget.Slider('',
-                                                                0, len(zeit))
-            self.horizontalSlider_3.on_changed(self.set_pos)
 
             y_sohle_2 = []
             y_deckel_3 = []
@@ -2244,27 +2331,16 @@ class LaengsTask:
                 timestamp = zeit[t]
                 time = timestamp.strftime("%d.%m.%Y %H:%M:%S")[:-3]
                 label_4.setText(time)
-                self.t=t
-                return self.t
+                val=t
+                #horizontalSlider_3.setValue(t)
 
-            def set_pos(self, t):
-                self.t = int(self.horizontalSlider_3.val)
-                self.anim(self.t)
+                # self.horizontalSlider_3.sliderReleased.connect(update_slider(time))
+                self.horizontalSlider_3.valueChanged(update_slider(time))
 
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
             self.anim.event_source.stop()
 
-            # TODO: update animation
-
-
-            # slider = interact(update, val=widget.IntSlider(min=1, max=15, value=7))
-            #
-            # def anim2():
-            #     animation.FuncAnimation(figure, animate,
-            #                                     frames=range(horizontalSlider_3.value(), len(zeit)),
-            #                                     interval=geschw,
-            #                                     blit=False)
 
             try:
                 self.anim.event_source.start()
@@ -2332,9 +2408,6 @@ class LaengsTask:
             horizontalSlider_3.setMinimum(0)
             horizontalSlider_3.setMaximum(len(zeit))
 
-            self.horizontalSlider_3 = widget.Slider('',
-                                                    0, len(zeit))
-            self.horizontalSlider_3.on_changed(self.set_pos)
 
             y_sohle_2 = []
             y_deckel_3 = []
@@ -2404,11 +2477,16 @@ class LaengsTask:
                 timestamp = zeit[t]
                 time = timestamp.strftime("%d.%m.%Y %H:%M:%S")[:-3]
                 label_4.setText(time)
-                self.horizontalSlider_3.setValue(t)
+                val = t
+                #self.horizontalSlider_3.setValue(t)
 
+            #self.horizontalSlider_3.sliderReleased.connect(update_slider(time))
+            self.horizontalSlider_3.valueChanged.connect(update_slider)
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
             self.anim.event_source.stop()
+            val = self.horizontalSlider_3.value()
+            self.horizontalSlider_3.valueChanged.connect(update_slider(val))
 
             # # TODO: update animation
             # anim2 = animation.FuncAnimation(figure, animate,

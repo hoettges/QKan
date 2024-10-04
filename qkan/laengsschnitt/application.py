@@ -65,8 +65,6 @@ class Laengsschnitt(QKanPlugin):
         self.animation.laengs()
         canv_2.draw()
 
-
-
     # noinspection PyPep8Naming
     def initGui(self) -> None:
         icon = ":/plugins/qkan/laengsschnitt/res/laengsschnitt.png"
@@ -99,6 +97,7 @@ class Laengsschnitt(QKanPlugin):
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
         self.dialog.fig = plt.figure(layout='constrained')
+        self.dialog.fig .set_size_inches(11.5, 5)
         self.dialog.fig.tight_layout()
 
         qw = QWidget(self.dialog)
