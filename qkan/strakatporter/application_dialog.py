@@ -65,6 +65,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
     cb_haltungen: QCheckBox
     cb_schaechte: QCheckBox
+    cb_rohranfang: QCheckBox
     cb_hausanschluesse: QCheckBox
 
     cb_schachtschaeden: QCheckBox
@@ -102,6 +103,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
         self.cb_schaechte.setChecked(QKan.config.check_import.schaechte)
         self.cb_haltungen.setChecked(QKan.config.check_import.haltungen)
+        self.cb_rohranfang.setChecked(QKan.config.strakat.coords_from_rohr)
         self.cb_hausanschluesse.setChecked(QKan.config.check_import.hausanschluesse)
         self.cb_schachtschaeden.setChecked(QKan.config.check_import.schachtschaeden)
         self.cb_haltungsschaeden.setChecked(QKan.config.check_import.haltungsschaeden)

@@ -411,7 +411,7 @@
      <x>440</x>
      <y>60</y>
      <width>231</width>
-     <height>91</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -533,12 +533,45 @@
      <string>Hausanschlüsse</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cb_rohranfang">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>201</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungskoordinaten aus Rohranfängen statt aus Gerinneanfängen übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Haltungskoordinaten aus Rohranfängen statt aus Gerinneanfängen übernehmen</string>
+    </property>
+    <property name="whatsThis">
+     <string>Haltungskoordinaten aus Rohranfängen statt aus Gerinneanfängen übernehmen</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Haltungskoordinaten aus Rohranfängen statt aus Gerinneanfängen übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Rohranfänge verwenden</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>300</y>
+     <y>340</y>
      <width>231</width>
      <height>61</height>
     </rect>
@@ -644,7 +677,7 @@ der Schachtnamen</string>
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>160</y>
+     <y>200</y>
      <width>231</width>
      <height>121</height>
     </rect>

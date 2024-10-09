@@ -140,7 +140,7 @@ def layersadapt(
 
         if not dbQK.connected:
             errormsg = "Programmfehler in QKan.tools.k_layersadapt.layersadapt()\n" + \
-            "Datenbank konnte nicht verbunden werden"
+            f"Datenbank {database_QKan} konnte nicht verbunden werden"
             logger.error(errormsg)
             raise Exception(f"{__name__}: {errormsg}")
 

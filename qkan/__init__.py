@@ -31,11 +31,10 @@ PLUGIN_LIST = [
     "isyporter.IsyPorter",
     "m150porter.M150Porter",
     "m145porter.M145Porter",
-    # "ganglinienhe8.GanglinienHE8",
     "datacheck.Plausi",
     "zustandsklassen.Zustandsklassen",
-    "subkans.Substanzklasse",
     "sanierungsbedarfszahl.Sanierungsbedarfszahl",
+    # "subkans.Substanzklasse",
     "laengsschnitt.Laengsschnitt",
     "floodTools.FloodTools",
     "tools.QKanTools",
@@ -241,8 +240,8 @@ class QKan:
 
             safe_add_action(zustand, "Zustandsklassen ermitteln")
             safe_add_action(zustand, "Sanierungsbedarfszahl ermitteln")
-            safe_add_action(zustand, "Substanzklassen ermitteln")
-
+            # safe_add_action(zustand, "Substanzklassen ermitteln")
+            #
             safe_add_action(flood2D, "Überflutungsanimation")
 
             safe_add_action(info, "Über QKan")

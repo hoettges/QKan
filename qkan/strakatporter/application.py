@@ -55,6 +55,7 @@ class StrakatPorter(QKanPlugin):
 
             QKan.config.check_import.haltungen = self.import_dlg.cb_haltungen.isChecked()
             QKan.config.check_import.schaechte = self.import_dlg.cb_schaechte.isChecked()
+            QKan.config.strakat.coords_from_rohr = self.import_dlg.cb_rohranfang.isChecked()
             QKan.config.check_import.hausanschluesse = self.import_dlg.cb_hausanschluesse.isChecked()
             QKan.config.check_import.schachtschaeden = self.import_dlg.cb_schachtschaeden.isChecked()
             QKan.config.check_import.haltungsschaeden = self.import_dlg.cb_haltungsschaeden.isChecked()
@@ -65,13 +66,9 @@ class StrakatPorter(QKanPlugin):
             QKan.config.check_import.testmodus = self.import_dlg.cb_testmodus.isChecked()
 
             if not QKan.config.strakat.import_dir:
-                fehlermeldung("Fehler beim Import", "Es wurde kein Verzeichnis ausgewählt!")
-                self.iface.messageBar().pushMessage(
-                    "Fehler beim Import",
-                    "Es wurde kein Verzeichnis ausgewählt!",
-                    level=Qgis.Critical,
-                )
-                return
+                self.log.error_user(
+                "Fehler beim Import: Es wurde kein Verzeichnis ausgewählt!")
+                raise Exception
             else:
                 crs: QgsCoordinateReferenceSystem = self.import_dlg.pw_epsg.crs()
 

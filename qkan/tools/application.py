@@ -14,7 +14,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_database import qgs_version
+from qkan.database.qkan_database import qgs_version, db_version
 from qkan.database.qkan_utils import (
     fehlermeldung,
     get_database_QKan,
@@ -601,7 +601,7 @@ class QKanTools(QKanPlugin):
             # Falls die Datenbank nicht aktuell ist (self.dbIsUptodate = False), werden alle Elemente im Formular
             # deaktiviert. Nur der Checkbutton zur Aktualisierung der Datenbank bleibt aktiv und es erscheint
             # eine Information.
-            self.db_is_uptodate = db_qkan.isCurrentVersion
+            self.db_is_uptodate = db_qkan.isCurrentDbVersion
 
         if not self.db_is_uptodate:
             logging.error("Versionskontrolle: Die QKan-Datenbank ist nicht aktuell")
@@ -768,14 +768,6 @@ class QKanTools(QKanPlugin):
             self.default_dir = os.path.dirname(self.database_name)
         self.dlgdb.tf_qkanDB.setText(self.database_name)
 
-        with DBConnection(dbname=self.database_name) as db_qkan:
-            if db_qkan.isCurrentVersion:
-                db_qkan.sql("SELECT RecoverSpatialIndex()")  # Geometrie-Indizes bereinigen
-                self.iface.mapCanvas().refresh()  # Grafik aktualisieren
-                meldung("Information", "Spatial Index wurde bereinigt...")
-                meldung("Information", "QKan-Datenbank ist aktuell")
-                return
-
         project = QgsProject.instance()
         project_file = project.absoluteFilePath()
         self.dlgdb.tf_projectFile.setText(project_file)
@@ -819,16 +811,22 @@ class QKanTools(QKanPlugin):
                 )"""
             )
 
-            version = qgs_version()
-            if writeDbBackup:
+            pjVersion = qgs_version()
+            if writeDbBackup or writeQgsBackup:
                 fpath, ext = os.path.splitext(self.database_name)
-                dbBackupFilePath = f'{fpath}_{version}{ext}'
-                shutil.copyfile(self.database_name, dbBackupFilePath)
+                bakdir = os.path.join(fpath, f'backup_{pjVersion}')
+                num = 0
+                bakdir_0 = bakdir
+                while os.path.exists(bakdir):
+                    num += 1
+                    bakdir = f'{bakdir_0}_{num}'
+                os.makedirs(bakdir)
 
-            if writeQgsBackup:
-                fpath, ext = os.path.splitext(project_file)
-                dbBackupFilePath = f'{fpath}_{version}{ext}'
-                shutil.copyfile(project_file, dbBackupFilePath)
+                if writeDbBackup:
+                    shutil.copy(self.database_name, bakdir)
+
+                if writeQgsBackup:
+                    shutil.copy(project_file, bakdir)
 
             dbAdapt(
                 cast(str, self.database_name),
@@ -853,9 +851,9 @@ class QKanTools(QKanPlugin):
 
     def run_help(self) -> None:
 
-        version = qgs_version()
+        pjVersion = qgs_version()
 
-        self.dlghp.textBrowser_2.setText(str(version))
+        self.dlghp.textBrowser_2.setText(str(pjVersion))
 
         # show the dialog
         self.dlghp.show()

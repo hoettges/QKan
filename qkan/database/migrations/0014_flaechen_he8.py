@@ -1,4 +1,4 @@
-from distutils.version import LooseVersion
+import packaging.version
 
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger
@@ -37,7 +37,7 @@ def run(dbcon: DBConnection) -> bool:
         return False
 
     # Ab Version 3.0.5 nochmal geändert
-    if dbcon.current_version < LooseVersion("3.0.5"):
+    if dbcon.current_version < packaging.version.parse("3.0.5"):
         if not dbcon.sql(
             f"""
             SELECT AddGeometryColumn('flaechen_he8', 'Geometry', 

@@ -502,22 +502,28 @@ class ImportTask:
         sqls = [
             f"""UPDATE t_strakatkanal
                 SET geom = MakeLine(
-                    Makepoint(rw_gerinne_o, hw_gerinne_o, {self.epsg}),
-                    Makepoint(rw_gerinne_u, hw_gerinne_u, {self.epsg})
+                    Makepoint(iif(:coordsFromRohr, rw_rohranfang, rw_gerinne_o), 
+                              iif(:coordsFromRohr, hw_rohranfang, hw_gerinne_o),
+                              :epsg),
+                    Makepoint(iif(:coordsFromRohr, rw_rohrende, rw_gerinne_u), 
+                              iif(:coordsFromRohr, hw_rohrende, hw_gerinne_u),
+                              :epsg)
                 )
-                WHERE rw_gerinne_o > 1
-                  AND rw_gerinne_u > 1
-                  AND hw_gerinne_o > 1
-                  AND hw_gerinne_u > 1
+                WHERE iif(:coordsFromRohr, rw_rohranfang, rw_gerinne_o) > 1
+                  AND iif(:coordsFromRohr, hw_rohranfang, hw_gerinne_o) > 1
+                  AND iif(:coordsFromRohr, rw_rohrende, rw_gerinne_u) > 1
+                  AND iif(:coordsFromRohr, hw_rohrende, hw_gerinne_u) > 1
             """,
             f"""UPDATE t_strakatkanal
-                SET geop = Makepoint(rw_gerinne_o, hw_gerinne_o, {self.epsg})
+                SET geop = Makepoint(rw_gerinne_o, hw_gerinne_o, :epsg)
                 WHERE rw_gerinne_o > 1   AND hw_gerinne_o > 1
             """,
             "DELETE FROM t_strakatkanal WHERE schachtnummer = 0"
         ]
+
+        params = {"epsg": self.epsg, "coordsFromRohr": False}   # für Netzlogik sind Gerinneschnittpunkte relevant
         for sql in sqls:
-            if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Geoobjekte t_strakatkanal"):
+            if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Geoobjekte t_strakatkanal", parameters=params):
                 raise Exception(f'{self.__class__.__name__}:Fehler beim Erzeugen der Geoobjekte t_strakatkanal')
 
         # Bereinigung inkonsistenter Schachtbezeichnungen
@@ -526,10 +532,16 @@ class ImportTask:
         #    der nicht mit anderen Schachtoben übereinstimmt.
         sqls = [
             # 1.0 Fehlende Schachtbezeichnungen ergänzen
-            "UPDATE t_strakatkanal SET schacht_oben = 'S_' || substr(printf('0000%d', pk), -5) WHERE schacht_oben = ''",
-            # 1.1 Abzweigende Haltungen (k1k), deren schacht_oben nicht mit dem eines durchlaufenden
+            """ UPDATE t_strakatkanal SET schacht_oben = 'S_' || substr(printf('0000%d', pk), -5)
+                WHERE schacht_oben = '' OR schacht_oben = '0'""",
+            # 1.1 Doppelte Schachtbezeichnungen schacht_oben eindeutig machen
+            """ UPDATE t_strakatkanal
+                SET schacht_oben = 'S_' || substr(printf('0000%d', t_strakatkanal.pk), -5)
+                FROM (SELECT pk, schacht_oben FROM t_strakatkanal) AS std
+                WHERE t_strakatkanal.schacht_oben = std.schacht_oben AND t_strakatkanal.pk > std.pk""",
+            # 1.2 Abzweigende Haltungen (k1k), deren schacht_oben nicht mit dem eines durchlaufenden
             #     Stranges (schacht_unten = schacht_oben: k2k) übereinstimmt.
-            f"""WITH k2k AS (
+            """WITH k2k AS (
                     SELECT ku.ROWID, ku.nummer, ku.geop, ku.schacht_oben, ku.schachtart, ku.kanalart
                     FROM t_strakatkanal ko
                     JOIN t_strakatkanal ku ON ko.abflussnummer1 = ku.nummer AND ko.schacht_unten = ku.schacht_oben
@@ -539,31 +551,31 @@ class ImportTask:
                         k1.nummer AS n1, k2.nummer AS n2, k1.schacht_oben AS schoben_diff, 
                         k2.schacht_oben AS schoben, k1.schachtart, k1.kanalart
                     FROM k2k AS k2
-                    JOIN t_strakatkanal AS k1 ON st_distance(k2.geop, k1.geop) < {self.maxdiff}
+                    JOIN t_strakatkanal AS k1 ON st_distance(k2.geop, k1.geop) < :maxdiff
                     WHERE
                         k2.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='t_strakatkanal'
-                            AND search_frame=makecircle(x(k1.geop),y(k1.geop), {self.maxdiff}, {self.epsg}))
+                            AND search_frame=makecircle(x(k1.geop),y(k1.geop), :maxdiff, :epsg))
                         AND k2.schacht_oben <> k1.schacht_oben
                 )
                 UPDATE t_strakatkanal SET schacht_oben = ksk.schoben
                 FROM (SELECT n1, schoben FROM k1k) AS ksk
-                WHERE ksk.n1 = t_strakatkanal.nummer AND ksk.schoben <> ''""",
+                WHERE ksk.n1 = t_strakatkanal.nummer AND ksk.schoben <> '' AND ksk.schoben <> '0'""",
 
-            # 1.2 Unterschiedliche Schachtnamen an der gleichen Position
-            f"""WITH k2k AS (
+            # 1.3 Unterschiedliche Schachtnamen an der gleichen Position
+            """WITH k2k AS (
                     SELECT k2.nummer AS nummer, k1.schacht_oben AS schoben
                     FROM t_strakatkanal AS k2
-                    JOIN t_strakatkanal AS k1 ON st_distance(k2.geop, k1.geop) < {self.maxdiff}
+                    JOIN t_strakatkanal AS k1 ON st_distance(k2.geop, k1.geop) < :maxdiff
                     WHERE
                         k2.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='t_strakatkanal'
-                            AND search_frame=makecircle(x(k1.geop),y(k1.geop), {self.maxdiff}, {self.epsg}))
+                            AND search_frame=makecircle(x(k1.geop),y(k1.geop), :maxdiff, :epsg))
                         AND k1.schacht_oben <> k2.schacht_oben AND k1.nummer < k2.nummer
                 )
                 UPDATE t_strakatkanal SET schacht_oben = ksk.schoben
                 FROM (SELECT nummer, schoben FROM k2k) AS ksk
                 WHERE ksk.nummer = t_strakatkanal.nummer AND ksk.schoben <> ''""",
 
-            # 1.3 Test der Haltungen, die über "abflussnummmerx" und "zuflussnummerx" verbunden sind.
+            # 1.4 Test der Haltungen, die über "abflussnummmerx" und "zuflussnummerx" verbunden sind.
             """ WITH ka AS (
                     SELECT n1 AS id, n4, kurz, text
                     FROM t_reflists
@@ -599,8 +611,10 @@ class ImportTask:
                 FROM sx
                 WHERE sx.nummer_oben = t_strakatkanal.nummer AND t_strakatkanal.schacht_unten <> sx.schacht_oben AND sx.schacht_oben <> ''""",
         ]
+
+        params = {"epsg": self.epsg, "maxdiff": self.maxdiff}
         for sql in sqls:
-            if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Korrektur Schachtnamen t_strakatkanal"):
+            if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Korrektur Schachtnamen t_strakatkanal", parameters=params):
                 raise Exception(f'{self.__class__.__name__}:Fehler bei der Korrektur der Schachtnamen t_strakatkanal')
 
         self.db_qkan.commit()
@@ -1625,37 +1639,38 @@ class ImportTask:
                 profilnam, entwart, druckdicht, material, strasse, eigentum, teilgebiet,  
                 haltungstyp, baujahr, simstatus, kommentar, geom)
             SELECT
-                stk.haltungsname                        AS haltnam,
-                stk.schacht_oben                        AS schoben,
-                stk.schacht_unten                       AS schunten,
-                stk.laenge                              AS laenge,
-                stk.rw_gerinne_o                        AS xschob,
-                stk.hw_gerinne_o                        AS yschob,
-                stk.rw_gerinne_u                        AS xschun,
-                stk.hw_gerinne_u                        AS yschun,
-                stk.rohrbreite_v                        AS breite,
-                stk.rohrhoehe___v                       AS hoehe,
-                stk.sohle_oben___v                      AS sohleoben,
-                stk.sohle_unten__v                      AS sohleunten,
-                profilarten.text                        AS profilnam,
-                k2e.text                                AS entwart,
+                stk.haltungsname                                            AS haltnam,
+                stk.schacht_oben                                            AS schoben,
+                stk.schacht_unten                                           AS schunten,
+                stk.laenge                                                  AS laenge,
+                iif(:coordsFromRohr, stk.rw_rohranfang, stk.rw_gerinne_o)   AS xschob,
+                iif(:coordsFromRohr, stk.hw_rohranfang, stk.hw_gerinne_o)   AS yschob,
+                iif(:coordsFromRohr, stk.rw_rohrende, stk.rw_gerinne_u)     AS xschun,
+                iif(:coordsFromRohr, stk.hw_rohrende, stk.hw_gerinne_u)     AS yschun,
+                stk.rohrbreite_v                                            AS breite,
+                stk.rohrhoehe___v                                           AS hoehe,
+                stk.sohle_oben___v                                          AS sohleoben,
+                stk.sohle_unten__v                                          AS sohleunten,
+                profilarten.text                                            AS profilnam,
+                k2e.text                                                    AS entwart,
                 CASE WHEN instr(lower(k2e.text),'druck') > 0
-                    THEN 1 ELSE 0 END                   AS druckdicht,
-                rohrmaterialien.text                    AS material,
+                    THEN 1 ELSE 0 END                                       AS druckdicht,
+                rohrmaterialien.text                                        AS material,
                 CASE WHEN INSTR(strassen.name,' ') > 0
                     THEN substr(strassen.name, INSTR(strassen.name,' ')+1)
                     ELSE strassen.name
-                END                                     AS strasse,
-                eg.text                                 AS eigentum,
-                k2g.text                                AS teilgebiet,
-                'Haltung'                               AS haltungstyp,
-                stk.baujahr                             AS baujahr,
-                'in Betrieb'                            AS simstatus,
-                'QKan-STRAKAT-Import'                   AS kommentar,
-                MakeLine(MakePoint(stk.rw_gerinne_o,
-                                   stk.hw_gerinne_o, :epsg),
-                         MakePoint(stk.rw_gerinne_u,
-                                   stk.hw_gerinne_u, :epsg)) AS geom
+                END                                                         AS strasse,
+                eg.text                                                     AS eigentum,
+                k2g.text                                                    AS teilgebiet,
+                'Haltung'                                                   AS haltungstyp,
+                stk.baujahr                                                 AS baujahr,
+                'in Betrieb'                                                AS simstatus,
+                'QKan-STRAKAT-Import'                                       AS kommentar,
+                MakeLine(MakePoint(iif(:coordsFromRohr, stk.rw_rohranfang, stk.rw_gerinne_o),
+                                   iif(:coordsFromRohr, stk.hw_rohranfang, stk.hw_gerinne_o), :epsg),
+                         MakePoint(iif(:coordsFromRohr, stk.rw_rohrende, stk.rw_gerinne_u),
+                                   iif(:coordsFromRohr, stk.hw_rohrende, stk.hw_gerinne_u), :epsg))
+                                                                            AS geom
             FROM
                 t_strakatkanal      AS stk
                 LEFT JOIN profilarten       ON stk.profilart_v = profilarten.id
@@ -1668,11 +1683,11 @@ class ImportTask:
                 LEFT JOIN eigentum  AS eg   ON eg.id = stk.eigentum 
             WHERE stk.laenge > 0.045
               AND stk.schachtnummer <> 0                         -- nicht geloescht
-              AND stk.schachtart <> 0
+              AND k2t.n4 <> 0
               AND haltungen.pk IS NULL                           -- nur neue Haltungen hinzufügen
               """
 
-        params = {"epsg": self.epsg}
+        params = {"epsg": self.epsg, "coordsFromRohr": QKan.config.strakat.coords_from_rohr}
 
         if not self.db_qkan.sql(sql, "strakat_import Haltungen (1)", params):
             raise Exception(f"{self.__class__.__name__}: Fehler in strakat_import Haltungen (1)")
@@ -1686,25 +1701,57 @@ class ImportTask:
         # identisch sein: eigentum, kanalart
 
         def _getstraenge():
-            """Liest alle zusammengesetzten Kanäle (Kriterium: schachtart = 0 zuzüglich oberhalb liegendem Kanal)"""
-            sql = f"""WITH ko AS (
-                        SELECT *
-                        FROM t_strakatkanal AS ko
-                        LEFT JOIN (SELECT * FROM t_strakatkanal WHERE schachtart = 0) AS k2
-                        ON k2.schacht_unten = ko.schacht_unten          -- muendet gemeinsam in einen Schacht
-                        WHERE ko.schachtart = 0 OR k2.nummer IS NULL    -- entweder schachtart 0 oder wenn nicht, dann kein paralleler mit schachtart 0
+            """Liest alle zusammengesetzten Kanäle (Kriterium: knotenart.n4 = 0 zuzüglich oberhalb liegendem Kanal)"""
+            sql = """WITH
+                    knotenart AS (
+                        SELECT n1 AS id, n4, kurz, text
+                        FROM t_reflists
+                        WHERE tabtyp = 'schachtart' 
+                    ),
+                    kanal AS (
+                        SELECT
+                            stk.nummer          AS nummer,
+                            stk.haltungsname    AS haltungsname,
+                            stk.schacht_oben    AS schacht_oben,
+                            stk.schacht_unten   AS schacht_unten,
+                            stk.rw_gerinne_o    AS rw_gerinne_o,
+                            stk.hw_gerinne_o    AS hw_gerinne_o,
+                            stk.rw_gerinne_u    AS rw_gerinne_u,
+                            stk.hw_gerinne_u    AS hw_gerinne_u,
+                            stk.rw_rohranfang   AS rw_rohranfang,
+                            stk.hw_rohranfang   AS hw_rohranfang,
+                            stk.rw_rohrende     AS rw_rohrende,
+                            stk.hw_rohrende     AS hw_rohrende,
+                            stk.schachtart      AS schachtart,
+                            stk.kanalart        AS kanalart,
+                            stk.eigentum        AS eigentum,
+                            k2t.n4              AS n4
+                        FROM
+                            t_strakatkanal AS stk
+                            JOIN knotenart AS k2t ON k2t.id = stk.schachtart
+                    ),
+                    ko AS (
+                        SELECT k1.*
+                        FROM kanal AS k1
+                        LEFT JOIN (SELECT * FROM kanal WHERE n4 = 0) AS k2
+                        ON k2.schacht_unten = k1.schacht_unten          -- muendet gemeinsam in einen Schacht
+                        WHERE k1.n4 = 0 OR k2.nummer IS NULL    -- entweder n4 = 0 oder wenn nicht, dann kein paralleler mit n4 = 0
                     )
                     SELECT
                         ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, 
                         ko.haltungsname, ko.schacht_oben, ko.schacht_unten,
                         ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un, 
-                        ko.rw_gerinne_o, ko.hw_gerinne_o, ko.rw_gerinne_u, ko.hw_gerinne_u
+                        iif(:coordsFromRohr, ko.rw_rohranfang, ko.rw_gerinne_o) as xob, 
+                        iif(:coordsFromRohr, ko.hw_rohranfang, ko.hw_gerinne_o) as yob,
+                        iif(:coordsFromRohr, ko.rw_rohrende, ko.rw_gerinne_u) as xun,
+                        iif(:coordsFromRohr, ko.hw_rohrende, ko.hw_gerinne_u) as yun
                         FROM ko
-                        JOIN t_strakatkanal AS ku ON ku.schacht_oben = ko.schacht_unten
-                        WHERE ko.schachtart = 0
-                           OR (ku.schachtart = 0 AND ko.kanalart = ku.kanalart AND ko.eigentum = ku.eigentum)"""
+                        JOIN kanal AS ku ON ku.schacht_oben = ko.schacht_unten
+                        WHERE ko.n4 = 0
+                           OR (ku.n4 = 0 AND ko.kanalart = ku.kanalart AND ko.eigentum = ku.eigentum)"""
 
-            if not self.db_qkan.sql(sql):
+            params = {"coordsFromRohr": QKan.config.strakat.coords_from_rohr}
+            if not self.db_qkan.sql(sql, parameters=params):
                 raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Haltungen (2)")
 
             stnet = self.db_qkan.fetchall()
@@ -1721,8 +1768,10 @@ class ImportTask:
                     if not idxschun.get(anf):
                         break
                 else:
-                    raise Exception(f'Fehler: Konnte (mindestens) ein Haltungsteilstück'
-                                    f'nicht verarbeiten: Schacht oben = {anf}')
+                    errormsg = f'Fehler: Konnte (mindestens) ein Haltungsteilstück' + \
+                                    f'nicht verarbeiten: Schacht oben = {anf}'
+                    logger.error(errormsg)
+                    raise Exception(errormsg)
                 # Kanal verfolgen und jedes Teilstück entnehmen
                 haltnam = idxschob[anf][2]
                 node = anf  # Anfang übernehmen
@@ -2096,10 +2145,10 @@ class ImportTask:
                 stk.schacht_oben                AS schoben,
                 stk.schacht_unten               AS schunten,
                 stk.laenge                      AS laenge,
-                stk.rw_gerinne_o                AS xschob,
-                stk.hw_gerinne_o                AS yschob,
-                stk.rw_gerinne_u                AS xschun,
-                stk.hw_gerinne_u                AS yschun,
+                iif(:coordsFromRohr, stk.rw_rohranfang, stk.rw_gerinne_o)   AS xschob,
+                iif(:coordsFromRohr, stk.hw_rohranfang, stk.hw_gerinne_o)   AS yschob,
+                iif(:coordsFromRohr, stk.rw_rohrende, stk.rw_gerinne_u)     AS xschun,
+                iif(:coordsFromRohr, stk.hw_rohrende, stk.hw_gerinne_u)     AS yschun,
                 stk.rohrbreite_v                AS breite,
                 stk.rohrhoehe___v               AS hoehe,
                 CASE WHEN INSTR(trim(strassen.name),' ') > 0
@@ -2123,10 +2172,11 @@ class ImportTask:
                 stb.skbetriebssicherheit        AS max_ZB,
                 stb.skstandsicherheit           AS max_ZS,
                 'QKan-STRAKAT-Import'                   AS kommentar,
-                MakeLine(MakePoint(stk.rw_gerinne_o,
-                                   stk.hw_gerinne_o, :epsg),
-                         MakePoint(stk.rw_gerinne_u,
-                                   stk.hw_gerinne_u, :epsg)) AS geom
+                MakeLine(MakePoint(iif(:coordsFromRohr, stk.rw_rohranfang, stk.rw_gerinne_o),
+                                   iif(:coordsFromRohr, stk.hw_rohranfang, stk.hw_gerinne_o), :epsg),
+                         MakePoint(iif(:coordsFromRohr, stk.rw_rohrende, stk.rw_gerinne_u),
+                                   iif(:coordsFromRohr, stk.hw_rohrende, stk.hw_gerinne_u), :epsg))
+                                                                            AS geom
             FROM
                 t_strakatkanal          AS stk
                 LEFT JOIN strassen              ON stk.strassennummer = strassen.id
@@ -2146,7 +2196,7 @@ class ImportTask:
             GROUP BY stk.strakatid, stb.datum
         """
 
-        params = {"epsg": self.epsg}
+        params = {"epsg": self.epsg, "coordsFromRohr": QKan.config.strakat.coords_from_rohr}
         if not self.db_qkan.sql(sql, "strakat_import untersuchte Haltungen", params):
             raise Exception(f"{self.__class__.__name__}: Fehler bei ")
 

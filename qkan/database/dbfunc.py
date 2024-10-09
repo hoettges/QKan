@@ -10,7 +10,7 @@ import os
 import shutil
 import sqlite3
 from array import array
-from distutils.version import LooseVersion
+import packaging.version
 from sqlite3 import Connection
 from typing import Any, List, Optional, Union, cast, Dict, Tuple
 from fnmatch import fnmatch
@@ -59,7 +59,7 @@ class DBConnection:
         epsg: int = 25832,
         qkan_db_update: bool = False,
     ):
-        """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentVersion.
+        """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentDbVersion.
 
         :param dbname:      Pfad zur SpatiaLite-Datenbankdatei.
                             - Falls angegeben und nicht vorhanden, wird es angelegt.
@@ -74,7 +74,8 @@ class DBConnection:
         :param epsg:        EPSG-Code aller Tabellen in einer neuen Datenbank
 
         :qkanDBUpdate:      Bei veralteter Datenbankversion automatisch Update durchführen. Achtung:
-                            Nach Durchführung muss k_layersadapt mindestens mit den Optionen
+                            Nach Durchführung muss k_layersadapt ausgeführt werden.
+                            Diese Option ist insbesondere für die Testläufe notwendig
         :type qkan_db_update: Boolean
 
 
@@ -85,7 +86,7 @@ class DBConnection:
 
         connected:          Datenbankverbindung erfolgreich
 
-        isCurrentVersion:   Datenbank ist auf dem aktuellen Stand
+        isCurrentDbVersion:   Datenbank ist auf dem aktuellen Stand
         """
 
         # Übernahme einiger Attribute in die Klasse
@@ -98,10 +99,7 @@ class DBConnection:
         self.sqltext = ""
         self.sqlcount = 0
 
-        self.actversion: str = db_version()
-
-        # QKan-Datenbank ist auf dem aktuellen Stand.
-        self.isCurrentVersion = True
+        self.actDbVersion: packaging.version.Version = packaging.version.parse(db_version())
 
         # Verbindung hergestellt, d.h. weder fehlgeschlagen noch wegen reload geschlossen
         self.connected = True
@@ -110,7 +108,7 @@ class DBConnection:
         # die ein Neuladen des Projektes erforderlich machen
         self.reload = False
 
-        self.current_version = LooseVersion("0.0.0")
+        self.current_dbversion = packaging.version.parse("0.0.0")
 
         self._connect(tab_object=tab_object, qkan_db_update=qkan_db_update)
 
@@ -145,7 +143,7 @@ class DBConnection:
         if not self.dbname:
             self.dbname, _ = get_database_QKan()
             if not self.dbname:
-                fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
+                logger.warning("Fehler: Für die gewählte Funktion muss ein Projekt geladen sein!")
                 raise DBConnectError()
 
         # Load existing database
@@ -168,7 +166,8 @@ class DBConnection:
             )
 
             # Versionsprüfung
-            if not self.check_version():
+            self.check_version()
+            if not self.isCurrentDbVersion:
                 logger.debug("dbfunc: Datenbank ist nicht aktuell")
                 if qkan_db_update:
                     logger.debug(
@@ -176,12 +175,12 @@ class DBConnection:
                     )
                     self.upgrade_database()
                 else:
-                    warnung(
-                        f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_version} stimmt nicht ",
-                        f"mit der aktuellen QKan-Version {self.actversion} überein und muss aktualisiert werden!",
+                    logger.info(
+                        f"Projekt muss aktualisiert werden. Die QKan-Version der "
+                        f"Datenbank {self.current_dbversion.base_version} stimmt nicht \n"
+                        f"mit der aktuellen QKan-Version {self.actDbVersion.base_version} überein und muss aktualisiert werden!"
                     )
                     self.consl.close()
-                    self.isCurrentVersion = False
                     self.connected = False
 
                     return None
@@ -207,7 +206,7 @@ class DBConnection:
                     level=Qgis.Info,
                 )
                 if not createdbtables(
-                    self.consl, self.cursl, self.actversion, self.epsg
+                    self.consl, self.cursl, self.actDbVersion.base_version, self.epsg
                 ):
                     fehlermeldung(
                         "Fehler",
@@ -319,12 +318,12 @@ class DBConnection:
 
         :returns: void
         """
-        if not self.isCurrentVersion:
-            warnung(
-                f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_version} stimmt nicht ",
-                f"mit der aktuellen QKan-Version {self.actversion} überein und muss aktualisiert werden!",
-            )
-            return False
+        # if not self.isCurrentDbVersion:
+        #     warnung(
+        #         f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_dbversion} stimmt nicht ",
+        #         f"mit der aktuellen QKan-Version {self.actDbVersion.base_version} überein und muss aktualisiert werden!",
+        #     )
+        #     return False
         try:
             # fürs logging:
             if isinstance(parameters, tuple):
@@ -624,7 +623,6 @@ class DBConnection:
         elif tabnam == "untersuchdat_haltung":
             parlis = [
                 "untersuchhal",
-                "untersuchrichtung",
                 "schoben",
                 "schunten",
                 "id",
@@ -663,12 +661,12 @@ class DBConnection:
 
             sql = f"""  
                 INSERT INTO untersuchdat_haltung
-                  (untersuchhal, untersuchrichtung, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
+                  (untersuchhal, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
                     inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
                     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
                     film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
                 SELECT
-                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+                  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
                   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -680,7 +678,7 @@ class DBConnection:
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
                 UNION
                 SELECT
-                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+                  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
                   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -843,7 +841,6 @@ class DBConnection:
         elif tabnam == "untersuchdat_anschlussleitungen":
             parlis = [
                 "untersuchleit",
-                "untersuchrichtung",
                 "schoben",
                 "schunten",
                 "id",
@@ -882,12 +879,12 @@ class DBConnection:
 
             sql = f"""  
                 INSERT INTO untersuchdat_anschlussleitungen
-                  (untersuchleit, untersuchrichtung, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
+                  (untersuchleit, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
                     inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
                     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
                     film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
                 SELECT
-                  :untersuchleit, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+                  :untersuchleit, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
                   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -899,7 +896,7 @@ class DBConnection:
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
                 UNION
                 SELECT
-                  :untersuchleit, :untersuchrichtung, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+                  :untersuchleit, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
                   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -1884,9 +1881,9 @@ class DBConnection:
          - Die aktuelle Datenbank ist bereits geöffnet.
 
         Die aktuelle Versionsnummer steht in der Datenbank: info.version
-        Diese wird mit dem Attribut self.actversion verglichen."""
+        Diese wird mit dem Attribut self.actDbVersion verglichen."""
 
-        logger.debug("0 - actversion = {}".format(self.actversion))
+        logger.debug("0 - actversion = {}".format(self.actDbVersion.base_version))
 
         # ---------------------------------------------------------------------------------------------
         # Aktuelle Version abfragen
@@ -1903,10 +1900,10 @@ class DBConnection:
 
         data = self.cursl.fetchone()
         if data is not None:
-            self.current_version = LooseVersion(data[0])
+            self.current_dbversion = packaging.version.parse(data[0])
             logger.debug(
                 "dbfunc.DBConnection.version: Aktuelle Version der qkan-Datenbank ist {}".format(
-                    self.current_version
+                    self.current_dbversion.base_version
                 )
             )
         else:
@@ -1921,11 +1918,17 @@ class DBConnection:
             ):
                 return False
 
-            self.current_version = LooseVersion("1.9.9")
+            self.current_dbversion = packaging.version.parse("1.9.9")
 
-        logger.debug(f"0 - versiondbQK = {self.current_version}")
+        logger.debug(f"0 - versiondbQK = {self.current_dbversion.base_version}")
 
-        return self.actversion == self.current_version
+        self.isCurrentDbVersion = (self.actDbVersion <= self.current_dbversion)
+
+        # Warnung, falls geladene Datenbank neuer als die Datenbankversion zu diesem QKan-Plugin ist.
+        if self.actDbVersion > self.current_dbversion:
+            logger.warning("Die QKan-Version ist älter als die QKan-Datenbank. "
+                           "Bitte führen Sie ein Upgrade des QKan-Plugins aus")
+
 
     # Ändern der Attribute einer Tabelle
 
@@ -2218,14 +2221,14 @@ class DBConnection:
             return True
 
         logger.debug(
-            "dbfunc.DBConnection.updateversion: versiondbQK = %s", self.current_version
+            "dbfunc.DBConnection.updateversion: versiondbQK = %s", self.current_dbversion.base_version
         )
 
         progress_bar = QProgressBar(QKan.instance.iface.messageBar())
         progress_bar.setRange(0, 100)
         progress_bar.setValue(0)
 
-        migrations = find_migrations(self.current_version)
+        migrations = find_migrations(self.current_dbversion)
         for i, migration in enumerate(migrations):
             if not migration.run(self):
                 fehlermeldung("Fehler beim Ausführen des Datenbankupdates.")
@@ -2244,8 +2247,8 @@ class DBConnection:
         self.commit()
 
         if self.reload:
-            meldung(
-                "Achtung! Benutzerhinweis!",
+            logger.info(
+                "Achtung! Benutzerhinweis!\n" + \
                 "Die Datenbank wurde geändert. Bitte QGIS-Projekt nach dem Speichern neu laden...",
             )
             return False

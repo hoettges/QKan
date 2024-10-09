@@ -54,23 +54,18 @@ def dbAdapt(
         qkan_project.setFileName(projectFile)
         qkan_project.write()
 
-    dbQK = DBConnection(
-        dbname=qkanDB, qkan_db_update=True
-    )  # Datenbankobjekt zur Aktualisierung öffnen
+    with DBConnection(dbname=qkanDB, qkan_db_update=True) as dbQK:   # Datenbankobjekt zur Aktualisierung öffnen
 
-    if not dbQK.connected:
-        fehlermeldung(
-            "Fehler in k_qgsadapt:\n",
-            "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                qkanDB
-            ),
-        )
-        return
+        if not dbQK.connected:
+            fehlermeldung(
+                "Fehler in k_qgsadapt:\n",
+                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                    qkanDB
+                ),
+            )
+            return
 
-    dbQK.upgrade_database()
-    # Datenbankverbindungen schliessen
-
-    del dbQK
+        dbQK.sql("SELECT RecoverSpatialIndex()")  # Geometrie-Indizes bereinigen
 
     # if projectFile:
     #     qkan_project.clear()

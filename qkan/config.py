@@ -297,8 +297,9 @@ class HE8Config(ClassObject):
 
 
 class STRAKATConfig(ClassObject):
-    import_dir: str = ""    # Importverzeichnis mit den STRAKAT-Dateien, u. a. kanal.rwtopen
-    maxdiff: float = 0.1    # Abst
+    import_dir: str = ""            # Importverzeichnis mit den STRAKAT-Dateien, u. a. kanal.rwtopen
+    maxdiff: float = 0.1            # Abst
+    coords_from_rohr: bool = False  # Haltungskoordinaten aus Rohranfang bzw. -ende statt Gerinne_o bzw. _u
 
 
 class FLOODConfig(ClassObject):
@@ -736,9 +737,9 @@ class ToolsConfig(ClassObject):
                 'verdämmert': ['*verdämm*', '*verdaemm*', '*verd\xe4mm*'],
                 'fiktiv': ['fikt*'],
                 'rückgebaut': ['zurückgeb*', 'zurueckgeb*', 'zur\xfcckgeb*', 'rückgeb*', 'rueckgeb*', '*r\xfcckgeb*'],
-                'Mischwasser':      ['mischw*', 'mw', 'km', 'mk', 'km-kanal'],
-                'Schmutzwasser':    ['schmutzw*', 'sw', 'ks', 'sk', 'ks-kanal'],
-                'Regenwasser':      ['regenw*', 'rw', 'kr', 'rk', 'kr-kanal'],
+                'Mischwasser':      ['mischw*', 'mw', 'km', 'mk', 'km-kanal', 'stauk* mischw*'],
+                'Schmutzwasser':    ['schmutzw*', 'sw', 'ks', 'sk', 'ks-kanal', 'stauk* schmutzw*'],
+                'Regenwasser':      ['regenw*', 'rw', 'kr', 'rk', 'kr-kanal', 'stauk* regenw*'],
                 'Rinnen/Gräben':    ['*rinne*', '*gräbe*', '*grabe*'],
             },
             'simulationsstatus': {

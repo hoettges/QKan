@@ -1,6 +1,6 @@
 import os
 
-from qgis.core import Qgis, QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog, QgsSettings
 from qgis.utils import iface, pluginDirectory
 
 from qkan import QKan, enums
@@ -16,15 +16,26 @@ def initQKanProject():
     try:
         logger = get_logger("QKan.openproject")
         logger.debug("openProjekt started\n")
+
+        # Add QKan SVG path
+        qkanSvgPath = os.path.join(pluginDirectory("qkan"), "templates/svg")
+        svgPaths = QgsSettings().value('svg/searchPathsForSVG')
+        if qkanSvgPath not in svgPaths:
+            svgPaths.append(qkanSvgPath)
+            QgsSettings().setValue('svg/searchPathsForSVG', svgPaths)
+
+        # Set Identify Forms Option
+        QgsSettings().setValue('Map/identifyAutoFeatureForm', 'true')
+        QgsSettings().setValue('Map/identifyMode', 'LayerSelection')
+
         database_qkan, _ = get_database_QKan(silent=True)
-        db_qkan = DBConnection(dbname=database_qkan)
-        is_actual = db_qkan.isCurrentVersion
+        with DBConnection(dbname=database_qkan) as db_qkan:
+            is_actual = db_qkan.isCurrentDbVersion
         if not is_actual:
             qkt = QKanTools(QKan.instance.iface)
-            warnung(
-                "Versionskontrolle",
-                "Die Datenbank muss aktualisiert werden!",
-                duration=5,
+            logger.warning(
+                "Versionskontrolle: "
+                "Die Datenbank muss aktualisiert werden!"
             )
             qkt.run_dbAdapt()
     except ImportError:

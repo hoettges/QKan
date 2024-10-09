@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60mm"
+   height="20mm"
+   viewBox="0 0 60 20"
+   version="1.1"
+   id="svg27113"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="Wehr.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview27115"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.8079686"
+     inkscape:cx="174.32531"
+     inkscape:cy="77.280067"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs27110" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.1;stroke-opacity:1;fill-opacity:1"
+       id="rect30916"
+       width="60"
+       height="20"
+       x="0"
+       y="0" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+       d="M 0,0 59.999998,20"
+       id="path32814" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1346;stroke-opacity:1"
+       d="m 0.35612934,37.927775 c 0,-20.468534 0.12038579,-37.21551632 0.26752397,-37.21551632 0.14713819,0 50.42815069,16.73434532 111.73557669,37.18743532 L 223.82729,75.087126 112.09171,75.11521 0.35612934,75.143291 Z"
+       id="path32885"
+       transform="scale(0.26458333)" />
+  </g>
+</svg>

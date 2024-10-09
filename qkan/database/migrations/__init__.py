@@ -1,7 +1,7 @@
 import dataclasses
 import importlib
 import pkgutil
-from distutils.version import LooseVersion
+import packaging.version
 from types import ModuleType
 from typing import Callable, List, Optional
 
@@ -13,7 +13,7 @@ logger = get_logger("QKan.database.migrations")
 
 @dataclasses.dataclass(init=True)
 class Migration:
-    version: LooseVersion
+    version: packaging.version.Version
     run: Callable[[DBConnection], bool]
     name: str
 
@@ -23,11 +23,10 @@ def parse_migration(module: ModuleType) -> Optional[Migration]:
         logger.error("Migration %s is missing the VERSION tag.", module.__name__)
         return None
 
-    # Parse and check version for int-yness
-    version = LooseVersion(getattr(module, "VERSION", None))
-    if not len(version.version) > 0 or not isinstance(version.version[0], int):
+    version = packaging.version.parse(getattr(module, "VERSION", ""))
+    if not isinstance(version, packaging.version.Version):
         logger.error(
-            "Could not parse version of %s or the version is not an int.",
+            "Could not parse version of %s.",
             module.__name__,
         )
         return None
@@ -54,7 +53,7 @@ def parse_migration(module: ModuleType) -> Optional[Migration]:
     return Migration(name=module.__name__.split(".")[-1], version=version, run=run)
 
 
-def find_migrations(version: LooseVersion) -> Optional[List[Migration]]:
+def find_migrations(version: packaging.version.Version) -> Optional[List[Migration]]:
     migrations = []
     for importer, modname, ispkg in pkgutil.iter_modules(
         __path__, prefix=__name__ + "."
