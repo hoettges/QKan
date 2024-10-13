@@ -7,7 +7,7 @@ from qgis.testing import unittest
 
 sys.path.append(os.path.join(os.path.split(__file__)[0], ".."))
 
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+from base_test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 
 from qkan import enums
 from qkan.createunbeffl.k_unbef import create_unpaved_areas
