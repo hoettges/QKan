@@ -876,7 +876,7 @@ Haltungen pro Strang:</string>
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lf_unit_fangradius_2">
+   <widget class="QLabel" name="lf_unit_abstand_zustandstexte">
     <property name="geometry">
      <rect>
       <x>285</x>
@@ -957,7 +957,7 @@ Haltungen pro Strang:</string>
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lf_unit_fangradius_3">
+   <widget class="QLabel" name="lf_unit_abstand_zustandsbloecke">
     <property name="geometry">
      <rect>
       <x>285</x>

@@ -254,6 +254,10 @@ class ImportTask:
             if not self.db_qkan.sql(sql, 'Erstellung Tabelle "t_strakatkanal"'):
                 return False
 
+            # Kopie von t_strakatkanal, um inkonsistente Schachtbezeichnungen nachvollziehbar zu machen
+            if not self.db_qkan.sql(sql.replace('t_strakatkanal', 't_strakatk_ori'), 'Erstellung Tabelle "t_strakatk_ori"'):
+                return False
+
             sqls = [
                 f"SELECT AddGeometryColumn('t_strakatkanal', 'geom', {self.epsg}, 'LINESTRING')",
                 "SELECT CreateSpatialIndex('t_strakatkanal', 'geom')",
@@ -261,8 +265,15 @@ class ImportTask:
                 "SELECT CreateSpatialIndex('t_strakatkanal', 'geop')",
             ]
             for sql in sqls:
-                if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import ergänze geom und geop in t_strakatkanal"):
+                if not self.db_qkan.sql(sql=sql,
+                                        stmt_category="strakat_import ergänze geom und geop in t_strakatkanal"):
                     raise Exception(f'{self.__class__.__name__}: Fehler beim Ergänzen von geom und geop in t_strakatkanal')
+
+            # Kopie von t_strakatkanal, um inkonsistente Schachtbezeichnungen nachvollziehbar zu machen
+            for sql in sqls:
+                if not self.db_qkan.sql(sql=sql.replace('t_strakatkanal', 't_strakatk_ori'),
+                                        stmt_category="strakat_import ergänze geom und geop in t_strakatk_ori"):
+                    raise Exception(f'{self.__class__.__name__}: Fehler beim Ergänzen von geom und geop in t_strakatk_ori')
 
             self.db_qkan.commit()
 
@@ -526,20 +537,63 @@ class ImportTask:
             if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Geoobjekte t_strakatkanal", parameters=params):
                 raise Exception(f'{self.__class__.__name__}:Fehler beim Erzeugen der Geoobjekte t_strakatkanal')
 
+        # Kopie von t_strakatkanal, um inkonsistente Schachtbezeichnungen nachvollziehbar zu machen
+        sql = "INSERT INTO t_strakatk_ori SELECT * FROM t_strakatkanal"
+        if not self.db_qkan.sql(sql=sql, stmt_category="strakat_import Kopie von t_strakatkanal"):
+            raise Exception(f'{self.__class__.__name__}:Fehler bei strakat_import Kopie von t_strakatkanal')
+
         # Bereinigung inkonsistenter Schachtbezeichnungen
 
         # 1. Übertragen des schacht_oben auf Kanäle ohne schachtoben oder mit einem schachtoben,
         #    der nicht mit anderen Schachtoben übereinstimmt.
         sqls = [
-            # 1.0 Fehlende Schachtbezeichnungen ergänzen
-            """ UPDATE t_strakatkanal SET schacht_oben = 'S_' || substr(printf('0000%d', pk), -5)
+            # 1.0 Fehlende Schacht- und Haltungsbezeichnungen ergänzen
+            """ UPDATE t_strakatkanal SET schacht_oben = 'SN_' || substr(printf('0000%d', pk), -5)
                 WHERE schacht_oben = '' OR schacht_oben = '0'""",
-            # 1.1 Doppelte Schachtbezeichnungen schacht_oben eindeutig machen
+            """ UPDATE t_strakatkanal SET haltungsname = 'HN_' || substr(printf('0000%d', pk), -5)
+                WHERE haltungsname = '' OR haltungsname = '0'""",
+            # 1.1 Doppelte Haltungsbezeichnungen eindeutig machen. Erkennungsmerkmal zur späteren
+            # Analyse: Diese Haltungsnamen beginnen
+            # mit HA_ im Gegensatz zu den Haltungen ohne Namen, die mit HN_ beginnen
             """ UPDATE t_strakatkanal
-                SET schacht_oben = 'S_' || substr(printf('0000%d', t_strakatkanal.pk), -5)
+                SET haltungsname = 'HA_' || substr(printf('0000%d', t_strakatkanal.pk), -5)
+                FROM (SELECT pk, haltungsname FROM t_strakatkanal) AS std
+                WHERE t_strakatkanal.haltungsname = std.haltungsname AND t_strakatkanal.pk > std.pk""",
+            # 1.2.1 Schacht_unten auf Schacht_oben von Haltungen übertragen, auf die Abflussnummer (abflussnummer1 - abflussnummer5) verweist.
+            """ WITH abflussnummern AS (
+                    SELECT abflussnummer1 AS abflussnummer, schacht_unten AS schachtname
+                    FROM t_strakatkanal
+                    UNION
+                    SELECT abflussnummer2 AS abflussnummer, schacht_unten AS schachtname
+                    FROM t_strakatkanal
+                    UNION
+                    SELECT abflussnummer3 AS abflussnummer, schacht_unten AS schachtname
+                    FROM t_strakatkanal
+                    UNION
+                    SELECT abflussnummer4 AS abflussnummer, schacht_unten AS schachtname
+                    FROM t_strakatkanal
+                    UNION
+                    SELECT abflussnummer5 AS abflussnummer, schacht_unten AS schachtname
+                    FROM t_strakatkanal
+                ), schaechte_unten AS (
+                    SELECT abflussnummer, schachtname
+                    FROM abflussnummern
+                    WHERE abflussnummer IS NOT NULL AND
+                          abflussnummer <> 0 AND
+                          schachtname <> '0' AND
+                          schachtname <> ''
+                    ORDER BY abflussnummer
+                )
+                UPDATE t_strakatkanal SET schacht_oben = schaechte_unten.schachtname
+                FROM schaechte_unten
+                WHERE t_strakatkanal.nummer = schaechte_unten.abflussnummer
+            """,
+            # Mehrfache "schacht_oben" mit SA_ im Gegensatz zu den Haltungen ohne Namen, die mit SN_ beginnen
+            """ UPDATE t_strakatkanal
+                SET schacht_oben = 'SA_' || substr(printf('0000%d', t_strakatkanal.pk), -5)
                 FROM (SELECT pk, schacht_oben FROM t_strakatkanal) AS std
                 WHERE t_strakatkanal.schacht_oben = std.schacht_oben AND t_strakatkanal.pk > std.pk""",
-            # 1.2 Abzweigende Haltungen (k1k), deren schacht_oben nicht mit dem eines durchlaufenden
+            # 1.2.2 Abzweigende Haltungen (k1k), deren schacht_oben nicht mit dem eines durchlaufenden
             #     Stranges (schacht_unten = schacht_oben: k2k) übereinstimmt.
             """WITH k2k AS (
                     SELECT ku.ROWID, ku.nummer, ku.geop, ku.schacht_oben, ku.schachtart, ku.kanalart
@@ -1300,7 +1354,7 @@ class ImportTask:
         # Referenztabelle Rohrprofile
 
         sql = """INSERT INTO profile (profilnam, kuerzel, kommentar)
-                 SELECT text, kurz, 'Importiert aus STRAKAT'
+                 SELECT iif(trim(text) = '', kurz,text), kurz, 'Importiert aus STRAKAT'
                  FROM t_reflists
                  WHERE tabtyp = 'profilart'"""
         if not self.db_qkan.sql(sql, "strakat_import Referenzliste profile"):
@@ -1695,8 +1749,8 @@ class ImportTask:
         self.db_qkan.commit()
 
         # Zusammengesetzte Haltungen werden neu erzeugt und überschreiben das geom-Objekt der jeweiligen Anfanghaltung
-        # Erkennungsmerkmal: 1. Kanal hat Schachtart <>0, alle weiteren haben die Schachtart 0.
-        # Einschränkung: Als 1. Kanal zählen nur Kanäle, die nicht gemeinsam mit einem anderen Kanal mit schachtart = 0
+        # Erkennungsmerkmal: 1. Kanal hat Schachtart.n4 <>0, alle weiteren haben die Schachtart.n4 0.
+        # Einschränkung: Als 1. Kanal zählen nur Kanäle, die nicht gemeinsam mit einem anderen Kanal mit schachtart.n4 = 0
         # in einen Schacht einleiten. Zusätzlich müssen aufeinander folgende Teile in folgenden Attribute
         # identisch sein: eigentum, kanalart
 
@@ -1738,7 +1792,6 @@ class ImportTask:
                         WHERE k1.n4 = 0 OR k2.nummer IS NULL    -- entweder n4 = 0 oder wenn nicht, dann kein paralleler mit n4 = 0
                     )
                     SELECT
-                        ko.nummer AS nummer_oben, ku.nummer AS nummer_unten, 
                         ko.haltungsname, ko.schacht_oben, ko.schacht_unten,
                         ko.schachtart AS schachtart_ob, ku.schachtart AS schachtart_un, 
                         iif(:coordsFromRohr, ko.rw_rohranfang, ko.rw_gerinne_o) as xob, 
@@ -1748,7 +1801,9 @@ class ImportTask:
                         FROM ko
                         JOIN kanal AS ku ON ku.schacht_oben = ko.schacht_unten
                         WHERE ko.n4 = 0
-                           OR (ku.n4 = 0 AND ko.kanalart = ku.kanalart AND ko.eigentum = ku.eigentum)"""
+                           OR (ku.n4 = 0 AND ko.kanalart = ku.kanalart AND ko.eigentum = ku.eigentum)
+                        GROUP BY ko.haltungsname, ko.schacht_oben, ko.schacht_unten
+                       """
 
             params = {"coordsFromRohr": QKan.config.strakat.coords_from_rohr}
             if not self.db_qkan.sql(sql, parameters=params):
@@ -1756,8 +1811,8 @@ class ImportTask:
 
             stnet = self.db_qkan.fetchall()
 
-            idxschob = {ds[3]: ds for ds in stnet}
-            idxschun = {ds[4]: ds for ds in stnet}
+            idxschob = {ds[1]: ds for ds in stnet}
+            idxschun = {ds[2]: ds for ds in stnet}
 
             # Schleife bis alle Haltungsteilstücke verarbeitet sind
             while len(idxschob) > 0:
@@ -1768,20 +1823,32 @@ class ImportTask:
                     if not idxschun.get(anf):
                         break
                 else:
-                    errormsg = f'Fehler: Konnte (mindestens) ein Haltungsteilstück' + \
+                    logger.debug('\nInhalt von idxschob:\nschacht_unten: nummer_oben, nummer_unten, haltungsname, schacht_oben, schacht_unten, '
+                                 'schachtart_ob, schachtart_un, xob, yob, xun, yun')
+                    errormsg = '\n'.join([f'{anf}: {idxschob.get(anf, "Error: anf nicht gefunden")}' for anf in idxschob])
+                    logger.error(errormsg + '\n')
+                    errormsg = f'Fehler: Konnte (mindestens) ein Haltungsteilstück ' + \
                                     f'nicht verarbeiten: Schacht oben = {anf}'
-                    logger.error(errormsg)
+                    # with open('c:/temp/strakat_polygons/net.csv', 'w') as fw:
+                    #     fw.write(
+                    #         '\nInhalt von idxschob:\nschacht_unten: nummer_oben, nummer_unten, haltungsname, schacht_oben, schacht_unten, '
+                    #         'schachtart_ob, schachtart_un, xob, yob, xun, yun\n')
+                    #     errormsg = '\n'.join(
+                    #         [f'{anf}: {idxschob.get(anf, "Error: anf nicht gefunden")}' for anf in idxschob])
+                    #     fw.write(errormsg + '\n')
+                    #     errormsg = f'Fehler: Konnte (mindestens) ein Haltungsteilstück ' + \
+                    #                f'nicht verarbeiten: Schacht oben = {anf}'
                     raise Exception(errormsg)
                 # Kanal verfolgen und jedes Teilstück entnehmen
-                haltnam = idxschob[anf][2]
+                haltnam = idxschob[anf][0]
                 node = anf  # Anfang übernehmen
                 while True:
                     ds = idxschob[node]
-                    gplis.append([ds[7], ds[8]])  # Anfangskoordinate
-                    next = idxschob.get(node)[4]  # Schacht unten als nächsten Schacht übernehmen
+                    gplis.append([ds[5], ds[6]])  # Anfangskoordinate
+                    next = idxschob.get(node)[2]  # Schacht unten als nächsten Schacht übernehmen
                     if not idxschob.get(next):
                         # Ende gefunden
-                        gplis.append([ds[9], ds[10]])  # Endkoordinate
+                        gplis.append([ds[7], ds[8]])  # Endkoordinate
                         del idxschob[node]
                         break
                     del idxschob[node]
