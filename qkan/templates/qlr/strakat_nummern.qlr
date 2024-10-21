@@ -8,17 +8,17 @@
       <customproperties>
         <Option/>
       </customproperties>
-      <layer-tree-layer id="t_strakat_Schachtoben_1309e28f_9de8_4140_8ca7_541a17eb7e67" source="dbname='C:/projekte/Juelich/qkan/b240916/juelich.sqlite' table=&quot;t_strakatkanal&quot; (geop)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Schachtoben" checked="Qt::Unchecked" providerKey="spatialite" legend_split_behavior="0">
+      <layer-tree-layer id="t_strakat_Schachtoben_1309e28f_9de8_4140_8ca7_541a17eb7e67" source="dbname='juelich.sqlite' table=&quot;t_strakatkanal&quot; (geop)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Schachtoben" checked="Qt::Unchecked" providerKey="spatialite" legend_split_behavior="0">
         <customproperties>
           <Option/>
         </customproperties>
       </layer-tree-layer>
-      <layer-tree-layer id="t_strakat_Kanal_1d02a644_2305_435c_96e8_ff695d59a47a" source="dbname='C:/projekte/Juelich/qkan/b240916/juelich.sqlite' table=&quot;t_strakatkanal&quot; (geom)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Kanal" checked="Qt::Unchecked" providerKey="spatialite" legend_split_behavior="0">
+      <layer-tree-layer id="t_strakat_Kanal_1d02a644_2305_435c_96e8_ff695d59a47a" source="dbname='juelich.sqlite' table=&quot;t_strakatkanal&quot; (geom)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Kanal" checked="Qt::Unchecked" providerKey="spatialite" legend_split_behavior="0">
         <customproperties>
           <Option/>
         </customproperties>
       </layer-tree-layer>
-      <layer-tree-layer id="t_strakat_Kanal_naechste_4e57e5c8_4646_4f68_b344_9f84da50378f" source="dbname='C:/projekte/Juelich/qkan/b240916/juelich.sqlite' table=&quot;t_strakatkanal&quot; (geom)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Kanal naechste" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0">
+      <layer-tree-layer id="t_strakat_Kanal_naechste_4e57e5c8_4646_4f68_b344_9f84da50378f" source="dbname='juelich.sqlite' table=&quot;t_strakatkanal&quot; (geom)" expanded="1" legend_exp="" patch_size="-1,-1" name="t_strakat Kanal naechste" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0">
         <customproperties>
           <Option/>
         </customproperties>
@@ -40,7 +40,7 @@
         <ymax>50.98100742964301446</ymax>
       </wgs84extent>
       <id>t_strakat_Schachtoben_1309e28f_9de8_4140_8ca7_541a17eb7e67</id>
-      <datasource>dbname='../../../../../../../../../../../../projekte/Juelich/qkan/b240916/juelich.sqlite' table="t_strakatkanal" (geop)</datasource>
+      <datasource>dbname='juelich.sqlite' table="t_strakatkanal" (geop)</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1438,7 +1438,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>50.98100744214510627</ymax>
       </wgs84extent>
       <id>t_strakat_Kanal_1d02a644_2305_435c_96e8_ff695d59a47a</id>
-      <datasource>dbname='../../../../../../../../../../../../projekte/Juelich/qkan/b240916/juelich.sqlite' table="t_strakatkanal" (geom)</datasource>
+      <datasource>dbname='juelich.sqlite' table="t_strakatkanal" (geom)</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2963,7 +2963,7 @@ format('(%1 | %2 | %3) -> %4 -> (%5 - %6 - %7)', zuflussnummer1, zuflussnummer2,
         <ymax>50.98100744214510627</ymax>
       </wgs84extent>
       <id>t_strakat_Kanal_naechste_4e57e5c8_4646_4f68_b344_9f84da50378f</id>
-      <datasource>dbname='../../../../../../../../../../../../projekte/Juelich/qkan/b240916/juelich.sqlite' table="t_strakatkanal" (geom)</datasource>
+      <datasource>dbname='juelich.sqlite' table="t_strakatkanal" (geom)</datasource>
       <keywordList>
         <value></value>
       </keywordList>

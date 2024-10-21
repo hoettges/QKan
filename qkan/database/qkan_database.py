@@ -20,8 +20,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.4.1"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.4.2"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.4.3"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.4.3"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 import os
 import traceback
@@ -620,27 +620,6 @@ def createdbtables(
         consl.close()
         return False
 
-    # Änderungen an der Profilbezeichnung in der Detailtabelle nachführen
-    sql = """CREATE TRIGGER trig_ref_profile AFTER UPDATE OF profilnam ON profile
-                BEGIN
-                    UPDATE haltungen
-                    SET profilnam = new.profilnam
-                    WHERE profilnam = old.profilnam;
-                    UPDATE anschlussleitungen
-                    SET profilnam = new.profilnam
-                    WHERE profilnam = old.profilnam;
-                END"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Trigger "profile.profilnam" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
     consl.commit()
 
     # Entwaesserungssysteme ----------------------------------------------------
@@ -665,30 +644,6 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "entwaesserungsarten" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    # Änderungen an der Bezeichnung in der Detailtabelle nachführen
-    sql = """CREATE TRIGGER trig_ref_entwart AFTER UPDATE OF bezeichnung ON entwaesserungsarten
-                BEGIN
-                    UPDATE haltungen
-                    SET entwart = new.bezeichnung
-                    WHERE entwart = old.bezeichnung;
-                    UPDATE schaechte
-                    SET entwart = new.bezeichnung
-                    WHERE entwart = old.bezeichnung;
-                    UPDATE anschlussleitungen
-                    SET entwart = new.bezeichnung
-                    WHERE entwart = old.bezeichnung;
-                END"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Trigger für "entwaesserungsarten.bezeichnung" konnte nicht erstellt werden.',
         )
         consl.close()
         return False
@@ -1321,30 +1276,6 @@ def createdbtables(
         consl.close()
         return False
 
-    # Änderungen an der Bezeichnung in der Detailtabelle nachführen
-    sql = """CREATE TRIGGER trig_ref_simstatus AFTER UPDATE OF bezeichnung ON simulationsstatus
-                BEGIN
-                    UPDATE haltungen
-                    SET simstatus = new.bezeichnung
-                    WHERE simstatus = old.bezeichnung;
-                    UPDATE schaechte
-                    SET simstatus = new.bezeichnung
-                    WHERE simstatus = old.bezeichnung;
-                    UPDATE anschlussleitungen
-                    SET simstatus = new.bezeichnung
-                    WHERE simstatus = old.bezeichnung;
-                END"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Trigger "simulationsstatus.bezeichnung" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
     consl.commit()
 
     # Material -----------------------------------------------------------------
@@ -1364,32 +1295,6 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "material" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
-    # Änderungen an der Bezeichnung in der Detailtabelle nachführen
-    sql = """CREATE TRIGGER trig_ref_material AFTER UPDATE OF bezeichnung ON material
-                BEGIN
-                    UPDATE haltungen
-                    SET material = new.bezeichnung
-                    WHERE material = old.bezeichnung;
-                    UPDATE schaechte
-                    SET material = new.bezeichnung
-                    WHERE material = old.bezeichnung;
-                    UPDATE anschlussleitungen
-                    SET material = new.bezeichnung
-                    WHERE material = old.bezeichnung;
-                END"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Trigger für "material.bezeichnung" konnte nicht erstellt werden.',
         )
         consl.close()
         return False
@@ -1810,14 +1715,14 @@ def createdbtables(
     # Referenztabelle für Plausi Zustandsklassen -----------------------------
 
     sql = """
-                CREATE TABLE IF NOT EXISTS reflist_zustand (
-                    pk INTEGER PRIMARY KEY,
-                    art TEXT,                      -- 
-                    hauptcode TEXT,                -- 
-                    charakterisierung1 TEXT,        --
-                    charakterisierung2 TEXT,         -- 
-                    bereich TEXT        -- 
-                    )
+        CREATE TABLE IF NOT EXISTS reflist_zustand (
+            pk INTEGER PRIMARY KEY,
+            art TEXT,                      -- 
+            hauptcode TEXT,                -- 
+            charakterisierung1 TEXT,        --
+            charakterisierung2 TEXT,         -- 
+            bereich TEXT        -- 
+            )
             """
 
     try:
@@ -1829,6 +1734,17 @@ def createdbtables(
         )
         consl.close()
         return False
+
+    consl.commit()
+
+    # Trigger zum Nachführen einiger Referenztabellen
+
+    with open(os.path.join(pluginDirectory("qkan"), 'database/triggers', 'reftables.sql'), 'r') as sql_file:
+        try:
+            cursl.executescript(sql_file.read())
+        except BaseException as err:
+            logger.debug(f"Fehler in {__name__}.trigger reftables, {sql_file =}")
+            return False
 
     consl.commit()
 

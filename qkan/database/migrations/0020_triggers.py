@@ -1,4 +1,5 @@
 from qkan.database.dbfunc import DBConnection
+import packaging.version
 from qkan.utils import get_logger
 
 VERSION = "3.1.5"
@@ -10,12 +11,12 @@ def run(dbcon: DBConnection) -> bool:
     # Version 3.1.4: Trigger wurden verworfen, deshalb Zusatz unter Version 3.1.5
 
     # ------------------------------------------------------------------------------------
-    logger.debug(f"Version: {dbcon.current_version}")
-    if dbcon.current_version < "3.1.5":
-        logger.debug(f"Version älter 3.1.5 erkannt: {dbcon.current_version}")
+    logger.debug(f"Version: {dbcon.current_dbversion}")
+    if dbcon.current_dbversion < packaging.version.parse("3.1.5"):
+        logger.debug(f"Version älter 3.1.5 erkannt: {dbcon.current_dbversion}")
 
-        if dbcon.current_version == "3.1.4":
-            logger.debug(f"Version 3.1.4 erkannt: {dbcon.current_version}")
+        if dbcon.current_dbversion == packaging.version.parse("3.1.4"):
+            logger.debug(f"Version 3.1.4 erkannt: {dbcon.current_dbversion}")
 
             # Trigger aus Version 3.1.4 wieder löschen
             if not dbcon.sql(

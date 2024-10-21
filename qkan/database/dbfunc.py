@@ -205,23 +205,26 @@ class DBConnection:
                     "SpatiaLite-Datenbank ist erstellt!",
                     level=Qgis.Info,
                 )
-                if not createdbtables(
-                    self.consl, self.cursl, self.actDbVersion.base_version, self.epsg
-                ):
-                    fehlermeldung(
-                        "Fehler",
-                        "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
-                    )
             except BaseException as err:
                 logger.debug(f"Datenbank ist nicht vorhanden: {self.dbname}")
-                fehlermeldung(
-                    "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
-                    "Kopieren von: {}\nnach: {}\n nicht möglich".format(
-                        QKan.template_dir, self.dbname
-                    ),
-                )
+                errormsg=(
+                    f"Fehler in dbfunc.DBConnection:\n{err}\n"
+                    f"Kopieren von: {QKan.template_dir}\nnach: {self.dbname}\n nicht möglich"
+                    )
                 self.connected = False
                 self.consl = None
+
+                logger.error(errormsg)
+                raise Exception(errormsg)
+
+            if not createdbtables(
+                self.consl, self.cursl, self.actDbVersion.base_version, self.epsg
+            ):
+                errormsg = "Fehler in SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden"
+                self.connected = False
+                self.consl = None
+                logger.error(errormsg)
+                raise Exception(errormsg)
 
     def _connect_with_object(self, tab_object: QgsVectorLayer) -> None:
         tab_connect = tab_object.publicSource()
@@ -2231,8 +2234,9 @@ class DBConnection:
         migrations = find_migrations(self.current_dbversion)
         for i, migration in enumerate(migrations):
             if not migration.run(self):
-                fehlermeldung("Fehler beim Ausführen des Datenbankupdates.")
-                return False
+                errormsg = "Fehler beim Ausführen des Datenbankupdates."
+                logger.error(errormsg)
+                raise Exception(errormsg)
 
             if not self.sql(
                 "UPDATE info SET value = ? WHERE subject = 'version'",
@@ -2252,6 +2256,8 @@ class DBConnection:
                 "Die Datenbank wurde geändert. Bitte QGIS-Projekt nach dem Speichern neu laden...",
             )
             return False
+
+        self.isCurrentDbVersion = True
 
         return True
 

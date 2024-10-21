@@ -57,13 +57,12 @@ def dbAdapt(
     with DBConnection(dbname=qkanDB, qkan_db_update=True) as dbQK:   # Datenbankobjekt zur Aktualisierung öffnen
 
         if not dbQK.connected:
-            fehlermeldung(
-                "Fehler in k_qgsadapt:\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    qkanDB
-                ),
+            errormsg = (
+                "Fehler in k_qgsadapt:\n"
+                f"QKan-Datenbank {qkanDB} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!"
             )
-            return
+            logger.error(errormsg)
+            raise  Exception(f"{__name__}: {errormsg}")
 
         dbQK.sql("SELECT RecoverSpatialIndex()")  # Geometrie-Indizes bereinigen
 

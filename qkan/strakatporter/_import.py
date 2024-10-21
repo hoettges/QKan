@@ -1494,14 +1494,14 @@ class ImportTask:
                     WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
         if not self.db_qkan.sql(sql, "Isybau Referenzliste entwaesserungsarten", daten, many=True):
             return False
-
-        # Ergänzen weiterer Kennnummern in speziellen Datensätzen
-        params = [(ds[2], ds[3], ds[4], ds[5], ds[6], ds[0],) for ds in daten]           # umsortieren
-        sql = """UPDATE entwaesserungsarten
-                 SET he_nr = ?, kp_nr = ?, m150 = ?, isybau = ?, bemerkung = ?
-                 WHERE bezeichnung = ?"""
-        if not self.db_qkan.sql(sql, "strakat_import Referenzliste entwaesserungsarten", params, many=True):
-            return False
+        #
+        # # Ergänzen weiterer Kennnummern in speziellen Datensätzen
+        # params = [(ds[2], ds[3], ds[4], ds[5], ds[6], ds[0],) for ds in daten]           # umsortieren
+        # sql = """UPDATE entwaesserungsarten
+        #          SET he_nr = ?, kp_nr = ?, m150 = ?, isybau = ?, bemerkung = ?
+        #          WHERE bezeichnung = ?"""
+        # if not self.db_qkan.sql(sql, "strakat_import Referenzliste entwaesserungsarten", params, many=True):
+        #     return False
 
         # Simulationsstatus
 

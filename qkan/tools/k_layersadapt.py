@@ -138,14 +138,14 @@ def layersadapt(
     if database_QKan is not None:
         dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
 
-        if not dbQK.connected:
+        if not dbQK:
             errormsg = "Programmfehler in QKan.tools.k_layersadapt.layersadapt()\n" + \
             f"Datenbank {database_QKan} konnte nicht verbunden werden"
             logger.error(errormsg)
             raise Exception(f"{__name__}: {errormsg}")
 
-        actversion = dbQK.actversion
-        logger.debug("actversion: {}".format(actversion))
+        actversion = dbQK.actDbVersion
+        logger.debug("actDBversion: {}".format(actversion))
     else:
         if (anpassen_ProjektMakros
             or anpassen_Datenbankanbindung
@@ -451,12 +451,12 @@ def layersadapt(
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(
-        "Information",
-        "Projektdatei ist angepasst und muss noch gespeichert werden!",
-        level=Qgis.Info,
-    )
+    # iface.mainWindow().statusBar().clearMessage()
+    # iface.messageBar().pushMessage(
+    #     "Information",
+    #     "Projektdatei wurde auf die neue Version angepasst",
+    #     level=Qgis.Info,
+    # )
 
     return
 

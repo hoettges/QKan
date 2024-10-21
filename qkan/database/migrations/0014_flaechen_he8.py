@@ -37,7 +37,7 @@ def run(dbcon: DBConnection) -> bool:
         return False
 
     # Ab Version 3.0.5 nochmal geändert
-    if dbcon.current_version < packaging.version.parse("3.0.5"):
+    if dbcon.current_dbversion < packaging.version.parse("3.0.5"):
         if not dbcon.sql(
             f"""
             SELECT AddGeometryColumn('flaechen_he8', 'Geometry', 

@@ -21,7 +21,7 @@ def run(dbcon: DBConnection) -> bool:
         ]
     
     for view in views:
-        sql = f"DROP VIEW {view}"
+        sql = f"DROP VIEW IF EXISTS {view}"
         if not dbcon.sql(sql, ignore=True):
             logger.warning(f"Fehler bei Migration zu Version {VERSION}: VIEW {view} konnte nicht gelöscht werden.")
             # return False
