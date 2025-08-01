@@ -39,6 +39,7 @@ class FloodanimationTask:
         self.min_w = float(QKan.config.flood.min_w)
 
     def run(self) -> bool:
+        self.db_qkan.loadmodule('floodtools')
 
         iface = QKan.instance.iface
 
@@ -139,13 +140,9 @@ class FloodanimationTask:
                 if not data:
                     print(f'not data\n')
                     sqls = [
-                        """CREATE TABLE IF NOT EXISTS wlevel (
-                           pk INTEGER PRIMARY KEY,
-                           h REAL,
-                           tanf TEXT,
-                           tend TEXT)""",
-                        f"SELECT AddGeometryColumn('wlevel','geom', {self.epsg},'POLYGON',2)",
-                        "SELECT CreateSpatialIndex('wlevel','geom')",
+                        'floodtools_create_wlevel1',
+                        f'floodtools_create_wlevel2',
+                        'floodtools_create_wlevel3',
                     ]
 
                     if not db.sqlmany(sqls, 'Erstellung Tabelle "wlevel"'):
@@ -153,19 +150,15 @@ class FloodanimationTask:
 
             if self.wlevel_choice:
                 # Erstellung Tabelle velo
-                sql = "PRAGMA table_list('velo')"
+                sql = 'floodtools_create_velo1'
                 data = db.select(sql, 'Tabelleninfos')
                 print(f'{data=}\n')
                 if not data:
                     print(f'not data\n')
                     sqls = [
-                        """CREATE TABLE IF NOT EXISTS velo (
-                           pk INTEGER PRIMARY KEY,
-                           v REAL,
-                           tanf TEXT,
-                           tend TEXT)""",
-                        f"SELECT AddGeometryColumn('velo','geom', {self.epsg},'LINESTRING',2)",
-                        "SELECT CreateSpatialIndex('velo','geom')",
+                        'floodtools_create_velo2',
+                        f'floodtools_create_velo3',
+                        'floodtools_create_velo4',
                     ]
 
                     if not db.sqlmany(sqls, 'Erstellung Tabelle "velo"'):
@@ -174,21 +167,21 @@ class FloodanimationTask:
             db.commit()
 
             if self.velo_choice:
-                sql = 'DELETE FROM wlevel'
+                sql = 'floodtools_delete_wlevel'
                 if not db.sql(sql, 'Zurücksetzen der Flächen-Tabelle'):
                     return False
 
             if self.wlevel_choice:
-                sql = 'DELETE FROM velo'
+                sql = 'floodtools_delete_velo'
                 if not db.sql(sql, 'Zurücksetzen der Flächen-Tabelle'):
                     return False
 
             # Berechnung der Anzahl Zeitschritte
             if self.velo_choice:
-                sql = "PRAGMA table_info('result2d__velocity')"
+                sql = 'floodtools_velo_choice'
                 data = db.select(sql, 'Tabelleninfo result2d__velocity')
             elif self.wlevel_choice:
-                sql = "PRAGMA table_info('result2d__topo_decimated')"
+                sql = 'floodtools_wlevel_choice'
                 data = db.select(sql, 'Tabelleninfo result2d__topo_decimated')
             else:
                 logger.warning("In der Ergebnisauswahl wurde keine Auswahl getroffen. Abbruch!")
@@ -204,37 +197,13 @@ class FloodanimationTask:
 
                 if self.velo_choice:
                     # Flächen mit maßgeblichem Wasserstand übertragen
-                    sql = f'''
-                        INSERT INTO wlevel (h, tanf, tend, geom)
-                        SELECT
-                            wl_{tstep} AS h,
-                            datetime(julianday('{starttime}') + {tstep} * {interval}) AS tanf,
-                            datetime(julianday('{starttime}') + {tstep + 1} * {interval}) AS tend,
-                            CastToXY(CastToPolygon(GEOMETRY)) AS geom
-                        FROM result2d__topo_decimated
-                        WHERE wl_{tstep} >= {self.min_w}
-                        '''
+                    sql = f'floodtools_insert_wlevel'
                     if not db.sql(sql, 'Erzeugen der wlevel-Flächen'):
                         return False
 
                 if self.wlevel_choice:
                     # Geschwindikeitspfeile für maßgebliche Geschwindigkeiten erzeugen
-                    sql = f'''
-                        INSERT INTO velo (v, tanf, tend, geom)
-                        SELECT
-                            v_{tstep} AS v,
-                            datetime(julianday('{starttime}') + {tstep} * {interval}) AS tanf,
-                            datetime(julianday('{starttime}') + {tstep + 1} * {interval}) AS tend,
-                            Makeline(
-                                Makepoint(x(GEOMETRY), 
-                                          y(GEOMETRY), {self.epsg}), 
-                                MakePoint(x(GEOMETRY)+v_{tstep}*cos(v_dir_{tstep}/57.2958)*{self.faktor_v}, 
-                                          y(GEOMETRY)+v_{tstep}*sin(v_dir_{tstep}/57.2958)*{self.faktor_v},
-                                          {self.epsg})
-                            ) as geom
-                        FROM result2d__velocity
-                        WHERE v_{tstep} >= {self.min_v}
-                        '''
+                    sql = f'floodtools_insert_velo'
                     if not db.sql(sql, 'Erzeugen der wlevel-Flächen'):
                         return False
 
