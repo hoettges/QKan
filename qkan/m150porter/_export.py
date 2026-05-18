@@ -2,7 +2,8 @@ from pathlib import Path
 
 # noinspection PyUnresolvedReferences
 from typing import Dict, List, Optional, Union
-from lxml.etree import Element, SubElement
+from xml.dom import minidom
+from lxml.etree import Element, SubElement, tostring
 from lxml import etree
 
 from qgis.PyQt.QtWidgets import QProgressBar
