@@ -3609,6 +3609,7 @@ class Zustandsklassen_funkt:
         db = self.db
         crs = self.crs
 
+        #TODO: umprogrammieren(siehe nachricht Jörg)
         try:
             db.sql("""UPDATE schaechte_untersucht_bewertung 
                                     SET objektklasse_dichtheit =
@@ -3762,6 +3763,9 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+
+        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        db.sql(sql)
 
         try:
             db.sql("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
@@ -4820,8 +4824,7 @@ class Zustandsklassen_funkt:
             pass
 
 
-        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        db.sql(sql)
+
 
         sql = """SELECT CreateSpatialIndex('haltungen_untersucht_bewertung', 'geom');"""
         try:
@@ -5027,6 +5030,9 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+
+        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        db.sql(sql)
 
         if haltung is True:
             sql = """
@@ -6084,8 +6090,7 @@ class Zustandsklassen_funkt:
         except:
             pass
 
-        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        db.sql(sql)
+
 
         sql = """SELECT CreateSpatialIndex('anschlussleitungen_untersucht_bewertung', 'geom');"""
         try:
@@ -6298,6 +6303,8 @@ class Zustandsklassen_funkt:
         logger.debug(f'Start_Bewertung_Schaechte.liste: {datetime.now()}')
 
         sql = """CREATE TABLE IF NOT EXISTS untersuchdat_schacht_bewertung AS SELECT * FROM untersuchdat_schacht"""
+        db.sql(sql)
+        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
         db.sql(sql)
 
         sql = """SELECT CreateSpatialIndex('untersuchdat_schacht_bewertung', 'geom');"""
@@ -7364,8 +7371,7 @@ class Zustandsklassen_funkt:
         except:
             pass
 
-        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        db.sql(sql)
+
         #db.commit()
         sql = """SELECT CreateSpatialIndex('schaechte_untersucht_bewertung', 'geop');"""
         try:
@@ -7573,6 +7579,9 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+
+        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        db.sql(sql)
 
         try:
             db.sql("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
@@ -8630,8 +8639,7 @@ class Zustandsklassen_funkt:
             group=['QKan', enums.LAYERBEZ.ZUSTANDSBEWERTUNG_GROUP.value, enums.LAYERBEZ.ZK_HALTUNGEN_GROUP.value],
         )
 
-        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('haltungen_untersucht_bewertung', 'geom');"""
         try:
             db.sql(sql)
@@ -8716,6 +8724,9 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+
+        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM anschlussleitungen_untersucht"""
+        db.sql(sql)
 
         try:
             db.sql("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
@@ -9772,8 +9783,7 @@ class Zustandsklassen_funkt:
             group=['QKan', enums.LAYERBEZ.ZUSTANDSBEWERTUNG_GROUP.value, enums.LAYERBEZ.ZK_HA_LEITUNGEN_GROUP.value],
         )
 
-        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM anschlussleitungen_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('anschlussleitungen_untersucht_bewertung', 'geom');"""
         try:
             db.sql(sql)
@@ -9856,6 +9866,9 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+
+        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
+        db.sql(sql)
 
         sql = """
                     SELECT
@@ -10972,8 +10985,7 @@ class Zustandsklassen_funkt:
             group=['QKan', enums.LAYERBEZ.ZUSTANDSBEWERTUNG_GROUP.value, enums.LAYERBEZ.ZK_SCHAECHTE_GROUP.value],
         )
 
-        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('schaechte_untersucht_bewertung', 'geop');"""
         try:
             db.sql(sql)
@@ -14693,6 +14705,8 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        db.sql(sql)
         try:
             db.sql("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Beschreibung TEXT ;""")
         except:
@@ -14796,8 +14810,7 @@ class Zustandsklassen_funkt:
             db.sql("""Update untersuchdat_haltung_bewertung set Zustandsklasse_S = ZS ;""")
         except:
             pass
-        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('haltungen_untersucht_bewertung', 'geom');"""
         try:
             db.sql(sql)
@@ -14997,6 +15010,8 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM anschlussleitungen_untersucht"""
+        db.sql(sql)
         try:
             db.sql("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Beschreibung TEXT ;""")
         except:
@@ -15096,8 +15111,7 @@ class Zustandsklassen_funkt:
             db.sql("""Update untersuchdat_anschlussleitung_bewertung set Zustandsklasse_S = ZS ;""")
         except:
             pass
-        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM anschlussleitungen_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('anschlussleitungen_untersucht_bewertung', 'geom');"""
         try:
             db.sql(sql)
@@ -15298,6 +15312,8 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
+        db.sql(sql)
         try:
             db.sql("""ALTER TABLE untersuchdat_schacht_bewertung ADD COLUMN Beschreibung TEXT ;""")
         except:
@@ -15399,8 +15415,7 @@ class Zustandsklassen_funkt:
             db.sql("""Update untersuchdat_schacht_bewertung set Zustandsklasse_S = ZS ;""")
         except:
             pass
-        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('schaechte_untersucht_bewertung', 'geop');"""
         try:
             db.sql(sql)
@@ -15600,6 +15615,8 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+        db.sql(sql)
         try:
             db.sql("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Beschreibung TEXT ;""")
         except:
@@ -15774,8 +15791,7 @@ class Zustandsklassen_funkt:
                     ) ;""")
         except:
             pass
-        sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('haltungen_untersucht_bewertung', 'geom');"""
         try:
             db.sql(sql)
@@ -15884,6 +15900,8 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM anschlussleitungen_untersucht"""
+        db.sql(sql)
         try:
             db.sql("""ALTER TABLE untersuchdat_anschlussleitung_bewertung ADD COLUMN Beschreibung TEXT ;""")
         except:
@@ -16055,8 +16073,7 @@ class Zustandsklassen_funkt:
                     ) ;""")
         except:
             pass
-        sql = """CREATE TABLE IF NOT EXISTS anschlussleitungen_untersucht_bewertung AS SELECT * FROM anschlussleitungen_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('anschlussleitungen_untersucht_bewertung', 'geom');"""
         try:
             db.sql(sql)
@@ -16166,6 +16183,8 @@ class Zustandsklassen_funkt:
             db.commit()
         except:
             pass
+        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
+        db.sql(sql)
         try:
             db.sql("""ALTER TABLE untersuchdat_schacht_bewertung ADD COLUMN Beschreibung TEXT ;""")
         except:
@@ -16338,8 +16357,7 @@ class Zustandsklassen_funkt:
                     ) ;""")
         except:
             pass
-        sql = """CREATE TABLE IF NOT EXISTS schaechte_untersucht_bewertung AS SELECT * FROM schaechte_untersucht"""
-        db.sql(sql)
+
         sql = """SELECT CreateSpatialIndex('schaechte_untersucht_bewertung', 'geop');"""
         try:
             db.sql(sql)
