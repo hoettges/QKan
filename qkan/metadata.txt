@@ -10,7 +10,7 @@
 name=QKan
 qgisMinimumVersion=3.28
 description=Gruppe der QKan-Erweiterung(en)
-version=3.4.13
+version=3.4.14
 author=Nora Blase, Jörg Höttges, Yannick Linke
 email=hoettges@fh-aachen.de
 
@@ -22,6 +22,13 @@ repository=https://github.com/hoettges/QKan
 
 changelog= 
 
+    3.4.14:
+        - Korrigiert: ISYBAU-Import erzeugte mehrfache Datensätze.
+    3.4.13:
+        - Flood-2D-Visualisierung von HYSTEM-EXTRAN korrigert und erweitert. Es kann jetzt mit sehr großen Einzugsgebieten umgehen
+          und bietet die Möglichkeit, Animationen für ausgewählte waterlevel-Elemente oder velocity-Punkte zu erstellen.
+        - Fehler in STRAKAT beseitigt: Wenn Anfänge von Strängen nicht gefunden werden können (t_strakatkanal.strangnr = 1),
+          erscheint jetzt eine Meldung und die entsprechenden Haltungen werden ignoriert.
     3.4.12:
         - Fehler in M150-Export provisorisch korrigiert, indem die Bibliothek lxml wieder durch die alte xml-Bibliothek ersetzt wurde
     3.4.11:

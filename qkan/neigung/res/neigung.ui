@@ -67,7 +67,10 @@
             <bool>true</bool>
            </property>
            <property name="text">
-            <string>DGM Daten automatierist herunterladen</string>
+            <string>DGM Daten automatisiert herunterladen</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

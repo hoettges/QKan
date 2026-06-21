@@ -248,7 +248,7 @@ class ImportTask:
                 if not self.db_qkan.sqlyml(
                     'he8_insert_haltungen',
                     "he8_import Haltungen",
-                    params
+                    parameters=params,
                 ):
                     return False
                 self.db_qkan.commit()

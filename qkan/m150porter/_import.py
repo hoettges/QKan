@@ -2396,7 +2396,6 @@ class ImportTask(Schadenstexte):
                     ZB = _get_int(_untersuchdat, "HZ208", None)
                     ZS = _get_int(_untersuchdat, "HZ207", None)
 
-
                     yield Untersuchdat_haltung(
                     untersuchhal=name,
                     untersuchrichtung=untersuchrichtung,

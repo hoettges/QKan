@@ -670,20 +670,23 @@ def loadLayer(
     :qmlfile:               Name der Stildatei
     :type qmlfile:          String
 
+    :filter:                Filter auf Datensätze
+    :type qmlfile:          String
+
     :uifile:                Name der Formulardatei
     :type uifile:           String
 
     :group:                 Bezeichnung der Gruppe, in der der Layer eingefügt werden soll
     :type group:            List, String
 
-    :exclusive:             Neue Gruppen sollen exklusiv sein
+    :exclusive:             Layer in Gruppe sollen exklusiv angezeigt werden
     :type exclusive:        Bool
 
     :gpos:                  Index der Position innerhalb der Gruppe
     :type gpos:             int
 
-    :qkan_db:           andere als die Standard-QKan-DB
-    :type qkan_db:      str
+    :qkan_db:               andere als die Standard-QKan-DB
+    :type qkan_db:          str
 
     :returns:               bool
     """
