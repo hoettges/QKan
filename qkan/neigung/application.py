@@ -52,7 +52,7 @@ class Neigung(QKanPlugin):
                 return
 
             with DBConnection(
-                    dbname=database_qkan, epsg=epsg
+                    dbname=database_qkan,
             ) as db_qkan:
                 if not db_qkan.connected:
                     return False
@@ -63,6 +63,7 @@ class Neigung(QKanPlugin):
 
                 speicherdgm = ''
                 speicherdgm = self.neigung_dlg.speicher_dgm.text()
+                epsg = self.neigung_dlg.epsg.crs().postgisSrid()
 
                 imp = NeigungTask(self.neigung_dlg.url_dgm_daten.text(), self.neigung_dlg.speicher_neigung.text(), speicherdgm,
                     db_qkan, check_cb, epsg

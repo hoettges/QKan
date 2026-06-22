@@ -1064,47 +1064,55 @@ class ImportTask(Schadenstexte):
 
             for x_zustandsdat in x_zustandsdaten:
 
-                x_zustaende = x_zustandsdat.findall(
+                x_inspektionen = x_zustandsdat.findall(
                     "InspizierteAbwassertechnischeAnlage/[Anlagentyp='3']",
                     self.NS,
                 )
 
-                schnam = None
-                untersuchtag = None
-                untersucher = None
-                wetter = None
-                strasse = None
-                baujahr = None
-                bewertungsart = None
-                bewertungstag = None
-                datenart = self.datenart
+                for x_inspektion in x_inspektionen:
 
-                for x_zustand in x_zustaende:
-                    schnam = x_zustand.findtext("Objektbezeichnung", None, self.NS)
-                    baujahr = _get_int(x_zustand.findtext("Baujahr", None, self.NS))
-                    strasse = x_zustand.findtext("Lage/Strassenname", None, self.NS)
+                    x_zustaende = x_inspektion.findall(
+                        "OptischeInspektion/Knoten/../..",
+                        self.NS,
+                    )
+                    logger.debug(f"Anzahl Schaechte: {len(x_zustaende)}")
 
-                    for _schacht in x_zustand.findall("OptischeInspektion", self.NS):
-                        untersuchtag = _schacht.findtext("Inspektionsdatum", None, self.NS)
-                        untersucher = _schacht.findtext("NameUntersucher", None, self.NS)
-                        wetter = _schacht.findtext("Wetter", None, self.NS)
-                        auftragsbezeichnung = _schacht.findtext("Auftragskennung", None, self.NS)
+                    schnam = None
+                    untersuchtag = None
+                    untersucher = None
+                    wetter = None
+                    strasse = None
+                    baujahr = None
+                    bewertungsart = None
+                    bewertungstag = None
+                    datenart = self.datenart
 
-                        for _schachtz in _schacht.findall("Knoten/Bewertung", self.NS):
-                            bewertungsart = _schachtz.findtext("Bewertungsverfahren", None, self.NS)
-                            bewertungstag = _schachtz.findtext("Bewertungsdatum", None, self.NS)
+                    for x_zustand in x_zustaende:
+                        schnam = x_zustand.findtext("Objektbezeichnung", None, self.NS)
+                        baujahr = _get_int(x_zustand.findtext("Baujahr", None, self.NS))
+                        strasse = x_zustand.findtext("Lage/Strassenname", None, self.NS)
 
-                            yield Schacht_untersucht(
-                                schnam=schnam,
-                                untersuchtag=untersuchtag,
-                                untersucher=untersucher,
-                                wetter=wetter,
-                                strasse=strasse,
-                                bewertungsart=bewertungsart,
-                                bewertungstag=bewertungstag,
-                                datenart=datenart,
-                                auftragsbezeichnung=auftragsbezeichnung,
-                            )
+                        for _schacht in x_zustand.findall("OptischeInspektion", self.NS):
+                            untersuchtag = _schacht.findtext("Inspektionsdatum", None, self.NS)
+                            untersucher = _schacht.findtext("NameUntersucher", None, self.NS)
+                            wetter = _schacht.findtext("Wetter", None, self.NS)
+                            auftragsbezeichnung = _schacht.findtext("Auftragskennung", None, self.NS)
+
+                            for _schachtz in _schacht.findall("Knoten/Bewertung", self.NS):
+                                bewertungsart = _schachtz.findtext("Bewertungsverfahren", None, self.NS)
+                                bewertungstag = _schachtz.findtext("Bewertungsdatum", None, self.NS)
+
+                        yield Schacht_untersucht(
+                            schnam=schnam,
+                            untersuchtag=untersuchtag,
+                            untersucher=untersucher,
+                            wetter=wetter,
+                            strasse=strasse,
+                            bewertungsart=bewertungsart,
+                            bewertungstag=bewertungstag,
+                            datenart=datenart,
+                            auftragsbezeichnung=auftragsbezeichnung,
+                        )
 
         for schacht_untersucht in _iter():
 
@@ -1162,57 +1170,52 @@ class ImportTask(Schadenstexte):
 
             ordner_bild = self.ordner_bild
 
-            x_zustandsdaten = self.xml.findall(
-                "Datenkollektive/Zustandsdatenkollektiv",
+            x_anlagen = self.xml.findall(
+                "Datenkollektive/Zustandsdatenkollektiv/InspizierteAbwassertechnischeAnlage/[Anlagentyp='3']",
                 self.NS,
             )
 
-            for x_zustandsdat in x_zustandsdaten:
 
-                x_anlagen = x_zustandsdat.findall(
-                    "InspizierteAbwassertechnischeAnlage",
-                    self.NS,
-                )
+            for x_anlage in x_anlagen:
 
-                logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(x_anlagen)}")
+                untersuchsch = x_anlage.findtext("Objektbezeichnung", None, self.NS)
+                untersuchtag = x_anlage.findtext("OptischeInspektion/Inspektionsdatum", None, self.NS)
 
-                for x_anlage in x_anlagen:
 
-                    untersuchsch = x_anlage.findtext("Objektbezeichnung", None, self.NS)
-                    untersuchtag = x_anlage.findtext("OptischeInspektion/Inspektionsdatum", None, self.NS)
+                kennung = _get_int(x_anlage.findtext("OptischeInspektion/Auftragskennung", None, self.NS))
+
+                for _untersuchdat_schacht in x_anlage.findall("OptischeInspektion/Knoten", self.NS):
                     inspektionslaenge = _get_float(x_anlage.findtext(
-                        "OptischeInspektion/Knoten/Inspektionsdaten/KZustand[InspektionsKode='DDB']"
+                        "Inspektionsdaten/KZustand[InspektionsKode='DDB']"
                         "[Streckenschaden='B']/VertikaleLage",
                         None, self.NS))
 
-                    kennung = _get_int(x_anlage.findtext("OptischeInspektion/Auftragskennung", None, self.NS))
-
-                    for _untersuchdat_schacht in x_anlage.findall("OptischeInspektion/Knoten/Inspektionsdaten/KZustand", self.NS):
+                    for _untersuchdat in _untersuchdat_schacht.findall("Inspektionsdaten/KZustand", self.NS):
 
                         #id = _get_int(_untersuchdat_schacht.findtext("Index", None, self.NS))
-                        videozaehler = _get_int(_untersuchdat_schacht.findtext("Videozaehler", None, self.NS))
-                        timecode = _untersuchdat_schacht.findtext("Timecode", None, self.NS)
-                        kuerzel = _untersuchdat_schacht.findtext("InspektionsKode", None, self.NS)
-                        charakt1 = _untersuchdat_schacht.findtext("Charakterisierung1", None, self.NS)
-                        charakt2 = _untersuchdat_schacht.findtext("Charakterisierung2", None, self.NS)
-                        quantnr1 = _get_float(_untersuchdat_schacht.findtext("Quantifizierung1Numerisch", None, self.NS))
-                        quantnr2 = _get_float(_untersuchdat_schacht.findtext("Quantifizierung2Numerisch", None, self.NS))
-                        streckenschaden = _untersuchdat_schacht.findtext("Streckenschaden", None, self.NS)
-                        streckenschaden_lfdnr = _get_int(_untersuchdat_schacht.findtext("StreckenschadenLfdNr", None, self.NS))
-                        pos_von = _get_int(_untersuchdat_schacht.findtext("PositionVon", None, self.NS))
-                        pos_bis = _get_int(_untersuchdat_schacht.findtext("PositionBis", None, self.NS))
-                        vertikale_lage = _get_float(_untersuchdat_schacht.findtext("VertikaleLage", None, self.NS))
-                        bereich = _untersuchdat_schacht.findtext("Schachtbereich", None, self.NS)
+                        videozaehler = _get_int(_untersuchdat.findtext("Videozaehler", None, self.NS))
+                        timecode = _untersuchdat.findtext("Timecode", None, self.NS)
+                        kuerzel = _untersuchdat.findtext("InspektionsKode", None, self.NS)
+                        charakt1 = _untersuchdat.findtext("Charakterisierung1", None, self.NS)
+                        charakt2 = _untersuchdat.findtext("Charakterisierung2", None, self.NS)
+                        quantnr1 = _get_float(_untersuchdat.findtext("Quantifizierung1Numerisch", None, self.NS))
+                        quantnr2 = _get_float(_untersuchdat.findtext("Quantifizierung2Numerisch", None, self.NS))
+                        streckenschaden = _untersuchdat.findtext("Streckenschaden", None, self.NS)
+                        streckenschaden_lfdnr = _get_int(_untersuchdat.findtext("StreckenschadenLfdNr", None, self.NS))
+                        pos_von = _get_int(_untersuchdat.findtext("PositionVon", None, self.NS))
+                        pos_bis = _get_int(_untersuchdat.findtext("PositionBis", None, self.NS))
+                        vertikale_lage = _get_float(_untersuchdat.findtext("VertikaleLage", None, self.NS))
+                        bereich = _untersuchdat.findtext("Schachtbereich", None, self.NS)
 
-                        foto_dateiname = _untersuchdat_schacht.findtext("Fotodatei", None, self.NS)
+                        foto_dateiname = _untersuchdat.findtext("Fotodatei", None, self.NS)
                         #if _datei is not None and self.ordner_bild is not None:
                         #    foto_dateiname = os.path.join(self.ordner_bild, _datei)
                         #else:
                         #    foto_dateiname = None
 
-                        ZD = _get_int(_untersuchdat_schacht.findtext("Klassifizierung/Dichtheit/SKDvAuto", None, self.NS))
-                        ZS = _get_int(_untersuchdat_schacht.findtext("Klassifizierung/Betriebssicherheit/SKSvAuto", None, self.NS))
-                        ZB = _get_int(_untersuchdat_schacht.findtext("Klassifizierung/Standsicherheit/SKBvAuto", None, self.NS))
+                        ZD = _get_int(_untersuchdat.findtext("Klassifizierung/Dichtheit/SKDvAuto", None, self.NS))
+                        ZS = _get_int(_untersuchdat.findtext("Klassifizierung/Betriebssicherheit/SKSvAuto", None, self.NS))
+                        ZB = _get_int(_untersuchdat.findtext("Klassifizierung/Standsicherheit/SKBvAuto", None, self.NS))
 
                         # x_filme = self.xml.findall(
                         #     "Datenkollektive/Zustandsdatenkollektiv/Filme"
