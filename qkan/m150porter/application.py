@@ -144,7 +144,7 @@ class M150Porter(QKanPlugin):
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-            QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerbild.text()
+            QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerFotos.text()
             QKan.config.videoPathCurrent = self.import_dlg.tf_ordnervideo.text()
             #QKan.config.fotoRootPath = self.dlgop.tf_fotopath.text()
             #QKan.config.videoRootPath = self.dlgop.tf_videopath.text()

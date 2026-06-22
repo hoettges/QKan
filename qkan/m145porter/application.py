@@ -107,7 +107,7 @@ class M145Porter(QKanPlugin):
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
             QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-            QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerbild.text()
+            QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerFotos.text()
             QKan.config.videoPathCurrent = self.import_dlg.tf_ordnervideo.text()
 
             QKan.config.xml.import_stamm = (
@@ -168,7 +168,7 @@ class M145Porter(QKanPlugin):
         """
         QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
         QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-        QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerbild.text()
+        QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerFotos.text()
         QKan.config.videoPathCurrent = self.import_dlg.tf_ordnervideo.text()
 
         self.log.info("Creating DB")

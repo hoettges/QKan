@@ -696,7 +696,7 @@ der Schachtnamen</string>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLineEdit" name="tf_ordnerbild">
+             <widget class="QLineEdit" name="tf_ordnerFotos">
               <property name="font">
                <font>
                 <family>Tahoma</family>
@@ -717,7 +717,7 @@ der Schachtnamen</string>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pb_ordnerbild">
+             <widget class="QPushButton" name="pb_ordnerFotos">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad zu den Fotos auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>

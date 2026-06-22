@@ -124,8 +124,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     pb_import: QPushButton
     pb_project: QPushButton
 
-    pb_ordnerbild: QPushButton
-    tf_ordnerbild: QLineEdit
+    pb_ordnerFotos: QPushButton
+    tf_ordnerFotos: QLineEdit
 
     pb_ordnervideo: QPushButton
     tf_ordnervideo: QLineEdit
@@ -148,7 +148,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
         # Attach events
         self.pb_import.clicked.connect(self.select_import)
-        self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
+        self.pb_ordnerFotos.clicked.connect(self.select_ordnerbild)
         self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
@@ -156,7 +156,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.xml.import_file)
-        self.tf_ordnerbild.setText(QKan.config.fotoPathCurrent)
+        self.tf_ordnerFotos.setText(QKan.config.fotoPathCurrent)
         self.tf_ordnervideo.setText(QKan.config.videoPathCurrent)
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
@@ -194,7 +194,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
             self.default_dir,
         )
         if ordner_bild:
-            self.tf_ordnerbild.setText(ordner_bild)
+            self.tf_ordnerFotos.setText(ordner_bild)
             self.default_dir = os.path.dirname(ordner_bild)
 
     def select_ordnervideo(self) -> None:

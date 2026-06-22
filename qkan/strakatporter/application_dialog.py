@@ -54,8 +54,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     pb_import: QPushButton
     pb_project: QPushButton
 
-    pb_ordnerbild: QPushButton
-    tf_ordnerbild: QLineEdit
+    pb_ordnerFotos: QPushButton
+    tf_ordnerFotos: QLineEdit
     lf_rootFotos: QLabel
 
     pb_ordnervideo: QPushButton
@@ -90,13 +90,13 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
         self.button_box.helpRequested.connect(self.click_help)
-        self.pb_ordnerbild.clicked.connect(self.select_ordnerbild)
+        self.pb_ordnerFotos.clicked.connect(self.select_ordnerbild)
         self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.strakat.import_dir)
-        self.tf_ordnerbild.setText(QKan.config.fotoPathCurrent)
+        self.tf_ordnerFotos.setText(QKan.config.fotoPathCurrent)
         self.tf_ordnervideo.setText(QKan.config.videoPathCurrent)
         self.lf_rootFotos.setText(f'Hauptpfad: {QKan.config.fotoRootPath}')
         self.lf_rootVideos.setText(f'Hauptpfad: {QKan.config.videoRootPath}')
@@ -171,7 +171,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
             self.default_dir,
         )
         if ordner_bild:
-            self.tf_ordnerbild.setText(ordner_bild)
+            self.tf_ordnerFotos.setText(ordner_bild)
             self.default_dir = os.path.dirname(ordner_bild)
 
     def select_ordnervideo(self) -> None:

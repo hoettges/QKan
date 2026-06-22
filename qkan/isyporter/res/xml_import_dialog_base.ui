@@ -566,7 +566,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLineEdit" name="tf_ordnerbild">
+             <widget class="QLineEdit" name="tf_ordnerFotos">
               <property name="font">
                <font>
                 <family>Tahoma</family>
@@ -587,7 +587,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pb_ordnerbild">
+             <widget class="QPushButton" name="pb_ordnerFotos">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad zu den Fotos auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -602,32 +602,71 @@
            </layout>
           </item>
           <item>
-           <widget class="QLabel" name="lf_rootFotos">
-            <property name="font">
-             <font>
-              <family>Tahoma</family>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <italic>true</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string>Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &quot;Optionen&quot;</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(128, 128, 128);</string>
-            </property>
-            <property name="text">
-             <string>Hauptpfad: </string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="lf_rootVideos">
+              <property name="minimumSize">
+               <size>
+                <width>71</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Tahoma</family>
+                <pointsize>10</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="statusTip">
+               <string>Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &quot;Optionen&quot;</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(127, 127, 127);</string>
+              </property>
+              <property name="text">
+               <string>Hauptpfad: </string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="tf_rootVideos">
+              <property name="font">
+               <font>
+                <family>Tahoma</family>
+                <pointsize>10</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vollständiger Pfad zu den Videos der TV-Befahrungen. In der Datenbank wird nur der Teil relativ zum Hauptpfad gespeichert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="statusTip">
+               <string>Pfad zu den Videos</string>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(127, 127, 127);
+background-color: rgb(235, 235, 235);</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QLabel" name="label_6">
@@ -685,32 +724,68 @@
            </layout>
           </item>
           <item>
-           <widget class="QLabel" name="lf_rootVideos">
-            <property name="font">
-             <font>
-              <family>Tahoma</family>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <italic>true</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string>Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &quot;Optionen&quot;</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(128, 128, 128);</string>
-            </property>
-            <property name="text">
-             <string>Hauptpfad: </string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QLabel" name="lf_rootFotos">
+              <property name="minimumSize">
+               <size>
+                <width>71</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Tahoma</family>
+                <pointsize>10</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="statusTip">
+               <string>Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &quot;Optionen&quot;</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(127, 127, 127);</string>
+              </property>
+              <property name="text">
+               <string>Hauptpfad: </string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="tf_rootFotos">
+              <property name="font">
+               <font>
+                <family>Tahoma</family>
+                <pointsize>10</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vollständiger Pfad zu den Videos der TV-Befahrungen. In der Datenbank wird nur der Teil relativ zum Hauptpfad gespeichert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="statusTip">
+               <string>Pfad zu den Videos</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(127, 127, 127);
+background-color: rgb(235, 235, 235);</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

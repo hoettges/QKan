@@ -44,56 +44,12 @@ class ReadData:  # type: ignore
 
         self.db_name: Optional[str] = None
 
-        # self.required_fields = QKan.config.tools.clipboardattributes.required_fields
-        # self.schacht_types = QKan.config.tools.clipboardattributes.schacht_types
-        # self.haltung_types = QKan.config.tools.clipboardattributes.haltung_types
-        # self.qkan_patterns = QKan.config.tools.clipboardattributes.qkan_patterns
+        self.required_fields = QKan.config.tools.clipboardattributes.required_fields
+        self.schacht_types = QKan.config.tools.clipboardattributes.schacht_types
+        self.haltung_types = QKan.config.tools.clipboardattributes.haltung_types
 
         filename = Path(pluginDirectory("qkan")) / 'patterns.yml'
         self.clipPatterns = Patterns(filename)
-
-        self.required_fields: dict = {
-            "schaechte": ["schnam", "sohlhoehe"],
-            "auslaesse": ["schnam", "sohlhoehe"],
-            "speicher": ["schnam", "sohlhoehe"],
-            "haltungen": ["haltnam"],
-            "pumpen": ["pnam", "schoben", "schunten"],
-            "wehre": ["wnam", "schoben", "schunten"],
-            "drosseln": ["wnam", "schoben", "schunten"],
-            "schieber": ["wnam", "schoben", "schunten"],
-            "grundseitenauslaesse": ["wnam", "schoben", "schunten"],
-            "qregler": ["wnam", "schoben", "schunten"],
-            "hregler": ["wnam", "schoben", "schunten"],
-            "tezg": [],
-            "flaechen": [],
-            "teilgebiete": [],
-            "anschlussleitungen": ["leitnam"],
-            "untersuchdat_haltung": ["untersuchhal", "schoben", "schunten", "station", 'kuerzel'],
-            "untersuchdat_schacht": ['untersuchsch', 'kuerzel'],
-            'haltungen_untersucht': ['haltnam', 'schoben', 'schunten'],
-            'schaechte_untersucht': ['schnam'],
-        }
-
-        # Layer names with data source table 'schaechte'
-        self.schacht_types: dict = {
-            enums.LAYERBEZ.SCHAECHTE.value: "Schacht",                  # Filterkriterium in Attribut schachttyp
-            enums.LAYERBEZ.GEOMETRIEN.value: "Schacht",
-            enums.LAYERBEZ.KNOTENTYP.value: "Schacht",
-            enums.LAYERBEZ.SPEICHER.value: "Speicher",
-            enums.LAYERBEZ.AUSLAESSE.value: "Auslass",
-        }
-
-        # Layer names with data source table 'haltungen'
-        self.haltung_types: dict = {
-            enums.LAYERBEZ.HALTUNGEN.value: "Haltung",                  # Filterkriterium in Attribut haltungstyp
-            enums.LAYERBEZ.PUMPEN.value: "Pumpe",
-            enums.LAYERBEZ.WEHRE.value: "Wehr",
-            enums.LAYERBEZ.DROSSELN.value: "Drossel",
-            enums.LAYERBEZ.SCHIEBER.value: "Schieber",
-            enums.LAYERBEZ.GRUND_SEITENAUSLASS.value: "GrundSeitenauslass",
-            enums.LAYERBEZ.H_REGLER.value: "H-Regler",
-            enums.LAYERBEZ.Q_REGLER.value: "Q-Regler",
-        }
 
         self.proceed = proceed
 
