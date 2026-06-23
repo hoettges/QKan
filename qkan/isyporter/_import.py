@@ -320,7 +320,7 @@ class ImportTask(Schadenstexte):
         #TODO: prüfen ob Namespace doch eingelesen werden muss, wenn ja aber mit ElementTree arbeiten
 
     def _consume_smp_block(self,
-            _block: ElementTree.Element,
+            _block: ElementTree._Element,
     ) -> Tuple[str, int, float, float, float]:
         name = _block.findtext("Objektbezeichnung", None, self.NS)
         schacht_typ = 0
@@ -333,7 +333,7 @@ class ImportTask(Schadenstexte):
             self.NS,
         )
 
-        if smp is not None:
+        if smp is None:
             #fehlermeldung(
             #    "Fehler beim XML-Import: Schächte",
             #    f'Keine Geometrie "SMP" für Schacht {name}',
@@ -348,7 +348,7 @@ class ImportTask(Schadenstexte):
             sohlhoehe = _get_float(smp.findtext("Punkthoehe", None, self.NS))
         return name, schacht_typ, xsch, ysch, sohlhoehe
 
-    def _get_knoten2(self, x_geodaten: ElementTree.Element, with_grafik: bool = True) -> Tuple[
+    def _get_knoten2(self, x_geodaten: ElementTree._Element, with_grafik: bool = True) -> Tuple[
         Union[bytes, None],
         Union[bytes, None],
         Union[float, None],
@@ -464,11 +464,11 @@ class ImportTask(Schadenstexte):
 
         return geop_wkb, geom_wkb, sohlhoehe, deckelhoehe
 
-    def _get_kante(self, x_geodaten: ElementTree.Element) -> Union[bytes, None]:
+    def _get_kante(self, x_geodaten: ElementTree._Element) -> Union[bytes, None]:
         """Liest ein Linienobjekt aus dem Geometriedatenblock
 
             :param x_geodaten:  xml-Block mit den Geodaten
-            :type  x_geodaten:  ElementTree.Element
+            :type  x_geodaten:  ElementTree._Element
 
             :rtpye:             bytes
         """
@@ -526,6 +526,7 @@ class ImportTask(Schadenstexte):
             self._speicher()
             self._haltungen()
             self._wehre()
+            self._pumpenschacht()
             self._pumpen()
         if getattr(QKan.config.xml, "import_haus", True):
             self._anschlussleitungen()
@@ -1029,8 +1030,6 @@ class ImportTask(Schadenstexte):
                     'durchm': schacht.durchm,
                     'kommentar': schacht.kommentar,
                     'baujahr': schacht.baujahr,
-                    'xsch': None,
-                    'ysch': None,
                     'geop': schacht.geop,
                 }
 
@@ -1069,50 +1068,46 @@ class ImportTask(Schadenstexte):
                     self.NS,
                 )
 
-                for x_inspektion in x_inspektionen:
+                logger.debug(f"Anzahl Schaechte: {len(x_inspektionen)}")
 
-                    x_zustaende = x_inspektion.findall(
-                        "OptischeInspektion/Knoten/../..",
-                        self.NS,
+                schnam = None
+                untersuchtag = None
+                untersucher = None
+                wetter = None
+                strasse = None
+                baujahr = None
+                bewertungsart = None
+                bewertungstag = None
+                datenart = self.datenart
+
+                for x_zustand in x_inspektionen:
+                    schnam = x_zustand.findtext("Objektbezeichnung", None, self.NS)
+                    baujahr = _get_int(x_zustand.findtext("Baujahr", None, self.NS))
+                    strasse = x_zustand.findtext("Lage/Strassenname", None, self.NS)
+
+                    _schacht = x_zustand.find("OptischeInspektion", self.NS)
+                    if _schacht is not None:
+                        untersuchtag = _schacht.findtext("Inspektionsdatum", None, self.NS)
+                        untersucher = _schacht.findtext("NameUntersucher", None, self.NS)
+                        wetter = _schacht.findtext("Wetter", None, self.NS)
+                        auftragsbezeichnung = _schacht.findtext("Auftragskennung", None, self.NS)
+
+                        _schachtz = _schacht.find("Knoten/Bewertung", self.NS)
+                        if _schachtz is not None:
+                            bewertungsart = _schachtz.findtext("Bewertungsverfahren", None, self.NS)
+                            bewertungstag = _schachtz.findtext("Bewertungsdatum", None, self.NS)
+
+                    yield Schacht_untersucht(
+                        schnam=schnam,
+                        untersuchtag=untersuchtag,
+                        untersucher=untersucher,
+                        wetter=wetter,
+                        strasse=strasse,
+                        bewertungsart=bewertungsart,
+                        bewertungstag=bewertungstag,
+                        datenart=datenart,
+                        auftragsbezeichnung=auftragsbezeichnung,
                     )
-                    logger.debug(f"Anzahl Schaechte: {len(x_zustaende)}")
-
-                    schnam = None
-                    untersuchtag = None
-                    untersucher = None
-                    wetter = None
-                    strasse = None
-                    baujahr = None
-                    bewertungsart = None
-                    bewertungstag = None
-                    datenart = self.datenart
-
-                    for x_zustand in x_zustaende:
-                        schnam = x_zustand.findtext("Objektbezeichnung", None, self.NS)
-                        baujahr = _get_int(x_zustand.findtext("Baujahr", None, self.NS))
-                        strasse = x_zustand.findtext("Lage/Strassenname", None, self.NS)
-
-                        for _schacht in x_zustand.findall("OptischeInspektion", self.NS):
-                            untersuchtag = _schacht.findtext("Inspektionsdatum", None, self.NS)
-                            untersucher = _schacht.findtext("NameUntersucher", None, self.NS)
-                            wetter = _schacht.findtext("Wetter", None, self.NS)
-                            auftragsbezeichnung = _schacht.findtext("Auftragskennung", None, self.NS)
-
-                            for _schachtz in _schacht.findall("Knoten/Bewertung", self.NS):
-                                bewertungsart = _schachtz.findtext("Bewertungsverfahren", None, self.NS)
-                                bewertungstag = _schachtz.findtext("Bewertungsdatum", None, self.NS)
-
-                        yield Schacht_untersucht(
-                            schnam=schnam,
-                            untersuchtag=untersuchtag,
-                            untersucher=untersucher,
-                            wetter=wetter,
-                            strasse=strasse,
-                            bewertungsart=bewertungsart,
-                            bewertungstag=bewertungstag,
-                            datenart=datenart,
-                            auftragsbezeichnung=auftragsbezeichnung,
-                        )
 
         for schacht_untersucht in _iter():
 
@@ -1499,6 +1494,15 @@ class ImportTask(Schadenstexte):
                     'auslastyp':    None,
                 }
 
+            # Schachtdaten für Zustand in dict übernehmen
+            if getattr(QKan.config.xml, "import_zustand", True):
+                self.schachtdaten[auslass.schnam] = {
+                    'durchm': auslass.durchm,
+                    'kommentar': auslass.kommentar,
+                    'baujahr': auslass.baujahr,
+                    'geop': auslass.geop,
+                }
+
             params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
                       'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe, 'baujahr': auslass.baujahr,
                       'durchm': auslass.durchm, 'entwart': entwart, 'strasse': auslass.strasse, 'simstatus': simstatus,
@@ -1594,6 +1598,15 @@ class ImportTask(Schadenstexte):
                 self.mapper_bauwerkstypen,
                 'Speicher',
             )
+
+            # Schachtdaten für Zustand in dict übernehmen
+            if getattr(QKan.config.xml, "import_zustand", True):
+                self.schachtdaten[speicher.schnam] = {
+                    'durchm': speicher.durchm,
+                    'kommentar': speicher.kommentar,
+                    'baujahr': speicher.baujahr,
+                    'geop': speicher.geop,
+                }
 
             params = {'schnam': speicher.schnam, 'xsch': speicher.xsch, 'ysch': speicher.ysch,
                       'sohlhoehe': speicher.sohlhoehe, 'deckelhoehe': speicher.deckelhoehe, 'baujahr': speicher.baujahr,
@@ -1875,7 +1888,8 @@ class ImportTask(Schadenstexte):
                 else:
                     bezugspunkt = enums.UntersuchBezugpunkt.GERINNEMITTELPUNKT.value
 
-                for _haltungz in x_anlage.findall("OptischeInspektion/Rohrleitung/Bewertung", self.NS):
+                _haltungz = x_anlage.find("OptischeInspektion/Rohrleitung/Bewertung", self.NS)
+                if _haltungz is not None:
                     bewertungsart = _haltungz.findtext("OptischeInspektion/Bewertungsverfahren", None, self.NS)
                     bewertungstag = _haltungz.findtext("OptischeInspektion/Bewertungsdatum", None, self.NS)
 
@@ -2473,7 +2487,8 @@ class ImportTask(Schadenstexte):
                     name = x_anlage.findtext("Objektbezeichnung", None, self.NS)
                     strasse = x_anlage.findtext("Lage/Strassenname", None, self.NS)
 
-                    for _haltung in x_anlage.findall("OptischeInspektion", self.NS):
+                    _haltung = x_anlage.find("OptischeInspektion", self.NS)
+                    if _haltung is not None:
 
                         _val = _haltung.findtext("Rohrleitung/BezugspunktLage", None, self.NS)
                         if _val == '2' or not _val:
@@ -2482,18 +2497,14 @@ class ImportTask(Schadenstexte):
                             bezugspunkt = enums.UntersuchBezugpunkt.GERINNEMITTELPUNKT.value
 
                         laenge = _get_float(x_anlage.findtext("Rohrleitung/Inspektionslaenge",None, self.NS))
-
                         untersuchtag = _haltung.findtext("Inspektionsdatum", None, self.NS)
-
                         untersucher = _haltung.findtext("NameUntersucher", None, self.NS)
-
                         wetter = _haltung.findtext("Wetter", None, self.NS)
-
                         auftragsbezeichnung = _haltung.findtext("Auftragskennung", None, self.NS)
 
-                        for _haltungz in _haltung.findall("Rohrleitung/Bewertung", self.NS):
+                        _haltungz = _haltung.findall("Rohrleitung/Bewertung", self.NS)
+                        if _haltungz is not None:
                             bewertungsart = _haltungz.findtext("Bewertungsverfahren", None, self.NS)
-
                             bewertungstag = _haltungz.findtext("Bewertungsdatum", None, self.NS)
 
                     yield Anschlussleitung_untersucht(
@@ -2953,6 +2964,110 @@ class ImportTask(Schadenstexte):
 
         self.db_qkan.commit()
 
+    def _pumpenschacht(self) -> None:
+        def _iter() -> Iterator[Schacht]:
+            # .//Becken/../../.. nimmt AbwassertechnischeAnlage
+            x_anlagen = self.xml.findall(
+                "Datenkollektive/Stammdatenkollektiv/AbwassertechnischeAnlage[Objektart='2']",
+                self.NS,
+            )
+
+            logger.debug(f"Anzahl Becken: {len(x_anlagen)}")
+
+            for x_anlage in x_anlagen:
+                bauwerkstyp = x_anlage.findtext("Knoten[KnotenTyp='2']/Bauwerk/Bauwerkstyp", None, self.NS)
+                if bauwerkstyp == '6':
+                    name = x_anlage.findtext("Objektbezeichnung", None, self.NS)
+                    baujahr = _get_int(x_anlage.findtext("Baujahr", None, self.NS))
+
+                    smp = x_anlage.find(
+                        "Geometrie/Geometriedaten/Knoten/Punkt[PunktattributAbwasser='KOP']",
+                        self.NS,
+                    )
+
+                    if smp is None:
+                        logger.warning_user(
+                            "Fehler beim XML-Import: Pumpenschacht: "
+                            f'Keine Geometrie "KOP" für Pumpenschacht {name}'
+                        )
+                        xsch, ysch, sohlhoehe = (0.0,) * 3
+                    else:
+                        xsch = _get_float(smp.findtext("Rechtswert", None, self.NS))
+                        ysch = _get_float(
+                            smp.findtext("Hochwert", None, self.NS)
+                        )
+                        sohlhoehe = _get_float(smp.findtext("Punkthoehe", None, self.NS))
+
+                    yield Schacht(
+                        schnam=name,
+                        xsch=xsch,
+                        ysch=ysch,
+                        sohlhoehe=sohlhoehe,
+                        deckelhoehe=_get_float(
+                            x_anlage.findtext(
+                                "Geometrie/Geometriedaten/Knoten"
+                                "/Punkt[PunktattributAbwasser='DMP']/Punkthoehe",
+                                None,
+                                self.NS,
+                            )
+                        ),
+                        baujahr=baujahr,
+                        durchm=0.5,
+                        entwart=x_anlage.findtext("Entwaesserungsart", None, self.NS),
+                        strasse=x_anlage.findtext("Lage/Strassenname", None, self.NS),
+                        knotentyp=bauwerkstyp,
+                        simstatus=x_anlage.findtext("Status", None, self.NS),
+                        kommentar=x_anlage.findtext("Kommentar", None, self.NS),
+                    )
+
+        for pumpenschacht in _iter():
+            # Simstatus
+            simstatus = self.db_qkan.get_from_mapper(
+                pumpenschacht.simstatus,
+                self.mapper_simstatus,
+                'Pumpenschacht',
+                'simulationsstatus',
+                'bezeichnung',
+                'isybau',
+                'kommentar',
+                'kuerzel',
+            )
+
+            # Unbekannte Knotentypen nicht ergänzen
+            knotentyp = self.db_qkan.get_from_mapper(
+                pumpenschacht.knotentyp,
+                self.mapper_bauwerkstypen,
+                'Pumpenschacht',
+            )
+
+            # Schachtdaten für Zustand in dict übernehmen
+            if getattr(QKan.config.xml, "import_zustand", True):
+                self.schachtdaten[pumpenschacht.schnam] = {
+                    'durchm': pumpenschacht.durchm,
+                    'kommentar': pumpenschacht.kommentar,
+                    'baujahr': pumpenschacht.baujahr,
+                    'geop': pumpenschacht.geop,
+                }
+
+            params = {'schnam': pumpenschacht.schnam, 'xsch': pumpenschacht.xsch, 'ysch': pumpenschacht.ysch,
+                      'sohlhoehe': pumpenschacht.sohlhoehe, 'deckelhoehe': pumpenschacht.deckelhoehe, 'baujahr': pumpenschacht.baujahr,
+                      'durchm': pumpenschacht.durchm, 'strasse': pumpenschacht.strasse,  'entwart': pumpenschacht.entwart,
+                      'simstatus': simstatus, 'kommentar': pumpenschacht.kommentar,
+                      'schachttyp': 'pumpenschacht', 'knotentyp': knotentyp, 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    parameters=params,
+            ):
+                del self.db_qkan
+                return
+
+        self.db_qkan.commit()
+
     def _pumpen(self) -> None:
         def _iter() -> Iterator[Pumpe]:
             x_anlagen = self.xml.findall(
@@ -3058,5 +3173,4 @@ class ImportTask(Schadenstexte):
                 return None
 
         self.db_qkan.commit()
-
 

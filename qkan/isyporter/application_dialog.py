@@ -299,8 +299,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.tf_ordnerFotos.setText(QKan.config.fotoPathCurrent)
         self.tf_ordnervideo.setText(QKan.config.videoPathCurrent)
 
-        self.lf_rootFotos.setText(QKan.config.fotoRootPath)
-        self.lf_rootVideos.setText(QKan.config.videoRootPath)
+        self.tf_rootFotos.setText(QKan.config.fotoRootPath)
+        self.tf_rootVideos.setText(QKan.config.videoRootPath)
 
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))

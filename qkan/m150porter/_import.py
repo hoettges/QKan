@@ -259,7 +259,7 @@ class ImportTask(Schadenstexte):
         self.xml.parse(xml_file)
 
     def _get_KG_GO(self,
-                   block: ElementTree.Element,
+                   block: ElementTree._Element,
                    name: str,
                    durchmesser: float = 1.0,
                    link: bool = False,
@@ -438,7 +438,7 @@ class ImportTask(Schadenstexte):
 
         return geop_wkb , geom_wkb, sohlhoehe, deckelhoehe
 
-    def _get_KG_201(self, block: ElementTree.Element, name: str) -> ([str, None], [str, None], [float, None], [float, None]):
+    def _get_KG_201(self, block: ElementTree._Element, name: str) -> ([str, None], [str, None], [float, None], [float, None]):
         """Liest Knotenobjekte sowie Sohl- und Deckelhoehe aus den alten m150-Feldern KG201 ff.
 
         - geop:          Punktobjekt
@@ -483,7 +483,7 @@ class ImportTask(Schadenstexte):
 
         return geop_wkb , geom_wkb, sohlhoehe, deckelhoehe
 
-    def _get_HG_GO(self, block: ElementTree.Element, name: str, switchDirection: bool = False) \
+    def _get_HG_GO(self, block: ElementTree._Element, name: str, switchDirection: bool = False) \
             -> ([str, None], [str, None], [float, None], [float, None], [float, None], [float, None]):
         """Liest Linienobjekte sowie Sohl- und Deckelhoehe aus einem HG/GO-Block
 
@@ -555,7 +555,7 @@ class ImportTask(Schadenstexte):
 
         return geom_wkb, sohleoben, sohleunten, schoben, schunten
 
-    def _get_HG_201(self, block: ElementTree.Element, name: str) \
+    def _get_HG_201(self, block: ElementTree._Element, name: str) \
             -> ([str, None], [str, None], [float, None], [float, None]):
         """Liest Haltungsobjekte sowie Sohl- und Deckelhoehe aus den alten m150-Feldern KG201 ff.
 

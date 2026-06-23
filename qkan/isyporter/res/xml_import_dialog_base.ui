@@ -604,7 +604,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="QLabel" name="lf_rootVideos">
+             <widget class="QLabel" name="lf_rootFotos">
               <property name="minimumSize">
                <size>
                 <width>71</width>
@@ -638,7 +638,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="tf_rootVideos">
+             <widget class="QLineEdit" name="tf_rootFotos">
               <property name="font">
                <font>
                 <family>Tahoma</family>
@@ -726,7 +726,7 @@ background-color: rgb(235, 235, 235);</string>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QLabel" name="lf_rootFotos">
+             <widget class="QLabel" name="lf_rootVideos">
               <property name="minimumSize">
                <size>
                 <width>71</width>
@@ -760,7 +760,7 @@ background-color: rgb(235, 235, 235);</string>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="tf_rootFotos">
+             <widget class="QLineEdit" name="tf_rootVideos">
               <property name="font">
                <font>
                 <family>Tahoma</family>

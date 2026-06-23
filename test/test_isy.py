@@ -19,18 +19,22 @@ class TestISYQKan(QgisTest):
         # Extract files
         # with ZipFile(BASE_DATA / "test_isybau_aj_import.zip") as z:
         # with ZipFile(BASE_DATA / "test_ISYBAU13_HKuSuHA.zip") as z:
-        with ZipFile(BASE_DATA / "test_isy_Import_tum.zip") as z:
+        # with ZipFile(BASE_DATA / "test_isy_Import_tum.zip") as z:
+        with ZipFile(BASE_DATA / "test_isy_2013.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
         # QKan.config.database.qkan = str(BASE_WORK / "blankenhd.sqlite")
-        QKan.config.database.qkan = str(BASE_WORK / "metelen.sqlite")
+        QKan.config.database.qkan = str(BASE_WORK / "isy.sqlite")
         # QKan.config.xml.import_file = str(BASE_WORK / "Datenausgabe ISYBAU-2017_29-01-21.xml")
         # QKan.config.xml.import_file = str(BASE_WORK / "ISYBAU13_HKuSuHA.xml")
-        QKan.config.xml.import_file = str(BASE_WORK / "Metelen Gemeinde-Metelen 2026 Metelen 2026-Neu.XML")
-        QKan.config.project.file = str(BASE_WORK / "plan.qgs")
-        QKan.config.fotoRootPath = "C:/FHAC/hoettges/Kanalprogramme/QKan/test/work/fotos"
-        QKan.config.fotoPathCurrent = "C:/FHAC/hoettges/Kanalprogramme/QKan/test/work/fotos"
+        # QKan.config.xml.import_file = str(BASE_WORK / "Metelen Gemeinde-Metelen 2026 Metelen 2026-Neu.XML")
+        QKan.config.xml.import_file = str(BASE_WORK / "ISYBAU_XML-2013-Stammdaten.XML")
+        QKan.config.project.file = str(BASE_WORK / "isy.qgs")
+        QKan.config.fotoRootPath = str(BASE_WORK)
+        QKan.config.fotoPathCurrent = str(BASE_WORK / "fotos")
+        QKan.config.videoRootPath = str(BASE_WORK)
+        QKan.config.videoPathCurrent = str(BASE_WORK / "videos")
         QKan.config.xml.import_stamm = True
         QKan.config.xml.import_haus = True
         QKan.config.xml.import_zustand = True

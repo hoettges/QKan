@@ -98,8 +98,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.tf_import.setText(QKan.config.strakat.import_dir)
         self.tf_ordnerFotos.setText(QKan.config.fotoPathCurrent)
         self.tf_ordnervideo.setText(QKan.config.videoPathCurrent)
-        self.lf_rootFotos.setText(f'Hauptpfad: {QKan.config.fotoRootPath}')
-        self.lf_rootVideos.setText(f'Hauptpfad: {QKan.config.videoRootPath}')
+        self.tf_rootFotos.setText(f'Hauptpfad: {QKan.config.fotoRootPath}')
+        self.tf_rootVideos.setText(f'Hauptpfad: {QKan.config.videoRootPath}')
         # noinspection PyCallByClass,PyArgumentList
         self.pw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
