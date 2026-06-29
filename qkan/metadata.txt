@@ -10,7 +10,7 @@
 name=QKan
 qgisMinimumVersion=3.28
 description=Gruppe der QKan-Erweiterung(en)
-version=3.4.15
+version=3.4.16
 author=Nora Blase, Jörg Höttges, Yannick Linke
 email=hoettges@fh-aachen.de
 
@@ -22,8 +22,11 @@ repository=https://github.com/hoettges/QKan
 
 changelog= 
 
+    3.4.16:
+        - Fehlerkorrektur bei Foto- und Videopfad, wenn QKan neu installiert wurde
     3.4.15:
         - Kleinere Fehlerkorrektur bei Foto- und Videopfad
+        - Pumpenschächte werden als Schächte erkannt und Schadensdaten entsprechend zugeordnet
     3.4.14:
         - Korrigiert: ISYBAU-Import erzeugte mehrfache Datensätze.
     3.4.13:

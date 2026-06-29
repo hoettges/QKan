@@ -522,8 +522,8 @@ class Config(ClassObject):
     max_loops: int = 1000
     mindestflaeche: float = 0.5
     mit_verschneidung: bool = True
-    fotoRootPath: str = ""                              # Hauptpfad. Ergibt zusammen mit dem Attribut fotos.datei den Pfad zum Foto
-    videoRootPath: str = ""                             # Hauptpfad. Ergibt zusammen mit dem Attribut videos.datei den Pfad zum Foto
+    fotoRootPath: str = ""                          # Hauptpfad. Ergibt zusammen mit dem Attribut fotos.datei den Pfad zum Foto
+    videoRootPath: str = ""                         # Hauptpfad. Ergibt zusammen mit dem Attribut videos.datei den Pfad zum Foto
     fotoPathCurrent: str = ""                       # aktuell vom Anwender ausgewählter absoluter Pfad
     videoPathCurrent: str = ""                      # aktuell vom Anwender ausgewählter absoluter Pfad
     # ---
