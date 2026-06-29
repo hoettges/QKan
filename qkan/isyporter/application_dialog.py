@@ -53,7 +53,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     cb_export_pumpen: QCheckBox
     cb_export_wehre: QCheckBox
     cb_export_anschlussleitungen: QCheckBox
-    #cb_export_zustandsdaten: QCheckBox
+    cb_export_zustandsdaten: QCheckBox
     comboBox: QComboBox
     cb_selectedObjects: QCheckBox
 
@@ -96,9 +96,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_export_wehre.setChecked(
             getattr(QKan.config.check_export, "export_wehre", True)
         )
-        # self.cb_export_zustandsdaten.setChecked(
-        #     getattr(QKan.config.check_export, "export_zustandsdaten", True)
-        # )
+        self.cb_export_zustandsdaten.setChecked(
+            getattr(QKan.config.check_export, "export_zustandsdaten", True)
+        )
         self.cb_selectedObjects.setChecked(
             getattr(QKan.config.selections, "selectedObjects", False)
         )

@@ -38,8 +38,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-46</y>
-        <width>489</width>
+        <y>-61</y>
+        <width>493</width>
         <height>654</height>
        </rect>
       </property>
@@ -640,6 +640,52 @@
           <property name="text">
            <string>Anschlussleitungen</string>
           </property>
+         </widget>
+         <widget class="QCheckBox" name="cb_export_zustandsdaten">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>50</y>
+            <width>171</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Tahoma</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Zustandsdaten</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="comboBox">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>70</y>
+            <width>181</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>Stammdaten</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bewertet (Zustandsklassifizierung)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bewertet (Substanzklassifizierung)</string>
+           </property>
+          </item>
          </widget>
         </widget>
        </item>
