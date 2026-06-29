@@ -47,7 +47,7 @@ class ExportTask:
     def __init__(self, db_qkan: DBConnection, export_file: str, vorlage: str, auswahl_zustand:str):
         self.db_qkan = db_qkan
         self.export_file = export_file
-        self.vorlage = vorlage
+        self.vorlage = ''
         self.auswahl_zustand = auswahl_zustand
 
         # XML base
@@ -464,6 +464,7 @@ class ExportTask:
             """
             if not self.db_qkan.sql(sql, "db_qkan: export_schaechte"):
                 return
+
 
             fortschritt("Export Schächte...", 0.35)
             for attr in self.db_qkan.fetchall():
@@ -1322,53 +1323,53 @@ class ExportTask:
 
                 sql = f"""
                  SELECT
-                    haltungen_untersucht_bewertet.pk,
-                    haltungen_untersucht_bewertet.haltnam,
-                    haltungen_untersucht_bewertet.bezugspunkt,
-                    haltungen_untersucht_bewertet.schoben,
-                    haltungen_untersucht_bewertet.schunten,
-                    haltungen_untersucht_bewertet.hoehe,
-                    haltungen_untersucht_bewertet.breite,
-                    haltungen_untersucht_bewertet.laenge,
-                    haltungen_untersucht_bewertet.baujahr,
-                    haltungen_untersucht_bewertet.untersuchtag,
-                    haltungen_untersucht_bewertet.untersucher,
-                    haltungen_untersucht_bewertet.untersuchrichtung,
-                    haltungen_untersucht_bewertet.wetter,
-                    haltungen_untersucht_bewertet.bewertungsart,
-                    haltungen_untersucht_bewertet.bewertungstag,
-                    haltungen_untersucht_bewertet.strasse,
-                    haltungen_untersucht_bewertet.datenart,
-                    haltungen_untersucht_bewertet.auftragsbezeichnung,
-                    haltungen_untersucht_bewertet.max_ZD,
-                    haltungen_untersucht_bewertet.max_ZB,
-                    haltungen_untersucht_bewertet.max_ZS,
-                    x(PointN(haltungen_untersucht_bewertet.geom, 1)) AS xschob,
-                    y(PointN(haltungen_untersucht_bewertet.geom, 1)) AS yschob,
-                    x(PointN(haltungen_untersucht_bewertet.geom, -1)) AS xschun,
-                    y(PointN(haltungen_untersucht_bewertet.geom, -1)) AS yschun,
-                    haltungen_untersucht_bewertet.kommentar,
-                    untersuchdat_haltung_bewertet.station,
-                    untersuchdat_haltung_bewertet.timecode,
-                    untersuchdat_haltung_bewertet.kuerzel,
-                    untersuchdat_haltung_bewertet.charakt1,
-                    untersuchdat_haltung_bewertet.charakt2,
-                    untersuchdat_haltung_bewertet.quantnr1,
-                    untersuchdat_haltung_bewertet.quantnr2,
-                    untersuchdat_haltung_bewertet.streckenschaden,
-                    untersuchdat_haltung_bewertet.streckenschaden_lfdnr,
-                    untersuchdat_haltung_bewertet.pos_von,
-                    untersuchdat_haltung_bewertet.pos_bis,
-                    untersuchdat_haltung_bewertet.foto_dateiname,
-                    untersuchdat_haltung_bewertet.ZD,
-                    untersuchdat_haltung_bewertet.ZB,
-                    untersuchdat_haltung_bewertet.ZS,
+                    haltungen_untersucht_bewertung.pk,
+                    haltungen_untersucht_bewertung.haltnam,
+                    haltungen_untersucht_bewertung.bezugspunkt,
+                    haltungen_untersucht_bewertung.schoben,
+                    haltungen_untersucht_bewertung.schunten,
+                    haltungen_untersucht_bewertung.hoehe,
+                    haltungen_untersucht_bewertung.breite,
+                    haltungen_untersucht_bewertung.laenge,
+                    haltungen_untersucht_bewertung.baujahr,
+                    haltungen_untersucht_bewertung.untersuchtag,
+                    haltungen_untersucht_bewertung.untersucher,
+                    haltungen_untersucht_bewertung.untersuchrichtung,
+                    haltungen_untersucht_bewertung.wetter,
+                    haltungen_untersucht_bewertung.bewertungsart,
+                    haltungen_untersucht_bewertung.bewertungstag,
+                    haltungen_untersucht_bewertung.strasse,
+                    haltungen_untersucht_bewertung.datenart,
+                    haltungen_untersucht_bewertung.auftragsbezeichnung,
+                    haltungen_untersucht_bewertung.max_ZD,
+                    haltungen_untersucht_bewertung.max_ZB,
+                    haltungen_untersucht_bewertung.max_ZS,
+                    x(PointN(haltungen_untersucht_bewertung.geom, 1)) AS xschob,
+                    y(PointN(haltungen_untersucht_bewertung.geom, 1)) AS yschob,
+                    x(PointN(haltungen_untersucht_bewertung.geom, -1)) AS xschun,
+                    y(PointN(haltungen_untersucht_bewertung.geom, -1)) AS yschun,
+                    haltungen_untersucht_bewertung.kommentar,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.ZD,
+                    untersuchdat_haltung_bewertung.ZB,
+                    untersuchdat_haltung_bewertung.ZS,
                     haltungen.profilnam,
                     haltungen.material,
                     haltungen.entwart
-                    FROM haltungen_untersucht_bewertet
-                    JOIN untersuchdat_haltung_bewertet 
-                    JOIN haltungen where haltungen_untersucht_bewertet.haltnam = untersuchdat_haltung_bewertet.untersuchhal and haltungen_untersucht_bewertet.haltnam = haltungen.haltnam
+                    FROM haltungen_untersucht_bewertung
+                    JOIN untersuchdat_haltung_bewertung 
+                    JOIN haltungen where haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal and haltungen_untersucht_bewertung.haltnam = haltungen.haltnam
                     {self.abfrage_h_and}
                     """
 
@@ -1379,53 +1380,53 @@ class ExportTask:
 
                 sql = f"""
                  SELECT
-                    haltungen_untersucht_substanz.pk,
-                    haltungen_untersucht_substanz.haltnam,
-                    haltungen_untersucht_substanz.bezugspunkt,
-                    haltungen_untersucht_substanz.schoben,
-                    haltungen_untersucht_substanz.schunten,
-                    haltungen_untersucht_substanz.hoehe,
-                    haltungen_untersucht_substanz.breite,
-                    haltungen_untersucht_substanz.laenge,
-                    haltungen_untersucht_substanz.baujahr,
-                    haltungen_untersucht_substanz.untersuchtag,
-                    haltungen_untersucht_substanz.untersucher,
-                    haltungen_untersucht_substanz.untersuchrichtung,
-                    haltungen_untersucht_substanz.wetter,
-                    haltungen_untersucht_substanz.bewertungsart,
-                    haltungen_untersucht_substanz.bewertungstag,
-                    haltungen_untersucht_substanz.strasse,
-                    haltungen_untersucht_substanz.datenart,
-                    haltungen_untersucht_substanz.auftragsbezeichnung,
-                    haltungen_untersucht_substanz.max_ZD,
-                    haltungen_untersucht_substanz.max_ZB,
-                    haltungen_untersucht_substanz.max_ZS,
-                    x(PointN(haltungen_untersucht_substanz.geom, 1)) AS xschob,
-                    y(PointN(haltungen_untersucht_substanz.geom, 1)) AS yschob,
-                    x(PointN(haltungen_untersucht_substanz.geom, -1)) AS xschun,
-                    y(PointN(haltungen_untersucht_substanz.geom, -1)) AS yschun,
-                    haltungen_untersucht_substanz.kommentar,
-                    untersuchdat_haltung_substanz.station,
-                    untersuchdat_haltung_substanz.timecode,
-                    untersuchdat_haltung_substanz.kuerzel,
-                    untersuchdat_haltung_substanz.charakt1,
-                    untersuchdat_haltung_substanz.charakt2,
-                    untersuchdat_haltung_substanz.quantnr1,
-                    untersuchdat_haltung_substanz.quantnr2,
-                    untersuchdat_haltung_substanz.streckenschaden,
-                    untersuchdat_haltung_substanz.streckenschaden_lfdnr,
-                    untersuchdat_haltung_substanz.pos_von,
-                    untersuchdat_haltung_substanz.pos_bis,
-                    untersuchdat_haltung_substanz.foto_dateiname,
-                    untersuchdat_haltung_substanz.ZD,
-                    untersuchdat_haltung_substanz.ZB,
-                    untersuchdat_haltung_substanz.ZS,
+                    haltungen_substanz_bewertung.pk,
+                    haltungen_substanz_bewertung.haltnam,
+                    NULL,
+                    haltungen_substanz_bewertung.schoben,
+                    haltungen_substanz_bewertung.schunten,
+                    haltungen_substanz_bewertung.hoehe,
+                    haltungen_substanz_bewertung.breite,
+                    haltungen_substanz_bewertung.laenge,
+                    haltungen_substanz_bewertung.baujahr,
+                    haltungen_substanz_bewertung.untersuchtag,
+                    haltungen_substanz_bewertung.untersucher,
+                    NULL,
+                    haltungen_substanz_bewertung.wetter,
+                    haltungen_substanz_bewertung.bewertungsart,
+                    haltungen_substanz_bewertung.bewertungstag,
+                    haltungen_substanz_bewertung.strasse,
+                    haltungen_substanz_bewertung.datenart,
+                    NULL,
+                    haltungen_substanz_bewertung.max_ZD,
+                    haltungen_substanz_bewertung.max_ZB,
+                    haltungen_substanz_bewertung.max_ZS,
+                    x(PointN(haltungen_substanz_bewertung.geom, 1)) AS xschob,
+                    y(PointN(haltungen_substanz_bewertung.geom, 1)) AS yschob,
+                    x(PointN(haltungen_substanz_bewertung.geom, -1)) AS xschun,
+                    y(PointN(haltungen_substanz_bewertung.geom, -1)) AS yschun,
+                    NULL,
+                    substanz_haltung_bewertung.station,
+                    substanz_haltung_bewertung.timecode,
+                    substanz_haltung_bewertung.kuerzel,
+                    substanz_haltung_bewertung.charakt1,
+                    substanz_haltung_bewertung.charakt2,
+                    substanz_haltung_bewertung.quantnr1,
+                    substanz_haltung_bewertung.quantnr2,
+                    substanz_haltung_bewertung.streckenschaden,
+                    substanz_haltung_bewertung.streckenschaden_lfdnr,
+                    substanz_haltung_bewertung.pos_von,
+                    substanz_haltung_bewertung.pos_bis,
+                    substanz_haltung_bewertung.foto_dateiname,
+                    substanz_haltung_bewertung.Zustandsklasse_D,
+                    substanz_haltung_bewertung.Zustandsklasse_B,
+                    substanz_haltung_bewertung.Zustandsklasse_S,
                     haltungen.profilnam,
                     haltungen.material,
                     haltungen.entwart
-                    FROM haltungen_untersucht_substanz
-                    JOIN untersuchdat_haltung_substanz 
-                    JOIN haltungen where haltungen_untersucht_substanz.haltnam = untersuchdat_haltung_substanz.untersuchhal and haltungen_untersucht_substanz.haltnam = haltungen.haltnam
+                    FROM haltungen_substanz_bewertung
+                    JOIN substanz_haltung_bewertung 
+                    JOIN haltungen where haltungen_substanz_bewertung.haltnam = substanz_haltung_bewertung.untersuchhal and haltungen_substanz_bewertung.haltnam = haltungen.haltnam
                     {self.abfrage_h_and}
                     """
 
@@ -2279,73 +2280,66 @@ class ExportTask:
         status_message.layout().addWidget(progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.MessageLevel.Info, 10)
 
-        if self.vorlage == "":
 
-            # region Create XML structure
-            root = Element(
-                "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation", "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",}
-            )
-            SubElementText(root, "Version", "2013-02")
+        # region Create XML structure
+        root = Element("Identifikation", nsmap={"xsi":"http://www.w3.org/2001/XMLSchema-instance",})
+        SubElementText(root, "Version", "2013-02")
 
-            admin_daten = SubElement(root, "Admindaten")
-            _create_children(
-                SubElement(admin_daten, "Liegenschaft"),
-                ["Liegenschaftsnummer", "Liegenschaftsbezeichnung"],
-            )
+        admin_daten = SubElement(root, "Admindaten")
+        _create_children(
+            SubElement(admin_daten, "Liegenschaft"),
+            ["Liegenschaftsnummer", "Liegenschaftsbezeichnung"],
+        )
 
-            daten_kollektive = SubElement(root, "Datenkollektive")
-            _create_children_text(
-                daten_kollektive,
-                {
-                    "Erstellungsdatum": str(date.today()),
-                    "Kommentar": "Created with QKan's XML export module",
-                },
-            )
-            kennungen = SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
+        daten_kollektive = SubElement(root, "Datenkollektive")
+        _create_children_text(
+            daten_kollektive,
+            {
+                "Erstellungsdatum": str(date.today()),
+                "Kommentar": "Created with QKan's XML export module",
+            },
+        )
+        kennungen = SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
 
+        _create_children_text(
+            kennungen,
+            {
+                "Kennung": "STA01",
+                "Kollektivart": "1",
+            },
+        )
+
+        #TODO: aufträge ergänzen zur Vollständigkeit bei stammdaten und zustandsdaten
+        #wenn nur zahl in auftragsbezeichnung, dann auftragskennung sonst als auftragsbezeichnung
+
+        self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
+        _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
+
+        if QKan.config.check_export.zustandsdaten:
             _create_children_text(
                 kennungen,
                 {
-                    "Kennung": "STA01",
-                    "Kollektivart": "1",
+                    "Kennung": "ZUS01",
+                    "Kollektivart": "2",
                 },
             )
+            self.zustand = SubElement(daten_kollektive, "Zustandsdatenkollektiv")
+            _create_children_text(self.zustand, {"Kennung": "ZUS01", "Beschreibung": "Zustandsdaten", }, )
 
-            #TODO: aufträge ergänzen zur Vollständigkeit bei stammdaten und zustandsdaten
-            #wenn nur zahl in auftragsbezeichnung, dann auftragskennung sonst als auftragsbezeichnung
+        hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
+        _create_children_text(
+            hydro_kollektiv,
+            {"Kennung": "STA01", "Beschreibung": "Hydraulikdaten",},
+        )
+        rechen = SubElement(hydro_kollektiv, "Rechennetz")
+        SubElement(rechen, "Stammdatenkennung")
+        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
+        # endregion
 
-            self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
-            _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
+        # Path(self.export_file).write_text(
+        #     minidom.parseString(tostring(root)).toprettyxml(indent="  ")
+        # )
 
-            if QKan.config.check_export.zustandsdaten:
-                _create_children_text(
-                    kennungen,
-                    {
-                        "Kennung": "ZUS01",
-                        "Kollektivart": "2",
-                    },
-                )
-                self.zustand = SubElement(daten_kollektive, "Zustandsdatenkollektiv")
-                _create_children_text(self.zustand, {"Kennung": "ZUS01", "Beschreibung": "Zustandsdaten", }, )
-
-            hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
-            _create_children_text(
-                hydro_kollektiv,
-                {"Kennung": "STA01", "Beschreibung": "Hydraulikdaten",},
-            )
-            rechen = SubElement(hydro_kollektiv, "Rechennetz")
-            SubElement(rechen, "Stammdatenkennung")
-            self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
-            # endregion
-
-        if self.vorlage == "":
-
-            # Path(self.export_file).write_text(
-            #     minidom.parseString(tostring(root)).toprettyxml(indent="  ")
-            # )
-            Path(self.export_file).write_text(
-                etree.tostring(root, pretty_print=True, encoding="unicode")
-            )
 
         if QKan.config.selections.selectedObjects:
             select_s = []
@@ -2416,6 +2410,10 @@ class ExportTask:
             self._export_zustandsdaten_haltungen()
             self._export_zustandsdaten_schaechte()
             self._export_zustandsdaten_anschlussleitungen()
+
+        Path(self.export_file).write_text(
+            etree.tostring(root, pretty_print=True, encoding="unicode")
+        )
 
 
         # Close connection
