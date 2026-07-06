@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan (3.4.16)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.28.1-Firenze" saveDateTime="2026-05-04T11:39:23">
+<qgis projectname="QKan (3.4.17)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.28.1-Firenze" saveDateTime="2026-05-04T11:39:23">
   <homePath path=""/>
-  <title>QKan (3.4.16)</title>
+  <title>QKan (3.4.17)</title>
   <transaction mode="Disabled"/>
   <projectFlags set=""/>
   <projectCrs>
@@ -43243,7 +43243,7 @@ def closeProject():
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan (3.4.16)</title>
+    <title>QKan (3.4.17)</title>
     <abstract></abstract>
     <contact>
       <name></name>

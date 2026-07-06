@@ -166,7 +166,7 @@ class QKan:
     forms: list[str]
 
     dbVersion = "3.4.10"  # Version der QKan-Datenbank
-    qgsVersion = "3.4.16"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+    qgsVersion = "3.4.17"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
     build = "0000"
 
     # SQL-Statements werden abhängig vom Datenbanktyp und Modul geladen.
@@ -409,7 +409,7 @@ class QKan:
             safe_add_action(daten, "Untersuchungsverwaltung")
 
             safe_add_action(flaechen, "Erzeuge unbefestigte Flächen...")
-            safe_add_action(flaechen, "Erzeuge Voronoiflächen zu Haltungen")
+            safe_add_action(flaechen, "Erzeuge Thiessen-Polygone zu Haltungen")
             safe_add_action(flaechen, "Entferne Überlappungen")
             safe_add_action(flaechen, "Zuordnung zu Teilgebiet")
             safe_add_action(flaechen, "Teilgebietszuordnungen als Gruppen verwalten")

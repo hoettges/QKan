@@ -1314,7 +1314,7 @@ class ImportTask(Schadenstexte):
         # Entwässerungsarten
         # sql = "SELECT m150, FIRST_VALUE(bezeichnung) OVER (PARTITION BY m150 ORDER BY pk) " \
         #       "FROM entwaesserungsarten WHERE m150 IS NOT NULL GROUP BY m150"
-        sql = "SELECT kuerzel, bezqkan " \
+        sql = "SELECT kuerzel, coalesce(bezqkan, bezext) AS bezqkan " \
               "FROM refdata WHERE modul = 'm150porter' AND subject = 'import_entwaesserungsarten'"
         subject = "xml_import_entwaesserungsarten"
         self.db_qkan.consume_mapper(sql, subject, self.mapper_entwart)

@@ -185,7 +185,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -208,7 +208,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -323,7 +323,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -346,7 +346,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -462,7 +462,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -485,7 +485,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -613,7 +613,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -636,7 +636,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -752,7 +752,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -775,7 +775,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -856,8 +856,8 @@ class ExportTask:
                     "HG303": None if baujahr is None else f'{baujahr:d}',
                     "HG304": material,
                     "HG305": profil,
-                    "HG306": formatm150(breite),
-                    "HG307": formatm150(hoehe),
+                    "HG306": formatm150(int(breite)),
+                    "HG307": formatm150(int(hoehe)),
                     "HG310": formatm150(laenge),
                     "HG313": 'A',
                     "HG314": rohrlaenge,
@@ -992,8 +992,8 @@ class ExportTask:
                     "HG302": entwart,
                     "HG303": None if baujahr is None else f'{baujahr:d}',
                     "HG304": material,
-                    "HG306": formatm150(breite),
-                    "HG307": formatm150(hoehe),
+                    "HG306": formatm150(int(breite)),
+                    "HG307": formatm150(int(hoehe)),
                     "HG308": profilauskleidung,
                     "HG309": innenmaterial,
                     "HG310": formatm150(laenge),
@@ -1144,7 +1144,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 
@@ -1167,7 +1167,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem,
+                    "GP010": QKan.config.check_export.hoehensystem.value,
                 },
             )
 

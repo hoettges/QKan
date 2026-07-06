@@ -16,7 +16,8 @@ class TestM150QKan(QgisTest):
 
         # Extract files
         # with ZipFile(BASE_DATA / "test_m150Import_kanalprofi.zip") as z:
-        with ZipFile(BASE_DATA / 'test_m150Import.zip') as z:
+        with ZipFile(BASE_DATA / "test_m150Import_barbarastrasse.zip") as z:
+        # with ZipFile(BASE_DATA / 'test_m150Import.zip') as z:
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
@@ -31,10 +32,13 @@ class TestM150QKan(QgisTest):
         # QKan.config.database.qkan = str(BASE_WORK / "lemgo.sqlite")
         # QKan.config.xml.import_file = str(BASE_WORK / "Lemgo_test_DWA-M_150.XML")
 
-        QKan.config.database.qkan = str(BASE_WORK / "maarbruecke.sqlite")
-        QKan.config.xml.import_file = str(BASE_WORK / "An der Maarbruecke ABK 3394.xml")
+        # QKan.config.database.qkan = str(BASE_WORK / "maarbruecke.sqlite")
+        # QKan.config.xml.import_file = str(BASE_WORK / "An der Maarbruecke ABK 3394.xml")
+        #
+        QKan.config.database.qkan = str(BASE_WORK / "test.sqlite")
+        QKan.config.xml.import_file = str(BASE_WORK / "barbarastrasse_AP1_5.xml")
 
-        QKan.config.project.file = str(BASE_WORK / "plan.qgs")
+        QKan.config.project.file = str(BASE_WORK / "test.qgs")
         QKan.config.epsg = 25832
 
         imp = M150Porter(iface())

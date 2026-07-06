@@ -56,7 +56,7 @@
           </font>
          </property>
          <property name="title">
-          <string>Erzeugen von Haltungsflächen (Voronoi-Flächen)</string>
+          <string>Erzeugen von Haltungsflächen (Thiessen-Polygone)</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>

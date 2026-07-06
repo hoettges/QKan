@@ -216,7 +216,7 @@ class SurfaceTask:
                     return False
                 db_qkan.commit()
 
-            # Feststellen der Ausdehnung für die Voronoi-Flächen, je 50% größer als ausgewählte Teilgebiete
+            # Feststellen der Ausdehnung für die Thiessen-Polygone, je 50% größer als ausgewählte Teilgebiete
             sql = f"""
                 WITH flrange AS (
                     SELECT Extent(geom) AS geom 
@@ -280,9 +280,9 @@ class SurfaceTask:
 
         progress_bar.setValue(20)
 
-        logger.debug('Voronoi-Gebiete erzeugen')
+        logger.debug('Thiessen-Polygone erzeugen')
 
-        # Voronoi-Gebiete erzeugen
+        # Thiessen-Polygone erzeugen
         try:
             p_voronoi = processing.run(
                 "grass7:v.voronoi.skeleton",
@@ -305,7 +305,7 @@ class SurfaceTask:
             )
         except BaseException as err:
             logger.warning(
-                f"Bei der Erstellung der Voronoi-Gebiete ist folgender Fehler aufgetreten:\n {err}\n"
+                f"Bei der Erstellung der Thiessen-Polygone ist folgender Fehler aufgetreten:\n {err}\n"
             )
                 # "Möglicherweise ist die GRASS-Toolbox nicht verfügbar.\nIn diesem Fall aktivieren Sie"
                 # " bitte die Erweiterung 'GRASS GIS provider' und starten Sie QGIS neu...")
@@ -315,9 +315,9 @@ class SurfaceTask:
 
         progress_bar.setValue(50)
 
-        logger.debug('Voronoi-Gebiete in Spatialite-DB speichern')
+        logger.debug('Thiessen-Polygone in Spatialite-DB speichern')
 
-        # Speichern der Voronoi-Gebiete in der Spatialite-DB
+        # Speichern der Thiessen-Polygone in der Spatialite-DB
         # Interessant: processing.run("qgis:importintospatialite"...) verursacht einen Datenbankzugriffsfehler.
         # Deshalb nachfolgender Workaraound
         processing.run("native:extractbyattribute",

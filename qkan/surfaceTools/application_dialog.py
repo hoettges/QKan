@@ -106,7 +106,7 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
     """Erzeugen von Haltungsflächen.
     Dabei werden in der Tabelle tezg für Haltungen, deren "Entwässerungsart"
     in der Listebox "lw_hal_entw" ausgewählt wurden, zunächst temporäre
-    Voronoi-Flächen erzeugt und damit anschließend für
+    Thiessen-Polygone erzeugt und damit anschließend für
     ausgewählte Flächen (flaechen where aufteilen) die mit diesen überschneidenden
     Flächen in der Tabelle tezg verschnitten.
     """

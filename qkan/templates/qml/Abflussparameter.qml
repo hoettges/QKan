@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis styleCategories="AllStyleCategories" maxScale="0" minScale="0" readOnly="0" version="3.28.13-Firenze" hasScaleBasedVisibilityFlag="0">
+<qgis styleCategories="AllStyleCategories" maxScale="0" minScale="100000000" labelsEnabled="0" simplifyLocal="1" simplifyAlgorithm="0" readOnly="0" version="3.28.13-Firenze" simplifyDrawingHints="0" symbologyReferenceScale="-1" hasScaleBasedVisibilityFlag="0" simplifyDrawingTol="1" simplifyMaxScale="1">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
@@ -8,8 +8,8 @@
   </flags>
   <temporal durationUnit="min" accumulate="0" mode="0" limitMode="0" startExpression="" endExpression="" enabled="0" durationField="pk" fixedDuration="0" startField="" endField="">
     <fixedRange>
-      <start></start>
-      <end></end>
+      <start/>
+      <end/>
     </fixedRange>
   </temporal>
   <elevation binding="Centroid" extrusionEnabled="0" clamping="Terrain" zoffset="0" showMarkerSymbolInSurfacePlots="0" extrusion="0" symbology="Line" zscale="1" type="IndividualFeatures" respectLayerSymbol="1">
@@ -146,13 +146,10 @@
   </elevation>
   <customproperties>
     <Option type="Map">
-      <Option value="copy" name="QFieldSync/action" type="QString"/>
+      <Option value="no_action" name="QFieldSync/action" type="QString"/>
       <Option value="{}" name="QFieldSync/attachment_naming" type="QString"/>
-      <Option value="" name="QFieldSync/attribute_editing_locked_expression" type="QString"/>
       <Option value="offline" name="QFieldSync/cloud_action" type="QString"/>
-      <Option value="" name="QFieldSync/feature_addition_locked_expression" type="QString"/>
-      <Option value="" name="QFieldSync/feature_deletion_locked_expression" type="QString"/>
-      <Option value="" name="QFieldSync/geometry_editing_locked_expression" type="QString"/>
+      <Option value="" name="QFieldSync/geometry_locked_expression" type="QString"/>
       <Option value="{}" name="QFieldSync/photo_naming" type="QString"/>
       <Option value="{}" name="QFieldSync/relationship_maximum_visible" type="QString"/>
       <Option value="30" name="QFieldSync/tracking_distance_requirement_minimum_meters" type="int"/>
@@ -164,8 +161,8 @@
         <Option value="&quot;apnam&quot;" type="QString"/>
       </Option>
       <Option value="0" name="embeddedWidgets/count" type="int"/>
-      <Option name="variableNames"/>
-      <Option name="variableValues"/>
+      <Option name="variableNames" type="invalid"/>
+      <Option name="variableValues" type="invalid"/>
     </Option>
   </customproperties>
   <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
@@ -266,7 +263,7 @@
       </editWidget>
     </field>
     <field name="pctZero" configurationFlags="None">
-      <editWidget type="TextEdit">
+      <editWidget type="">
         <config>
           <Option/>
         </config>
@@ -418,7 +415,7 @@
       <column name="flaechentyp" hidden="0" width="-1" type="field"/>
       <column name="kommentar" hidden="0" width="-1" type="field"/>
       <column name="createdat" hidden="0" width="-1" type="field"/>
-      <column name="pctZero" hidden="0" width="-1" type="field"/>
+      <column name="pctzero" hidden="0" width="-1" type="field"/>
       <column hidden="1" width="-1" type="actions"/>
     </columns>
   </attributetableconfig>
@@ -429,24 +426,7 @@
   <storedexpressions/>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
-  <editforminitfilepath></editforminitfilepath>
-  <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
-"""
-QGIS forms can have a Python function that is called when the form is
-opened.
-
-Use this function to add extra logic to your forms.
-
-Enter the name of the function in the "Python Init function"
-field.
-An example follows:
-"""
-from qgis.PyQt.QtWidgets import QWidget
-
-def my_form_open(dialog, layer, feature):
-	geom = feature.geometry()
-	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
+  <editforminitfilepath/>
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
@@ -503,6 +483,6 @@ def my_form_open(dialog, layer, feature):
   <dataDefinedFieldProperties/>
   <widgets/>
   <previewExpression>"apnam"</previewExpression>
-  <mapTip></mapTip>
-  <layerGeometryType>4</layerGeometryType>
+  <mapTip/>
+  <layerGeometryType>0</layerGeometryType>
 </qgis>

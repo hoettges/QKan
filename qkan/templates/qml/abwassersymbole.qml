@@ -8,8 +8,8 @@
   </flags>
   <temporal durationUnit="min" accumulate="0" mode="0" limitMode="0" startExpression="" endExpression="" enabled="0" durationField="pk" fixedDuration="0" startField="" endField="">
     <fixedRange>
-      <start></start>
-      <end></end>
+      <start/>
+      <end/>
     </fixedRange>
   </temporal>
   <elevation binding="Centroid" extrusionEnabled="0" clamping="Terrain" zoffset="0" showMarkerSymbolInSurfacePlots="0" extrusion="0" symbology="Line" zscale="1" type="IndividualFeatures" respectLayerSymbol="1">
@@ -549,7 +549,7 @@
             <Option value="false" name="AllowMulti" type="bool"/>
             <Option value="false" name="AllowNull" type="bool"/>
             <Option value="" name="Description" type="QString"/>
-            <Option value=" &quot;gruppe&quot; &lt;> 'ABK NRW'" name="FilterExpression" type="QString"/>
+            <Option value=" &quot;gruppe&quot; &lt;&gt; 'ABK NRW'" name="FilterExpression" type="QString"/>
             <Option value="bezeichnung" name="Key" type="QString"/>
             <Option value="symbolkatalog_2e1dd950_9b92_4458_bbe1_40bedb78d1d1" name="Layer" type="QString"/>
             <Option value="Symbolkatalog" name="LayerName" type="QString"/>
@@ -666,22 +666,7 @@
   <storedexpressions/>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
-  <editforminitfilepath></editforminitfilepath>
-  <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
-"""
-QGIS-Formulare können eine Python-Funktion haben,, die aufgerufen wird, wenn sich das Formular öffnet
-
-Diese Funktion kann verwendet werden um dem Formular Extralogik hinzuzufügen.
-
-Der Name der Funktion wird im Feld "Python Init-Function" angegeben
-Ein Beispiel folgt:
-"""
-from qgis.PyQt.QtWidgets import QWidget
-
-def my_form_open(dialog, layer, feature):
-	geom = feature.geometry()
-	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
+  <editforminitfilepath/>
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
@@ -714,6 +699,6 @@ def my_form_open(dialog, layer, feature):
   <dataDefinedFieldProperties/>
   <widgets/>
   <previewExpression>"bezeichnung"</previewExpression>
-  <mapTip></mapTip>
+  <mapTip/>
   <layerGeometryType>0</layerGeometryType>
 </qgis>

@@ -10,7 +10,7 @@
 name=QKan
 qgisMinimumVersion=3.28
 description=Gruppe der QKan-Erweiterung(en)
-version=3.4.16
+version=3.4.17
 author=Nora Blase, Jörg Höttges, Yannick Linke
 email=hoettges@fh-aachen.de
 
@@ -22,6 +22,9 @@ repository=https://github.com/hoettges/QKan
 
 changelog= 
 
+    3.4.17:
+        - Fehlender Menüeintrag reaktiviert: "Erzeuge Thieesen-Polygone zu Haltungen"
+        - Fehler in M150-Export korrigiert
     3.4.16:
         - Fehlerkorrektur bei Foto- und Videopfad, wenn QKan neu installiert wurde
     3.4.15:
