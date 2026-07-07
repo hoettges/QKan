@@ -1,17 +1,19 @@
 import os.path
-import sys
 from PyQt5 import uic
 from PyQt5.QtCore import QTimer, QTime
-from qgis.core import QgsProject
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QFrame, QPushButton, QSlider,QApplication
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QFrame, QPushButton, QSlider
+
+from qkan.utils import get_logger
+
+from .vlc_error import VlcLoadError
+
+LOGGER = get_logger(__name__)
 
 try:
     from qkan.external.vlc import vlc
 except OSError:
-    import traceback
-
-    traceback.print_exc()
-    raise Exception("Could not open/find VLC. Is it installed?")
+    LOGGER.info("Could not open/find VLC. Is it installed?", exc_info=True)
+    vlc = None
 
 FORM_CLASS_videoplayer, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "videoplayer.ui")
@@ -31,6 +33,9 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
         super().__init__(parent=parent)
 
         self.setupUi(self)
+
+        if vlc is None:
+            raise VlcLoadError
 
         self.instance = vlc.Instance()
         self.mediaplayer = self.instance.media_player_new()
@@ -105,6 +110,9 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
 
     def open_file(self):
         """Open a media file in a MediaPlayer"""
+        if vlc is None:
+            raise VlcLoadError
+
         filename = self.video
         time = self.time
         if filename is None:
@@ -130,9 +138,6 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
         events = self.mediaplayer.event_manager()
         events.event_attach(vlc.EventType.MediaPlayerPositionChanged, self.update_ui)
         self.play_pause()
-        #self.mediaplayer.pause()
-        #self.playpause.setText("Play")
-        #self.isPaused = True
 
 
     def Stop(self):
@@ -186,14 +191,3 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
         mtime = QTime(0, 0, 0, 0)
         self.time = mtime.addMSecs(self.mediaplayer.get_time())
         self.timelabel.setText(self.time.toString())
-
-    @staticmethod
-    def open_video(video: str, time: float):
-        #folder_path = QgsProject.instance().readPath("./")
-        window = Videoplayer(video=video, time=time)
-        window.show()
-        window.open_file()
-        window.exec_()
-
-
-

@@ -9,14 +9,11 @@ Ergänzung für ui_handlers.py - Vollständige Implementierungen der Handler-Met
 import os
 import json
 import subprocess
-from collections import defaultdict
 
 from PyQt5.QtWidgets import (
     QMessageBox,
-    QTableWidget,
     QTabWidget,
     QListWidget,
-    QWidget,
     QVBoxLayout,
     QDialog,
     QDialogButtonBox,
@@ -26,11 +23,16 @@ from qgis.core import QgsProject, QgsPrintLayout, QgsLayoutItemMap
 from qgis.gui import *
 from qgis.utils import iface
 
+from qkan.tools.vlc_error import VlcLoadError
+from qkan.utils import get_logger
+
 from .data_queries import find_inner_table_widget
 from .media_player import MediaPlayer
 from .document_management import DocumentManagementWindow
 from .visualization import CanalVisualizationWindow
 from .sanierung_tool import Sanierungstool
+
+LOGGER = get_logger(__name__)
 
 
 # =========================================================
@@ -97,9 +99,14 @@ def start_video_clicked(self):
     film_dateiname = QLineEdit()
     film_dateiname.setText(video_path)
 
-    media_player = MediaPlayer(film_dateiname=film_dateiname)
-    media_player.show()
-    media_player.exec()
+    try:
+        media_player = MediaPlayer(film_dateiname=film_dateiname)
+        media_player.show()
+        media_player.exec()
+    except VlcLoadError:
+        LOGGER.error_user("Could not open/find VLC. Is it installed?")
+
+
 
 
 # =========================================================
