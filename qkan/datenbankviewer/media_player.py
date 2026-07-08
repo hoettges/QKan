@@ -11,19 +11,13 @@ import os
 import sys
 import json
 import re
-import traceback
 from pathlib import Path
 
 from PyQt5.QtCore import QTimer, QTime, Qt
 from PyQt5.QtWidgets import (
     QDialog,
     QFileDialog,
-    QFrame,
-    QPushButton,
-    QSlider,
-    QLineEdit,
     QMessageBox,
-    QLabel,
 )
 
 from qgis.PyQt import uic
@@ -31,6 +25,10 @@ from qgis.utils import iface
 from qgis.gui import QgsMapToolIdentifyFeature
 from qgis.core import QgsProject
 
+from qkan.tools.vlc_error import VlcLoadError
+from qkan.utils import get_logger
+
+LOGGER = get_logger(__name__)
 
 # =========================================================
 # VLC-Import
@@ -39,8 +37,8 @@ from qgis.core import QgsProject
 try:
     from ..external.vlc import vlc
 except OSError:
-    traceback.print_exc()
-    raise Exception("Could not open/find VLC. Is it installed?")
+    LOGGER.info("Could not open/find VLC. Is it installed?", exc_info=True)
+    vlc = None
 
 
 # =========================================================
@@ -78,6 +76,9 @@ class MediaPlayer(QDialog, FORM_CLASS_MediaPlayer):
         self.video_settings_dialog = (
             VideoSettingsDialog_qkan() if VideoSettingsDialog_qkan else None
         )
+
+        if vlc is None:
+            raise VlcLoadError
 
         # VLC initialisieren
         self.instance = vlc.Instance()
@@ -271,6 +272,9 @@ class MediaPlayer(QDialog, FORM_CLASS_MediaPlayer):
 
     def open_file(self):
         """Öffnet und lädt eine Video-Datei anhand des Dateinamens aus dem UI."""
+        if vlc is None:
+            raise VlcLoadError
+
         video = self.film_dateiname.text()
         if not video:
             return
@@ -451,14 +455,3 @@ class MediaPlayer(QDialog, FORM_CLASS_MediaPlayer):
         except Exception:
             pass
         super().closeEvent(event)
-
-
-# =========================================================
-# Factory-Funktion
-# =========================================================
-
-def open_video(video_path, time=0):
-    """Statische Factory-Funktion zum Öffnen eines Videofensters."""
-    window = MediaPlayer(film_dateiname=video_path)
-    window.show()
-    return window

@@ -1,18 +1,14 @@
-from qgis.PyQt.QtWidgets import QDialog, QTableWidgetItem
-from qgis.PyQt.QtCore import QStandardPaths
+from qgis.PyQt.QtWidgets import QDialog
+from qkan.tools.vlc_error import VlcLoadError
 from qkan.utils import get_logger
 from qgis.utils import iface
 from qgis.core import Qgis
-from qgis.core import QgsApplication
 
 import os
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.videoplayer import Videoplayer
 from qkan.tools.qkan_utils import get_database_QKan
-import json
-import site
-from pathlib import Path
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -68,20 +64,22 @@ class ShowVideo(QDialog):
                 video = video.lower()
                 time_h = 0
                 timecode = self.time_code
-                if timecode == 0:
-                    window = Videoplayer(video=video, time=0)
-                else:
+                if timecode > 0:
                     time_h = int(timecode / 1000000) if timecode > 1000000 else 0
                 time_m = (int(timecode / 10000) if timecode > 10000 else 0) - (time_h * 100)
                 time_s = (int(timecode / 100) if timecode > 100 else 0) - (time_h * 10000) - (time_m * 100)
 
                 video_offset = self.video_offset
                 time = float(time_h / 3600 + time_m / 60 + time_s + video_offset)
-                window = Videoplayer(video=video, time=time)
 
-                window.show()
-                window.open_file()
-                window.exec_()
+                try:
+                    window = Videoplayer(video=video, time=time)
+                except VlcLoadError:
+                    logger.error_user("Could not open/find VLC. Is it installed?")
+                else:
+                    window.show()
+                    window.open_file()
+                    window.exec_()
 
             except ImportError:
                 raise Exception(
