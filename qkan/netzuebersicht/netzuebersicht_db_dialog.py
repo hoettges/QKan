@@ -22,7 +22,7 @@ from qkan.__init__ import QKan
 
 
 # Tools aus QKan
-from ..tools.PanoramoPruefer import PanoramoPruefer, FehlendeDateienDialog
+from .PanoramoPruefer import PanoramoPruefer, FehlendeDateienDialog
 from .sonderbauwerke import (
     sonderbauwerk_anlegen,
     sonderbauwerk_loeschen,
@@ -237,7 +237,8 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
 
         # 6. Spaltenfilter-Combo initialisieren
         fill_column_combobox(self)
-        self.panoramo_pruefer = PanoramoPruefer()
+        from .PanoramoPruefer import PanoramoPruefer
+        self.panoramo_pruefer = PanoramoPruefer(parent=self)
 
 
         # 7. Signal-Slot-Verbindungen (Filter/Tabs)

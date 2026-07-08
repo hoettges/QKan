@@ -47,7 +47,7 @@ from .neuer_schaden_helper import NewUntersuchungDialog
 
 # UI-Datei laden
 FORMCLASSdatabaseviewerui, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "database_viewer.ui")
+    os.path.join(os.path.dirname(__file__), "res", "database_viewer.ui")
 )
 
 

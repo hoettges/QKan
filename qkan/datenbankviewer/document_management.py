@@ -19,7 +19,7 @@ from .utils import DOCUMENT_BASE_PATH
 
 
 FORMCLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), 'dokumentenablage.ui')
+    os.path.join(os.path.dirname(__file__), 'res', 'dokumentenablage.ui')
 )
 
 

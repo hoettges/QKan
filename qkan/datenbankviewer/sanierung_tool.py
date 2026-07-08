@@ -54,7 +54,7 @@ except ImportError:
 
 
 FORMCLASS_Sanierungstool, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "Sanierungstool.ui")
+    os.path.join(os.path.dirname(__file__), "res", "Sanierungstool.ui")
 )
 
 

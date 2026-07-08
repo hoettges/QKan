@@ -24,7 +24,7 @@ from .erneuerung_price_editor import ErneuerungPriceEditor
 # =========================================================
 
 FORM_CLASS_Erneuerungstool, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "Kostenermittlung_Erneuerung.ui")
+    os.path.join(os.path.dirname(__file__), "res", "Kostenermittlung_Erneuerung.ui")
 )
 
 
