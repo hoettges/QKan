@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Erstellung von QKan-Plugins &mdash; QKan 3.3.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=3d1d8b85"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4a9fcc6a"></script>
+        <script src="_static/doctools.js?v=a6d80eb4"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=57cff002"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QKan
+          </a>
+              <div class="version">
+                3.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_allgemein.html">Was ist QKan?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Datenaustausch.html">Datenaustausch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_flaechen.html">Arbeiten mit Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_workflow.html">Beispielprojekt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_qfield.html">QKan-Projekte auf dem Tablet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_edit.html">Erstellen und Bearbeiten von Kanalnetzen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Zustandsklassifizierung.html">Zustandsklassifizierung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Sanierungsbedarfszahl.html">Sanierungsbedarfszahl</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Substanzklassifizierung.html">SubKanS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Synchronisation.html">Synchronisation von QKan-Projekten</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Formulare.html">Formulare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Tabellen.html">QKan-Tabellen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Erstellung von QKan-Plugins</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/QKan_Plugins.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="erstellung-von-qkan-plugins">
+<h1>Erstellung von QKan-Plugins<a class="headerlink" href="#erstellung-von-qkan-plugins" title="Link to this heading"></a></h1>
+<p>Grundsätzlich entspricht die Erstellung von QKan-Plugins in Teilen der für QGIS empfohlenen Vorgehensweise.
+Wenn das Plugin als Bestandteil von QKan fungieren soll, sind einige Anpassungen und Ergänzungen notwendig.
+An dieser Stelle wird der Einfachheit halber der gesamte Workflow erläutert.</p>
+<section id="vorbereitung-des-moduls">
+<h2>Vorbereitung des Moduls<a class="headerlink" href="#vorbereitung-des-moduls" title="Link to this heading"></a></h2>
+<p>Am einfachsten ist es, den Vorlage-Ordner „template“ in das QKan-Module-Verzeichnis .plugins/qkan zu kopieren und diesen dann entsprechend dem
+gewünschten Modulnamen umzubenennen. Das neueste Modul, das nach dem hier erläuterten Standard erstellt wurde, ist das Modul „sync“, und ist
+deshalb ebenfalls als Vorlage empfehlendswert.</p>
+</section>
+<section id="erzeugen-von-modul-icons">
+<h2>Erzeugen von Modul-Icons<a class="headerlink" href="#erzeugen-von-modul-icons" title="Link to this heading"></a></h2>
+<p>Ein Modul benötigt mindestens ein Icon, kann aber auch mehrere verwenden. Diese sollten im Dateityp <cite>*</cite>.png in der Größe von 32 x 32 oder
+64 x 64 Pixeln vorliegen, wobei beinahe beliebige Pixelgrößen verarbeitet werden.
+Alle Icons eines Moduls müssen mit dem Programm „pyrcc5.exe“ in die Python-Datei resources.py umgewandelt werden. Dazu muss der Pfad zu
+den Icons in der Datei resource.qrc als relatvier Pfad bezogen auf das Modulverzeichnis eingetragen sein. Da für die Umwandlung
+einige Voreinstellungen (hierfür ist das Ausführen der Datei „o4w_env.bat“ empfehlenswert) notwendig sind, empfiehlt sich die
+Verwendung der durch das ISCE erstellten Batch-Datei „make resource.bat“.</p>
+</section>
+<section id="anpassungen-in-den-moduldateien-py">
+<h2>Anpassungen in den Moduldateien (<cite>*</cite>.py)<a class="headerlink" href="#anpassungen-in-den-moduldateien-py" title="Link to this heading"></a></h2>
+<p>Folgende Bezeichnungen müssen angepasst werden:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>„template“ durch den gewählten Modulnamen</p></li>
+<li><p>Icon-Bezeichnungen. Bei mehreren Icons müssen auch mehrere Aufrufe von QKan.instance.add_action() erfolgen</p></li>
+<li><p>In der Methode unload(self) müssen alle Dialoge wieder geschlossen werden</p></li>
+</ul>
+</div></blockquote>
+<section id="help-schaltflache-anbinden">
+<h3>Help-Schaltfläche anbinden<a class="headerlink" href="#help-schaltflache-anbinden" title="Link to this heading"></a></h3>
+<p>Die Schaltfläche im Formular ruft die Methode application_dialog.click_help() auf. Hier muss der Link auf die Dokumentation
+angepasst werden. Natürlich muss auch in der Dokumentation der Link, der hinter dem #-Zeichen steht (z. B. <strong>name_des_links</strong>),
+vorhanden sein. Meistens steht in der entsprechenden <cite>*</cite>.rst-Datei über der entsprechenden Überschrift ein
+Eintrag „.. _name_des_links:“, wobei das führende Unterstrichzeichen nicht zum Namen des Links gehört.</p>
+</section>
+<section id="zentrale-plugin-dateien">
+<h3>Zentrale Plugin-Dateien<a class="headerlink" href="#zentrale-plugin-dateien" title="Link to this heading"></a></h3>
+<section id="datei-application-py">
+<h4>Datei application.py<a class="headerlink" href="#datei-application-py" title="Link to this heading"></a></h4>
+<p>Im Modul <em>application,py</em> wird eine Klasse mit einem Namen ähnlich dem Modulnamen definiert, die folgende Aufgaben erfüllt:</p>
+<ul class="simple">
+<li><p>Die Funktion initGui stellt die nötigen Informationen zur Einbindung des Moduls in die Menüleiste von QKan zur Verfügung</p></li>
+<li><p>Öffnen des Formulars</p></li>
+<li><p>Aufruf des Modulcodes</p></li>
+</ul>
+<p>Dabei stehen über die geerbte Klasse „QKanPlugin“ folgende Funktionen zur Verfügung:</p>
+<ul class="simple">
+<li><p>self.default_dir: Standardverzeichnis des QKan-Projektes</p></li>
+<li><p>self.iface: iface-Modul von QGIS. Beim Debuggen wird es durch ein internes Modul ersetzt, damit die
+iface-Methodenaufrufe nicht ins Leere laufen</p></li>
+<li><p>self.log: Mit diesem Modul können Fehlermeldungen erzeugt werden, die je nach Aufruf in der internen
+Protokolldatei, im Meldungsfenster und/oder in der QGIS-Meldungsleiste erscheinen. Aktuell stehen zur Verfügung:
+- self.log.error_user(‚Anwenderfehler…‘)
+- self.log.error_code(‚Interner Programmierfehler‘)
+- self.log.error_data(‚Datenfehler‘)
+- self.log.notice(‚Information für den Anwender…‘)</p></li>
+</ul>
+</section>
+<section id="datei-application-dialog-py">
+<h4>Datei application_dialog.py<a class="headerlink" href="#datei-application-dialog-py" title="Link to this heading"></a></h4>
+<p>In dieser Datei werden zunächst einmal die Bedienfunktionen des Formulars definiert und mit den entsprechenden Ereignissen
+verbunden (connect).</p>
+<p>Weiterhin werden die Felder des Formulars mit Standardwerten besetzt und nach Bestätigung von [OK] durch den Anwender
+wieder gelesen und in die QKan-Konfiguration übernommen (QKN.congig.xxx.varieble):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>_load_template_config(): Schreiben der in der QKan-Konfiguration gespeicherten Standardwerte in das Formular</p></li>
+<li><p>_save_template_config(): Auslesen der im Formular vorgenommenen Einträge und Speichern in der QKan-Konfiguration</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="ordner-res">
+<h4>Ordner <em>res</em><a class="headerlink" href="#ordner-res" title="Link to this heading"></a></h4>
+<p>Im Ordner <em>res</em> befinden sich die Formulardatei (<cite>*</cite>.ui) sowie die Icon-Datei.
+Die Icon-Datei muss für QGIS in Form der Python-Datei „resources.py“ zur Verfügung gestellt werden.
+Dazu muss zunächst der Verweis auf die Icon-Datei in der Datei „resources.qrc“ eingetragen und gegebenenfalls der Pfad
+in der Batch-Datei „make resources.bat“ auf das richtige QGIS-Verzeichnis angepasst werden. Anschließend kann mit der
+Batch-Datei „make resources.bat“ die Python-Datei erstellt werden.</p>
+</section>
+</section>
+<section id="einbindung-in-die-qkan-plugins">
+<h3>Einbindung in die QKan-Plugins<a class="headerlink" href="#einbindung-in-die-qkan-plugins" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>QKan-Plugins müssen zur Einbindung nur in der Datei „__init__.py“ im Hauptverzeichnis eingetragen werden.</dt><dd><ol class="arabic simple">
+<li><p>in der PLUGIN_LIST</p></li>
+<li><p>in der Funktion „sort_actions(): Zu Beginn steht die Liste der Hauptmenüs und im Anschluss folgen die dazu gehörenden Menüeinträge</p></li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="vorlage-plugin-template">
+<h3>Vorlage-Plugin „Template“<a class="headerlink" href="#vorlage-plugin-template" title="Link to this heading"></a></h3>
+<p>Hier können Sie ein ZIP-Archiv mit der Grundstruktur eines QKan-Plugins
+downloaden: <a class="reference download internal" download="" href="_downloads/ff1534563e8fbd11387becf47d33e96c/template_plugin.zip"><code class="xref download docutils literal notranslate"><span class="pre">template_plugin.zip</span></code></a></p>
+<p>Zunächst sollten Sie an allen Stellen den Text <em>template</em> durch den Namen Ihres Moduls ersetzen, wobei unbedingt
+auf Groß- und Kleinschreibung zu achten ist.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
+  </div>
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

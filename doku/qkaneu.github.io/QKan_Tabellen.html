@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QKan-Tabellen &mdash; QKan 3.3.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=3d1d8b85"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4a9fcc6a"></script>
+        <script src="_static/doctools.js?v=a6d80eb4"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=57cff002"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="prev" title="Flächenverarbeitung" href="QKan_Flaechenverarbeitung.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QKan
+          </a>
+              <div class="version">
+                3.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_allgemein.html">Was ist QKan?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Datenaustausch.html">Datenaustausch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_flaechen.html">Arbeiten mit Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_workflow.html">Beispielprojekt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_qfield.html">QKan-Projekte auf dem Tablet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_edit.html">Erstellen und Bearbeiten von Kanalnetzen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Zustandsklassifizierung.html">Zustandsklassifizierung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Sanierungsbedarfszahl.html">Sanierungsbedarfszahl</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Substanzklassifizierung.html">SubKanS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Synchronisation.html">Synchronisation von QKan-Projekten</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="QKan_Formulare.html">Formulare</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">QKan-Tabellen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tabelleninhalte">Tabelleninhalte</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#haltungen">Haltungen</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#referenztabellen">Referenztabellen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#grundlagen">Grundlagen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#abflussparameter">Abflussparameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#abflusstypen">Abflusstypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auslasstypen">Auslasstypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bewertungsart">Bewertungsart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bodenklassen">Bodenklassen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#entwasserungsarten">Entwässerungsarten</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flachentypen">Flächentypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haltungstypen">Haltungstypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#knotentypen">Knotentypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profile">Profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pumpentypen">Pumpentypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#schachttypen">Schachttypen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulationsstatus">Simulationsstatus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#untersuchungsrichtung">Untersuchungsrichtung</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wetter">Wetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">QKan-Tabellen</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/QKan_Tabellen.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qkan-tabellen">
+<h1>QKan-Tabellen<a class="headerlink" href="#qkan-tabellen" title="Link to this heading"></a></h1>
+<p>QKan basiert auf zwei Arten von Tabellen:</p>
+<ul class="simple">
+<li><p>Datentabellen, z. B. Schächte, Haltungen, enthalten in der Regel grafische (Geo-)Objekte</p></li>
+<li><p>Referenztabellen, z. B. Entwässerungsarten, Profile</p></li>
+</ul>
+<section id="tabelleninhalte">
+<h2>Tabelleninhalte<a class="headerlink" href="#tabelleninhalte" title="Link to this heading"></a></h2>
+<p>Im Folgenden werden QKan-Tabellen und ihre Inhalte dokumentiert.</p>
+<section id="haltungen">
+<h3>Haltungen<a class="headerlink" href="#haltungen" title="Link to this heading"></a></h3>
+<p>Die Tabelle enthält alle Verbindungselemente in einem Kanalnetz. In der nachfolgenden
+Tabelle sind die internen Attributnamen sowie für die verschiedenen Elementtypen in
+einem Kanalnetz mit den jeweils angepassten Attributinhalten dargestellt.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attributname</p></th>
+<th class="head"><p>Haltungen</p></th>
+<th class="head"><p>Pumpen</p></th>
+<th class="head"><p>Wehre</p></th>
+<th class="head"><p>Drosseln</p></th>
+<th class="head"><p>Schieber</p></th>
+<th class="head"><p>Grund-/Seitenauslässe</p></th>
+<th class="head"><p>Q-Regler</p></th>
+<th class="head"><p>H-Regler</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>haltnam</p></td>
+<td><p>Name</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>schoben</p></td>
+<td><p>Anfangsschacht</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>schunten</p></td>
+<td><p>Endschacht</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>hoehe</p></td>
+<td><p>Profilhöhe</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>rel. Hubhöhe</p></td>
+<td><p>(n. v.)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>breite</p></td>
+<td><p>Profilbreite</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>Öffnungsbreite</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>laenge</p></td>
+<td><p>Haltungslänge</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>sohleoben</p></td>
+<td><p>Sohlhöhe Anfang</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>min. abs. Hubhöhe</p></td>
+<td><p>Höhe Unterkante</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>sohleunten</p></td>
+<td><p>Sohlhöhe Ende</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>teilgebiet</p></td>
+<td><p>Teilgebiet</p></td>
+<td></td>
+<td></td>
+<td><p>(n. v.)</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>profilnam</p></td>
+<td><p>Profilbezeichnung</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>entwart</p></td>
+<td><p>Entwässerungssystem</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>material</p></td>
+<td><p>Material</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>(n. v.)</p></td>
+</tr>
+<tr class="row-even"><td><p>ks</p></td>
+<td><p>Rauheitsbeiwert</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>Überfallbeiwert</p></td>
+<td><p>(n. v.)</p></td>
+<td><p>Verlustbeiwert</p></td>
+<td><p>Auslassbeiwert</p></td>
+<td><p>Verlustbeiwert</p></td>
+<td><p>Verlustbeiwert</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>haltungstyp</p></td>
+<td><p>„Haltung“</p></td>
+<td><p>„Pumpe“</p></td>
+<td><p>„Wehr“</p></td>
+<td><p>„Drossel“</p></td>
+<td><p>„Schieber“</p></td>
+<td><p>„GrundSeitenauslass“</p></td>
+<td><p>„Q-Regler“</p></td>
+<td><p>„H-Regler“</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>simstatus</p></td>
+<td><p>Planungsstatus</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>kommentar</p></td>
+<td><p>Kommentar</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>createdat</p></td>
+<td><p>bearbeitet</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>xschob</p></td>
+<td><p>x_anf</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>yschob</p></td>
+<td><p>y_anf</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>xschun</p></td>
+<td><p>x_end</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>yschun</p></td>
+<td><p>y_end</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="referenztabellen">
+<h2>Referenztabellen<a class="headerlink" href="#referenztabellen" title="Link to this heading"></a></h2>
+<section id="grundlagen">
+<h3>Grundlagen<a class="headerlink" href="#grundlagen" title="Link to this heading"></a></h3>
+<p>Eine QKan-Datenbank enthält neben den eigentlichen Geodatentabellen auch Referenztabellen, die in den Formularen als Nachschlagetabellen
+dienen. Anders als in vielen
+Datenbanken üblich erfolgt dabei der Zugriff nicht indirekt über die Schlüssel, sondern ausschließlich direkt über die Langbezeichnungen.
+Beispielsweise wird in der Haltungstabelle als Entwässerungsart „Mischwasser“ und nicht das Kürzel „M“ verwendet.
+Dies hat den Vorteil, dass Werte in den Tabellen direkt mit dem Ausdruckseditor im Tabellenfenster (Attributtabelle öffnen) bearbeitet werden können.</p>
+<p>Beim Datenimport werden zunächst in der zu importierenden Datei vorhandene Referenztabellen eingelesen und anschließend beim Einlesen
+alle Schlüsselwerte durch die zugeordneten Langbezeichnungen ersetzt.</p>
+<p>Falls in der zu importierenden Datei eine benötigte Referenztabelle nicht enthalten ist, hält QKan drei Maßnahmen vor:</p>
+<ul class="simple">
+<li><p>es werden dem Dateiformat entsprechende Standardschlüssel angelegt (z. B. die im Merkblatt DWA-M 145 enthaltenen Werte der jeweiligen
+Referenztabelle).</p></li>
+<li><p>bereits vor dem Datenimport können Schlüsselwerte und die zugehörigen Langbezeichnungen in der Referenztabelle hinzugefügt werden.</p></li>
+<li><p>unbekannte Schlüsselwerte werden beim Datenimport in die Referenztabelle übernommen, wobei der Schlüsselwert auch als Langbezeichnung
+eingetragen wird.
+Zusätzlich wird in der Kommentarspalte „unbekannt“ ergänzt. Dem Anwender wird empfohlen, direkt nach dem Datenimmport an Stelle dieser
+Langbezeichnungen entsprechende Bezeichnungen einzutragen, also z. B. „KM“ durch „Mischwasser“ zu ersetzen.
+QKan enthält einen automatischen Trigger, der Änderungen der Langbezeichnungen automatisch (erst nach dem Speichern der Änderungen an
+der Referenztabelle!) auch in den
+zugeordneten Geodatentabellen ausführt, damit die logische Verknüpfung zwischen den Tabellen erhalten bleibt.</p></li>
+</ul>
+<p>Von besonderer Bedeutung ist die Referenztabelle „Entwässerungsarten“. Sie bestimmt die Linienstile im Lageplan. Beim Import versucht
+QKan, die intern festgelegten Linienstile mit den Langbezeichnungen abzustimmen. Falls dies nicht funktioniert oder nachträglich Änderungen
+am Attribut „Entwässerungsart“ in der Tabelle „Haltungen“ vorgenommen werden, müssen gegebenenfalls die Bezeichnungen in den
+Layereigenschaften des Layers „Haltungen“ entsprechend angepasst werden.</p>
+<p>Nachfolgend sind die in QKan implementierten Refernztabellen aufgeführt. Die Referenztabellen enthalten optional die nachfolgend
+aufgeführten Blöcke für den Datenaustausch; darüber hinaus erfüllen alle Referenztabellen QKan-interne Funktionen von Nachschlagefeldern
+in Formularen und Darstellungsstile im Lageplan:</p>
+<ol class="arabic simple">
+<li><p>Schlüssel für den Datenaustausch mit Programmen zur hydrodynamischen Simulation. Dies sind aktuell: HYSTEM-EXTRAN („he“), Mike+ („mu“),
+Kanal++ („kp“), SWMM („sw“).</p></li>
+<li><p>Schlüssel für den Datenaustausch mit allgemeinen Datenaustauschformaten (ISYBAU, DWA-M150, DWA-M145)</p></li>
+</ol>
+<p>In der QKan-Datenbank haben die Tabellen aus softwaretechnischen Gründen leicht vereinfachte Tabellennamen (z. B. entwart für Entwässerungsarten).</p>
+</section>
+<section id="abflussparameter">
+<h3>Abflussparameter<a class="headerlink" href="#abflussparameter" title="Link to this heading"></a></h3>
+<p>Hydrologische Parameter für die hydrodynamsiche Simulation (Simulationsprogramme)</p>
+</section>
+<section id="abflusstypen">
+<h3>Abflusstypen<a class="headerlink" href="#abflusstypen" title="Link to this heading"></a></h3>
+<p>Art des hydrologischen Modells zur Beschreibung des Oberflächenabflusses (Simulationsprogramme)</p>
+</section>
+<section id="auslasstypen">
+<h3>Auslasstypen<a class="headerlink" href="#auslasstypen" title="Link to this heading"></a></h3>
+<p>Art des Auslasses (Simulationsprogramme)</p>
+</section>
+<section id="bewertungsart">
+<h3>Bewertungsart<a class="headerlink" href="#bewertungsart" title="Link to this heading"></a></h3>
+<p>Art bzw. verwendete Richtlinie für die Zustandsbewertung (allgemeiner Datenaustausch)</p>
+</section>
+<section id="bodenklassen">
+<h3>Bodenklassen<a class="headerlink" href="#bodenklassen" title="Link to this heading"></a></h3>
+<p>Hydrogeologische Parameter für die hydrodynamsiche Simulation (Simulationsprogramme)</p>
+</section>
+<section id="entwasserungsarten">
+<h3>Entwässerungsarten<a class="headerlink" href="#entwasserungsarten" title="Link to this heading"></a></h3>
+<p>Die Abwasserart wird für die farbige Darstellung der Haltungen verwendet (Simulationsprogramme und allgemeiner Datenaustausch)</p>
+</section>
+<section id="flachentypen">
+<h3>Flächentypen<a class="headerlink" href="#flachentypen" title="Link to this heading"></a></h3>
+<p>Klassifizierung der Flächen für das Simulationsprogramm HYSTEM/EXTRAN. Die Bezeichnungen werden für die farbige Darstellung
+verwendet (Simulationsprogramme)</p>
+</section>
+<section id="haltungstypen">
+<h3>Haltungstypen<a class="headerlink" href="#haltungstypen" title="Link to this heading"></a></h3>
+<p>Art des Verbindungselements. Die interne Tabelle „haltungen“ enthält nicht nur Haltungen, sondern auch alle anderen Elemente, die eine hydraulische Verbindung
+zwischen zwei Knotenelementen darstellen, also z. B. Wehre, Pumpen, Drosseln. Einige Elemente wie z. B. „Q-Regler“ sind speziell für das Simulationsprogramm
+HYSTEM-EXTRAN eingefügt worden (nur in QKan)</p>
+</section>
+<section id="knotentypen">
+<h3>Knotentypen<a class="headerlink" href="#knotentypen" title="Link to this heading"></a></h3>
+<p>Klassifizierung des Schachtes nach seiner Funktion im Entwässerungsnetz. Sie dient ausschließlich zur farbigen Auszeichnung im Lageplan (nur in QKan)</p>
+</section>
+<section id="profile">
+<h3>Profile<a class="headerlink" href="#profile" title="Link to this heading"></a></h3>
+<p>Bezeichnungen der Rohrprofile (Simulationsprogramme und allgemeiner Datenaustausch)</p>
+</section>
+<section id="pumpentypen">
+<h3>Pumpentypen<a class="headerlink" href="#pumpentypen" title="Link to this heading"></a></h3>
+<p>Die Tabelle wird ausschließlich für den Datenaustausch mit dem Simulationsprogramm HYSTEM/EXTRAN verwendet und enthält neben der
+Bezeichnung den zugehörigen Schlüsselwert (Simulationsprogramme)</p>
+</section>
+<section id="schachttypen">
+<h3>Schachttypen<a class="headerlink" href="#schachttypen" title="Link to this heading"></a></h3>
+<p>Art des Knotenelements. Die interne Tabelle „schaechte“ enthält nicht nur Schächte, sondern auch alle anderen Elemente, die Knotenelemente
+im Entwässerungsnetz darstellen, z. B. Speicher oder Auslässe (nur in QKan)</p>
+</section>
+<section id="simulationsstatus">
+<h3>Simulationsstatus<a class="headerlink" href="#simulationsstatus" title="Link to this heading"></a></h3>
+<p>Der Status ermöglicht die Klassifizierung als fiktives, geplantes, stillgelegtes Element etc. (Simulationsprogramme und allgemeiner Datenaustausch)</p>
+</section>
+<section id="untersuchungsrichtung">
+<h3>Untersuchungsrichtung<a class="headerlink" href="#untersuchungsrichtung" title="Link to this heading"></a></h3>
+<p>Untersuchungsrichtung bei einer Kamerabefahrung (allgemeiner Datenaustausch)</p>
+</section>
+<section id="wetter">
+<h3>Wetter<a class="headerlink" href="#wetter" title="Link to this heading"></a></h3>
+<p>Bezeichnung des Wetters während einer Kanaluntersuchung (allgemeiner Datenaustausch)</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="QKan_Flaechenverarbeitung.html" class="btn btn-neutral float-left" title="Flächenverarbeitung" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
+  </div>
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

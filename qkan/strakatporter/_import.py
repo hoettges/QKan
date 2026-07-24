@@ -119,7 +119,7 @@ class Kanal_STRAKAT(ClassObject):
     strakatid: str = ""
 
 
-class ImportTask(Schadenstexte):
+class ImportTask():
     def __init__(
         self,
         db_qkan: DBConnection,
@@ -190,12 +190,9 @@ class ImportTask(Schadenstexte):
                 self._anschlussleitungen(), self.progress_bar.setValue(35),             logger.debug("_anschlussleitungen"),
                 self._anschlussschaechte(), self.progress_bar.setValue(38),             logger.debug("_anschlussschaechte"),
                 self._strakat_berichte(), self.progress_bar.setValue(40),               logger.debug("_strakat_berichte"),
-                self._schaechte_untersucht(), self.progress_bar.setValue(45),           logger.debug("_schaechte_untersucht"),
-                self._untersuchdat_schacht(), self.progress_bar.setValue(50),           logger.debug("_untersuchdat_schacht"),
-                self._haltungen_untersucht(), self.progress_bar.setValue(60),           logger.debug("_haltungen_untersucht"),
-                self._untersuchdat_haltung(), self.progress_bar.setValue(70),           logger.debug("_untersuchdat_haltung"),
-                self._anschlussleitungen_untersucht(), self.progress_bar.setValue(80),  logger.debug("_anschlussleitungen_untersucht"),
-                self._untersuchdat_anschlussleitung(), self.progress_bar.setValue(90),  logger.debug("_untersuchdat_anschlussleitung"),
+                self._schachtuntersuchungen(), self.progress_bar.setValue(45),          logger.debug("_schachtuntersuchungen"),
+                self._haltungsuntersuchungen(), self.progress_bar.setValue(60),         logger.debug("_haltungsuntersuchungen"),
+                self._anschlussleitungsuntersuchungen(), self.progress_bar.setValue(80),  logger.debug("_anschlussleitungsuntersuchungen"),
             ]
         )
 
@@ -283,8 +280,8 @@ class ImportTask(Schadenstexte):
                         abflussnummer5
                     ) = unpack('iiiiiiiiiiiii', b[64:116])
 
-                    schacht_oben = b[172:b[172:187].find(b'\x00')+172].decode('ansi').strip()
-                    haltungsname = b[187:b[187:202].find(b'\x00')+187].decode('ansi').strip()
+                    schacht_oben = b[172:b[172:187].find(b'\x00')+172].decode('latin_1').strip()
+                    haltungsname = b[187:b[187:202].find(b'\x00')+187].decode('latin_1').strip()
 
                     (
                         rohrbreite_v, rohrbreite_g, rohrhoehe___v, rohrhoehe___g,
@@ -342,7 +339,7 @@ class ImportTask(Schadenstexte):
                     ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[917:933])]
                     strakatid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
 
-                    schacht_unten = b[965:b[965:980].find(b'\x00')+965].decode('ansi').strip()
+                    schacht_unten = b[965:b[965:980].find(b'\x00')+965].decode('latin_1').strip()
 
                     yield Kanal_STRAKAT(
                         nummer=nummer,
@@ -590,8 +587,16 @@ class ImportTask(Schadenstexte):
 
                 id = n1
 
-                kurz = b[10:b[10:26].find(b'\x00')+10].decode('ansi')
-                text = b[26:b[26:128].find(b'\x00')+26].decode('ansi')
+                try:
+                    kurz = b[10:b[10:26].find(b'\x00')+10].decode('latin_1')
+                except UnicodeDecodeError:
+                    _ = b[10:b[10:26].find(b'\x00')+10]
+                    logger.error_code(f"Fehlerhaftes Zeichen in Block {n}: {_}")
+                try:
+                    text = b[26:b[26:128].find(b'\x00')+26].decode('latin_1')
+                except UnicodeDecodeError:
+                    _ = b[10:b[10:26].find(b'\x00')+10]
+                    logger.error_code("Fehlerhaftes Zeichen in Block {n}: {_}")
 
                 params = {'tabtyp': tabtyp, 'id': id,
                           'n1': n1, 'n2': n2, 'n3': n3, 'n4': n4, 'n5': n5,
@@ -686,7 +691,7 @@ class ImportTask(Schadenstexte):
 
                 rohrbreite = unpack('f', b[220:224])[0]  # nur erste von 9 Rohrbreiten lesen
 
-                hausnummer = b[288:b[288:299].find(b'\x00')+288].decode('ansi').strip()
+                hausnummer = b[288:b[288:299].find(b'\x00')+288].decode('latin_1').strip()
 
                 berichtnr = unpack('i', b[299:303])[0]
                 anschlusshalnr = unpack('i', b[303:307])[0]
@@ -694,14 +699,14 @@ class ImportTask(Schadenstexte):
 
                 geloescht = unpack('b', b[317:318])[0]
 
-                anschlussschob = b[326:b[326:362].find(b'\x00')+326].decode('ansi').strip()    # vermutlich kürzer als 36 Zeichen
-                anschlussschun = b[362:b[362:398].find(b'\x00')+362].decode('ansi').strip()    # vermutlich kürzer als 36 Zeichen
+                anschlussschob = b[326:b[326:362].find(b'\x00')+326].decode('latin_1').strip()    # vermutlich kürzer als 36 Zeichen
+                anschlussschun = b[362:b[362:398].find(b'\x00')+362].decode('latin_1').strip()    # vermutlich kürzer als 36 Zeichen
 
                 urstation = unpack('f', b[515:519])[0]
 
                 strassennummer = unpack('h', b[597:599])[0]
 
-                anschlusshalname = b[611:b[611:631].find(b'\x00')+611].decode('ansi').strip()
+                anschlusshalname = b[611:b[611:631].find(b'\x00')+611].decode('latin_1').strip()
                 if anschlusshalname == '':
                     if anschlussschob != '':
                         anschlusshalname = anschlussschob
@@ -716,8 +721,8 @@ class ImportTask(Schadenstexte):
                 hausanschlid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
 
                 # gelöschte Datensätze überspringen
-                if geloescht == 0:
-                    continue
+                # if geloescht == 1:
+                #     continue
 
                 params = {
                     'nummer': nummer, 'nextnum': nextnum,
@@ -817,7 +822,7 @@ class ImportTask(Schadenstexte):
                     rest = b[896:1024]          # if rest != leer
                     if anf == leer:
                         continue
-                    datum = b[0:10].decode('ansi')
+                    datum = b[0:10].decode('latin_1')
                     if datum[2] != '.' or datum[5] != '.':
                         if re.fullmatch('\\d\\d[\\.\\,\\:\\;\\/\\*\\>\\+\\-_]'
                                         '\\d\\d[\\.\\,\\:\\;\\/\\*\\>\\+\\-_]\\d\\d\\d\\d',
@@ -831,11 +836,11 @@ class ImportTask(Schadenstexte):
 
                             continue
                     datum = datum[6:10] + '-' + datum[3:5] + '-' + datum[:2]
-                    untersucher = b[11:b[11:31].find(b'\x00') + 11].decode('ansi').strip()
-                    ag_kontrolle = b[31:b[31:46].find(b'\x00') + 31].decode('ansi').strip()
-                    fahrzeug = b[46:b[46:57].find(b'\x00') + 46].decode('ansi').strip()
-                    inspekteur = b[58:b[58:74].find(b'\x00') + 58].decode('ansi').strip()
-                    wetter = b[73:b[73:88].find(b'\x00') + 73].decode('ansi').strip()
+                    untersucher = b[11:b[11:31].find(b'\x00') + 11].decode('latin_1').strip()
+                    ag_kontrolle = b[31:b[31:46].find(b'\x00') + 31].decode('latin_1').strip()
+                    fahrzeug = b[46:b[46:57].find(b'\x00') + 46].decode('latin_1').strip()
+                    inspekteur = b[58:b[58:74].find(b'\x00') + 58].decode('latin_1').strip()
+                    wetter = b[73:b[73:88].find(b'\x00') + 73].decode('latin_1').strip()
 
                     atv149 = unpack('f', b[90:94])[0]
 
@@ -843,15 +848,15 @@ class ImportTask(Schadenstexte):
                     station_gegen = round(unpack('d', b[107:115])[0], 3)
                     station_untersucher = round(unpack('d', b[115:123])[0], 3)
 
-                    atv_kuerzel = b[123:b[123:134].find(b'\x00') + 123].decode('ansi').strip()
+                    atv_kuerzel = b[123:b[123:134].find(b'\x00') + 123].decode('latin_1').strip()
                     if not atv_kuerzel:
                         continue
-                    atv_langtext = b[134:b[134:295].find(b'\x00') + 134].decode('ansi').strip()
-                    sandatum = b[284:294].decode('ansi')
+                    atv_langtext = b[134:b[134:295].find(b'\x00') + 134].decode('latin_1').strip()
+                    sandatum = b[284:294].decode('latin_1')
                     geloescht = unpack('b', b[296:297])[0]
                     schadensklasse = unpack('B', b[295:296])[0]
                     untersuchungsrichtung = unpack('B', b[297:298])[0]
-                    bandnr_ = b[301:b[301:320].find(b'\x00') + 301].decode('ansi').strip()
+                    bandnr_ = b[301:b[301:320].find(b'\x00') + 301].decode('latin_1').strip()
                     try:
                         bandnr = int(bandnr_)
                     except:
@@ -863,21 +868,21 @@ class ImportTask(Schadenstexte):
                         logger.debug(f'Datenfehler: {bandnr=}, {videozaehler=}')
                         foto_dateiname = '00000000'
 
-                    wert8 = unpack('B', b[365:366])                         # STRAKAT: Bewertungsart
+                    wert8 = unpack('B', b[298:299])                         # STRAKAT: Bewertungsart
                     if wert8 == 4:
                         bewertungsart = 'DWA'
                     else:
                         bewertungsart = 'ATV'
                     pos_von, pos_bis = unpack('BB', b[366:368])             # STRAKAT: von/bis Uhr
-                    sanierung = b[402:b[402:413].find(b'\x00') + 402].decode('ansi').strip()
+                    sanierung = b[402:b[402:413].find(b'\x00') + 402].decode('latin_1').strip()
                     atv143 = unpack('f', b[430:434])[0]
 
                     quantnr1, quantnr2 = unpack('bb', b[434:436])
-                    streckenschaden = b[436:b[436:437].find(b'\x00') + 436].decode('ansi').strip()
-                    charakt1 = b[438:b[438:449].find(b'\x00') + 438].decode('ansi').strip()
-                    charakt2 = b[449:b[449:].find(b'\x00') + 449].decode('ansi').strip()
+                    streckenschaden = b[436:b[436:437].find(b'\x00') + 436].decode('latin_1').strip()
+                    charakt1 = b[438:b[438:449].find(b'\x00') + 438].decode('latin_1').strip()
+                    charakt2 = b[449:b[449:].find(b'\x00') + 449].decode('latin_1').strip()
 
-                    anmerkung = b[463:b[463:715].find(b'\x00') + 463].decode('ansi').strip()
+                    anmerkung = b[463:b[463:715].find(b'\x00') + 463].decode('latin_1').strip()
                     if sanierung != '' and anmerkung != '':
                         kommentar = sanierung + ', ' + anmerkung
                     else:
@@ -1401,14 +1406,13 @@ class ImportTask(Schadenstexte):
 
         return True
 
-    def _schaechte_untersucht(self) -> bool:
+    def _schachtuntersuchungen(self) -> bool:
         """Import der Schächte mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         if not QKan.config.check_import.schachtschaeden:
             return True
 
-        sqlnam = "strakat_30"
-
+        sqlnam = "strakat_schaechte_untersucht"
         params = {"epsg": self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
@@ -1417,25 +1421,23 @@ class ImportTask(Schadenstexte):
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Schächte untersucht")
 
-        self.db_qkan.commit()
+        sqlnam = "strakat_videos_schaechte"
+        params = {'ordner_video': self.ordner_video,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei Videos Schächte")
 
-        return True
-
-    def _untersuchdat_schacht(self) -> bool:
-        """Import der Schachtschäden aus der STRAKAT-Tabelle t_strakatberichte"""
-
-        if not QKan.config.check_import.schachtschaeden:
-            return True
-
-        sqlnam = "strakat_31"
-
+        sqlnam = "strakat_untersuchdat_schacht"
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video, 'epsg': self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import der Schachtschäden",
             parameters=params,
         ):
-            raise Exception(f"{self.__class__.__name__}: Fehler bei ")
+            raise Exception(f"{self.__class__.__name__}: Fehler bei Untersuchdat Schächte")
 
         self.db_qkan.commit()
 
@@ -1445,14 +1447,13 @@ class ImportTask(Schadenstexte):
 
         return True
 
-    def _haltungen_untersucht(self) -> bool:
+    def _haltungsuntersuchungen(self) -> bool:
         """Import der Haltungen mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         if not QKan.config.check_import.haltungsschaeden:
             return True
 
-        sqlnam = "strakat_32"
-
+        sqlnam = "strakat_haltungen_untersucht"
         params = {"epsg": self.epsg, "coordsFromRohr": QKan.config.strakat.coords_from_rohr}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
@@ -1461,20 +1462,17 @@ class ImportTask(Schadenstexte):
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei ")
 
-        self.db_qkan.commit()
+        sqlnam = "strakat_videos_haltungen"
+        params = {'ordner_video': self.ordner_video,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
 
-        return True
-
-    def _untersuchdat_haltung(self) -> bool:
-        """Import der Haltungsschäden aus der STRAKAT-Tabelle t_strakatberichte"""
-
-        if not QKan.config.check_import.haltungsschaeden:
-            return True
-
-        sqlnam = "strakat_33"
-
+        sqlnam = "strakat_untersuchdat_haltung"
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video}
-
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Haltungsschäden",
@@ -1490,33 +1488,30 @@ class ImportTask(Schadenstexte):
 
         return True
 
-    def _anschlussleitungen_untersucht(self) -> bool:
+    def _anschlussleitungsuntersuchungen(self) -> bool:
         """Import der Anschlussleitungen mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         if not QKan.config.check_import.hausanschlussschaeden:
             return True
 
-        sqlnam = "strakat_34"
-
+        sqlnam = "strakat_anschlussleitungen_untersucht"
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Anschlussleitungen untersucht",
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Anschlussleitungen untersucht")
 
-        self.db_qkan.commit()
+        sqlnam = "strakat_videos_anschlussleitungen"
+        params = {'ordner_video': self.ordner_video,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
 
-        return True
-
-    def _untersuchdat_anschlussleitung(self) -> bool:
-        """Import der Schäden an Anschlussleitungen aus der STRAKAT-Tabelle t_strakatberichte"""
-
-        if not QKan.config.check_import.hausanschlussschaeden:
-            return True
-
-        sqlnam = "strakat_35"
+        sqlnam = "strakat_untersuchdat_anschlussleitung"
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video}
-
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Untersuchungsdaten Anschlussleitungen",

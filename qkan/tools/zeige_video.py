@@ -1,8 +1,6 @@
 from qgis.PyQt.QtWidgets import QDialog
 from qkan.tools.vlc_error import VlcLoadError
 from qkan.utils import get_logger
-from qgis.utils import iface
-from qgis.core import Qgis
 
 import os
 from qkan import QKan
@@ -17,13 +15,13 @@ logger = get_logger("QKan.tools.zeige_video")
 
 class ShowVideo(QDialog):
     """Zeigt Haltungsschäden an"""
-    def __init__(self, name: str, untersuchtag, video_offset, time_code, art, bild_ordner):
+    def __init__(self, name: str, untersuchtag, video_offset, time_code, art, foto_ordner):
         super(ShowVideo, self).__init__()
 
         self.name = name
         self.untersuchtag = untersuchtag
         self.art = art
-        self.bild_ordner = bild_ordner
+        self.foto_ordner = foto_ordner
         if video_offset in ['', None, 'NULL']:
             self.video_offset = 0
         else:
@@ -53,9 +51,8 @@ class ShowVideo(QDialog):
                 db_qkan.sql(sql)
                 data = db_qkan.fetchone()
                 if data is None:
-                    iface.messageBar().pushMessage(
-                        f'Kein Video für Haltung {name} und Datum {datum} gefunden',
-                        level=Qgis.Warning, duration=5)
+                    logger.warning_user(f'Kein Video für Haltung {name} und Datum {datum} gefunden')
+                    return
                 else:
                     datei = data[0]
                     datei = datei.lstrip("\\/")
@@ -100,9 +97,8 @@ class ShowVideo(QDialog):
             db_qkan.sql(sql)
             data = db_qkan.fetchone()
             if data is None:
-                iface.messageBar().pushMessage(
-                    f'Kein Video für Haltung {name} und Datum {datum} gefunden',
-                    level=Qgis.Warning, duration=5)
+                logger.warning_user(f'Kein Video für Haltung {name} und Datum {datum} gefunden')
+                return
             else:
                 datei = data[0]
                 datei = datei.lstrip("\\/")
@@ -110,24 +106,39 @@ class ShowVideo(QDialog):
             video = video.lower()
             system = sys.platform
 
-            if system == "Windows":
-                os.startfile(video)  # Windows öffnet die Datei mit Standardprogramm
-            elif system == "Darwin":  # macOS
-                os.system(f"open '{video}'")
-            else:  # Linux
-                os.system(f"xdg-open '{video}'")
+            try:
+                if system == "Windows":
+                    os.startfile(video)  # Windows öffnet die Datei mit Standardprogramm
+                elif system == "Darwin":  # macOS
+                    os.system(f"open '{video}'")
+                else:  # Linux
+                    os.system(f"xdg-open '{video}'")
+            except:
+                logger.warning_user(f"Video {video} existiert nicht")
+                return
 
     def show_bild(self):
+
         ordner = QKan.config.fotoRootPath
 
-        # Bild laden
-        bild = self.bild_ordner
-        if bild != '':
-            bild_path = os.path.normpath(os.path.join(ordner, bild))
-            bild_path = bild_path.lower()
-            bild_path = mpimg.imread(bild_path)
+        # Fenster zur Anzeige des Fotos mit der Taste [ESC] schliessen
+        def hide_foto(k):
+            if k.key == 'escape':
+                plt.close()
 
-            # Bild anzeigen
-            plt.imshow(bild_path)
-            plt.axis("off")
+        # Foto laden
+        foto = self.foto_ordner
+        if foto != '':
+            foto_path = os.path.normpath(os.path.join(ordner, foto))
+            foto_path = foto_path.lower()
+            try:
+                img = mpimg.imread(foto_path)
+            except:
+                logger.warning_user(f"Foto {foto_path} existiert nicht")
+                return
+
+            # Foto anzeigen
+            plt.imshow(img)
+            # plt.axis("off")
+            plt.connect('key_press_event', hide_foto)
             plt.show()

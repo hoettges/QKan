@@ -93,6 +93,11 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_ordnerFotos.clicked.connect(self.select_ordnerbild)
         self.pb_ordnervideo.clicked.connect(self.select_ordnervideo)
 
+    def prepareDialog(self, iface) -> bool:
+        # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
+
+        self.iface = iface
+
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.strakat.import_dir)
@@ -114,6 +119,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_haltungsschaeden.setChecked(QKan.config.check_import.haltungsschaeden)
         self.cb_hausanschlussschaeden.setChecked(QKan.config.check_import.hausanschlussschaeden)
 
+        return True
         #self.cb_testmodus.setChecked(False)         # Standard: deaktiviert, vorher QKan.config.check_import.testmodus
 
     def select_import(self) -> None:

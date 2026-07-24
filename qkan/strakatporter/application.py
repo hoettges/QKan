@@ -45,6 +45,9 @@ class StrakatPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars STRAKAT und anschließender Start des Import aus einer STRAKAT-Datenbank"""
 
+        if not self.import_dlg.prepareDialog(self.iface):
+            return
+
         self.import_dlg.show()
 
         if self.import_dlg.exec_():

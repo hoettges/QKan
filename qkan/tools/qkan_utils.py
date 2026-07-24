@@ -253,7 +253,7 @@ def set_qkanlayer_dbname(oldsource: str, newdb: str) -> str:
     return newsource
 
 
-def get_database_QKan(silent: bool = False) -> None:
+def get_database_QKan(silent: bool = False) -> bool:
     """Ermittlung der aktuellen Datenbank aus den geladenen Layern. Ergebnisse werden in QKan.config gespeichert"""
 
     # noinspection PyArgumentList
@@ -265,7 +265,8 @@ def get_database_QKan(silent: bool = False) -> None:
         if len(layerobjects) > 0:
             break
     else:
-        return
+        logger.debug("Info: Es ist noch kein Projekt geöffnet")
+        return False
 
     layer = layerobjects[0]
     # only once for loaded project
@@ -282,6 +283,8 @@ def get_database_QKan(silent: bool = False) -> None:
             QKan.config.epsg = provider.crs().postgisSrid()
         else:
             logger.error_code(f"no or wrong dataProvider {provider.name()}")
+
+    return True
 
 
 def get_editable_layers() -> Set[str]:

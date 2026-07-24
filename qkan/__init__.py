@@ -48,11 +48,7 @@ PLUGIN_LIST = [
     "sync.application.Synchronisation",
     "info.application.Infos",
     # "createelements.application.CreateElements",
-<<<<<<< HEAD
     "netzuebersicht.application.NetzuebersichtPlugin",
-=======
-    # "netzuebersicht.application.NetzuebersichtPlugin",
->>>>>>> 3bb9e3a2357e4baa67ebbb5d02b41a0f280aae2d
     "datenbankviewer.application.DatenbankviewerPlugin",
     "untersuchungsverwaltung.application.UntersuchungsverwaltungApplication",
 ]
@@ -170,7 +166,7 @@ class QKan:
     forms: list[str]
 
     dbVersion = "3.4.10"  # Version der QKan-Datenbank
-    qgsVersion = "3.4.17"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+    qgsVersion = "3.4.18"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
     build = "0000"
 
     # SQL-Statements werden abhängig vom Datenbanktyp und Modul geladen.

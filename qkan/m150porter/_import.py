@@ -119,7 +119,7 @@ class Haltung_untersucht(ClassObject):
     untersuchtag: str = ""
     untersucher: str = ""
     untersuchrichtung: str = ""
-    film_dateiname: str = ""
+    film_dateiname: str = ""                # in Tabelle "haltungen_untersucht" nicht enthalten
     bezugspunkt: str = ""
     wetter: str = ""
     strasse: str = ""
@@ -1809,7 +1809,6 @@ class ImportTask(Schadenstexte):
                     inspektionslaenge = inspektionslaenge,
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
-                    film_dateiname = film_dateiname,
                     ordner_bild = self.ordner_bild,
                     ZD=ZD,
                     ZB=ZB,
@@ -2213,6 +2212,7 @@ class ImportTask(Schadenstexte):
                         bezugspunkt = enums.UntersuchBezugpunkt.GERINNEMITTELPUNKT.value    # HI 102 in ('C' , 'D', 'Z')
 
                 else:
+                    film_dateiname = None
                     untersuchtag = None
                     untersucher = None
                     untersuchrichtung = None

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hystem-Extran &mdash; QKan 3.3.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=8209df7b" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=3d1d8b85"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4a9fcc6a"></script>
+        <script src="_static/doctools.js?v=a6d80eb4"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=57cff002"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="XML" href="QKan_XML.html" />
+    <link rel="prev" title="Verwaltung" href="QKan_Verwaltung.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QKan
+          </a>
+              <div class="version">
+                3.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Allgemeines</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_allgemein.html">Was ist QKan?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_aufsetzen.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Datenaustausch.html">Datenaustausch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_flaechen.html">Arbeiten mit Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_workflow.html">Beispielprojekt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_qfield.html">QKan-Projekte auf dem Tablet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_edit.html">Erstellen und Bearbeiten von Kanalnetzen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Zustandsklassifizierung.html">Zustandsklassifizierung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Sanierungsbedarfszahl.html">Sanierungsbedarfszahl</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Substanzklassifizierung.html">SubKanS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Synchronisation.html">Synchronisation von QKan-Projekten</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Übersicht</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="QKan_Formulare.html">Formulare</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="QKan_Formulare_Allgemein.html">Allgemein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Verwaltung.html">Verwaltung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Daten.html">Daten</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hystem-Extran</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-aus-hystem-extran">Import aus HYSTEM-EXTRAN</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#datenquelle">Datenquelle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datenziel">Datenziel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#projektdatei-erzeugen">Projektdatei erzeugen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabellen-importieren">Tabellen importieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haltungsflachen-importieren-markiert-als">Haltungsflächen importieren, markiert als:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#referenztabellen-importieren">Referenztabellen importieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-importierenden-daten">Tabelle zur Auswahl der zu importierenden Daten</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#export-nach-hystem-extran">Export nach HYSTEM-EXTRAN</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qkan-projekt-datenbank">QKan-Projekt-Datenbank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zieldatenbank">Zieldatenbank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nur-ausgewahlte-teilgebiete-berucksichtigen">Nur ausgewählte Teilgebiete berücksichtigen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optionen">Optionen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabellen-exportieren">Tabellen exportieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#aktionen-beim-export">Aktionen beim Export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten">Tabelle zur Auswahl der zu exportierenden Daten</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ergebnisse-aus-hystem-extran-8">Ergebnisse aus HYSTEM-EXTRAN 8</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_XML.html">XML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_DYNA.html">DYNA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Mike.html">Mike+</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_SWMM.html">SWMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_STRAKAT.html">STRAKAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Flaechenverarbeitung.html">Flächenverarbeitung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QKan_Formulare.html#allgemeine-funktionselemente-in-formularen">Allgemeine Funktionselemente in Formularen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="QKan_Tabellen.html">QKan-Tabellen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="QKan_Formulare.html">Formulare</a></li>
+      <li class="breadcrumb-item active">Hystem-Extran</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/QKan_Hystem_Extran.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hystem-extran">
+<h1>Hystem-Extran<a class="headerlink" href="#hystem-extran" title="Link to this heading"></a></h1>
+<section id="import-aus-hystem-extran">
+<span id="linkimporthe"></span><h2>Import aus HYSTEM-EXTRAN<a class="headerlink" href="#import-aus-hystem-extran" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_Import_HE.png"><img alt="Tool_Import_HE" src="_images/Tool_Import_HE.png" style="width: 1.25em;" /></a> <span class="guilabel">Import aus HYSTEM-EXTRAN</span> geschieht der Import leicht mit Hilfe einer HE Quelldatenbank (Endung .idbf).</p>
+<img alt="_images/import_aus_he.png" src="_images/import_aus_he.png" />
+<section id="datenquelle">
+<h3>Datenquelle<a class="headerlink" href="#datenquelle" title="Link to this heading"></a></h3>
+<p>In diesem Bereich wird die mit HE erstellte Quelldatenbank (Endung .idbf) ausgewählt. Darunter muss das Projektionssystem ausgewählt werden,
+in dem die Daten <strong>in der Datenquelle</strong> gespeichert sind. In dem gleichen Projektionssystem wird das QKan-Projekt aufgebaut, sodass beide
+Projektionssysteme identisch sind.</p>
+</section>
+<section id="datenziel">
+<h3>Datenziel<a class="headerlink" href="#datenziel" title="Link to this heading"></a></h3>
+<p>Hier wird das Datenziel - die Sqlite-Datenbank - ausgewählt. Ist noch keine Zieldatenbank vorhanden, kann diese hier erstellt werden.</p>
+</section>
+<section id="projektdatei-erzeugen">
+<h3>Projektdatei erzeugen<a class="headerlink" href="#projektdatei-erzeugen" title="Link to this heading"></a></h3>
+<p>Werden die Daten in ein bereits existierendes Projekt geladen, dann ist hier bereits der Pfad der verwendeten Projektdatei angegeben. Existiert noch
+keine Projektdatei, kann diese hier nun erstellt werden. Dabei ist es empfehlenswert, diese im selben Verzeichnis mit der Datenbank zu speichern.</p>
+</section>
+<section id="tabellen-importieren">
+<h3>Tabellen importieren<a class="headerlink" href="#tabellen-importieren" title="Link to this heading"></a></h3>
+<p>Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. Im unteren Bereich schließt sich die Auswahl
+der Flächen an, dabei steht „Flächen (RW)“ für Regenwasserflächen und „SW-Einleiter“ für Schmutzwasser-Einleiter.</p>
+</section>
+<section id="haltungsflachen-importieren-markiert-als">
+<h3>Haltungsflächen importieren, markiert als:<a class="headerlink" href="#haltungsflachen-importieren-markiert-als" title="Link to this heading"></a></h3>
+<p>Die Selektion in diesem Block bezieht sich auf die Auswahl der entsprechenden Datensätze in HE (siehe Bild unten).
+Hierbei können bei Bedarf bestimmte Flächentypen, durch löschen des Hakens im QKan-Formular, vom Import ausgeschlossen werden.</p>
+<p><a class="reference internal" href="_images/Einzugsflaeche_HE.png"><img alt="bild_einzugsfl_he" src="_images/Einzugsflaeche_HE.png" style="width: 30em;" /></a></p>
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+</section>
+<section id="referenztabellen-importieren">
+<h3>Referenztabellen importieren<a class="headerlink" href="#referenztabellen-importieren" title="Link to this heading"></a></h3>
+<p>Hier kann festgelegt werden, welche Referenztabellen importiert werden sollen. Wird hier keine Auswahl getroffen, so füllt QKan
+selbstständig entsprechende Referenztabellen mit Standardwerten. Werden die zur Auswahl stehenden Referenztabellen gewählt, so importiert
+QKan nur genutzte, das heißt, mit anderen Tabellen verbundene, Werte. Einträge, die Angelegt wurden, aber in diesem Projekt nicht
+verwendet wurden, werden nur importiert, wenn die Option „Auch nicht verwendete Datensätze importieren“ gewählt wird. Diese Option sollte
+nur gewählt werden, wenn eigene Referenztabellen (z.B. für Bodenklassen) in HYSTEM-EXTRAN angelegt wurden und davon auszugehen ist, dass
+diese in der Zukunft benötigt werden.</p>
+</section>
+<section id="tabelle-zur-auswahl-der-zu-importierenden-daten">
+<h3>Tabelle zur Auswahl der zu importierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-importierenden-daten" title="Link to this heading"></a></h3>
+<p>Mit Hilfe der <a class="reference internal" href="QKan_Formulare.html#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Import auf bestimmte Datentabellen des Kanalnetzes, bestimmte Flächen
+oder Referenztabellen beschränkt werden.</p>
+</section>
+</section>
+<section id="export-nach-hystem-extran">
+<span id="index-0"></span><h2>Export nach HYSTEM-EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_export_he.png"><img alt="Tool_export_he" src="_images/Tool_export_he.png" style="width: 1.25em;" /></a> <span class="guilabel">Export nach HYSTEM-EXTRAN</span> können Kanaldaten aus QKan nach HYSTEM-EXTRAN exportiert werden.
+Dazu muss jedoch zuerst in HYSTEM-EXTRAN eine Vorlagedatenbank angelegt werden, da QKan über keine Dateivorlagen für eine HYSTEM-EXTRAN
+Datenbank verfügt. In dieser Vorlagedatenbank sollten auch die Sonderbauwerke (z.B. Drosseln oder Pumpen) angelegt werden, da diese in
+QKan nur mit Informationen, welche zur Herstellung des Netz-Zusammenhangs notwendig sind, gespeichert werden. Die Sonderbauwerke sollten
+in HYSTEM-EXTRAN mit den jeweiligen (richtig benannten!) Anschluss-Schächten (Schacht oben &amp; Schacht unten) angelegt werden. (Diese Schächte
+werden mit dem Import der QKan Daten angelegt, müssen also zu diese Zeitpunkt noch nicht existieren. Die Fehlermeldung darf also ignoriert
+werden.) Sind diese vorbereitenden Schritte ausgeführt, kann das Formular <a class="reference internal" href="_images/Tool_export_he.png"><img alt="Tool_export_he" src="_images/Tool_export_he.png" style="width: 1.25em;" /></a> geöffnet werden und wie unten beschrieben ausgefüllt
+werden.</p>
+<img alt="_images/export_he.png" src="_images/export_he.png" />
+<section id="qkan-projekt-datenbank">
+<h3>QKan-Projekt-Datenbank<a class="headerlink" href="#qkan-projekt-datenbank" title="Link to this heading"></a></h3>
+<p>Hier wird die gerade geöffnete QKan-Projektdatenbank angezeigt, welche hier nicht editiert werden kann.</p>
+</section>
+<section id="zieldatenbank">
+<h3>Zieldatenbank<a class="headerlink" href="#zieldatenbank" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Datenziel:</strong> Hier wird der Name und Ablageort der mit diesem Formular erstellten Datenbank für den Import nach HYSTEM-EXTRAN gewählt.</p></li>
+<li><p><strong>Vorlage:</strong> Hier muss die vorher mit HYSTEM-EXTRAN erstellte Vorlagedatenbank (siehe oben) ausgewählt werden.</p></li>
+</ul>
+</section>
+<section id="nur-ausgewahlte-teilgebiete-berucksichtigen">
+<h3>Nur ausgewählte Teilgebiete berücksichtigen<a class="headerlink" href="#nur-ausgewahlte-teilgebiete-berucksichtigen" title="Link to this heading"></a></h3>
+<p>Soll nur ein Teilgebiet bearbeitet werden, dann kann dies hier, über die Aktivierung der Schaltfläche mit anschließender Auswahl des
+entsprechenden Teilgebiets, geschehen.</p>
+</section>
+<section id="optionen">
+<h3>Optionen<a class="headerlink" href="#optionen" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Mit Haltungsflächen verschneiden:</strong> Sind keine Haltungsflächen in zu exportierenden Datensatz vorhanden, <strong>muss</strong> diese Option
+deaktiviert sein. Wurden vorher <a class="reference internal" href="QKan_flaechen.html#linkhaltungsflaechen"><span class="std std-ref">Haltungsflächen</span></a> erstellt, kann diese Option gewählt werden, damit (große)
+Flächen aufgeteilt und die Teilstücke den entsprechenden Haltungen zugeordnet werden.</p></li>
+</ul>
+</section>
+<section id="tabellen-exportieren">
+<h3>Tabellen exportieren<a class="headerlink" href="#tabellen-exportieren" title="Link to this heading"></a></h3>
+<p>Hier können die klassischen Datentabellen, die das Kanalnetz ausmachen, selektiert werden. In der Regel sollten hier die Optionen „Schächte“,
+„ Haltungen“ und „Auslässe“ selektiert werden, da die Sonderbauwerke bereits vorher in HYSTEM-EXTRAN angelegt wurden. Im unteren Bereich
+schließt sich die Auswahl der Flächen an.</p>
+<ul class="simple">
+<li><p><strong>Flächen (RW):</strong> Regenwasserflächen - Der Flächenexport steht im Zusammenhang mit der Verschneidung der Flächen und muss daher auch
+aktiviert sein, wenn die Option „Mit Haltungsflächen verschneiden“ gewählt wurde.</p></li>
+<li><p><strong>Haltungsflächen mit Befestigungsgraden:</strong> Diese Option bezieht sich auf ältere Versionen von HYSTEM-EXTRAN, wobei die
+Befestigungsgrade direkt in die Datensätze der Haltungsflächen geschrieben werden, um so von HYSTEM-EXTRAN weiterverarbeitet werden zu
+können.</p></li>
+<li><p><strong>SW-Einleiter:</strong> Derzeit noch nicht implementiert.</p></li>
+<li><p><strong>Außengebiete:</strong> Derzeit noch nicht implementiert.</p></li>
+<li><p><strong>Haltungsflächen:</strong> HYSTEM-EXTRAN kann Haltungsflächen anzeigen, diese sind jedoch für eine Berechnung nicht unbedingt notwendig.</p></li>
+<li><p><strong>Einzugsgebiete:</strong> Derzeit noch nicht implementiert.</p></li>
+<li><p><strong>Abflussparameter:</strong> Sollte exportiert werden, wenn entsprechender Datensatz nicht schon in HYSTEM-EXTRAN vorliegt.</p></li>
+<li><p><strong>Bodenklassen:</strong> Sollte exportiert werden, wenn entsprechender Datensatz nicht schon in HYSTEM-EXTRAN vorliegt.</p></li>
+<li><p><strong>Rohrprofile:</strong> Derzeit noch nicht implementiert.</p></li>
+</ul>
+</section>
+<section id="aktionen-beim-export">
+<h3>Aktionen beim Export<a class="headerlink" href="#aktionen-beim-export" title="Link to this heading"></a></h3>
+<p>In der Regel sollte die Option „hinzufügen“ ausgewählt werden. Die Option „ändern“ sollte gewählt werden, wenn bereit ein Export ausgeführt
+wurde und in QKan Änderungen vorgenommen wurden und diese in die existierenden Daten eingespielt werden sollen. Dabei werden alle
+existierenden Datensätze in der Zieldatenbank überschrieben, jedoch keine neuen hinzugefügt.</p>
+<p>Die Nutzung dieses Formulars in einem Anwendungsfall ist <a class="reference internal" href="QKan_workflow.html#workflexporthe"><span class="std std-ref">hier</span></a> zu sehen.</p>
+</section>
+<section id="tabelle-zur-auswahl-der-zu-exportierenden-daten">
+<h3>Tabelle zur Auswahl der zu exportierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten" title="Link to this heading"></a></h3>
+<p>Mit Hilfe der <a class="reference internal" href="QKan_Formulare.html#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Export auf ausgewählte Teilgebiete beschränkt werden.</p>
+</section>
+</section>
+<section id="ergebnisse-aus-hystem-extran-8">
+<h2>Ergebnisse aus HYSTEM-EXTRAN 8<a class="headerlink" href="#ergebnisse-aus-hystem-extran-8" title="Link to this heading"></a></h2>
+<p>Mit der Funktion <a class="reference internal" href="_images/Tool_ergebnisse_he.png"><img alt="Tool_ergebnisse_he" src="_images/Tool_ergebnisse_he.png" style="width: 1.25em;" /></a> <span class="guilabel">Ergebnisse aus HYSTEM-EXTRAN 8</span> können leicht die Simulationsergebnisse aus HYSTEM-EXTRAN 8 in ein bestehendes QKan-Projekt geladen werden.</p>
+<img alt="_images/ergebnisse_he.png" src="_images/ergebnisse_he.png" />
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="QKan_Verwaltung.html" class="btn btn-neutral float-left" title="Verwaltung" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="QKan_XML.html" class="btn btn-neutral float-right" title="XML" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
+  </div>
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -2099,7 +2099,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            db.sql("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN ueberdeckung REAL ;""")
             #db.commit()
         except:
             pass
@@ -3375,7 +3375,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            db.sql("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN ueberdeckung REAL ;""")
             # db.commit()
         except:
             pass
@@ -4667,7 +4667,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            db.sql("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN ueberdeckung REAL ;""")
             #db.commit()
         except:
             pass
@@ -5926,7 +5926,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+            db.sql("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Grundwasserabstand REAL ;""")
             #db.commit()
         except:
             pass
@@ -7070,7 +7070,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+            db.sql("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Grundwasserabstand REAL ;""")
             #db.commit()
         except:
             pass
@@ -8271,7 +8271,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+            db.sql("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Grundwasserabstand REAL ;""")
             #db.commit()
         except:
             pass
@@ -12112,7 +12112,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            db.sql("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN ueberdeckung REAL ;""")
         # db.commit()
         except:
             pass
@@ -12423,7 +12423,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            db.sql("""ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN ueberdeckung REAL ;""")
         # db.commit()
         except:
             pass
@@ -12736,7 +12736,7 @@ class Zustandsklassen_funkt:
         except:
             pass
         try:
-            db.sql("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+            db.sql("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN ueberdeckung REAL ;""")
         # db.commit()
         except:
             pass
@@ -13108,7 +13108,7 @@ class Zustandsklassen_funkt:
             pass
         try:
             db.sql(
-                """ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+                """ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Grundwasserabstand REAL ;""")
         # db.commit()
         except:
             pass
@@ -13390,7 +13390,7 @@ class Zustandsklassen_funkt:
             pass
         try:
             db.sql(
-                """ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+                """ALTER TABLE anschlussleitungen_untersucht_bewertung ADD COLUMN Grundwasserabstand REAL ;""")
         # db.commit()
         except:
             pass
@@ -13674,7 +13674,7 @@ class Zustandsklassen_funkt:
             pass
         try:
             db.sql(
-                """ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
+                """ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Grundwasserabstand REAL ;""")
         # db.commit()
         except:
             pass

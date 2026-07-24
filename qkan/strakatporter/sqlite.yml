@@ -740,7 +740,7 @@ SELECT
     Makepoint(stk.rw_gerinne_o, stk.hw_gerinne_o, :epsg)  AS geom
 FROM t_strakatkanal AS stk
 JOIN knotenart AS k2t       ON stk.schachtart = k2t.id
-WHERE stk.zuflussnummer1 = 0 AND stk.abflussnummer1 = 0                 /* Symbol */ ;"
+WHERE k2t.id > 1                                                     /* Symbol */ ;"
 
 strakat_25: "
 INSERT INTO symbolkatalog (bezeichnung, gruppe, kommentar)
@@ -904,7 +904,7 @@ FROM
     LEFT JOIN strassen AS stn ON ha.strassennummer = stn.id
 WHERE anschlussleitungen.pk IS NULL                         /* nur neue Anschlussleitungen hinzufügen */ ;"
 
-strakat_30: "
+strakat_schaechte_untersucht: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1014,7 +1014,7 @@ LEFT JOIN schaechte_untersucht AS schunt USING (schnam, untersuchtag)
 WHERE schunt.pk IS NULL                             /* nur neue Schächte untersucht hinzufügen  */ 
 GROUP BY schnam, untersuchtag;"
 
-strakat_31: "
+strakat_untersuchdat_schacht: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1061,57 +1061,7 @@ uts AS (
       AND stk.schachtnummer <> 0
       AND stb.geloescht = 0
       AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
-      AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)                /* kein Symbol */ 
-      AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D') AND substr(stb.atv_kuerzel, 2, 1) <> '-' 
-      AND (   (stb.untersuchungsrichtung = 1 AND stb.station_untersucher < 0.01) 
-           OR (stb.untersuchungsrichtung = 0 AND stb.station_untersucher > stk.laenge * 0.9)
-          ) 
-    UNION
-    SELECT                                              /* Schacht unten */ 
-        stk.schacht_unten               AS untersuchsch,
-        NULL                            AS id, 
-        stb.datum                       AS untersuchtag,
-        stb.bandnr                      AS bandnr,
-        stb.videozaehler                AS videozaehler,
-        NULL                            AS timecode,
-        stb.atv_langtext                AS langtext,
-        stb.atv_kuerzel                 AS kuerzel,
-        stb.charakt1                    AS charakt1,
-        stb.charakt2                    AS charakt2,                
-        stb.quantnr1                    AS quantnr1,
-        stb.quantnr2                    AS quantnr2,                
-        stb.streckenschaden             AS streckenschaden,
-        stb.fortsetzung                 AS streckenschaden_lfdnr,
-        stb.pos_von                     AS pos_von, 
-        stb.pos_bis                     AS pos_bis,
-        :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
-                      || stb.foto_dateiname || '.jpg'
-                                        AS foto_dateiname,
-        :ordner_video || '\\'  || stb.foto_dateiname
-                      || ' von '  || stk.schacht_oben
-                      || ' nach ' || stk.schacht_unten
-                      || ' - '    || strassen.name  || '.mpg' 
-                                        AS film_dateiname,
-        NULL                            AS filmtyp,
-        NULL                            AS video_start,
-        NULL                            AS video_ende,
-        stb.skdichtheit                 AS ZD,
-        stb.skbetriebssicherheit        AS ZB,
-        stb.skstandsicherheit           AS ZS,
-        stb.kommentar                   AS kommentar
-    FROM
-        t_strakatberichte  AS stb
-        JOIN t_strakatkanal AS stk      ON stk.strakatid = stb.strakatid
-        LEFT JOIN strassen              ON stk.strassennummer = strassen.id
-    WHERE stk.laenge > 0.045
-      AND stk.schachtnummer <> 0
-      AND stb.geloescht = 0
-      AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
-      AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)                /* kein Symbol */ 
-      AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D') AND substr(stb.atv_kuerzel, 2, 1) <> '-' 
-      AND (   (stb.untersuchungsrichtung = 0 AND stb.station_untersucher < 0.01) 
-           OR (stb.untersuchungsrichtung = 1 AND stb.station_untersucher > stk.laenge * 0.9)
-          ) 
+      AND (substr(stb.atv_kuerzel, 1, 1) in ('C', 'D') AND stb.bewertungsart = 'DWA')
 )
 INSERT INTO untersuchdat_schacht (
     untersuchsch,
@@ -1135,11 +1085,43 @@ SELECT
     uts.filmtyp, uts.video_start, uts.video_ende,
     uts.ZD, uts.ZB, uts.ZS, uts.kommentar
 FROM uts
-LEFT JOIN untersuchdat_schacht AS usd 
+LEFT JOIN untersuchdat_schacht AS usd                   /* nur neue Schächte untersucht hinzufügen */ 
 USING(untersuchsch, untersuchtag, kuerzel, bandnr, videozaehler, streckenschaden_lfdnr, langtext)
-WHERE usd.pk IS NULL                                        /* nur neue Schächte untersucht hinzufügen; */ "
+WHERE usd.pk IS NULL;"
 
-strakat_32: "
+strakat_videos_schaechte: "
+WITH strassen AS (
+    SELECT n1 AS id, kurz, trim(text) AS name
+    FROM t_reflists
+    WHERE tabtyp = 'strasse'
+)
+INSERT INTO videos (
+name, untersuchtag, untersuchrichtung,
+objekt, datei, createdat
+)
+SELECT
+    stk.schacht_oben                AS name,
+    stb.datum                       AS untersuchtag,
+    stb.untersuchungsrichtung       AS untersuchrichtung,
+    'Schacht'                       AS objekt,
+    :ordner_video || '\\'  || stb.foto_dateiname
+                  || ' von '  || stk.schacht_oben
+                  || ' nach ' || stk.schacht_unten
+                  || ' - '    || strassen.name  || '.mpg' 
+                                    AS datei,
+    CURRENT_TIMESTAMP               AS createdat
+FROM
+    t_strakatberichte  AS stb
+    JOIN t_strakatkanal AS stk      ON stk.strakatid = stb.strakatid
+    LEFT JOIN strassen              ON stk.strassennummer = strassen.id
+WHERE stk.schachtnummer <> 0
+  AND stb.geloescht = 0
+  AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
+  AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)            /* kein Symbol */ 
+  AND stb.bewertungsart = 'DWA'                                     /* DWA und Schachtschaden */ 
+  AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D');"
+
+strakat_haltungen_untersucht: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1210,7 +1192,7 @@ WHERE  stk.laenge > 0.045 AND
        (substr(stb.atv_kuerzel, 1, 1) not in ('C', 'D') OR substr(stb.atv_kuerzel, 2, 1) = '-') 
 GROUP BY stk.strakatid, stb.datum;"
 
-strakat_33: "
+strakat_untersuchdat_haltung: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1280,7 +1262,34 @@ WHERE stk.laenge > 0.045 AND
       (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0) AND                /* kein Symbol */ 
       (substr(stb.atv_kuerzel, 1, 1) not in ('C', 'D') OR substr(stb.atv_kuerzel, 2, 1) = '-');"
 
-strakat_34: "
+strakat_videos_haltungen: "
+WITH strassen AS (
+    SELECT n1 AS id, kurz, trim(text) AS name
+    FROM t_reflists
+    WHERE tabtyp = 'strasse'
+)
+INSERT INTO videos (
+name, untersuchtag, untersuchrichtung,
+objekt, datei, createdat
+)
+SELECT
+    stk.haltungsname                AS name,
+    stb.datum                       AS untersuchtag,
+    stb.untersuchungsrichtung       AS untersuchrichtung,
+    'Haltung'                       AS objekt,
+    :ordner_video || '\\'  || stb.foto_dateiname
+                  || ' von '  || stk.schacht_oben
+                  || ' nach ' || stk.schacht_unten
+                  || ' - '    || strassen.name  || '.mpg' 
+                                    AS datei,
+    CURRENT_TIMESTAMP               AS createdat
+FROM
+    t_strakatkanal          AS stk
+    JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
+    LEFT JOIN strassen              ON stk.strassennummer = strassen.id
+GROUP BY stk.haltungsname, stk.schacht_oben, stk.schacht_unten, stb.datum, stb.untersuchungsrichtung;"
+
+strakat_anschlussleitungen_untersucht: "
 WITH stb AS (
     SELECT *
     FROM t_strakatberichte
@@ -1348,7 +1357,7 @@ FROM
     USING (leitnam, schoben, schunten, untersuchtag, untersuchrichtung) 
 WHERE la.pk IS NULL;"
 
-strakat_35: "
+strakat_untersuchdat_anschlussleitung: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1427,6 +1436,53 @@ LEFT JOIN untersuchdat_anschlussleitung AS ud
         langtext
     )
 WHERE ud.pk IS NULL;"
+
+strakat_videos_anschlussleitungen: "
+WITH strassen AS (
+    SELECT n1 AS id, kurz, trim(text) AS name
+    FROM t_reflists
+    WHERE tabtyp = 'strasse'
+),
+stb AS (
+    SELECT *
+    FROM t_strakatberichte
+    WHERE hausanschlid <> '00000000-0000-0000-0000-000000000000'
+),
+ua AS (
+    SELECT
+        sha.anschlusshalname                    AS untersuchleit,
+        sha.anschlussschob                      AS schoben,
+        sha.anschlussschun                      AS schunten,
+        NULL                                    AS id, 
+        stb.datum                               AS untersuchtag,
+        stb.untersuchungsrichtung               AS untersuchrichtung,
+        :ordner_video || '\\'  || stb.foto_dateiname
+                      || ' von '  || stk.schacht_oben
+                      || ' nach ' || stk.schacht_unten
+                      || ' - '    || strassen.name  || '.mpg' 
+                                                AS film_dateiname
+    FROM
+        t_strakathausanschluesse    AS sha
+        JOIN                           stb  ON stb.hausanschlid = sha.hausanschlid
+        JOIN t_strakatkanal         AS stk  ON stk.nummer = sha.anschlusshalnr
+        LEFT JOIN strassen                  ON stk.strassennummer = strassen.id
+    WHERE stb.geloescht = 0
+      AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)                  /* kein Symbol */ 
+)
+INSERT INTO videos (
+name, untersuchtag, untersuchrichtung,
+objekt, datei, createdat
+)
+SELECT
+    ua.untersuchleit AS name,
+    ua.untersuchtag AS untersuchtag,
+    ua.untersuchrichtung AS untersuchrichtung,
+    'Anschlussleitung'              AS objekt,
+    ua.film_dateiname               AS datei,
+    CURRENT_TIMESTAMP               AS createdat
+FROM
+    ua
+GROUP BY ua.untersuchleit, ua.schoben, ua.schunten, ua.untersuchtag, ua.untersuchrichtung;"
 
 strakat_addgeom_t_strakathausanschluesse: "
 SELECT AddGeometryColumn('t_strakathausanschluesse', 'geom', :epsg, 'LINESTRING');"

@@ -27,13 +27,12 @@ import os
 from pathlib import Path, PurePath
 from xml.etree import ElementTree as ET
 
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.utils import pluginDirectory
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import (
-    fehlermeldung,
     list_qkan_layers,
     get_qkanlayer_attributes,
 )
@@ -78,17 +77,13 @@ def qgsadapt(
         db_qkan.loadmodule('tools')
         db_qkan.sqlyml('qgsadapt_zoom', "k_qgsadapt (1)")
     except BaseException as err:
-        fehlermeldung("SQL-Fehler", repr(err))
-        fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom, sqlnam = 'qgsadapt_zoom'")
+        logger.error_code(f"SQL-Fehler: {err}\n'")
         return False
 
     try:
         zoom = db_qkan.fetchone()
     except BaseException as err:
-        fehlermeldung("SQL-Fehler", repr(err))
-        fehlermeldung(
-            "\nFehler in sql_zoom; daten= \n",
-        )
+        logger.warning_user(f"SQL-Fehler: {err}\n'")
         zoom = [0.0, 0.0, 100.0, 100.0]
 
     # --------------------------------------------------------------------------
@@ -112,16 +107,11 @@ def qgsadapt(
             ellipsoid_acronym = crs.ellipsoidAcronym()
         else:
             ellipsoid_acronym = None
-    except BaseException as e:
+    except BaseException as err:
         srsid, proj4, description, projection_acronym, ellipsoid_acronym = (
             "dummy",
         ) * 5
-
-        fehlermeldung('\nFehler in "create_project"', str(e))
-        fehlermeldung(
-            "Fehler beim Erstellen des Projekts",
-            f"\nFehler bei der Ermittlung der srid: {srid}\n",
-        )
+        logger.warning_user(f"Fehler bei der Ermittlung der srid: {err}\n'")
         srid = -1
 
     # --------------------------------------------------------------------------
@@ -164,6 +154,8 @@ def qgsadapt(
         tag_title = root.find("projectMetadata/title")
         projectname = os.path.splitext(os.path.basename(QKan.config.database.qkan))[0].title()
         tag_title.text = f'{projectname} ({QKan.qgsVersion})'
+
+        root.attrib['version'] = Qgis.version()
 
         # Projektionssystem anpassen --------------------------------------------------------------
 
@@ -285,7 +277,8 @@ def qgsadapt(
 
         # Set path to QKan database in LayerSource
         for tag_layersource in root.findall(
-                ".//projectlayers/maplayer/fieldConfiguration/field/editWidget/config/Option/Option[@name='LayerSource']"
+                ".//projectlayers/maplayer/fieldConfiguration/field/"
+                "editWidget/config/Option/Option[@name='LayerSource']"
         ):
             text = tag_layersource.attrib['value'] or ""
             dbname, table, _, _ = get_qkanlayer_attributes(text)
@@ -297,7 +290,8 @@ def qgsadapt(
 
         # Set path to QKan database in layer-tree-layer
         for tag_layertreelayer in root.findall(
-                ".//layer-tree-group/layer-tree-group/layer-tree-group/layer-tree-layer/[@providerKey='spatialite']"
+                ".//layer-tree-group/layer-tree-group/layer-tree-group/"
+                "layer-tree-layer/[@providerKey='spatialite']"
         ):
             text = tag_layertreelayer.attrib['source'] or ""
             dbname, table, _, _ = get_qkanlayer_attributes(text)
@@ -310,8 +304,8 @@ def qgsadapt(
         # writing modified project file
         try:
             qgsxml.write(projectfile, encoding='UTF-8')
-        except BaseException as e:
-            fehlermeldung('\nFehler beim Schreiben der Projektdatei"', str(e))
+        except BaseException as err:
+            logger.warning_user(f"Fehler beim Schreiben der Projektdatei: {err}\n'")
 
         logger.debug("Projektdatei: {}".format(projectfile))
 
