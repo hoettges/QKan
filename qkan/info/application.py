@@ -70,17 +70,6 @@ class Infos(QKanPlugin):
 
         self.stamm: Optional[Element] = None
         self.hydraulik_objekte: Optional[Element] = None
-        self.get_widget_1()
-        self.get_widget_2()
-        self.get_widget_3()
-        self.get_widget_4()
-        self.get_widget_5()
-        self.get_widget_6()
-        self.get_widget_7()
-        self.get_widget_8()
-        self.get_widget_9()
-        self.get_widget_10()
-        # self.canv_1 = None
 
 
     # noinspection PyPep8Naming
@@ -252,6 +241,18 @@ class Infos(QKanPlugin):
         # Prüfen, ob ein Projekt geladen ist
         project = QgsProject.instance()
         layers = project.mapLayers()
+
+        self.get_widget_1()
+        self.get_widget_2()
+        self.get_widget_3()
+        self.get_widget_4()
+        self.get_widget_5()
+        self.get_widget_6()
+        self.get_widget_7()
+        self.get_widget_8()
+        self.get_widget_9()
+        self.get_widget_10()
+        # self.canv_1 = None
 
         if len(layers) > 0:
 

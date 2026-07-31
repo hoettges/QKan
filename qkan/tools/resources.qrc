@@ -9,10 +9,10 @@
         <file>res/icon_readData.png</file>
         <file>res/icon_readCheck.png</file>
         <file>res/icon_filepath.png</file>
-        <file>res/icon_befahrung</file>
+        <file>res/icon_befahrung.png</file>
         <file>res/icon_help.png</file>
         <file>res/icon_zoom_clipboard.png</file>
         <file>res/icon_bericht.png</file>
-        <file>res/icon_befahrung.png</file>
+        <file>res/icon_transform.png</file>
     </qresource>
 </RCC>

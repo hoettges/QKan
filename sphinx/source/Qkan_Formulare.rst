@@ -6,7 +6,7 @@ Dialogfenster
     
     QKan_Formulare_Allgemein
     QKan_Daten
-    QKan_Synchro
+    QKan_Synchronisation
     QKan_Hystem_Extran
     QKan_M150
     QKan_ISYBAU
@@ -18,6 +18,7 @@ Dialogfenster
     QKan_Zustandsbewertung
     QKan_Substanzbewertung
     QKan_Ueberflutung
+    QKan_Plugins
 
    
    

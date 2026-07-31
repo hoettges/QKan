@@ -92,6 +92,23 @@ Die Animation kann anschließend über die Steuerelemente im unteren Bereich in 
 Im Reiter „Ganglinien“ lassen sich mit dem Button „Ganglinie anzeigen“ verschiedene Ganglinien aus den Ergebnisdaten erzeugen – beispielsweise Zufluss, Wasserstand oder Durchfluss.
 
 
+.. index:: Transformation
 
+Transformation
+--------------
+Mit dem Tool |Tool_transformation| :guilabel:`Transformation` können alle Tabellen eines Projektes von einem anderen Koordinatensystem in das für ein Projekt festgelegtes 
+Koordinatensystem transformiert werden.
 
+.. image:: ./QKan_Bilder/Formulare/transformation.png
+.. |Tool_transformation| image:: ./QKan_Bilder/icon_transformation.png
+                             :width: 1.25 em
 
+Falls Kanaldaten mit einer der QKan-Importfunktionen (M150, HYSTEM-EXTRAN, Clipboard, etc.) importiert werden sollen, diese aber in einem anderen als dem für das QKan-Projekt 
+vorgesehenen Koordinatensystem gespeichert sind, wird folgendes Vorgehen empfohlen, um die Daten nach dem Import in das vorgesehene Koordinatensystem zu transformieren: 
+
+1. Import der Daten, wobei bereits das endgültig vorgesehene Koordinatensystem eingestellt werden muss. Die Daten erscheinen zunächst an einer falschen Position im Kartenfenster.
+
+2. Transformation, wobei im Formular nur das Koordinatensystem der Quelldaten ausgewählt werden muss. Das Koordinatensystem des Zielsystems ist ja durch das Projekt bereits vorgegeben. 
+
+3. Es empfiehlt sich, das Projekt nach der Transformation neu zu laden, weil dabei einige interne geographische Indizes aktualisiert werden, die z. B. für die Layer-Funktion 
+   :guilabel:`Auf Layer Zoomen` benötigt werden.

@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan (3.4.17)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.28.1-Firenze" saveDateTime="2026-05-04T11:39:23">
+<qgis projectname="QKan (3.4.18)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.28.1-Firenze" saveDateTime="2026-05-04T11:39:23">
   <homePath path=""/>
-  <title>QKan (3.4.17)</title>
+  <title>QKan (3.4.18)</title>
   <transaction mode="Disabled"/>
   <projectFlags set=""/>
   <projectCrs>
@@ -6381,7 +6381,7 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="1" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="LineString" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="250" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="1" labelsEnabled="0" simplifyLocal="1" simplifyDrawingTol="1" geometry="Line">
+    <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="1" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="LineString" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="5000" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="1" labelsEnabled="0" simplifyLocal="1" simplifyDrawingTol="1" geometry="Line">
       <id>HA_Leitungen_a15ec7ac_e753_4eed_8604_d5ffb8724574</id>
       <datasource>dbname='./demo.sqlite' table="anschlussleitungen" (geom)</datasource>
       <keywordList>
@@ -8464,6 +8464,10 @@ def my_form_open(dialog, layer, feature):
           <actionScope id="Feature"/>
         </actionsetting>
         <actionsetting id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" capture="1" isEnabledOnlyWhenEditable="0" name="Zustandsdaten zu Hausanschlussleitung und Untersuchungsdatum anzeigen" icon="" shortTitle="Zustandsdaten zu Hausanschlussleitung und Untersuchungsdatum" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHausanschlussschaeden(untersuchleit = '[%leitnam%]', untersuchtag = '[%untersuchtag%]')&#xd;&#xa;del form&#xd;&#xa;&#xd;&#xa;" type="1">
+          <actionScope id="Canvas"/>
+          <actionScope id="Feature"/>
+        </actionsetting>
+        <actionsetting id="{90a3a7e9-f6fd-4ab7-853c-3c66d4fa8340}" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=           '[%leitnam%]'&#xd;&#xa;datum=          '[%untersuchtag%]'&#xd;&#xa;timecode=       None&#xd;&#xa;video_offset=   None&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Anschlussleitung', '').show()" notificationMessage="" type="1" shortTitle="Videos abspielen" capture="0" isEnabledOnlyWhenEditable="0" name="Videos abspielen" icon="">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -12937,7 +12941,7 @@ Zur Filterung nach Inspektionsdatum entsprechende Aktion im Layer "Zustand_Haltu
         <alias field="pos_bis" index="23" name="Position Ende"/>
         <alias field="foto_dateiname" index="24" name="Dateiname Foto"/>
         <alias field="film_dateiname" index="25" name="Dateiname Film"/>
-        <alias field="ordner_bild" index="26" name="Ordner Bild"/>
+        <alias field="ordner_bild" index="26" name="Ordner Foto"/>
         <alias field="ordner_video" index="27" name="Ordner Video"/>
         <alias field="filmtyp" index="28" name=""/>
         <alias field="video_start" index="29" name=""/>
@@ -13069,7 +13073,7 @@ Zur Filterung nach Inspektionsdatum entsprechende Aktion im Layer "Zustand_Haltu
       <expressionfields/>
       <attributeactions>
         <defaultAction value="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" key="Canvas"/>
-        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Bild öffnen" icon="" shortTitle="Bild öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=None&#xd;&#xa;datum=None&#xd;&#xa;timecode=None&#xd;&#xa;video_offset= None&#xd;&#xa;x='[%foto_dateiname%]'&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Haltung', x).show_bild()&#xd;&#xa;" type="1">
+        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Foto öffnen" icon="" shortTitle="Foto öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=None&#xd;&#xa;datum=None&#xd;&#xa;timecode=None&#xd;&#xa;video_offset= None&#xd;&#xa;x='[%replace(foto_dateiname,'\\', '/')%]'&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Haltung', x).show_bild()&#xd;&#xa;" type="1">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -13274,7 +13278,7 @@ def my_form_open(dialog, layer, feature):
       </reuseLastValue>
       <dataDefinedFieldProperties/>
       <widgets/>
-      <previewExpression>"film_dateiname"</previewExpression>
+      <previewExpression>format_date( untersuchtag, 'dd.MM.yyyy: ') || langtext</previewExpression>
       <mapTip></mapTip>
     </maplayer>
     <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="0" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="LineString" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="100000000" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="0" labelsEnabled="1" simplifyLocal="1" simplifyDrawingTol="1" geometry="Line">
@@ -14497,7 +14501,7 @@ def my_form_open(dialog, layer, feature):
       <expressionfields/>
       <attributeactions>
         <defaultAction value="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" key="Canvas"/>
-        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Bild öffnen" icon="" shortTitle="Bild öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=None&#xd;&#xa;datum=None&#xd;&#xa;timecode=None&#xd;&#xa;video_offset= None&#xd;&#xa;x='[%foto_dateiname%]'&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Schacht', x).show_bild()&#xd;&#xa;" type="1">
+        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Foto öffnen" icon="" shortTitle="Foto öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=None&#xd;&#xa;datum=None&#xd;&#xa;timecode=None&#xd;&#xa;video_offset= None&#xd;&#xa;x='[%replace(foto_dateiname,'\\', '/')%]'&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Schacht', x).show_bild()&#xd;&#xa;" type="1">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -14679,7 +14683,7 @@ def my_form_open(dialog, layer, feature):
       </reuseLastValue>
       <dataDefinedFieldProperties/>
       <widgets/>
-      <previewExpression>"langtext"</previewExpression>
+      <previewExpression>format_date( untersuchtag, 'dd.MM.yyyy: ') || langtext</previewExpression>
       <mapTip></mapTip>
     </maplayer>
     <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="1" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="LineString" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="100000000" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="0" labelsEnabled="1" simplifyLocal="1" simplifyDrawingTol="1" geometry="Line">
@@ -15794,7 +15798,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="pos_bis" index="22" name="Position Ende"/>
         <alias field="foto_dateiname" index="23" name="Dateiname Foto"/>
         <alias field="film_dateiname" index="24" name="Dateiname Film"/>
-        <alias field="ordner_bild" index="25" name="Ordner Bild"/>
+        <alias field="ordner_bild" index="25" name="Ordner Foto"/>
         <alias field="ordner_video" index="26" name="Ordner Video"/>
         <alias field="filmtyp" index="27" name=""/>
         <alias field="video_start" index="28" name=""/>
@@ -15923,7 +15927,7 @@ def my_form_open(dialog, layer, feature):
       <expressionfields/>
       <attributeactions>
         <defaultAction value="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" key="Canvas"/>
-        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Bild öffnen" icon="" shortTitle="Bild öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=None&#xd;&#xa;datum=None&#xd;&#xa;timecode=None&#xd;&#xa;video_offset= None&#xd;&#xa;x='[%foto_dateiname%]'&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Anschlussleitung', x).show_bild()&#xd;&#xa;" type="1">
+        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Foto öffnen" icon="" shortTitle="Foto öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=None&#xd;&#xa;datum=None&#xd;&#xa;timecode=None&#xd;&#xa;video_offset= None&#xd;&#xa;x='[%replace(foto_dateiname,'\\', '/')%]'&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Anschlussleitung', x).show_bild()&#xd;&#xa;" type="1">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -16126,7 +16130,7 @@ def my_form_open(dialog, layer, feature):
       </reuseLastValue>
       <dataDefinedFieldProperties/>
       <widgets/>
-      <previewExpression>"langtext"</previewExpression>
+      <previewExpression>format_date( untersuchtag, 'dd.MM.yyyy: ') || langtext</previewExpression>
       <mapTip></mapTip>
     </maplayer>
     <maplayer autoRefreshEnabled="0" styleCategories="AllStyleCategories" wkbType="NoGeometry" maxScale="0" autoRefreshTime="0" minScale="0" geometry="No geometry" readOnly="0" refreshOnNotifyMessage="" legendPlaceholderImage="" type="vector" refreshOnNotifyEnabled="0" hasScaleBasedVisibilityFlag="0">
@@ -28058,6 +28062,10 @@ def my_form_open(dialog, layer, feature):
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
+        <actionsetting id="{90a3a7e9-f6fd-4ab7-853c-3c66d4fa8342}" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=           '[%haltnam%]'&#xd;&#xa;datum=          '[%untersuchtag%]'&#xd;&#xa;timecode=       None&#xd;&#xa;video_offset=   None&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Haltung', '').show()" notificationMessage="" type="1" shortTitle="Videos abspielen" capture="0" isEnabledOnlyWhenEditable="0" name="Videos abspielen" icon="">
+          <actionScope id="Canvas"/>
+          <actionScope id="Feature"/>
+        </actionsetting>
       </attributeactions>
       <attributetableconfig sortOrder="1" actionWidgetStyle="dropDown" sortExpression="&quot;haltnam&quot;">
         <columns>
@@ -37154,6 +37162,10 @@ def my_form_open(dialog, layer, feature):
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
+        <actionsetting id="{90a3a7e9-f6fd-4ab7-853c-3c66d4fa8346}" action="from qkan.tools.zeige_video import ShowVideo&#xd;&#xa;from qkan.config import Config&#xd;&#xa;    &#xd;&#xa;name=           '[%schnam%]'&#xd;&#xa;datum=          '[%untersuchtag%]'&#xd;&#xa;timecode=       None&#xd;&#xa;video_offset=   None&#xd;&#xa;ShowVideo(name, datum, timecode, video_offset, 'Schacht', '').show()" notificationMessage="" type="1" shortTitle="Videos abspielen" capture="0" isEnabledOnlyWhenEditable="0" name="Videos abspielen" icon="">
+          <actionScope id="Canvas"/>
+          <actionScope id="Feature"/>
+        </actionsetting>
       </attributeactions>
       <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="">
         <columns>
@@ -43243,7 +43255,7 @@ def closeProject():
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan (3.4.17)</title>
+    <title>QKan (3.4.18)</title>
     <abstract></abstract>
     <contact>
       <name></name>

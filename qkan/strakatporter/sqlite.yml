@@ -77,6 +77,7 @@ SELECT CreateSpatialIndex('t_strakatkanal', 'geom');"
 strakat_createspatialindex_geop: "
 SELECT CreateSpatialIndex('t_strakatkanal', 'geop');"
 
+# für Netzlogik sind Gerinneschnittpunkte relevant!
 strakat_kanaltabelle: "
 INSERT INTO t_strakatkanal (
     nummer, 
@@ -95,9 +96,10 @@ INSERT INTO t_strakatkanal (
     schachtnummer, schachtart, berichtsnummer,
     laenge, schachtmaterial, oberflaeche,
     baujahr, wasserschutz, eigentum,
-    naechste_halt, rueckadresse, strangnr, betriebspunkt, strakatid
+    naechste_halt, rueckadresse, strangnr, betriebspunkt, strakatid,
+    geom, geop
 )
-VALUES (
+SELECT 
     :nummer, 
     :rw_gerinne_o, :hw_gerinne_o, :rw_gerinne_u, :hw_gerinne_u,
     :rw_rohranfang, :hw_rohranfang, :rw_rohrende, :hw_rohrende,
@@ -114,27 +116,32 @@ VALUES (
     :schachtnummer, :schachtart, :berichtsnummer,
     :laenge, :schachtmaterial, :oberflaeche,
     :baujahr, :wasserschutz, :eigentum,
-    :naechste_halt, :rueckadresse, :strangnr, :betriebspunkt, :strakatid);"
+    :naechste_halt, :rueckadresse, :strangnr, :betriebspunkt, :strakatid,
+    MakeLine(
+        Makepoint(:rw_gerinne_o, :hw_gerinne_o, :epsg),
+        Makepoint(:rw_gerinne_u, :hw_gerinne_u, :epsg)
+    ),
+    Makepoint(:rw_gerinne_o, :hw_gerinne_o, :epsg);"
 
-strakat_update_geom: "
-UPDATE t_strakatkanal
-SET geom = MakeLine(
-    Makepoint(iif(:coordsFromRohr, rw_rohranfang, rw_gerinne_o), 
-              iif(:coordsFromRohr, hw_rohranfang, hw_gerinne_o),
-              :epsg),
-    Makepoint(iif(:coordsFromRohr, rw_rohrende, rw_gerinne_u), 
-              iif(:coordsFromRohr, hw_rohrende, hw_gerinne_u),
-              :epsg)
-)
-WHERE iif(:coordsFromRohr, rw_rohranfang, rw_gerinne_o) > 1
-  AND iif(:coordsFromRohr, hw_rohranfang, hw_gerinne_o) > 1
-  AND iif(:coordsFromRohr, rw_rohrende, rw_gerinne_u) > 1
-  AND iif(:coordsFromRohr, hw_rohrende, hw_gerinne_u) > 1;"
+# strakat_update_geom: "
+# UPDATE t_strakatkanal
+# SET geom = MakeLine(
+    # Makepoint(iif(:coordsFromRohr, rw_rohranfang, rw_gerinne_o), 
+              # iif(:coordsFromRohr, hw_rohranfang, hw_gerinne_o),
+              # :epsg),
+    # Makepoint(iif(:coordsFromRohr, rw_rohrende, rw_gerinne_u), 
+              # iif(:coordsFromRohr, hw_rohrende, hw_gerinne_u),
+              # :epsg)
+# )
+# WHERE iif(:coordsFromRohr, rw_rohranfang, rw_gerinne_o) > 1
+  # AND iif(:coordsFromRohr, hw_rohranfang, hw_gerinne_o) > 1
+  # AND iif(:coordsFromRohr, rw_rohrende, rw_gerinne_u) > 1
+  # AND iif(:coordsFromRohr, hw_rohrende, hw_gerinne_u) > 1;"
 
-strakat_update_geop: "
-UPDATE t_strakatkanal
-SET geop = Makepoint(rw_gerinne_o, hw_gerinne_o, :epsg)
-WHERE rw_gerinne_o > 1   AND hw_gerinne_o > 1;"
+# strakat_update_geop: "
+# UPDATE t_strakatkanal
+# SET geop = Makepoint(rw_gerinne_o, hw_gerinne_o, :epsg)
+# WHERE rw_gerinne_o > 1   AND hw_gerinne_o > 1;"
 
 # Aktuell deaktiviert:
 strakat_delete_schnr0: "
@@ -834,7 +841,7 @@ FROM
     LEFT JOIN haltungen         ON haltungen.haltnam = stk.haltungsname
     LEFT JOIN eigentum  AS eg   ON eg.id = stk.eigentum 
 WHERE stk.laenge > 0.045
-  AND stk.schachtnummer <> 0 AND stk.strangnr <= 1                  /* nicht gelöscht und nur Stranganfänge */
+  AND stk.schachtnummer <> 0 AND stk.strangnr = 0                   /* nicht gelöscht und kein Strang */
   AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)            /* kein Symbol */ 
   AND haltungen.pk IS NULL                                          /* nur neue Haltungen hinzufügen */ ;"
 
@@ -843,6 +850,11 @@ strakat_straenge: "
         stk.haltungsname    AS haltungsname,
         stk.schacht_oben    AS schacht_oben,
         stk.schacht_unten   AS schacht_unten,
+		stk.nummer          AS haltnr,
+		stk.zuflussnummer1  AS haltnr_oben,
+		stk.abflussnummer1  AS haltnr_unen,
+		stk.zuflussnummer2  AS haltnr2_oben,
+		stk.abflussnummer2  AS haltnr2_unten,
         stk.strangnr        AS strangnr,
         iif(:coordsFromRohr, stk.rw_rohranfang, stk.rw_gerinne_o) as xob, 
         iif(:coordsFromRohr, stk.hw_rohranfang, stk.hw_gerinne_o) as yob,
@@ -853,9 +865,85 @@ strakat_straenge: "
         WHERE strangnr <> 0 AND schachtnummer <> 0
 ;"
 
-strakat_28: "
-UPDATE haltungen SET geom = GeomFromWKB(:geom, :epsg)
-WHERE haltnam = :haltnam;"
+strakat_strang: "
+WITH profilarten AS (
+    SELECT n1 AS id, kurz, text
+    FROM t_reflists
+    WHERE tabtyp = 'profilart'
+),
+rohrmaterialien AS (
+    SELECT n1 AS id, kurz, text
+    FROM t_reflists
+    WHERE tabtyp = 'rohrmaterial'
+),
+strassen AS (
+    SELECT n1 AS id, kurz, trim(text) AS name
+    FROM t_reflists
+    WHERE tabtyp = 'strasse'
+),
+entwart AS (
+    SELECT n1 AS id, kurz, text
+    FROM t_reflists
+    WHERE tabtyp = 'kanalart' 
+),
+knotenart AS (
+    SELECT n1 AS id, n4, kurz, text
+    FROM t_reflists
+    WHERE tabtyp = 'schachtart' 
+),
+gebiet AS (
+    SELECT n1 AS id, text, kurz
+    FROM t_reflists
+    WHERE tabtyp = 'entwaesserungsgebiet'
+),
+eigentum AS (
+    SELECT n1 AS id, text, kurz
+    FROM t_reflists
+    WHERE tabtyp = 'eigentum'
+)
+INSERT INTO haltungen (haltnam, schoben, schunten, laenge, 
+    xschob, yschob, xschun, yschun, 
+    breite, hoehe, 
+    sohleoben, sohleunten, 
+    profilnam, entwart, druckdicht, material, strasse, eigentum, teilgebiet,  
+    haltungstyp, baujahr, simstatus, kommentar, geom)
+SELECT
+    stk.haltungsname                                            AS haltnam,
+    stk.schacht_oben                                            AS schoben,
+    stk.schacht_unten                                           AS schunten,
+    stk.laenge                                                  AS laenge,
+    iif(:coordsFromRohr, stk.rw_rohranfang, stk.rw_gerinne_o)   AS xschob,
+    iif(:coordsFromRohr, stk.hw_rohranfang, stk.hw_gerinne_o)   AS yschob,
+    iif(:coordsFromRohr, stk.rw_rohrende, stk.rw_gerinne_u)     AS xschun,
+    iif(:coordsFromRohr, stk.hw_rohrende, stk.hw_gerinne_u)     AS yschun,
+    stk.rohrbreite_v                                            AS breite,
+    stk.rohrhoehe___v                                           AS hoehe,
+    stk.sohle_oben___v                                          AS sohleoben,
+    stk.sohle_unten__v                                          AS sohleunten,
+    profilarten.text                                            AS profilnam,
+    k2e.text                                                    AS entwart,
+    CASE WHEN instr(lower(k2e.text),'druck') > 0
+        THEN 1 ELSE 0 END                                       AS druckdicht,
+    rohrmaterialien.text                                        AS material,
+    strassen.name                                               AS strasse,
+    eg.text                                                     AS eigentum,
+    k2g.text                                                    AS teilgebiet,
+    'Haltung'                                                   AS haltungstyp,
+    stk.baujahr                                                 AS baujahr,
+    'in Betrieb'                                                AS simstatus,
+    'QKan-STRAKAT-Import'                                       AS kommentar,
+    GeomFromWKB(:geom, :epsg)                                   AS geom
+FROM
+    t_strakatkanal      AS stk
+    LEFT JOIN profilarten       ON stk.profilart_v = profilarten.id
+    LEFT JOIN rohrmaterialien   ON stk.Material_v = rohrmaterialien.ID
+    LEFT JOIN strassen          ON stk.strassennummer = strassen.ID
+    JOIN entwart        AS k2e  ON stk.kanalart = k2e.id
+    JOIN knotenart      AS k2t  ON stk.schachtart = k2t.id
+    JOIN gebiet         AS k2g  ON stk.e_gebiet = k2g.id
+    LEFT JOIN haltungen         ON haltungen.haltnam = stk.haltungsname
+    LEFT JOIN eigentum  AS eg   ON eg.id = stk.eigentum 
+WHERE stk.nummer = :kanalnr;"
 
 strakat_anschlussleitungen: "
 WITH ha AS (
@@ -904,7 +992,7 @@ FROM
     LEFT JOIN strassen AS stn ON ha.strassennummer = stn.id
 WHERE anschlussleitungen.pk IS NULL                         /* nur neue Anschlussleitungen hinzufügen */ ;"
 
-strakat_30: "
+strakat_schaechte_untersucht: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1014,7 +1102,7 @@ LEFT JOIN schaechte_untersucht AS schunt USING (schnam, untersuchtag)
 WHERE schunt.pk IS NULL                             /* nur neue Schächte untersucht hinzufügen  */ 
 GROUP BY schnam, untersuchtag;"
 
-strakat_31: "
+strakat_untersuchdat_schacht: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1096,35 +1184,17 @@ WITH strassen AS (
     WHERE tabtyp = 'strasse'
 )
 INSERT INTO videos (
-untersuchhal, schoben, schunten,
-untersuchtag, id, untersuchrichtung,
-name, objekt, datei, createdat
+name, untersuchtag, untersuchrichtung,
+objekt, datei, createdat
 )
 SELECT
-    NULL                            AS untersuchhal,
-    stk.schacht_oben                AS schoben,
-    NULL                            AS schunten,
+    stk.schacht_oben                AS name,
     stb.datum                       AS untersuchtag,
-    NULL                            AS id, 
-    stb.untersuchungsrichtung       AS untersuchrichtung,
-    NULL                            AS name,
+    CASE stb.untersuchungsrichtung
+    WHEN 0 THEN 'gegen Fließrichtung'
+    WHEN 1 THEN 'in Fließrichtung'
+    ELSE NULL END                   AS untersuchrichtung,
     'Schacht'                       AS objekt,
-
-
-
-    stb.bandnr                      AS bandnr,
-    stb.videozaehler                AS videozaehler,
-    NULL                            AS timecode,
-    stb.atv_langtext                AS langtext,
-    stb.atv_kuerzel                 AS kuerzel,
-    stb.charakt1                    AS charakt1,
-    stb.charakt2                    AS charakt2,                
-    stb.quantnr1                    AS quantnr1,
-    stb.quantnr2                    AS quantnr2,                
-    stb.streckenschaden             AS streckenschaden,
-    stb.fortsetzung                 AS streckenschaden_lfdnr,
-    stb.pos_von                     AS pos_von, 
-    stb.pos_bis                     AS pos_bis,
     :ordner_video || '\\'  || stb.foto_dateiname
                   || ' von '  || stk.schacht_oben
                   || ' nach ' || stk.schacht_unten
@@ -1142,7 +1212,7 @@ WHERE stk.schachtnummer <> 0
   AND stb.bewertungsart = 'DWA'                                     /* DWA und Schachtschaden */ 
   AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D');"
 
-strakat_32: "
+strakat_haltungen_untersucht: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1175,7 +1245,10 @@ SELECT
     stk.baujahr                     AS baujahr,
     stb.datum                       AS untersuchtag,
     stb.untersucher                 AS untersucher,
-    stb.untersuchungsrichtung       AS untersuchrichtung,
+    CASE stb.untersuchungsrichtung
+    WHEN 0 THEN 'gegen Fließrichtung'
+    WHEN 1 THEN 'in Fließrichtung'
+    ELSE NULL END                   AS untersuchrichtung,
     CASE WHEN instr(lower(stb.wetter), 'trock') + 
                instr(lower(stb.wetter), 'kein Nied') > 0 THEN 1
           WHEN instr(lower(stb.wetter), 'reg')       > 0 THEN 2
@@ -1213,7 +1286,7 @@ WHERE  stk.laenge > 0.045 AND
        (substr(stb.atv_kuerzel, 1, 1) not in ('C', 'D') OR substr(stb.atv_kuerzel, 2, 1) = '-') 
 GROUP BY stk.strakatid, stb.datum;"
 
-strakat_33: "
+strakat_untersuchdat_haltung: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1290,18 +1363,16 @@ WITH strassen AS (
     WHERE tabtyp = 'strasse'
 )
 INSERT INTO videos (
-untersuchhal, schoben, schunten,
-untersuchtag, id, untersuchrichtung,
-name, objekt, datei, createdat
+name, untersuchtag, untersuchrichtung,
+objekt, datei, createdat
 )
 SELECT
-    stk.haltungsname                AS untersuchhal,
-    stk.schacht_oben                AS schoben,
-    stk.schacht_unten               AS schunten,
+    stk.haltungsname                AS name,
     stb.datum                       AS untersuchtag,
-    NULL                            AS id, 
-    stb.untersuchungsrichtung       AS untersuchrichtung,
-    NULL                            AS name,
+    CASE stb.untersuchungsrichtung
+    WHEN 0 THEN 'gegen Fließrichtung'
+    WHEN 1 THEN 'in Fließrichtung'
+    ELSE NULL END                   AS untersuchrichtung,
     'Haltung'                       AS objekt,
     :ordner_video || '\\'  || stb.foto_dateiname
                   || ' von '  || stk.schacht_oben
@@ -1315,11 +1386,7 @@ FROM
     LEFT JOIN strassen              ON stk.strassennummer = strassen.id
 GROUP BY stk.haltungsname, stk.schacht_oben, stk.schacht_unten, stb.datum, stb.untersuchungsrichtung;"
 
-strakat_fotos_haltungen: "
-
-;"
-
-strakat_34: "
+strakat_anschlussleitungen_untersucht: "
 WITH stb AS (
     SELECT *
     FROM t_strakatberichte
@@ -1336,7 +1403,10 @@ SELECT
     NULL                                AS id,
     stb.datum                           AS untersuchtag,
     stb.untersucher                     AS untersucher,
-    stb.untersuchungsrichtung           AS untersuchrichtung,
+    CASE stb.untersuchungsrichtung
+    WHEN 0 THEN 'gegen Fließrichtung'
+    WHEN 1 THEN 'in Fließrichtung'
+    ELSE NULL END                       AS untersuchrichtung,
     CASE WHEN instr(lower(stb.wetter), 'trock') + 
                instr(lower(stb.wetter), 'kein Nied') > 0 THEN 1
           WHEN instr(lower(stb.wetter), 'reg')       > 0 THEN 2
@@ -1387,7 +1457,7 @@ FROM
     USING (leitnam, schoben, schunten, untersuchtag, untersuchrichtung) 
 WHERE la.pk IS NULL;"
 
-strakat_35: "
+strakat_untersuchdat_anschlussleitung: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -1485,7 +1555,10 @@ ua AS (
         sha.anschlussschun                      AS schunten,
         NULL                                    AS id, 
         stb.datum                               AS untersuchtag,
-        stb.untersuchungsrichtung               AS untersuchrichtung,
+        CASE stb.untersuchungsrichtung
+        WHEN 0 THEN 'gegen Fließrichtung'
+        WHEN 1 THEN 'in Fließrichtung'
+        ELSE NULL END                           AS untersuchrichtung,
         :ordner_video || '\\'  || stb.foto_dateiname
                       || ' von '  || stk.schacht_oben
                       || ' nach ' || stk.schacht_unten
@@ -1500,14 +1573,13 @@ ua AS (
       AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)                  /* kein Symbol */ 
 )
 INSERT INTO videos (
-untersuchhal, schoben, schunten,
-untersuchtag, id, untersuchrichtung,
-name, objekt, datei, createdat
+name, untersuchtag, untersuchrichtung,
+objekt, datei, createdat
 )
 SELECT
-    ua.untersuchleit, ua.schoben, ua.schunten,
-    ua.untersuchtag, ua.id, ua.untersuchrichtung,
-    NULL                            AS name,
+    ua.untersuchleit AS name,
+    ua.untersuchtag AS untersuchtag,
+    ua.untersuchrichtung AS untersuchrichtung,
     'Anschlussleitung'              AS objekt,
     ua.film_dateiname               AS datei,
     CURRENT_TIMESTAMP               AS createdat

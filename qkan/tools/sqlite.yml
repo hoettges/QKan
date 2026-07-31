@@ -335,3 +335,83 @@ tools_check_triggers_fang_schacht: "
 SELECT name FROM sqlite_master
 WHERE type = 'trigger' 
   AND name in ('trig_mod_hal_all', 'trig_mod_hal_nul', 'trig_new_hal');"
+
+tools_transform_linkfl: "
+UPDATE linkfl
+SET glink = ST_Transform(SetSrid(glink, 31466), 25832),
+    geom = ST_Transform(SetSrid(geom, 31466), 25832),
+    gbuf = ST_Transform(SetSrid(gbuf, 31466), 25832);"
+
+tools_transform_linksw: "
+UPDATE linksw
+SET glink = ST_Transform(SetSrid(glink, 31466), 25832),
+    geom = ST_Transform(SetSrid(geom, 31466), 25832),
+    gbuf = ST_Transform(SetSrid(gbuf, 31466), 25832);"
+
+tools_transform_linkageb: "
+UPDATE linkageb SET glink = ST_Transform(SetSrid(glink, 31466), 25832);"
+
+tools_transform_notizen: "
+UPDATE notizen SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_schaechte: "
+UPDATE schaechte
+SET geom = ST_Transform(SetSrid(geom, 31466), 25832),
+    geop = ST_Transform(SetSrid(geop, 31466), 25832);"
+
+tools_transform_schaechte_untersucht: "
+UPDATE schaechte_untersucht SET geop = ST_Transform(SetSrid(geop, 31466), 25832);"
+
+tools_transform_symbole: "
+UPDATE symbole SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_t_strakathausanschluesse: "
+UPDATE t_strakathausanschluesse SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_t_strakatkanal: "
+UPDATE t_strakatkanal SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_t_strakatkanal: "
+UPDATE t_strakatkanal SET geop = ST_Transform(SetSrid(geop, 31466), 25832);"
+
+tools_transform_teilgebiete: "
+UPDATE teilgebiete SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_tezg: "
+UPDATE tezg SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_untersuchdat_anschlussleitung: "
+UPDATE untersuchdat_anschlussleitung SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_untersuchdat_haltung: "
+UPDATE untersuchdat_haltung SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_untersuchdat_schacht: "
+UPDATE untersuchdat_schacht SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_anschlussschaechte: "
+UPDATE anschlussschaechte SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_anschlussleitungen: "
+UPDATE anschlussleitungen SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_anschlussleitungen_untersucht: "
+UPDATE anschlussleitungen_untersucht SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_aussengebiete: "
+UPDATE aussengebiete SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_einleit: "
+UPDATE einleit SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_einzugsgebiete: "
+UPDATE einzugsgebiete SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_flaechen: "
+UPDATE flaechen SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_haltungen: "
+UPDATE haltungen SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"
+
+tools_transform_haltungen_untersucht: "
+UPDATE haltungen_untersucht SET geom = ST_Transform(SetSrid(geom, 31466), 25832);"

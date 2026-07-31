@@ -10,7 +10,7 @@
 name=QKan
 qgisMinimumVersion=3.28
 description=Gruppe der QKan-Erweiterung(en)
-version=3.4.17
+version=3.4.18
 author=Nora Blase, Jörg Höttges, Yannick Linke
 email=hoettges@fh-aachen.de
 
@@ -22,6 +22,10 @@ repository=https://github.com/hoettges/QKan
 
 changelog= 
 
+    3.4.18:
+        - STRAKAT-Import berücksichtigt jetzt wieder Hausanschlüsse
+        - STRAKAT-Import importiert Symbole jetzt mit der Langbezeichung in die Tabelle "Symbole"
+        - Video- und Fotoanzeige wurden überarbeitet. Es sind jetzt mehrere Videos pro Haltung möglich
     3.4.17:
         - Fehlender Menüeintrag reaktiviert: "Erzeuge Thieesen-Polygone zu Haltungen"
         - Fehler in M150-Export korrigiert
