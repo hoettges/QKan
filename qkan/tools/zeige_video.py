@@ -17,13 +17,13 @@ logger = get_logger("QKan.tools.zeige_video")
 
 class ShowVideo(QDialog):
     """Zeigt Haltungsschäden an"""
-    def __init__(self, name: str, untersuchtag, video_offset, time_code, art, bild_ordner):
+    def __init__(self, name: str, untersuchtag, video_offset, time_code, art, foto_ordner):
         super(ShowVideo, self).__init__()
 
         self.name = name
         self.untersuchtag = untersuchtag
         self.art = art
-        self.bild_ordner = bild_ordner
+        self.foto_ordner = foto_ordner
         if video_offset in ['', None, 'NULL']:
             self.video_offset = 0
         else:
@@ -120,14 +120,14 @@ class ShowVideo(QDialog):
     def show_bild(self):
         ordner = QKan.config.fotoRootPath
 
-        # Bild laden
-        bild = self.bild_ordner
-        if bild != '':
-            bild_path = os.path.normpath(os.path.join(ordner, bild))
-            bild_path = bild_path.lower()
-            bild_path = mpimg.imread(bild_path)
+        # Foto laden
+        foto = self.foto_ordner
+        if foto != '':
+            foto_path = os.path.normpath(os.path.join(ordner, foto))
+            foto_path = foto_path.lower()
+            foto_path = mpimg.imread(foto_path)
 
-            # Bild anzeigen
-            plt.imshow(bild_path)
+            # Foto anzeigen
+            plt.imshow(foto_path)
             plt.axis("off")
             plt.show()

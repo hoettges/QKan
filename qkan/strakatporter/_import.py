@@ -119,7 +119,7 @@ class Kanal_STRAKAT(ClassObject):
     strakatid: str = ""
 
 
-class ImportTask(Schadenstexte):
+class ImportTask():
     def __init__(
         self,
         db_qkan: DBConnection,
@@ -190,11 +190,10 @@ class ImportTask(Schadenstexte):
                 self._anschlussleitungen(), self.progress_bar.setValue(35),             logger.debug("_anschlussleitungen"),
                 self._anschlussschaechte(), self.progress_bar.setValue(38),             logger.debug("_anschlussschaechte"),
                 self._strakat_berichte(), self.progress_bar.setValue(40),               logger.debug("_strakat_berichte"),
-                self._schaechte_untersucht(), self.progress_bar.setValue(45),           logger.debug("_schaechte_untersucht"),
-                self._untersuchdat_schacht(), self.progress_bar.setValue(50),           logger.debug("_untersuchdat_schacht"),
-                self._haltungen_untersucht(), self.progress_bar.setValue(60),           logger.debug("_haltungen_untersucht"),
+                self._schachtuntersuchungen(), self.progress_bar.setValue(45),          logger.debug("_schachtuntersuchungen"),
+                self._haltungsuntersuchungen(), self.progress_bar.setValue(60),         logger.debug("_haltungsuntersuchungen"),
                 self._untersuchdat_haltung(), self.progress_bar.setValue(70),           logger.debug("_untersuchdat_haltung"),
-                self._anschlussleitungen_untersucht(), self.progress_bar.setValue(80),  logger.debug("_anschlussleitungen_untersucht"),
+                self._anschlussleitungsuntersuchungen(), self.progress_bar.setValue(80),  logger.debug("_anschlussleitungsuntersuchungen"),
                 self._untersuchdat_anschlussleitung(), self.progress_bar.setValue(90),  logger.debug("_untersuchdat_anschlussleitung"),
             ]
         )
@@ -863,7 +862,7 @@ class ImportTask(Schadenstexte):
                         logger.debug(f'Datenfehler: {bandnr=}, {videozaehler=}')
                         foto_dateiname = '00000000'
 
-                    wert8 = unpack('B', b[365:366])                         # STRAKAT: Bewertungsart
+                    wert8 = unpack('B', b[298:299])                         # STRAKAT: Bewertungsart
                     if wert8 == 4:
                         bewertungsart = 'DWA'
                     else:
@@ -1401,14 +1400,13 @@ class ImportTask(Schadenstexte):
 
         return True
 
-    def _schaechte_untersucht(self) -> bool:
+    def _schachtuntersuchungen(self) -> bool:
         """Import der Schächte mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         if not QKan.config.check_import.schachtschaeden:
             return True
 
         sqlnam = "strakat_30"
-
         params = {"epsg": self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
@@ -1417,25 +1415,23 @@ class ImportTask(Schadenstexte):
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Schächte untersucht")
 
-        self.db_qkan.commit()
-
-        return True
-
-    def _untersuchdat_schacht(self) -> bool:
-        """Import der Schachtschäden aus der STRAKAT-Tabelle t_strakatberichte"""
-
-        if not QKan.config.check_import.schachtschaeden:
-            return True
+        sqlnam = "strakat_videos_schaechte"
+        params = {'ordner_video': self.ordner_video,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei Videos Schächte")
 
         sqlnam = "strakat_31"
-
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video, 'epsg': self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import der Schachtschäden",
             parameters=params,
         ):
-            raise Exception(f"{self.__class__.__name__}: Fehler bei ")
+            raise Exception(f"{self.__class__.__name__}: Fehler bei Untersuchdat Schächte")
 
         self.db_qkan.commit()
 
@@ -1445,14 +1441,13 @@ class ImportTask(Schadenstexte):
 
         return True
 
-    def _haltungen_untersucht(self) -> bool:
+    def _haltungsuntersuchungen(self) -> bool:
         """Import der Haltungen mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         if not QKan.config.check_import.haltungsschaeden:
             return True
 
         sqlnam = "strakat_32"
-
         params = {"epsg": self.epsg, "coordsFromRohr": QKan.config.strakat.coords_from_rohr}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
@@ -1461,20 +1456,17 @@ class ImportTask(Schadenstexte):
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei ")
 
-        self.db_qkan.commit()
-
-        return True
-
-    def _untersuchdat_haltung(self) -> bool:
-        """Import der Haltungsschäden aus der STRAKAT-Tabelle t_strakatberichte"""
-
-        if not QKan.config.check_import.haltungsschaeden:
-            return True
+        sqlnam = "strakat_videos_haltungen"
+        params = {'ordner_video': self.ordner_video,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
 
         sqlnam = "strakat_33"
-
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video}
-
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Haltungsschäden",
@@ -1490,33 +1482,30 @@ class ImportTask(Schadenstexte):
 
         return True
 
-    def _anschlussleitungen_untersucht(self) -> bool:
+    def _anschlussleitungsuntersuchungen(self) -> bool:
         """Import der Anschlussleitungen mit Berichten aus der STRAKAT-Tabelle t_strakatberichte"""
 
         if not QKan.config.check_import.hausanschlussschaeden:
             return True
 
         sqlnam = "strakat_34"
-
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Anschlussleitungen untersucht",
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Anschlussleitungen untersucht")
 
-        self.db_qkan.commit()
-
-        return True
-
-    def _untersuchdat_anschlussleitung(self) -> bool:
-        """Import der Schäden an Anschlussleitungen aus der STRAKAT-Tabelle t_strakatberichte"""
-
-        if not QKan.config.check_import.hausanschlussschaeden:
-            return True
+        sqlnam = "strakat_videos_anschlussleitungen"
+        params = {'ordner_video': self.ordner_video,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
 
         sqlnam = "strakat_35"
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video}
-
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Untersuchungsdaten Anschlussleitungen",

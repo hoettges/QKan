@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS qkan.haltungen_untersucht_bewertung (
     objektklasse_gesamt             TEXT,       /* todo: INTEGER, aber Wert z.b. '-' */
     hydraulische_auslastung         TEXT,
     lage_grundwasser                TEXT,
-    ueberdeckung                    INTEGER,
+    ueberdeckung                    NUMERIC(11,3),
     bodengruppe                     TEXT,
     geom geometry(LINESTRING, 25832) )
 
@@ -381,7 +381,7 @@ CREATE TABLE IF NOT EXISTS qkan.anschlussleitungen_untersucht_bewertung (
     objektklasse_gesamt             TEXT,       /* todo: INTEGER, aber Wert z.b. '-' */
     hydraulische_auslastung         TEXT,
     lage_grundwasser                TEXT,
-    ueberdeckung                    INTEGER,
+    ueberdeckung                    NUMERIC(11,3),
     bodengruppe                     TEXT,
     geom geometry(LINESTRING, 25832) )
 
@@ -611,7 +611,7 @@ CREATE TABLE IF NOT EXISTS qkan.schaechte_untersucht_bewertung (
     objektklasse_gesamt             TEXT,       /* todo: INTEGER, aber Wert z.b. '-' */
     hydraulische_auslastung         TEXT,
     lage_grundwasser                TEXT,
-    ueberdeckung                    INTEGER,
+    ueberdeckung                    NUMERIC(11,3),
     bodengruppe                     TEXT,
     geop geometry(POINT, 25832) )
 

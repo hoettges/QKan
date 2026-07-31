@@ -48,11 +48,7 @@ PLUGIN_LIST = [
     "sync.application.Synchronisation",
     "info.application.Infos",
     # "createelements.application.CreateElements",
-<<<<<<< HEAD
     "netzuebersicht.application.NetzuebersichtPlugin",
-=======
-    # "netzuebersicht.application.NetzuebersichtPlugin",
->>>>>>> 3bb9e3a2357e4baa67ebbb5d02b41a0f280aae2d
     "datenbankviewer.application.DatenbankviewerPlugin",
     "untersuchungsverwaltung.application.UntersuchungsverwaltungApplication",
 ]
