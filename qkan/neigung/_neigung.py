@@ -121,7 +121,8 @@ class NeigungTask:
 
         #Hangneigung ermitteln
 
-        neigung = processing.run("native:slope", {'INPUT': dgm_gesamt,'Z_FACTOR':1,'OUTPUT':self.zielordner_dmg+'/'+'neigung.tif'})
+        neigung = processing.run("gdal:slope", {'INPUT': dgm_gesamt,'BAND': 1, 'SCALE': 1.0, 'AS_PERCENT': True,
+                                            'COMPUTE_EDGES': False, 'ZEVENBERGEN': False,'OUTPUT':self.zielordner_dmg+'/'+'neigung.tif'})
 
         #Mittlere Neigung dem Layer Einzelflächen oder Haltungsflächen zu
 

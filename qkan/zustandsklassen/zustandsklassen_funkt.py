@@ -1989,7 +1989,7 @@ class Zustandsklassen_funkt:
                                     Zustandsklasse_B = '-',
                                     Zustandsklasse_S = '-',
                                     Zustandsklasse_D = '-'
-                                WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
+                                WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BBH', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
                                   AND (    (:datumswahl = 'Importdatum'     AND ABS(julianday(createdat) = julianday(:datumswert))*1440<=15)
                             OR (:datumswahl = 'Befahrungsdatum' AND ABS(julianday(untersuchtag)    = julianday(:datumswert))*1440<=15)
                           );"""
@@ -3265,7 +3265,7 @@ class Zustandsklassen_funkt:
                                             Zustandsklasse_B = '-',
                                             Zustandsklasse_S = '-',
                                             Zustandsklasse_D = '-'
-                                        WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
+                                        WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BBH', 'BCB', 'BCC', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
                                           AND (    (:datumswahl = 'Importdatum'     AND ABS(julianday(createdat) = julianday(:datumswert))*1440<=15)
                             OR (:datumswahl = 'Befahrungsdatum' AND ABS(julianday(untersuchtag)    = julianday(:datumswert))*1440<=15)
                           );"""
@@ -5745,7 +5745,7 @@ class Zustandsklassen_funkt:
                                             Schadensklasse_B = '-',
                                             Schadensklasse_S = '-',
                                             Schadensklasse_D = '-'
-                                        WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
+                                        WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BBH', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
                                           AND (    (:datumswahl = 'Importdatum'     AND ABS(julianday(createdat) = julianday(:datumswert))*1440<=15)
                             OR (:datumswahl = 'Befahrungsdatum' AND ABS(julianday(untersuchtag)    = julianday(:datumswert))*1440<=15)
                           );"""
@@ -6890,7 +6890,7 @@ class Zustandsklassen_funkt:
                                             Schadensklasse_B = '-',
                                             Schadensklasse_S = '-',
                                             Schadensklasse_D = '-'
-                                        WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
+                                        WHERE kuerzel in ('BCD', 'BCE', 'BDC', 'BCA', 'BCB', 'BCC', 'BBH', 'BDA', 'BDF', 'BDG', 'BDB', 'AEC', 'AED')
                                           AND (    (:datumswahl = 'Importdatum'     AND ABS(julianday(createdat) = julianday(:datumswert))*1440<=15)
                             OR (:datumswahl = 'Befahrungsdatum' AND ABS(julianday(untersuchtag)    = julianday(:datumswert))*1440<=15)
                           );"""
