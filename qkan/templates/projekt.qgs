@@ -6381,7 +6381,7 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="1" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="LineString" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="250" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="1" labelsEnabled="0" simplifyLocal="1" simplifyDrawingTol="1" geometry="Line">
+    <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="1" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="LineString" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="5000" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="1" labelsEnabled="0" simplifyLocal="1" simplifyDrawingTol="1" geometry="Line">
       <id>HA_Leitungen_a15ec7ac_e753_4eed_8604_d5ffb8724574</id>
       <datasource>dbname='./demo.sqlite' table="anschlussleitungen" (geom)</datasource>
       <keywordList>

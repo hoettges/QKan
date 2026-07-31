@@ -446,9 +446,16 @@ class ImportTask():
                 'baujahr': _kanal.baujahr, 'wasserschutz': _kanal.wasserschutz, 'eigentum': _kanal.eigentum,
                 'naechste_halt': _kanal.naechste_halt, 'rueckadresse': _kanal.rueckadresse,
                 'strangnr': _kanal.strangnr, 'betriebspunkt': _kanal.betriebspunkt,
-                'strakatid': _kanal.strakatid
+                'strakatid': _kanal.strakatid,
+                "epsg": self.epsg, "coordsFromRohr": False   # für Netzlogik sind Gerinneschnittpunkte relevant
             }
-            params += (data,)
+            if all([
+                _kanal.rw_gerinne_o > 1,
+                _kanal.rw_gerinne_u > 1,
+                _kanal.hw_gerinne_o > 1,
+                _kanal.hw_gerinne_u > 1,
+            ]):
+                params += (data,)
 
         logger.debug("{__name__}: Berichte werden in temporäre STRAKAT-Tabellen geschrieben ...")
 
@@ -460,21 +467,21 @@ class ImportTask():
         ):
             raise Exception(f'{self.__class__.__name__}:Fehler beim Lesen der Datei "kanal.rwtopen"')
 
-        sqlnams = [
-            'strakat_update_geom',
-            'strakat_update_geop',
-            # 'strakat_delete_schnr0',              alle gelöschten Kanäle entfernen
-        ]
-
-        params = {"epsg": self.epsg, "coordsFromRohr": False}   # für Netzlogik sind Gerinneschnittpunkte relevant
-        for sqlnam in sqlnams:
-            if not self.db_qkan.sqlyml(
-                sqlnam=sqlnam,
-                stmt_category="strakat_import Geoobjekte t_strakatkanal",
-                parameters=params,
-            ):
-                logger.error_code('Fehler beim Erzeugen der Geoobjekte t_strakatkanal')
-                raise QkanDbError
+        # sqlnams = [
+        #     'strakat_update_geom',
+        #     'strakat_update_geop',
+        #     # 'strakat_delete_schnr0',              alle gelöschten Kanäle entfernen
+        # ]
+        #
+        # params = {"epsg": self.epsg, "coordsFromRohr": False}   # für Netzlogik sind Gerinneschnittpunkte relevant
+        # for sqlnam in sqlnams:
+        #     if not self.db_qkan.sqlyml(
+        #         sqlnam=sqlnam,
+        #         stmt_category="strakat_import Geoobjekte t_strakatkanal",
+        #         parameters=params,
+        #     ):
+        #         logger.error_code('Fehler beim Erzeugen der Geoobjekte t_strakatkanal')
+        #         raise QkanDbError
 
         # Kopie von t_strakatkanal, um inkonsistente Schachtbezeichnungen nachvollziehbar zu machen
         # if not self.db_qkan.sqlyml(
@@ -1318,71 +1325,74 @@ class ImportTask():
             ):
                 raise Exception(f"{self.__class__.__name__}: Fehler bei strakat_import Haltungen (2)")
 
-            stnet = self.db_qkan.fetchall()        # haltnam, schob, schun, strangnr, xob, yob, xun, yun
+            stnet = self.db_qkan.fetchall()
+            # Benannte Indizes
+            (   i_haltnam, i_schob, i_schun,
+                i_nr, i_zunr1, i_abnr1, i_zunr2, i_abnr2, i_strangnr,
+                i_xob, i_yob, i_xun, i_yun
+            ) = range(13)
 
-            idxschob = {ds[1]: ds for ds in stnet}
-            idxschun = {ds[2]: ds for ds in stnet}
+            kdat = {ds[i_nr]: ds for ds in stnet}
 
             # Schleife bis alle Haltungsteilstücke verarbeitet sind
-            while len(idxschob) > 0:
+            while len(kdat) > 0:
                 gplis = []  # Knotenpunkte einer zusammengesetzten Haltung
                 # Anfang finden
-                for anf in idxschob:
-                    # Anfang bei Strangnr = 1
-                    if idxschob.get(anf)[3] == 1:
+                nanf = None             # Kanalnr des Teilstücks
+                for nanf in kdat:
+                    if kdat.get(kdat[nanf][i_zunr1]) is None:
                         break
                 else:
-                    logger.debug('\nInhalt von idxschob:\nschacht_unten: haltungsname, schacht_oben, schacht_unten, '
-                                 'xob, yob, xun, yun')
-                    errormsg = '\n'.join([f'{anf}: {idxschob.get(anf, "Error: anf nicht gefunden")}' for anf in idxschob])
-                    logger.debug(errormsg + '\n')
                     errormsg = f'Fehler: Konnte (mindestens) ein Haltungsteilstück ' + \
-                                    f'nicht verarbeiten: Schacht oben = {anf}'
+                               f'nicht verarbeiten: Schacht oben = {kdat[nanf]}'
+                    logger.debug(errormsg + '\n')
+                    logger.debug('\nInhalt von kdat:\nhaltnr: haltungsname, schacht_oben, schacht_unten, '
+                                 'haltnr, zunr1, abnr1, zunr2, abnr2, strangnr, xob, yob, xun, yun')
+                    errormsg = '\n'.join([f'{nanf}: {kdat.get(nanf)}' for nanf in kdat])
                     # with open('c:/temp/strakat_polygons/net.csv', 'w') as fw:
                     #     fw.write(
                     #         '\nInhalt von idxschob:\nschacht_unten: nummer_oben, nummer_unten, haltungsname, schacht_oben, schacht_unten, '
                     #         'schachtart_ob, schachtart_un, xob, yob, xun, yun\n')
                     #     errormsg = '\n'.join(
-                    #         [f'{anf}: {idxschob.get(anf, "Error: anf nicht gefunden")}' for anf in idxschob])
+                    #         [f'{kanf}: {idxschob.get(kanf, "Error: kanf nicht gefunden")}' for kanf in idxschob])
                     #     fw.write(errormsg + '\n')
                     #     errormsg = f'Fehler: Konnte (mindestens) ein Haltungsteilstück ' + \
-                    #                f'nicht verarbeiten: Schacht oben = {anf}'
+                    #                f'nicht verarbeiten: Schacht oben = {kanf}'
                     QkanUserError(errormsg)
                 # Kanal verfolgen und jedes Teilstück entnehmen
-                haltnam = idxschob[anf][0]
-                node = anf  # Anfang übernehmen
-                xend, yend = None, None
+                haltnr = kdat[nanf][i_nr]
+                nteil = nanf  # Kanalnr. des Anfangsteilstücks übernehmen
                 while True:
-                    ds = idxschob.get(node)
-                    if ds is None:
-                        # Strang hat nur 1 Element ...
-                        gplis.append([xend, yend])  # Endkoordinate
-                        break
-                    gplis.append([ds[4], ds[5]])  # Anfangskoordinate
-                    xend, yend = (ds[6], ds[7])   # nur für den Fall, dass Strang nur 1 Element hat (s. o.)
-                    next = idxschob.get(node)[2]  # Schacht unten als nächsten Schacht übernehmen
-                    if idxschob.get(node)[3] == 3:
+                    kteil = kdat[nteil]
+                    gplis.append([kteil[i_xob], kteil[i_yob]])  # Anfangskoordinate
+                    next = kteil[i_abnr1]  # Schacht unten als nächsten Schacht übernehmen
+                    if kdat.get(next) is None:
                         # Ende gefunden
-                        gplis.append([ds[6], ds[7]])  # Endkoordinate
-                        del idxschob[node]
+                        gplis.append([kteil[i_xun], kteil[i_yun]])  # Endkoordinate
+                        del kdat[nteil]
                         break
-                    del idxschob[node]
-                    node = next
+                    del kdat[nteil]
+                    nteil = next
 
                 ptlis = [QgsPoint(x, y) for x, y in gplis]
                 geom = QgsGeometry.fromPolyline(ptlis)
 
-                yield haltnam, geom.asWkb()
+                yield haltnr, geom.asWkb()
 
-        for strang_haltnam, strang_wkb in _getstraenge():
-            params = {"geom": strang_wkb, "haltnam": strang_haltnam, "epsg": self.epsg}
-            sqlnam = "strakat_28"
+        for strang_haltnr, strang_wkb in _getstraenge():
+            params = {
+                "coordsFromRohr": QKan.config.strakat.coords_from_rohr,
+                "geom": strang_wkb,
+                "kanalnr": strang_haltnr,
+                "epsg": self.epsg
+            }
+            sqlnam = "strakat_strang"
             if not self.db_qkan.sqlyml(
                 sqlnam=sqlnam,
                 stmt_category= "strakat_import Zusammensetzen der Kanalstränge",
                 parameters=params,
             ):
-                raise Exception(f"{self.__class__.__name__}: Fehler bei ")
+                raise Exception(f"{self.__class__.__name__}: Fehler bei Einfügen des Strangs {strang_haltnr} ")
 
         self.db_qkan.commit()
 

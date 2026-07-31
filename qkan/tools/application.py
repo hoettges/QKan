@@ -16,10 +16,10 @@ from PyQt5.QtGui import QPixmap
 from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import (
-    get_database_QKan,
     get_editable_layers,
     list_selected_items,
 )
+
 from qkan.plugin import QKanPlugin
 
 # noinspection PyUnresolvedReferences
@@ -35,6 +35,7 @@ from .dialogs.qgsadapt import QgsAdaptDialog
 from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadData
 from .dialogs.runoffparams import RunoffParamsDialog
+from .dialogs.transform import TransformDialog
 from .dialogs.zoom_clipboard import QgsZoomDialog
 from .k_filepath import setfilepath
 from .k_bericht import bericht
@@ -42,6 +43,7 @@ from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
 from .k_befahrung import setbefahrung
+from .k_transform import TransformTask
 
 from qkan.tools.k_schadenstexte import Schadenstexte
 from qkan.tools.qkan_utils import get_database_QKan
@@ -52,6 +54,7 @@ logger = get_logger("QKan.tools.application")
 class QKanTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
+
         self.database_name: Optional[str] = None
 
         self.dlgla = LayersAdaptDialog(self)
@@ -66,7 +69,8 @@ class QKanTools(QKanPlugin):
         self.dlgfp = QgsFileDialog(self)
         self.dlgbf = QgsBefahrungDialog(self)
         self.dlgzc = QgsZoomDialog(self)
-        self.dlgb = QgsBerichtDialog(self)
+        self.dlgb =  QgsBerichtDialog(self)
+        self.dlgtr = TransformDialog(self.default_dir, tr=self.tr)
         self.iface = iface
 
         self.clip = QApplication.clipboard()
@@ -184,6 +188,15 @@ class QKanTools(QKanPlugin):
             text=self.tr("Haltungsbericht"),
             toolbar='QKan-Allgemein',
             callback=self.run_bericht,
+            parent=self.iface.mainWindow(),
+        )
+
+        icon_transform = ":/plugins/qkan/tools/res/icon_transform.png"
+        QKan.instance.add_action(
+            icon_transform,
+            text=self.tr("Alle Layer transformieren"),
+            toolbar='QKan-Allgemein',
+            callback=self.run_transform,
             parent=self.iface.mainWindow(),
         )
 
@@ -1083,7 +1096,6 @@ class QKanTools(QKanPlugin):
 
     def run_bericht(self) -> None:
 
-
         # show the dialog
         self.dlgb.show()
 
@@ -1118,6 +1130,26 @@ class QKanTools(QKanPlugin):
                     path,
                     auswahl, art
                 )
+
+    def run_transform(self) -> None:
+
+        # noinspection PyArgumentList
+        if not self.dlgtr.prepareDialog():
+            return
+
+        # Formular anzeigen
+        self.dlgtr.show()
+
+        # Run the dialog event loop
+        result = self.dlgtr.exec()
+
+        # See if OK was pressed
+        if result:
+            self.dlgtr.finishDialog()
+
+            epsg_from = self.dlgtr.epsg_from
+            task = TransformTask(epsg_from)
+            task.run()
 
     def on_change(self):
         text = self.clip.text()

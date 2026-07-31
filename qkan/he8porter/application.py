@@ -8,7 +8,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.tools.qkan_utils import eval_node_types, get_default_dir
+from qkan.tools.qkan_utils import eval_node_types
 
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
@@ -176,6 +176,11 @@ class He8Porter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
 
+        # noinspection PyArgumentList
+        if not self.import_dlg.prepareDialog(self.iface):
+            return
+
+        # Formular anzeigen
         self.import_dlg.show()
 
         if self.import_dlg.exec_():

@@ -98,40 +98,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Aktionen zu Selektionen
         self.cb_selectedObjects.stateChanged.connect(self.count)
 
-        # Init fields
-
-        # Datenbanken und Vorlagen aus config übernehmen
-        # self.tf_database.setText(QKan.config.database.qkan)
-        self.tf_exportdb.setText(QKan.config.he8.export_file)
-        self.tf_template.setText(QKan.config.he8.template)
-
-        # Auswahl der zu exportierenden Tabellen
-        self.cb_haltungen.setChecked(QKan.config.check_export.haltungen)
-        self.cb_schaechte.setChecked(QKan.config.check_export.schaechte)
-        self.cb_auslaesse.setChecked(QKan.config.check_export.auslaesse)
-        self.cb_speicher.setChecked(QKan.config.check_export.speicher)
-        self.cb_pumpen.setChecked(QKan.config.check_export.pumpen)
-        self.cb_wehre.setChecked(QKan.config.check_export.wehre)
-        self.cb_drosseln.setChecked(QKan.config.check_export.drosseln)
-        self.cb_schieber.setChecked(QKan.config.check_export.schieber)
-        self.cb_qregler.setChecked(QKan.config.check_export.qregler)
-        self.cb_hregler.setChecked(QKan.config.check_export.hregler)
-        self.cb_grundseitenauslaesse.setChecked(QKan.config.check_export.grundseitenauslaesse)
-        self.cb_flaechen.setChecked(QKan.config.check_export.flaechen)
-        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
-        self.cb_rohrprofile.setChecked(QKan.config.check_export.rohrprofile)
-        self.cb_abflussparameter.setChecked(QKan.config.check_export.abflussparameter)
-        self.cb_bodenklassen.setChecked(QKan.config.check_export.bodenklassen)
-        self.cb_einleitdirekt.setChecked(QKan.config.check_export.einleitdirekt)
-        self.cb_aussengebiete.setChecked(QKan.config.check_export.aussengebiete)
-        self.cb_einzugsgebiete.setChecked(QKan.config.check_export.einzugsgebiete)
-        self.cb_tezg.setChecked(QKan.config.check_export.tezg)
-        self.cb_selectedObjects.setChecked(False)                   # zunächst deaktiviert
-
-        # Aktionen beim Export
-        self.rb_append.setChecked(QKan.config.check_export.append)
-        self.rb_update.setChecked(QKan.config.check_export.update)
-
     def select_template(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         # if self.cb_use_templatedir.isChecked():
@@ -217,6 +183,40 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             self.lf_anzahl_flaechen.setText(f'{n_flaechen}')
 
     def prepareDialog(self, iface) -> bool:
+        """Prepare the dialog"""
+
+        # Datenbanken und Vorlagen aus config übernehmen
+        # self.tf_database.setText(QKan.config.database.qkan)
+        self.tf_exportdb.setText(QKan.config.he8.export_file)
+        self.tf_template.setText(QKan.config.he8.template)
+
+        # Auswahl der zu exportierenden Tabellen
+        self.cb_haltungen.setChecked(QKan.config.check_export.haltungen)
+        self.cb_schaechte.setChecked(QKan.config.check_export.schaechte)
+        self.cb_auslaesse.setChecked(QKan.config.check_export.auslaesse)
+        self.cb_speicher.setChecked(QKan.config.check_export.speicher)
+        self.cb_pumpen.setChecked(QKan.config.check_export.pumpen)
+        self.cb_wehre.setChecked(QKan.config.check_export.wehre)
+        self.cb_drosseln.setChecked(QKan.config.check_export.drosseln)
+        self.cb_schieber.setChecked(QKan.config.check_export.schieber)
+        self.cb_qregler.setChecked(QKan.config.check_export.qregler)
+        self.cb_hregler.setChecked(QKan.config.check_export.hregler)
+        self.cb_grundseitenauslaesse.setChecked(QKan.config.check_export.grundseitenauslaesse)
+        self.cb_flaechen.setChecked(QKan.config.check_export.flaechen)
+        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
+        self.cb_rohrprofile.setChecked(QKan.config.check_export.rohrprofile)
+        self.cb_abflussparameter.setChecked(QKan.config.check_export.abflussparameter)
+        self.cb_bodenklassen.setChecked(QKan.config.check_export.bodenklassen)
+        self.cb_einleitdirekt.setChecked(QKan.config.check_export.einleitdirekt)
+        self.cb_aussengebiete.setChecked(QKan.config.check_export.aussengebiete)
+        self.cb_einzugsgebiete.setChecked(QKan.config.check_export.einzugsgebiete)
+        self.cb_tezg.setChecked(QKan.config.check_export.tezg)
+        self.cb_selectedObjects.setChecked(False)  # zunächst deaktiviert
+
+        # Aktionen beim Export
+        self.rb_append.setChecked(QKan.config.check_export.append)
+        self.rb_update.setChecked(QKan.config.check_export.update)
+
         # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
 
         # Für 3 Layer Selection-Change-Events definieren
@@ -311,7 +311,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_database.clicked.connect(self.select_database)
         self.button_box.helpRequested.connect(self.click_help)
 
-        # Init fields
+    def prepareDialog(self, iface) -> bool:
+        """Init fields"""
+
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.he8.import_file)
         # noinspection PyCallByClass,PyArgumentList
@@ -345,6 +347,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         # self.rb_update.setChecked(QKan.config.check_import.update)
 
         self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
+
+        return True
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

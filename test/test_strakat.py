@@ -10,7 +10,7 @@ from qkan.strakatporter.application import StrakatPorter
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestSTRAKATQKan(QgisTest):
-    case = 2
+    case = 3
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -20,6 +20,7 @@ class TestSTRAKATQKan(QgisTest):
             "test_strakatImport.zip",
             "test_strakat_Wegberg_Server.zip",
             "test_strakat_rommerskirchen.zip",
+            "test_strakat_juelich.zip",
         ][cls.case]
         with ZipFile(BASE_DATA / dataset) as z:
             z.extractall(BASE_WORK)
@@ -40,6 +41,11 @@ class TestSTRAKATQKan(QgisTest):
             [
                 "rommerskirchen.sqlite",
                 "rommerskirchen.qgs",
+                "strakat"
+            ],
+            [
+                "juelich.sqlite",
+                "plan.qgs",
                 "strakat"
             ],
         ][cls.case]

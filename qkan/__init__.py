@@ -392,6 +392,7 @@ class QKan:
             flood2D = self.menu.addMenu("Überflutung")
             info = self.menu.addMenu("Info")
 
+            # Hier werden die Bezeichnungen aus den initGui-Methoden dem Menü zugeordnet
             safe_add_action(allgemein, "QKan-Datenbank aktualisieren")
             safe_add_action(allgemein, "QKan-Projektdatei übernehmen")
             safe_add_action(allgemein, "QKan-Projekt anpassen")
@@ -407,6 +408,7 @@ class QKan:
             safe_add_action(daten, "Netzübersicht")  # neuer Eintrag
             safe_add_action(daten, "Datenbankviewer")
             safe_add_action(daten, "Untersuchungsverwaltung")
+            safe_add_action(daten, "Alle Layer transformieren")
 
             safe_add_action(flaechen, "Erzeuge unbefestigte Flächen...")
             safe_add_action(flaechen, "Erzeuge Thiessen-Polygone zu Haltungen")

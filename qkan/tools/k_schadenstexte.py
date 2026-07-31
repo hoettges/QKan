@@ -186,9 +186,9 @@ class Schadenstexte:
         sql = """SELECT
             uh.pk, hu.pk AS id,
             CASE hu.untersuchrichtung
-                WHEN 'gegen Fließrichtung' THEN GLength(hu.geom) - uh.station
-                WHEN 'in Fließrichtung'    THEN uh.station
-                                           ELSE uh.station END        AS station
+                WHEN 'gegen Fließrichtung' THEN min(max(GLength(hu.geom) - uh.station, 0.0), GLength(hu.geom))
+                WHEN 'in Fließrichtung'    THEN min(max(uh.station                   , 0.0), GLength(hu.geom))
+                                           ELSE NULL END        AS station
             FROM untersuchdat_haltung AS uh
             JOIN haltungen_untersucht AS hu
             ON hu.haltnam = uh.untersuchhal AND
@@ -200,7 +200,7 @@ class Schadenstexte:
                   coalesce(laenge, 0) > 0.05 AND
                   uh.station IS NOT NULL AND
                   hu.geom IS NOT NULL AND
-                  abs(uh.station) < 10000 
+                  uh.station IS NOT NULL 
             GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station"""
 
