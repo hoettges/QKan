@@ -10,7 +10,7 @@ from qkan.strakatporter.application import StrakatPorter
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestSTRAKATQKan(QgisTest):
-    case = 3
+    case = 2
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

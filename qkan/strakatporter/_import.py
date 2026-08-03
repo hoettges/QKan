@@ -181,15 +181,15 @@ class ImportTask():
             [
                 self._strakat_kanaltabelle(), self.progress_bar.setValue(5),            logger.debug("_strakat_kanaltabelle"),
                 self._strakat_reftables(), self.progress_bar.setValue(10),              logger.debug("_strakat_reftables"),
+                self._strakat_berichte(), self.progress_bar.setValue(40),               logger.debug("_strakat_berichte"),
                 self._reftables(), self.progress_bar.setValue(15),                      logger.debug("_reftables"),
                 self._schaechte(), self.progress_bar.setValue(20),                      logger.debug("_schaechte"),
                 self._haltungen(), self.progress_bar.setValue(25),                      logger.debug("_haltungen"),
-                self._symbole(),  self.progress_bar.setValue(29),                       logger.debug("_symbole"),
                 self._adapt_refvals(),                                                  logger.debug("_adapt_refvals"),
+                self._symbole_kanal(),  self.progress_bar.setValue(29),                 logger.debug("_symbole"),
                 self._strakat_hausanschl(), self.progress_bar.setValue(30),             logger.debug("_strakat_hausanschl"),
                 self._anschlussleitungen(), self.progress_bar.setValue(35),             logger.debug("_anschlussleitungen"),
                 self._anschlussschaechte(), self.progress_bar.setValue(38),             logger.debug("_anschlussschaechte"),
-                self._strakat_berichte(), self.progress_bar.setValue(40),               logger.debug("_strakat_berichte"),
                 self._schachtuntersuchungen(), self.progress_bar.setValue(45),          logger.debug("_schachtuntersuchungen"),
                 self._haltungsuntersuchungen(), self.progress_bar.setValue(60),         logger.debug("_haltungsuntersuchungen"),
                 self._anschlussleitungsuntersuchungen(), self.progress_bar.setValue(80),  logger.debug("_anschlussleitungsuntersuchungen"),
@@ -260,7 +260,8 @@ class ImportTask():
                 maxloop = 1000000                   # Begrenzung zur Sicherheit. Falls erreicht: Meldung
                 for n in range(1, maxloop):
                     b = fo.read(blength)
-                    if not b:
+                    # Dateiende
+                    if b is None or len(b) < blength:
                         break
 
                     (
@@ -568,13 +569,13 @@ class ImportTask():
             for n in range(1, maxloop):
                 """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
                 b = fo.read(blength)
-
-                if b:
-                    (
-                        n0, n1, n2, n3, n4, n5
-                    ) = unpack('HHHHBB', b[0:10])
-                else:
+                # Dateiende
+                if b is None or len(b) < blength:
                     break
+
+                (
+                    n0, n1, n2, n3, n4, n5
+                ) = unpack('HHHHBB', b[0:10])
 
                 # Prüfen, ob: 1. Wechsel zu anderer List, 2. Listenende
                 nextlist = False
@@ -588,22 +589,22 @@ class ImportTask():
                     continue
 
                 tabtyp = t_typen.get(n0, None)
-                if not tabtyp:
+                if tabtyp is None:
                     # Tabellentyp unbekannt
                     continue
 
                 id = n1
 
                 try:
-                    kurz = b[10:b[10:26].find(b'\x00')+10].decode('latin_1')
+                    block = b[10:b[10:26].find(b'\x00')+10]
+                    kurz = block.decode('latin_1')
                 except UnicodeDecodeError:
-                    _ = b[10:b[10:26].find(b'\x00')+10]
-                    logger.error_code(f"Fehlerhaftes Zeichen in Block {n}: {_}")
+                    logger.error_code(f"Fehlerhaftes Zeichen in Block {n}: {block}")
                 try:
-                    text = b[26:b[26:128].find(b'\x00')+26].decode('latin_1')
+                    block = b[26:b[26:128].find(b'\x00')+26]
+                    text = block.decode('latin_1')
                 except UnicodeDecodeError:
-                    _ = b[10:b[10:26].find(b'\x00')+10]
-                    logger.error_code("Fehlerhaftes Zeichen in Block {n}: {_}")
+                    logger.error_code(f"Fehlerhaftes Zeichen in Block {n}: {block}")
 
                 params = {'tabtyp': tabtyp, 'id': id,
                           'n1': n1, 'n2': n2, 'n3': n3, 'n4': n4, 'n5': n5,
@@ -616,7 +617,66 @@ class ImportTask():
                     raise Exception(f'{self.__class__.__name__}:Fehler beim Lesen der Datei "system/referenztabelle.strakat"')
             else:
                 raise Exception(f'{self.__class__.__name__}:Programmfehler: Einlesen der Datei '
-                                f'"system/referenztabelle.strakat" wurde nicht ordnungsgemäß abgeschlossen!"')
+                                f'"system/referenztabelle.strakat" wurde nicht ordnungsgemäß abgeschlossen!')
+
+            self.db_qkan.commit()
+
+        blength = 256                       # Blocklänge in der STRAKAT-Datei
+        with open(os.path.join(self.strakatdir, 'symbol.os'), 'rb') as fo:
+
+            maxloop = 1000000                   # Begrenzung zur Sicherheit. Falls erreicht: Meldung
+            valid = False                       # Symbol wird erst gültig, wenn ein Folgesatz folgt
+            for n in range(1, maxloop):
+                """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
+                b = fo.read(blength)
+                # Dateiende, beachte auch break weiter unten
+                if b is None or len(b) < blength:
+                    break
+
+                # Redundante Symboldatensätze! Diese sind ungültig, wenn direkt darauf ein weiterer
+                # Bezeichnungsdatensatz (id == 0) folgt
+                (f1, f2, f3) = unpack('LLL', b[112:124])
+                folgesatz = f1 + f2 + f3
+                # Achtung: Merkwürdige Spezialität von STRAKAT: Zwischendurch sind Seiten nur 00h!
+                f0 = unpack('H', b[0:2])[0]
+                if f0 == 0:
+                    folgesatz = 1
+
+                # Folgesätze nach verarbeitetem Symbol ignorieren
+                if folgesatz != 0 and not valid:
+                    continue
+
+                if folgesatz == 0:
+                    id = unpack('H', b[0:2])[0]
+
+                    # Alternatives Dateiende
+                    if id == 0:
+                        break
+
+                    try:
+                        block = b[37:b[37:59].find(b'\x00')+37]
+                        bezeichnung = block.decode('latin_1').strip()
+                    except UnicodeDecodeError:
+                        logger.error_code(f"Fehlerhaftes Zeichen in Block {n}: {block}")
+
+                    # Darf erst verarbeitet werden, wenn danach ein Folgesatz folgt
+                    valid = True
+                else:
+                    # Verarbeitung erfolgt in der nächsten Schleife, wenn ein Folgesatz folgt
+                    valid = False
+
+                    params = {'tabtyp': 'symbol', 'id': id,
+                              'n1': None, 'n2': None, 'n3': None, 'n4': None, 'n5': None,
+                              'kurz': str(id), 'text': bezeichnung}
+
+                    if not self.db_qkan.sqlyml(
+                            sqlnam="strakat_add_t_reflists",
+                            stmt_category="strakat_import Referenztabellen",
+                            parameters=params):
+                        raise Exception(f'{self.__class__.__name__}: SQL-Fehler beim Lesen der Datei "symbole.os"')
+            else:
+                raise Exception(f'{self.__class__.__name__}:Programmfehler: Einlesen der Datei '
+                                '"symbole.os" wurde nicht ordnungsgemäß abgeschlossen!')
 
         self.db_qkan.commit()
 
@@ -661,7 +721,8 @@ class ImportTask():
             for nummer in range(1, maxloop):
                 """Einlesen der Blöcke. Begrenzung nur zur Sicherheit"""
                 b = fo.read(blength)
-                if not b or len(b) < blength:
+                # Dateiende
+                if b is None or len(b) < blength:
                     break
                 xlis = list(unpack('ddddddddd', b[20:92]))
                 ylis = list(unpack('ddddddddd', b[100:172]))
@@ -698,6 +759,8 @@ class ImportTask():
 
                 rohrbreite = unpack('f', b[220:224])[0]  # nur erste von 9 Rohrbreiten lesen
 
+                symbolnr = unpack('h', b[280:282])[0]
+                strassennummer = unpack('h', b[282:284])[0]
                 hausnummer = b[288:b[288:299].find(b'\x00')+288].decode('latin_1').strip()
 
                 berichtnr = unpack('i', b[299:303])[0]
@@ -711,7 +774,7 @@ class ImportTask():
 
                 urstation = unpack('f', b[515:519])[0]
 
-                strassennummer = unpack('h', b[597:599])[0]
+                # strassennummer = unpack('h', b[597:599])[0]
 
                 anschlusshalname = b[611:b[611:631].find(b'\x00')+611].decode('latin_1').strip()
                 if anschlusshalname == '':
@@ -748,7 +811,7 @@ class ImportTask():
                     'anschlusshalnr': anschlusshalnr, 'anschlusshalname': anschlusshalname,
                     'anschlussschob': anschlussschob, 'anschlussschun': anschlussschun,
                     'sohleoben': sohleoben, 'sohleunten': sohleunten,
-                    'urstation': urstation, 'geloescht': geloescht,
+                    'urstation': urstation, 'geloescht': geloescht, 'symbolnr': symbolnr,
                     'strassennummer': strassennummer, 'hausnummer': hausnummer,
                     'strakatid': strakatid, 'hausanschlid': hausanschlid, 'geomwkb': geomwkb, "epsg": self.epsg,
                 }
@@ -776,11 +839,6 @@ class ImportTask():
 
         self.db_qkan.commit()
 
-        return True
-
-    def _anschlussschaechte(self) -> bool:
-        """Erzeugen der zusätzlichen Schächte aus Anschlussleitungen"""
-        pass
         return True
 
     def _strakat_berichte(self) -> bool:
@@ -822,11 +880,12 @@ class ImportTask():
 
                 for nummer in range(1, maxloop):
                     b = fo.read(blength)
-                    if not b:
+                    # Dateiende
+                    if b is None or len(b) < blength:
                         break
 
                     anf = b[0:128]
-                    rest = b[896:1024]          # if rest != leer
+                    # rest = b[896:1024]          # if rest != leer
                     if anf == leer:
                         continue
                     datum = b[0:10].decode('latin_1')
@@ -1248,7 +1307,7 @@ class ImportTask():
         if not QKan.config.check_import.schaechte:
             return True
 
-        sqlnam = "strakat_23"
+        sqlnam = "strakat_schaechte"
         params = {"epsg": self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
@@ -1261,13 +1320,13 @@ class ImportTask():
 
         return True
 
-    def _symbole(self) -> bool:
+    def _symbole_kanal(self) -> bool:
         """Import aller STRAKAT-Schächte, die in Wirklichkeit Symbole sind"""
 
         if not QKan.config.check_import.symbole:
             return True
 
-        sqlnam = "strakat_24"
+        sqlnam = "strakat_symbole"
         params = {"epsg": self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
@@ -1276,7 +1335,7 @@ class ImportTask():
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler in strakat_import Symbole")
 
-        sqlnam = "strakat_25"
+        sqlnam = "strakat_symbolkatalog"
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Symbolkatalog",
@@ -1411,6 +1470,24 @@ class ImportTask():
             stmt_category= "strakat_import anschlussleitungen",
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei ")
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _anschlussschaechte(self) -> bool:
+        """Erzeugen der zusätzlichen Schächte aus Anschlussleitungen"""
+        if not QKan.config.check_import.hausanschluesse:
+            return True
+
+        sqlnam = "strakat_anschlussschaechte"
+
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category= "strakat_import anschlussschaechte",
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Import "
+                            "der Anschlussschaechte")
 
         self.db_qkan.commit()
 

@@ -55,7 +55,7 @@
         <x>0</x>
         <y>0</y>
         <width>679</width>
-        <height>507</height>
+        <height>516</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -577,10 +577,10 @@ der Schachtnamen</string>
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten aus HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verzeichnis mit STRAKAT-Daten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="statusTip">
-               <string>Quelldatenbank mit Kanaldaten aus HYSTEM-EXTRAN</string>
+               <string>Verzeichnis mit STRAKAT-Daten</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -636,16 +636,16 @@ der Schachtnamen</string>
              </font>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem der STRAKAT-Tabellen auswählen. Gilt auch für QKan-Tabellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für das QKan-Projekt. Wenn die STRAKAT-Daten in einem anderen Projektionssystem vorliegen, müssen sie anschließend transformiert werden (&lt;a href=&quot;https://qkan.eu/QKan_Daten.html#transformation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Transformation von QKan-Daten&lt;/span&gt;&lt;/a&gt;).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="statusTip">
-             <string>Projektionssystem der STRAKAT-Tabellen auswählen. Gilt auch für QKan-Tabellen</string>
+             <string>Projektionssystem für das QKan-Projekt</string>
             </property>
             <property name="whatsThis">
-             <string>Projektionssystem der STRAKAT-Tabellen auswählen. Gilt auch für QKan-Tabellen</string>
+             <string>Projektionssystem für das QKan-Projekt</string>
             </property>
             <property name="accessibleName">
-             <string>Projektionssystem der STRAKAT-Tabellen auswählen. Gilt auch für QKan-Tabellen</string>
+             <string>Projektionssystem für das QKan-Projekt</string>
             </property>
            </widget>
           </item>

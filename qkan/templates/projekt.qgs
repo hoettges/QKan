@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan (3.4.18)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.28.1-Firenze" saveDateTime="2026-05-04T11:39:23">
+<qgis projectname="QKan (3.4.19)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.28.1-Firenze" saveDateTime="2026-05-04T11:39:23">
   <homePath path=""/>
-  <title>QKan (3.4.18)</title>
+  <title>QKan (3.4.19)</title>
   <transaction mode="Disabled"/>
   <projectFlags set=""/>
   <projectCrs>
@@ -16506,7 +16506,7 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>"abflusstyp"</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="0" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="Point" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="250" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="1" labelsEnabled="1" simplifyLocal="1" simplifyDrawingTol="1" geometry="Point">
+    <maplayer styleCategories="AllStyleCategories" maxScale="0" type="vector" simplifyDrawingHints="0" symbologyReferenceScale="-1" autoRefreshEnabled="0" refreshOnNotifyEnabled="0" wkbType="Point" autoRefreshTime="0" refreshOnNotifyMessage="" legendPlaceholderImage="" simplifyMaxScale="1" readOnly="0" minScale="1000" simplifyAlgorithm="0" hasScaleBasedVisibilityFlag="1" labelsEnabled="1" simplifyLocal="1" simplifyDrawingTol="1" geometry="Point">
       <id>anschlussschaechte_40ba3139_67b9_43cf_9c10_1b62ad11f61b</id>
       <datasource>dbname='./demo.sqlite' table="anschlussschaechte" (geom)</datasource>
       <keywordList>
@@ -43255,7 +43255,7 @@ def closeProject():
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan (3.4.18)</title>
+    <title>QKan (3.4.19)</title>
     <abstract></abstract>
     <contact>
       <name></name>

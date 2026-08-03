@@ -378,6 +378,7 @@ CREATE TABLE IF NOT EXISTS t_strakathausanschluesse (
     sohleoben REAL,             /* aus z-Wert */ 
     sohleunten REAL,            /* aus z-Wert */ 
     urstation REAL,
+    symbolnr INTEGER,             /* Symbol-Nr. aus STRAKAT */
     strassennummer INTEGER,
     hausnummer TEXT,
     geloescht INTEGER,
@@ -402,7 +403,7 @@ INSERT INTO t_strakathausanschluesse (
         berichtnr,
         anschlusshalnr, anschlusshalname,
         anschlussschob, anschlussschun, sohleoben, sohleunten, urstation, 
-        strassennummer, hausnummer, geloescht,
+        symbolnr, strassennummer, hausnummer, geloescht,
         strakatid, hausanschlid, geom
     )
     VALUES (
@@ -421,7 +422,7 @@ INSERT INTO t_strakathausanschluesse (
         :berichtnr,
         :anschlusshalnr, :anschlusshalname,
         :anschlussschob, :anschlussschun, :sohleoben, :sohleunten, :urstation, 
-        :strassennummer, :hausnummer, :geloescht,
+        :symbolnr, :strassennummer, :hausnummer, :geloescht,
         :strakatid, :hausanschlid, GeomFromWKB(:geomwkb, :epsg)
     );"
 
@@ -651,7 +652,7 @@ UPDATE simulationsstatus
     SET he_nr = ?, mu_nr = ?, kp_nr = ?, m150 = ?, m145 = ?, isybau = ?, kommentar = ?
     WHERE bezeichnung = ?;"
 
-strakat_23: "
+strakat_schaechte: "
 WITH strassen AS (
     SELECT n1 AS id, kurz, trim(text) AS name
     FROM t_reflists
@@ -732,7 +733,7 @@ WHERE
 GROUP BY
     stk.schacht_oben;"
 
-strakat_24: "
+strakat_symbole: "
 WITH knotenart AS (
     SELECT n1 AS id, n4, kurz, text
     FROM t_reflists
@@ -749,7 +750,7 @@ FROM t_strakatkanal AS stk
 JOIN knotenart AS k2t       ON stk.schachtart = k2t.id
 WHERE k2t.id > 1                                                     /* Symbol */ ;"
 
-strakat_25: "
+strakat_symbolkatalog: "
 INSERT INTO symbolkatalog (bezeichnung, gruppe, kommentar)
     SELECT
         text                AS bezeichnung,
@@ -970,7 +971,7 @@ strassen AS (
 )
 INSERT INTO anschlussleitungen (leitnam, schoben, schunten,
     hoehe, breite, laenge, haltnam,
-    urstation, ursprung,
+    strasse, urstation, ursprung,
     simstatus, kommentar, geom)
 SELECT
     ha.leitnam,
@@ -980,6 +981,7 @@ SELECT
     ha.breite,
     GLength(ha.geom)                    AS laenge,
     stk.haltungsname                    AS haltnam,
+    stn.name                            AS strasse,
     ha.urstation,
     stn.name || ' ' || ha.hausnummer    AS ursprung,
     'in Betrieb'                        AS simstatus,
@@ -991,6 +993,60 @@ FROM
     LEFT JOIN t_strakatkanal AS stk ON stk.strakatid = ha.strakatid
     LEFT JOIN strassen AS stn ON ha.strassennummer = stn.id
 WHERE anschlussleitungen.pk IS NULL                         /* nur neue Anschlussleitungen hinzufügen */ ;"
+
+strakat_anschlussschaechte: "
+WITH ha AS (
+SELECT
+    pk,
+    nummer                          AS nummer, 
+    anschlusshalname                AS leitnam,
+    Trim(anschlussschob)            AS schoben,
+    Trim(anschlussschun)            AS schunten,
+    rohrbreite                      AS hoehe,
+    rohrbreite                      AS breite,
+    strakatid                       AS strakatid,
+    urstation                       AS urstation,
+    symbolnr                        AS symbolnr,
+    strassennummer                  AS strassennummer,
+    hausnummer                      AS hausnummer,
+    xanf                            AS xanf,
+    yanf                            AS yanf,
+    geom                            AS geom
+FROM t_strakathausanschluesse
+WHERE geloescht = 0
+),
+strassen AS (
+    SELECT n1 AS id, kurz, trim(text) AS name
+    FROM t_reflists
+    WHERE tabtyp = 'strasse'
+),
+symbole AS (
+    SELECT id AS id, kurz, trim(text) AS text
+    FROM t_reflists
+    WHERE tabtyp = 'symbol'
+)
+INSERT INTO anschlussschaechte (schnam, strasse,
+haltnam, urstation, ursprung, anschlusstyp,
+xsch, ysch, simstatus, kommentar,
+createdat, geom)
+SELECT
+    ha.schoben                          AS schnam,
+    stn.name                            AS strasse,
+    stk.haltungsname                    AS haltnam,
+    ha.urstation                        AS urstation,
+    stn.name || ' ' || ha.hausnummer    AS ursprung,
+    coalesce(sym.text, ha.symbolnr)     AS anschlusstyp,
+    ha.xanf                             AS xsch,
+    ha.yanf                             AS ysch,
+    'in Betrieb'                        AS simstatus,
+    'QKan-STRAKAT-Import'               AS kommentar,
+    CURRENT_TIMESTAMP      AS createdat,
+    PointN(ha.geom, 1)                  AS geom
+FROM
+    ha
+    LEFT JOIN t_strakatkanal AS stk ON stk.strakatid = ha.strakatid
+    LEFT JOIN strassen AS stn ON ha.strassennummer = stn.id
+    LEFT JOIN symbole AS sym ON sym.id = ha.symbolnr;"
 
 strakat_schaechte_untersucht: "
 WITH strassen AS (

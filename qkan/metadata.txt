@@ -10,7 +10,7 @@
 name=QKan
 qgisMinimumVersion=3.28
 description=Gruppe der QKan-Erweiterung(en)
-version=3.4.18
+version=3.4.19
 author=Nora Blase, Jörg Höttges, Yannick Linke
 email=hoettges@fh-aachen.de
 
@@ -22,6 +22,10 @@ repository=https://github.com/hoettges/QKan
 
 changelog= 
 
+    3.4.19:
+        - Neues Modul: Transformation aller QKan-Tabellen aus einer anderen Projektion
+        - STRAKAT-Import berücksichtigt jetzt auch Hausanschlussschächte mit den entsprechenden Symbolbezeichnungen
+        - STRAKAT-Erkennung von Haltungsstängen (z. B. Druckleitungen) überarbeitet
     3.4.18:
         - STRAKAT-Import berücksichtigt jetzt wieder Hausanschlüsse
         - STRAKAT-Import importiert Symbole jetzt mit der Langbezeichung in die Tabelle "Symbole"
