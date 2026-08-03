@@ -1,5 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+import locale
 
 # noinspection PyUnresolvedReferences
 from typing import Dict, List, Optional, Union
@@ -16,6 +17,22 @@ from qkan.tools.qkan_utils import fortschritt
 from qkan.utils import get_logger
 
 logger = get_logger("QKan.xml.export")
+locale.setlocale(locale.LC_TIME, "deu_deu")
+
+month_map = {
+    "Jan": "01", "Jan.": "01", "Januar": "01",
+    "Feb": "02", "Feb.": "02", "Februar": "02",
+    "Mär": "03", "Mär.": "03", "März": "03",
+    "Apr": "04", "Apr.": "04", "April": "04",
+    "Mai": "05",
+    "Jun": "06", "Juni": "06",
+    "Jul": "07", "Juli": "07",
+    "Aug": "08", "Aug.": "08", "August": "08",
+    "Sep": "09", "Sept": "09", "Sept.": "09", "September": "09",
+    "Okt": "10", "Okt.": "10", "Oktober": "10",
+    "Nov": "11", "November": "11",
+    "Dez": "12", "Dezember": "12",
+}
 
 
 def _create_children(parent: Element, names: List[str]) -> None:
@@ -28,9 +45,13 @@ def _create_children_text(
 ) -> None:
     for name, text in children.items():
         if text is None:
-            SubElement(parent, name)
-        else:
-            SubElementText(parent, name, str(text))
+            continue
+
+        text = str(text).strip()
+        if not text:
+            continue
+
+        SubElementText(parent, name, text)
 
 
 # noinspection PyPep8Naming
@@ -73,17 +94,19 @@ class ExportTask:
                 return
             sql = f"""
             SELECT
-                haltnam,
-                schoben,
-                schunten,
-                sohleunten,
-                sohleoben,
-                hoehe,
-                breite,
-                laenge,
-                simstatus,
-                kommentar
-            FROM haltungen WHERE haltungstyp = 'Wehr' {self.abfrage_h_and}
+                ha.haltnam,
+                ha.schoben,
+                ha.schunten,
+                ha.sohleunten,
+                ha.sohleoben,
+                ha.hoehe,
+                ha.breite,
+                ha.laenge,
+                si.isybau AS simstatus,
+                ha.kommentar
+            FROM haltungen AS ha
+            LEFT JOIN simulationsstatus AS si ON ha.simstatus = si.bezeichnung
+            WHERE haltungstyp = 'Wehr' {self.abfrage_h_and}
             """
 
             if not self.db_qkan.sql(sql, "db_qkan: export_wehre"):
@@ -117,7 +140,7 @@ class ExportTask:
                         "SchachtAblauf": schunten,                               # schunten
                         "Schwellenhoehe": sohleunten,                              # sohleoben
                         "Kammerhoehe": hoehe,                                 # hoehe
-                        "LaengeWehrschwelle": laenge,                          # laenge
+                        "LaengeWehrschwelle": round(laenge,2),                          # laenge
                     },
                 )
 
@@ -129,7 +152,7 @@ class ExportTask:
                     SubElement(
                         SubElement(SubElement(abw, "Knoten"), "Bauwerk"), "Wehr_Ueberlauf"
                     ),
-                    {"LaengeWehrschwelle": laenge},                            # laenge
+                    {"LaengeWehrschwelle": round(laenge,2)},                            # laenge
                 )
 
             fortschritt("Wehre eingefügt", 0.10)
@@ -147,13 +170,15 @@ class ExportTask:
 
             sql = f"""
             SELECT
-                haltnam,
-                sohleoben,
-                schoben,
-                schunten,
-                simstatus,
-                kommentar
-            FROM haltungen WHERE haltungstyp = 'Pumpe' {self.abfrage_h_and}
+                ha.haltnam,
+                ha.sohleoben,
+                ha.schoben,
+                ha.schunten,
+                si.isybau AS simstatus,
+                ha.kommentar
+            FROM haltungen AS ha
+            LEFT JOIN simulationsstatus AS si ON ha.simstatus = si.bezeichnung
+            WHERE haltungstyp = 'Pumpe' {self.abfrage_h_and}
             """
 
             if not self.db_qkan.sql(sql, "db_qkan: export_pumpen"):
@@ -215,15 +240,17 @@ class ExportTask:
                 x(schaechte.geop) AS xsch,
                 y(schaechte.geop) AS ysch,
                 schaechte.kommentar,
-                schaechte.simstatus,
+                si.isybau,
                 ea.isybau,
                 schaechte.strasse,
                 schaechte.knotentyp,
                 schaechte.baujahr,
-                schaechte.material
+                ma.isybau
             FROM schaechte
             LEFT JOIN Entwaesserungsarten AS ea
             ON schaechte.entwart = ea.bezeichnung
+            LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+            LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
             WHERE schaechte.schachttyp = 'Auslass' {self.abfrage_s_and}
             """
 
@@ -250,23 +277,36 @@ class ExportTask:
                 ) = attr
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-                _create_children_text(
-                    abw,
-                    {
-                        "Objektbezeichnung": schnam,
-                        "Objektart": str(2),
-                        "Status": simstatus_nr,
-                        "baujahr": baujahr,
-                        "Entwaesserungsart": entwart_nr,
-                        "Kommentar": kommentar,
-                    },
-                )
+                if baujahr not in (0, '0', None, 'NULL'):
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": schnam,
+                            "Objektart": str(2),
+                            "Status": simstatus_nr,
+                            "Baujahr": baujahr,
+                            "Entwaesserungsart": entwart_nr,
+                            "Kommentar": kommentar,
+                        },
+                    )
+
+                else:
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": schnam,
+                            "Objektart": str(2),
+                            "Status": simstatus_nr,
+                            "Entwaesserungsart": entwart_nr,
+                            "Kommentar": kommentar,
+                        },
+                    )
                 knoten = SubElement(abw, "Knoten")
                 SubElementText(knoten, "KnotenTyp", 0)
                 schacht = SubElement(knoten, "Schacht")
                 strasse = SubElement(abw, "Lage")
                 SubElementText(strasse, "Strassenname", strasse_nam)
-                SubElementText(schacht, "Schachttiefe", deckelhoehe-sohlhoehe)
+                SubElementText(schacht, "Schachttiefe", round(deckelhoehe-sohlhoehe,2))
                 _create_children(
                     SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
                 )
@@ -275,13 +315,7 @@ class ExportTask:
                 # )
 
                 geo = SubElement(abw, "Geometrie")
-                x = QgsProject.instance().crs().authid()
-                x.replace('EPSG:', '')
-                _create_children_text(
-                    geo,
-                    {
-                        "CRSLage": x,
-                    }, )
+
 
                 geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
                 _create_children_text(
@@ -307,6 +341,13 @@ class ExportTask:
                         "Hochwert": ysch,
                     },
                 )
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
+                _create_children_text(
+                    geo,
+                    {
+                        "CRSLage": x,
+                    }, )
             fortschritt("Auslässe eingefügt", 0.3)
 
         if self.vorlage != "":
@@ -323,15 +364,17 @@ class ExportTask:
                             x(schaechte.geop) AS xsch,
                             y(schaechte.geop) AS ysch,
                             schaechte.kommentar,
-                            schaechte.simstatus,
-                            schaechte.entwart,
+                            si.isybau,
+                            ea.isybau,
                             schaechte.strasse,
                             schaechte.knotentyp,
                             schaechte.baujahr,
-                            schaechte.material
+                            ma.isybau
                         FROM schaechte
                         LEFT JOIN Entwaesserungsarten AS ea
                         ON schaechte.entwart = ea.bezeichnung
+                        LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                        LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
                         WHERE schaechte.schachttyp = 'Auslass' {self.abfrage_s_and}
                         """
 
@@ -367,24 +410,36 @@ class ExportTask:
 
                     stammdaten = root.find('Stammdatenkollektiv')
                     stammdaten.append(new_item)
+                    if baujahr not in (0, '0', None, 'NULL'):
+                        _create_children_text(
+                            new_item,
+                            {
+                                "Objektbezeichnung": schnam,
+                                "Objektart": str(2),
+                                "Status": simstatus_nr,
+                                "Baujahr": baujahr,
+                                "Entwaesserungsart": entwart_nr,
+                                "Kommentar": kommentar,
+                            },
+                        )
+                    else:
+                        _create_children_text(
+                            new_item,
+                            {
+                                "Objektbezeichnung": schnam,
+                                "Objektart": str(2),
+                                "Status": simstatus_nr,
+                                "Entwaesserungsart": entwart_nr,
+                                "Kommentar": kommentar,
+                            },
+                        )
 
-                    _create_children_text(
-                        new_item,
-                        {
-                            "Objektbezeichnung": schnam,
-                            "Objektart": str(2),
-                            "Status": simstatus_nr,
-                            "Baujahr": baujahr,
-                            "Entwaesserungsart": entwart_nr,
-                            "Kommentar": kommentar,
-                        },
-                    )
                     knoten = SubElement(new_item, "Knoten")
                     SubElementText(knoten, "KnotenTyp", 0)
                     schacht = SubElement(knoten, "Schacht")
                     strasse = SubElement(new_item, "Lage")
                     SubElementText(strasse, "Strassenname", strasse_nam)
-                    SubElementText(schacht, "Schachttiefe", deckelhoehe - sohlhoehe)
+                    SubElementText(schacht, "Schachttiefe", round(deckelhoehe - sohlhoehe,2))
                     _create_children(
                         SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
                     )
@@ -392,13 +447,7 @@ class ExportTask:
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
                     geo = SubElement(new_item, "Geometrie")
-                    x = QgsProject.instance().crs().authid()
-                    x.replace('EPSG:', '')
-                    _create_children_text(
-                        geo,
-                        {
-                            "CRSLage": x,
-                        }, )
+
 
                     geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
                     _create_children_text(
@@ -424,6 +473,13 @@ class ExportTask:
                             "Hochwert": ysch,
                         },
                     )
+                    x = QgsProject.instance().crs().authid()
+                    x.replace('EPSG:', '')
+                    _create_children_text(
+                        geo,
+                        {
+                            "CRSLage": x,
+                        }, )
                 fortschritt("Auslässe eingefügt", 0.3)
                 if blocks is not None:
                     pass
@@ -453,13 +509,15 @@ class ExportTask:
                 schaechte.strasse,
                 schaechte.knotentyp,
                 schaechte.kommentar,
-                schaechte.simstatus,
+                si.isybau,
                 x(schaechte.geop) AS xsch,
                 y(schaechte.geop) AS ysch,
                 schaechte.baujahr
             FROM schaechte
             LEFT JOIN Entwaesserungsarten AS ea
             ON schaechte.entwart = ea.bezeichnung
+            LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+            LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
             WHERE schaechte.schachttyp = 'Schacht' {self.abfrage_s_and}
             """
             if not self.db_qkan.sql(sql, "db_qkan: export_schaechte"):
@@ -486,23 +544,35 @@ class ExportTask:
                 ) = attr
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-                _create_children_text(
-                    abw,
-                    {
-                        "Objektbezeichnung": schnam,
-                        "Objektart": str(2),
-                        "Status": simstatus_nr,
-                        "Baujahr": baujahr,
-                        "Entwaesserungsart": entwart_nr,
-                        "Kommentar": kommentar,
-                    },
-                )
+                if baujahr not in (0, '0', None, 'NULL'):
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": schnam,
+                            "Objektart": str(2),
+                            "Status": simstatus_nr,
+                            "Baujahr": baujahr,
+                            "Entwaesserungsart": entwart_nr,
+                            "Kommentar": kommentar,
+                        },
+                    )
+                else:
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": schnam,
+                            "Objektart": str(2),
+                            "Status": simstatus_nr,
+                            "Entwaesserungsart": entwart_nr,
+                            "Kommentar": kommentar,
+                        },
+                    )
 
                 knoten = SubElement(abw, "Knoten")
                 SubElementText(knoten, "KnotenTyp", 0)
                 schacht = SubElement(knoten, "Schacht")
                 if deckelhoehe is not None and deckelhoehe>0:
-                    SubElementText(schacht, "Schachttiefe", deckelhoehe - sohlhoehe)
+                    SubElementText(schacht, "Schachttiefe", round(deckelhoehe - sohlhoehe,2))
                 _create_children(
                     SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
                 )
@@ -510,13 +580,7 @@ class ExportTask:
                 #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                 #
                 geo = SubElement(abw, "Geometrie")
-                x = QgsProject.instance().crs().authid()
-                x.replace('EPSG:', '')
-                _create_children_text(
-                    geo,
-                    {
-                        "CRSLage": x,
-                    }, )
+
 
                 geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
                 _create_children_text(
@@ -543,6 +607,13 @@ class ExportTask:
                         "Hochwert": ysch,
                     },
                 )
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
+                _create_children_text(
+                    geo,
+                    {
+                        "CRSLage": x,
+                    }, )
 
             fortschritt("Schächte eingefügt", 0.4)
 
@@ -563,13 +634,15 @@ class ExportTask:
                             schaechte.strasse,
                             schaechte.knotentyp,
                             schaechte.kommentar,
-                            schaechte.simstatus,
+                            si.isybau,
                             x(schaechte.geop) AS xsch,
                             y(schaechte.geop) AS ysch,
                             schaechte.baujahr
                         FROM schaechte
                         LEFT JOIN Entwaesserungsarten AS ea
                         ON schaechte.entwart = ea.bezeichnung
+                        LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                        LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
                         WHERE schaechte.schachttyp = 'Schacht' {self.abfrage_s_and}
                     """
 
@@ -604,18 +677,29 @@ class ExportTask:
 
                     stammdaten = root.find('Stammdatenkollektiv')
                     stammdaten.append(new_item)
-
-                    _create_children_text(
-                        new_item,
-                        {
-                            "Objektbezeichnung": schnam,
-                            "Objektart": str(2),
-                            "Status": simstatus_nr,
-                            "Baujahr": baujahr,
-                            "Entwaesserungsart": entwart_nr,
-                            "Kommentar": kommentar,
-                        },
-                    )
+                    if baujahr not in (0, '0', None, 'NULL'):
+                        _create_children_text(
+                            new_item,
+                            {
+                                "Objektbezeichnung": schnam,
+                                "Objektart": str(2),
+                                "Status": simstatus_nr,
+                                "Baujahr": baujahr,
+                                "Entwaesserungsart": entwart_nr,
+                                "Kommentar": kommentar,
+                            },
+                        )
+                    else:
+                        _create_children_text(
+                            new_item,
+                            {
+                                "Objektbezeichnung": schnam,
+                                "Objektart": str(2),
+                                "Status": simstatus_nr,
+                                "Entwaesserungsart": entwart_nr,
+                                "Kommentar": kommentar,
+                            },
+                        )
                     knoten = SubElement(new_item, "Knoten")
                     SubElementText(knoten, "KnotenTyp", 0)
                     schacht = SubElement(knoten, "Schacht")
@@ -629,13 +713,7 @@ class ExportTask:
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
                     geo = SubElement(new_item, "Geometrie")
-                    x=QgsProject.instance().crs().authid()
-                    x.replace('EPSG:', '')
-                    _create_children_text(
-                        geo,
-                        {
-                            "CRSLage": x,
-                        }, )
+
 
                     geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
                     _create_children_text(
@@ -661,6 +739,13 @@ class ExportTask:
                             "Hochwert": ysch,
                         },
                     )
+                    x = QgsProject.instance().crs().authid()
+                    x.replace('EPSG:', '')
+                    _create_children_text(
+                        geo,
+                        {
+                            "CRSLage": x,
+                        }, )
                 fortschritt("Schaechte eingefügt", 0.3)
                 if blocks is not None:
                     pass
@@ -689,12 +774,14 @@ class ExportTask:
                 x(schaechte.geop) AS xsch,
                 y(schaechte.geop) AS ysch,
                 schaechte.kommentar,
-                schaechte.simstatus,
+                si.isybau,
                 schaechte.knotentyp,
                 schaechte.baujahr
             FROM schaechte
             left join Entwaesserungsarten AS ea
             ON schaechte.entwart = ea.bezeichnung
+            LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+            LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
             WHERE schaechte.schachttyp = 'Speicher' {self.abfrage_s_and}
             """
 
@@ -720,17 +807,29 @@ class ExportTask:
                 ) = attr
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-                _create_children_text(
-                    abw,
-                    {
-                        "Objektbezeichnung": schnam,
-                        "Objektart": str(2),
-                        "Status": simstatus_nr,
-                        "Baujahr": baujahr,
-                        "Entwaesserungsart": entwart_nr,
-                        "Kommentar": kommentar,
-                    },
-                )
+                if baujahr not in (0, '0', None, 'NULL'):
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": schnam,
+                            "Objektart": str(2),
+                            "Status": simstatus_nr,
+                            "Baujahr": baujahr,
+                            "Entwaesserungsart": entwart_nr,
+                            "Kommentar": kommentar,
+                        },
+                    )
+                else:
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": schnam,
+                            "Objektart": str(2),
+                            "Status": simstatus_nr,
+                            "Entwaesserungsart": entwart_nr,
+                            "Kommentar": kommentar,
+                        },
+                    )
 
                 knoten = SubElement(abw, "Knoten")
                 SubElementText(knoten, "KnotenTyp",0)
@@ -744,13 +843,7 @@ class ExportTask:
                 #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                 #)
                 geo = SubElement(abw, "Geometrie")
-                x = QgsProject.instance().crs().authid()
-                x.replace('EPSG:', '')
-                _create_children_text(
-                    geo,
-                    {
-                        "CRSLage": x,
-                    },)
+
 
                 geom_knoten= SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
                 _create_children_text(
@@ -771,6 +864,13 @@ class ExportTask:
                         "Hochwert": ysch,
                     },
                 )
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
+                _create_children_text(
+                    geo,
+                    {
+                        "CRSLage": x,
+                    }, )
             fortschritt("Speicher eingefügt", 0.5)
 
 
@@ -791,13 +891,15 @@ class ExportTask:
                             schaechte.strasse,
                             schaechte.knotentyp,
                             schaechte.kommentar,
-                            schaechte.simstatus,
+                            si.isybau,
                             x(schaechte.geop) AS xsch,
                             y(schaechte.geop) AS ysch,
                             schaechte.baujahr
                         FROM schaechte
                         LEFT JOIN Entwaesserungsarten AS ea
                         ON schaechte.entwart = ea.bezeichnung
+                        LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                        LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
                         WHERE schaechte.schachttyp = 'Speicher' {self.abfrage_s_and}
                     """
 
@@ -831,18 +933,29 @@ class ExportTask:
 
                     stammdaten = root.find('Stammdatenkollektiv')
                     stammdaten.append(new_item)
-
-                    _create_children_text(
-                        new_item,
-                        {
-                            "Objektbezeichnung": schnam,
-                            "Objektart": str(2),
-                            "Status": simstatus_nr,
-                            "Baujahr": baujahr,
-                            "Entwaesserungsart": entwart_nr,
-                            "Kommentar": kommentar,
-                        },
-                    )
+                    if baujahr not in (0, '0', None, 'NULL'):
+                        _create_children_text(
+                            new_item,
+                            {
+                                "Objektbezeichnung": schnam,
+                                "Objektart": str(2),
+                                "Status": simstatus_nr,
+                                "Baujahr": baujahr,
+                                "Entwaesserungsart": entwart_nr,
+                                "Kommentar": kommentar,
+                            },
+                        )
+                    else:
+                        _create_children_text(
+                            new_item,
+                            {
+                                "Objektbezeichnung": schnam,
+                                "Objektart": str(2),
+                                "Status": simstatus_nr,
+                                "Entwaesserungsart": entwart_nr,
+                                "Kommentar": kommentar,
+                            },
+                        )
                     knoten = SubElement(new_item, "Knoten")
                     SubElementText(knoten, "KnotenTyp", 0)
                     bauwerk = SubElement(knoten, "Bauwerk")
@@ -854,13 +967,7 @@ class ExportTask:
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
                     geo = SubElement(new_item, "Geometrie")
-                    x = QgsProject.instance().crs().authid()
-                    x.replace('EPSG:', '')
-                    _create_children_text(
-                        geo,
-                        {
-                            "CRSLage": x,
-                        }, )
+
 
                     geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
                     _create_children_text(
@@ -886,6 +993,13 @@ class ExportTask:
                             "Hochwert": ysch,
                         },
                     )
+                    x = QgsProject.instance().crs().authid()
+                    x.replace('EPSG:', '')
+                    _create_children_text(
+                        geo,
+                        {
+                            "CRSLage": x,
+                        }, )
                 fortschritt("Speicher eingefügt", 0.3)
                 if blocks is not None:
                     pass
@@ -915,12 +1029,12 @@ class ExportTask:
                 haltungen.laenge,
                 haltungen.sohleoben,
                 haltungen.sohleunten,
-                haltungen.profilnam,
+                pr.isybau,
                 haltungen.strasse,
-                haltungen.material,
+                ma.isybau,
                 ea.isybau,
                 haltungen.ks,
-                haltungen.simstatus,
+                si.bezeichnung,
                 haltungen.kommentar,
                 x(PointN(haltungen.geom, 1)) AS xschob,
                 y(PointN(haltungen.geom, 1)) AS yschob,
@@ -931,6 +1045,9 @@ class ExportTask:
                 haltungen.profilauskleidung,
                 haltungen.innenmaterial
             FROM haltungen
+            LEFT JOIN simulationsstatus AS si ON haltungen.simstatus = si.bezeichnung
+            LEFT JOIN material AS ma ON haltungen.material = ma.bezeichnung
+            LEFT JOIN profile AS pr ON haltungen.profilnam = pr.profilnam
             LEFT JOIN Entwaesserungsarten AS ea 
             ON haltungen.entwart = ea.bezeichnung {self.abfrage_h_where}
             """
@@ -975,16 +1092,27 @@ class ExportTask:
                 )
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
-                _create_children_text(
-                    abw,
-                    {
-                        "Objektbezeichnung": haltnam,
-                        "Objektart": str(1),
-                        "Status": simstatus_nr,
-                        "Baujahr": baujahr,
-                        "Entwaesserungsart": entwart_nr,
-                    },
-                )
+                if baujahr not in (0, '0', None, 'NULL'):
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": haltnam,
+                            "Objektart": str(1),
+                            "Status": simstatus_nr,
+                            "Baujahr": baujahr,
+                            "Entwaesserungsart": entwart_nr,
+                        },
+                    )
+                else:
+                    _create_children_text(
+                        abw,
+                        {
+                            "Objektbezeichnung": haltnam,
+                            "Objektart": str(1),
+                            "Status": simstatus_nr,
+                            "Entwaesserungsart": entwart_nr,
+                        },
+                    )
 
                 kante = SubElement(abw, "Kante")
                 _create_children_text(
@@ -997,7 +1125,7 @@ class ExportTask:
                         "KnotenAblaufTyp": 0,
                         "SohlhoeheZulauf": sohleoben,
                         "SohlhoeheAblauf": sohleunten,
-                        "Laenge": laenge,
+                        "Laenge": round(laenge,2),
                         "Material": material,
                     },
                 )
@@ -1006,7 +1134,7 @@ class ExportTask:
                     SubElement(kante, "Profil"),
                     {
                         "ProfilID": None,
-                        "SonderprofilVorhanden": None,
+                        "SonderprofilVorhanden": 0,
                         "Profilart": profilnam_nr,
                         "Profilbreite": breite,
                         "Profilhoehe": hoehe,
@@ -1016,7 +1144,7 @@ class ExportTask:
                     },
                 )
 
-                SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", laenge)
+                #SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", laenge)
 
                 strasse = SubElement(abw, "Lage")
                 _create_children_text(
@@ -1027,13 +1155,7 @@ class ExportTask:
                 )
 
                 geom = SubElement(abw, "Geometrie")
-                x = QgsProject.instance().crs().authid()
-                x.replace('EPSG:', '')
-                _create_children_text(
-                    geom,
-                    {
-                        "CRSLage": x,
-                    }, )
+
 
                 _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
@@ -1060,6 +1182,13 @@ class ExportTask:
                         "Punkthoehe":sohleunten,
                     },
                 )
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
+                _create_children_text(
+                    geom,
+                    {
+                        "CRSLage": x,
+                    }, )
 
             fortschritt("Haltungen eingefügt", 0.60)
 
@@ -1094,11 +1223,11 @@ class ExportTask:
                         anschlussleitungen.laenge,
                         anschlussleitungen.sohleoben,
                         anschlussleitungen.sohleunten,
-                        anschlussleitungen.profilnam,
-                        anschlussleitungen.material,
+                        pr.isybau,
+                        ma.isybau,
                         ea.isybau,
                         anschlussleitungen.ks,
-                        anschlussleitungen.simstatus,
+                        si.isybau,
                         anschlussleitungen.kommentar,
                         x(PointN(anschlussleitungen.geom, 1)) AS xschob,
                         y(PointN(anschlussleitungen.geom, 1)) AS yschob,
@@ -1107,6 +1236,9 @@ class ExportTask:
                     FROM anschlussleitungen
                     LEFT JOIN Entwaesserungsarten AS ea 
                     ON anschlussleitungen.entwart = ea.bezeichnung
+                    LEFT JOIN simulationsstatus AS si ON anschlussleitungen.simstatus = si.bezeichnung
+                    LEFT JOIN material AS ma ON anschlussleitungen.material = ma.bezeichnung
+                    LEFT JOIN profile AS pr ON anschlussleitungen.profilnam = pr.profilnam
                     INNER JOIN anschluss_haltung  ah
                     ON anschlussleitungen.pk =ah.anschluss_id
                         """
@@ -1126,11 +1258,11 @@ class ExportTask:
                             anschlussleitungen.laenge,
                             anschlussleitungen.sohleoben,
                             anschlussleitungen.sohleunten,
-                            anschlussleitungen.profilnam,
-                            anschlussleitungen.material,
+                            pr.isybau,
+                            ma.isybau,
                             ea.isybau,
                             anschlussleitungen.ks,
-                            anschlussleitungen.simstatus,
+                            si.isybau,
                             anschlussleitungen.kommentar,
                             x(PointN(anschlussleitungen.geom, 1)) AS xschob,
                             y(PointN(anschlussleitungen.geom, 1)) AS yschob,
@@ -1139,6 +1271,9 @@ class ExportTask:
                         FROM anschlussleitungen
                         LEFT JOIN Entwaesserungsarten AS ea 
                         ON anschlussleitungen.entwart = ea.bezeichnung 
+                        LEFT JOIN simulationsstatus AS si ON anschlussleitungen.simstatus = si.bezeichnung
+                        LEFT JOIN material AS ma ON anschlussleitungen.material = ma.bezeichnung
+                        LEFT JOIN profile AS pr ON anschlussleitungen.profilnam = pr.profilnam
                         """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
@@ -1198,7 +1333,7 @@ class ExportTask:
                         "Material": material,
                         "SohlhoeheZulauf": sohleoben,
                         "SohlhoeheAblauf": sohleunten,
-                        "Laenge": laenge,
+                        "Laenge": round(laenge,2),
                     },
                 )
 
@@ -1206,23 +1341,17 @@ class ExportTask:
                     SubElement(kante, "Profil"),
                     {
                         "ProfilID": None,
-                        "SonderprofilVorhanden": None,
+                        "SonderprofilVorhanden": 0,
                         "Profilart": profilnam_nr,
                         "Profilbreite": breite,
                         "Profilhoehe": hoehe,
                     },
                 )
 
-                SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", laenge)
+                #SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", laenge)
 
                 geom = SubElement(abw, "Geometrie")
-                x = QgsProject.instance().crs().authid()
-                x.replace('EPSG:', '')
-                _create_children_text(
-                    geom,
-                    {
-                        "CRSLage": x,
-                    }, )
+
                 _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
                 kante = SubElement(
@@ -1244,9 +1373,17 @@ class ExportTask:
                         "Hochwert": yschun,
                     },
                 )
+                x = QgsProject.instance().crs().authid()
+                x.replace('EPSG:', '')
+                _create_children_text(
+                    geom,
+                    {
+                        "CRSLage": x,
+                    }, )
 
             fortschritt("Leitung eingefügt", 0.7)
 
+#TODO abhier weiter die referenzdaten verknüpfen
     def _export_zustandsdaten_haltungen(self):
         if self.vorlage == "":
 
@@ -1502,20 +1639,40 @@ class ExportTask:
                         },
                     )
 
+                    for de in sorted(month_map, key=len, reverse=True):
+                        untersuchtag = untersuchtag.replace(de, month_map[de])
+
+                    tag, monat, jahr = untersuchtag.replace(".", "").split()
+
+                    datum = f"{jahr}-{monat}-{int(tag):02d}"
+
                     opt = SubElement(insp, "OptischeInspektion")
-                    _create_children_text(
-                        opt,
-                        {
-                            "Inspektionsdatum": untersuchtag,
-                            "NameUntersucher": untersucher,
-                            "Wetter": wetter_nr,
-                        },
-                    )
+                    if wetter_nr not in (0,'0', None,'NULL'):
+                        _create_children_text(
+                            opt,
+                            {
+                                "Auftragskennung": 1,
+                                "Inspektionsdatum": datum,
+                                "NameUntersucher": untersucher,
+                                "Wetter": wetter_nr,
+                            },
+                        )
+                    else:
+                        _create_children_text(
+                            opt,
+                            {
+                                "Auftragskennung": 1,
+                                "Inspektionsdatum": datum,
+                                "NameUntersucher": untersucher,
+                            },
+                        )
+
 
                     rohr = SubElement(opt, "Rohrleitung")
                     _create_children_text(
                         rohr,
                         {
+                            "Rohrleitungstyp": 0,
                             "Inspektionsrichtung": untersuchrichtung,
                             "Bezugspunktlage": bezugspunkt,
                             "Inspektionslaenge": laenge,
@@ -1537,38 +1694,38 @@ class ExportTask:
                             "Kanalart": entwart_nr,
                         },
                     )
-                    inspdat = SubElement(opt, "Inspektionsdaten")
+                    inspdat = SubElement(rohr, "Inspektionsdaten")
 
                     last_pk = pk
 
 
-                rzu = SubElement(inspdat, "RZustand")
-                _create_children_text(
-                    rzu,
-                    {
-                        "Station": station,
-                        "Timecode": timekode,
-                        "InspektionsKode": kuerzel,
-                        "Charakterisierung1": charakt1,
-                        "Charakterisierung2": charakt2,
-                        "Quantifizierung1Numerisch": quantnr1,
-                        "Quantifizierung2Numerisch": quantnr2,
-                        "Streckenschaden": streckenschaden,
-                        "StreckenschadenLfdNr": streckenschadenlfdnr,
-                        "PositionVon": posvon,
-                        "PositionBis": posbis,
-                        "Fotodatei": foto,
-                    },
-                )
-                kl = SubElement(rzu, "Klassifizierung")
-                _create_children_text(
-                    kl,
-                    {
-                        "Dichtheit": zd,
-                        "Standsicherheit": zs,
-                        "Betriebssicherheit": zb,
-                    },
-                )
+                    rzu = SubElement(inspdat, "RZustand")
+                    _create_children_text(
+                        rzu,
+                        {
+                            "Station": station,
+                            "Timecode": timekode,
+                            "InspektionsKode": kuerzel,
+                            "Charakterisierung1": charakt1,
+                            "Charakterisierung2": charakt2,
+                            "Quantifizierung1Numerisch": quantnr1,
+                            "Quantifizierung2Numerisch": quantnr2,
+                            "Streckenschaden": streckenschaden,
+                            "StreckenschadenLfdNr": streckenschadenlfdnr,
+                            "PositionVon": posvon,
+                            "PositionBis": posbis,
+                            "Fotodatei": foto,
+                        },
+                    )
+                    kl = SubElement(rzu, "Klassifizierung")
+                    _create_children_text(
+                        kl,
+                        {
+                            "Dichtheit": zd,
+                            "Standsicherheit": zs,
+                            "Betriebssicherheit": zb,
+                        },
+                    )
 
     def _export_zustandsdaten_anschlussleitungen(self):
         if self.vorlage == "":
@@ -1905,20 +2062,40 @@ class ExportTask:
                         },
                     )
 
+                    for de in sorted(month_map, key=len, reverse=True):
+                        untersuchtag = untersuchtag.replace(de, month_map[de])
+
+                    tag, monat, jahr = untersuchtag.replace(".", "").split()
+
+                    datum = f"{jahr}-{monat}-{int(tag):02d}"
+
                     opt = SubElement(insp, "OptischeInspektion")
-                    _create_children_text(
-                        opt,
-                        {
-                            "Inspektionsdatum": untersuchtag,
-                            "NameUntersucher": untersucher,
-                            "Wetter": wetter_nr,
-                        },
-                    )
+                    if wetter_nr not in (0, '0', None, 'NULL'):
+                        _create_children_text(
+                            opt,
+                            {
+                                "Auftragskennung": 1,
+                                "Inspektionsdatum": datum,
+                                "NameUntersucher": untersucher,
+                                "Wetter": wetter_nr,
+                            },
+                        )
+                    else:
+                        _create_children_text(
+                            opt,
+                            {
+                                "Auftragskennung": 1,
+                                "Inspektionsdatum": datum,
+                                "NameUntersucher": untersucher,
+                            },
+                        )
+
 
                     rohr = SubElement(opt, "Rohrleitung")
                     _create_children_text(
                         rohr,
                         {
+                            "Rohrleitungstyp": 1,
                             "Inspektionsrichtung": untersuchrichtung,
                             "Bezugspunktlage": bezugspunkt,
                             "Inspektionslaenge": laenge,
@@ -1940,38 +2117,38 @@ class ExportTask:
                             "Kanalart": entwart_nr,
                         },
                     )
-                    inspdat = SubElement(opt, "Inspektionsdaten")
+                    inspdat = SubElement(rohr, "Inspektionsdaten")
 
                     last_pk = pk
 
-                rzu = SubElement(inspdat, "RZustand")
-                _create_children_text(
-                    rzu,
-                    {
-                        "Station": station,
-                        "Timecode": timekode,
-                        "InspektionsKode": kuerzel,
-                        "Charakterisierung1": charakt1,
-                        "Charakterisierung2": charakt2,
-                        "Quantifizierung1Numerisch": quantnr1,
-                        "Quantifizierung2Numerisch": quantnr2,
-                        "Streckenschaden": streckenschaden,
-                        "StreckenschadenLfdNr": streckenschadenlfdnr,
-                        "PositionVon": posvon,
-                        "PositionBis": posbis,
-                        "Fotodatei": foto,
-                    },
-                )
-                kl = SubElement(rzu, "Klassifizierung")
+                    rzu = SubElement(inspdat, "RZustand")
+                    _create_children_text(
+                        rzu,
+                        {
+                            "Station": station,
+                            "Timecode": timekode,
+                            "InspektionsKode": kuerzel,
+                            "Charakterisierung1": charakt1,
+                            "Charakterisierung2": charakt2,
+                            "Quantifizierung1Numerisch": quantnr1,
+                            "Quantifizierung2Numerisch": quantnr2,
+                            "Streckenschaden": streckenschaden,
+                            "StreckenschadenLfdNr": streckenschadenlfdnr,
+                            "PositionVon": posvon,
+                            "PositionBis": posbis,
+                            "Fotodatei": foto,
+                        },
+                    )
+                    kl = SubElement(rzu, "Klassifizierung")
 
-                _create_children_text(
-                    kl,
-                    {
-                        "Dichtheit": zd,
-                        "Standsicherheit": zs,
-                        "Betriebssicherheit": zb,
-                    },
-                )
+                    _create_children_text(
+                        kl,
+                        {
+                            "Dichtheit": zd,
+                            "Standsicherheit": zs,
+                            "Betriebssicherheit": zb,
+                        },
+                    )
 
     def _export_zustandsdaten_schaechte(self):
         if self.vorlage == "":
@@ -2145,15 +2322,34 @@ class ExportTask:
                         },
                     )
 
+                    for de in sorted(month_map, key=len, reverse=True):
+                        untersuchtag = untersuchtag.replace(de, month_map[de])
+
+                    tag, monat, jahr = untersuchtag.replace(".", "").split()
+
+                    datum = f"{jahr}-{monat}-{int(tag):02d}"
+
                     opt = SubElement(insp, "OptischeInspektion")
-                    _create_children_text(
-                        opt,
-                        {
-                            "Inspektionsdatum": untersuchtag,
-                            "NameUntersucher": untersucher,
-                            "Wetter": wetter_nr,
-                        },
-                    )
+                    if wetter_nr not in (0, '0', None, 'NULL'):
+                        _create_children_text(
+                            opt,
+                            {
+                                "Auftragskennung": 1,
+                                "Inspektionsdatum": datum,
+                                "NameUntersucher": untersucher,
+                                "Wetter": wetter_nr,
+                            },
+                        )
+                    else:
+                        _create_children_text(
+                            opt,
+                            {
+                                "Auftragskennung": 1,
+                                "Inspektionsdatum": datum,
+                                "NameUntersucher": untersucher,
+                            },
+                        )
+
 
                     knoten = SubElement(opt, "Knoten")
                     _create_children_text(
@@ -2282,8 +2478,25 @@ class ExportTask:
 
 
         # region Create XML structure
-        root = Element("Identifikation", nsmap={"xsi":"http://www.w3.org/2001/XMLSchema-instance",})
-        SubElementText(root, "Version", "2013-02")
+
+        NS = "http://www.ofd-hannover.la/Identifikation"
+        XSI = "http://www.w3.org/2001/XMLSchema-instance"
+
+        root = etree.Element(
+            f"{{{NS}}}Identifikation",
+            nsmap={
+                None: NS,
+                "xsi": XSI
+            }
+        )
+
+        root.attrib[f"{{{XSI}}}schemaLocation"] = (
+            f"{NS} schema/1302-metadaten.xsd"
+        )
+
+        etree.SubElement(root, f"{{{NS}}}Version").text = "2013-02"
+        #root = Element("Identifikation", nsmap={"xmlns":"http://www.ofd-hannover.la/Identifikation","xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","xsi:schemaLocation":"http://www.ofd-hannover.la/Identifikation schema/1302-metadaten.xsd",})
+        #SubElementText(root, "Version", "2013-02")
 
         admin_daten = SubElement(root, "Admindaten")
         _create_children(
@@ -2295,6 +2508,7 @@ class ExportTask:
         _create_children_text(
             daten_kollektive,
             {
+                "Datenstatus": '1',
                 "Erstellungsdatum": str(date.today()),
                 "Kommentar": "Created with QKan's XML export module",
             },
@@ -2325,6 +2539,9 @@ class ExportTask:
             )
             self.zustand = SubElement(daten_kollektive, "Zustandsdatenkollektiv")
             _create_children_text(self.zustand, {"Kennung": "ZUS01", "Beschreibung": "Zustandsdaten", }, )
+            self.auftraege = SubElement(self.zustand, "Auftraege")
+            self.auftrag = SubElement(self.auftraege, "Auftrag")
+            _create_children_text( self.auftrag, {"Auftragsbezeichnung": '1', "Auftragsnummer": 1, "Auftragskennung": '1', }, )
 
         hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
         _create_children_text(
@@ -2333,7 +2550,7 @@ class ExportTask:
         )
         rechen = SubElement(hydro_kollektiv, "Rechennetz")
         SubElement(rechen, "Stammdatenkennung")
-        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
+        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekte")
         # endregion
 
         # Path(self.export_file).write_text(
@@ -2411,8 +2628,18 @@ class ExportTask:
             self._export_zustandsdaten_schaechte()
             self._export_zustandsdaten_anschlussleitungen()
 
-        Path(self.export_file).write_text(
-            etree.tostring(root, pretty_print=True, encoding="unicode")
+        # Path(self.export_file).write_text(
+        #     etree.tostring(root, pretty_print=True, encoding="unicode")
+        # )
+
+        Path(self.export_file).write_bytes(
+            etree.tostring(
+                root,
+                pretty_print=True,
+                encoding="ISO-8859-1",
+                xml_declaration=True,
+                standalone=True,
+            )
         )
 
 
