@@ -130,7 +130,7 @@ class ExportTask:
 
                 obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
                 _create_children_text(
-                    obj, {"HydObjektTyp": None, "Objektbezeichnung": haltnam}
+                    obj, {"Objektbezeichnung": haltnam, "HydObjektTyp": 1}
                 )
 
                 _create_children_text(
@@ -198,10 +198,10 @@ class ExportTask:
 
                 obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
                 SubElementText(obj, "Objektbezeichnung", haltnam)
+                SubElementText(obj, "HydObjektTyp", 1)
                 _create_children_text(
                     SubElement(obj, "Pumpe"),
                     {
-                        "HydObjektTyp": None,
                         "Sohlhoehe": sohleoben,
                         "SchachtAblauf": schunten,
                         "SchachtZulauf": schoben,
@@ -232,26 +232,39 @@ class ExportTask:
                 return
 
             sql = f"""
-            SELECT
-                schaechte.schnam,
-                schaechte.deckelhoehe,
-                schaechte.sohlhoehe,
-                schaechte.durchm,
-                x(schaechte.geop) AS xsch,
-                y(schaechte.geop) AS ysch,
-                schaechte.kommentar,
-                si.isybau,
-                ea.isybau,
-                schaechte.strasse,
-                schaechte.knotentyp,
-                schaechte.baujahr,
-                ma.isybau
-            FROM schaechte
-            LEFT JOIN Entwaesserungsarten AS ea
-            ON schaechte.entwart = ea.bezeichnung
-            LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
-            LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
-            WHERE schaechte.schachttyp = 'Auslass' {self.abfrage_s_and}
+            WITH ea_bestaende AS (
+                    SELECT
+                        bezeichnung,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY bezeichnung
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM Entwaesserungsarten
+                )
+                SELECT
+                    schaechte.schnam,
+                    schaechte.deckelhoehe,
+                    schaechte.sohlhoehe,
+                    schaechte.durchm,
+                    schaechte.druckdicht,
+                    ea.isybau,
+                    schaechte.strasse,
+                    schaechte.knotentyp,
+                    schaechte.kommentar,
+                    si.isybau,
+                    x(schaechte.geop) AS xsch,
+                    y(schaechte.geop) AS ysch,
+                    schaechte.baujahr
+                FROM schaechte
+                LEFT JOIN ea_bestaende AS ea
+                    ON schaechte.entwart = ea.bezeichnung
+                    AND ea.rn = 1
+                LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
+                WHERE schaechte.schachttyp = 'Auslass' {self.abfrage_s_and}
             """
 
             if not self.db_qkan.sql(sql, u"db_qkan: export_auslaesse"):
@@ -321,10 +334,10 @@ class ExportTask:
                 _create_children_text(
                     SubElement(geom_knoten, "Punkt"),
                     {
-                        "PunktattributAbwasser": "DMP",
-                        "Punkthoehe": sohlhoehe,
                         "Rechtswert": xsch,
                         "Hochwert": ysch,
+                        "Punkthoehe": sohlhoehe,
+                        "PunktattributAbwasser": "DMP",
                     },
                 )
                 _create_children_text(
@@ -335,10 +348,10 @@ class ExportTask:
                 _create_children_text(
                     SubElement(geom_knoten, "Punkt"),
                     {
-                        "PunktattributAbwasser": "SMP",
-                        "Punkthoehe": sohlhoehe,
                         "Rechtswert": xsch,
                         "Hochwert": ysch,
+                        "Punkthoehe": sohlhoehe,
+                        "PunktattributAbwasser": "SMP",
                     },
                 )
                 x = QgsProject.instance().crs().authid()
@@ -356,26 +369,39 @@ class ExportTask:
             root = tree.getroot()
 
             sql = f"""
-                        SELECT
-                            schaechte.schnam,
-                            schaechte.deckelhoehe,
-                            schaechte.sohlhoehe,
-                            schaechte.durchm,
-                            x(schaechte.geop) AS xsch,
-                            y(schaechte.geop) AS ysch,
-                            schaechte.kommentar,
-                            si.isybau,
-                            ea.isybau,
-                            schaechte.strasse,
-                            schaechte.knotentyp,
-                            schaechte.baujahr,
-                            ma.isybau
-                        FROM schaechte
-                        LEFT JOIN Entwaesserungsarten AS ea
-                        ON schaechte.entwart = ea.bezeichnung
-                        LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
-                        LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
-                        WHERE schaechte.schachttyp = 'Auslass' {self.abfrage_s_and}
+            WITH ea_bestaende AS (
+                    SELECT
+                        bezeichnung,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY bezeichnung
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM Entwaesserungsarten
+                )
+                SELECT
+                    schaechte.schnam,
+                    schaechte.deckelhoehe,
+                    schaechte.sohlhoehe,
+                    schaechte.durchm,
+                    schaechte.druckdicht,
+                    ea.isybau,
+                    schaechte.strasse,
+                    schaechte.knotentyp,
+                    schaechte.kommentar,
+                    si.isybau,
+                    x(schaechte.geop) AS xsch,
+                    y(schaechte.geop) AS ysch,
+                    schaechte.baujahr
+                FROM schaechte
+                LEFT JOIN ea_bestaende AS ea
+                    ON schaechte.entwart = ea.bezeichnung
+                    AND ea.rn = 1
+                LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
+                WHERE schaechte.schachttyp = 'Auslass' {self.abfrage_s_and}
                         """
 
             if not self.db_qkan.sql(sql, u"db_qkan: export_auslaesse"):
@@ -453,10 +479,10 @@ class ExportTask:
                     _create_children_text(
                         SubElement(geom_knoten, "Punkt"),
                         {
-                            "PunktattributAbwasser": "DMP",
-                            "Punkthoehe": deckelhoehe,
                             "Rechtswert": xsch,
                             "Hochwert": ysch,
+                            "Punkthoehe": deckelhoehe,
+                            "PunktattributAbwasser": "DMP",
                         },
                     )
                     _create_children_text(
@@ -467,10 +493,10 @@ class ExportTask:
                     _create_children_text(
                         SubElement(geom_knoten, "Punkt"),
                         {
-                            "PunktattributAbwasser": "SMP",
-                            "Punkthoehe": sohlhoehe,
                             "Rechtswert": xsch,
                             "Hochwert": ysch,
+                            "Punkthoehe": sohlhoehe,
+                            "PunktattributAbwasser": "SMP",
                         },
                     )
                     x = QgsProject.instance().crs().authid()
@@ -499,6 +525,18 @@ class ExportTask:
                 return
 
             sql = f"""
+                        WITH ea_bestaende AS (
+                SELECT
+                    bezeichnung,
+                    isybau,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY bezeichnung
+                        ORDER BY
+                            CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                            isybau
+                    ) AS rn
+                FROM Entwaesserungsarten
+            )
             SELECT
                 schaechte.schnam,
                 schaechte.deckelhoehe,
@@ -514,8 +552,9 @@ class ExportTask:
                 y(schaechte.geop) AS ysch,
                 schaechte.baujahr
             FROM schaechte
-            LEFT JOIN Entwaesserungsarten AS ea
-            ON schaechte.entwart = ea.bezeichnung
+            LEFT JOIN ea_bestaende AS ea
+                ON schaechte.entwart = ea.bezeichnung
+                AND ea.rn = 1
             LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
             LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
             WHERE schaechte.schachttyp = 'Schacht' {self.abfrage_s_and}
@@ -573,9 +612,9 @@ class ExportTask:
                 schacht = SubElement(knoten, "Schacht")
                 if deckelhoehe is not None and deckelhoehe>0:
                     SubElementText(schacht, "Schachttiefe", round(deckelhoehe - sohlhoehe,2))
-                _create_children(
-                    SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
-                )
+                # _create_children(
+                #     SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
+                # )
                 # geom_knoten = SubElement(
                 #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                 #
@@ -586,10 +625,10 @@ class ExportTask:
                 _create_children_text(
                     SubElement(geom_knoten, "Punkt"),
                     {
-                        "PunktattributAbwasser": "DMP",
-                        "Punkthoehe": deckelhoehe,
                         "Rechtswert": xsch,
                         "Hochwert": ysch,
+                        "Punkthoehe": deckelhoehe,
+                        "PunktattributAbwasser": "DMP",
                     },
                 )
 
@@ -601,10 +640,10 @@ class ExportTask:
                 _create_children_text(
                     SubElement(geom_knoten, "Punkt"),
                     {
-                        "PunktattributAbwasser": "SMP",
-                        "Punkthoehe": sohlhoehe,
                         "Rechtswert": xsch,
                         "Hochwert": ysch,
+                        "Punkthoehe": sohlhoehe,
+                        "PunktattributAbwasser": "SMP",
                     },
                 )
                 x = QgsProject.instance().crs().authid()
@@ -623,6 +662,18 @@ class ExportTask:
             root = tree.getroot()
 
             sql = f"""
+                        WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM entwaesserungsarten
+                        )
                         SELECT
                             schaechte.schnam,
                             schaechte.deckelhoehe,
@@ -639,8 +690,9 @@ class ExportTask:
                             y(schaechte.geop) AS ysch,
                             schaechte.baujahr
                         FROM schaechte
-                        LEFT JOIN Entwaesserungsarten AS ea
-                        ON schaechte.entwart = ea.bezeichnung
+                        LEFT JOIN ea_bestaende AS ea
+                            ON schaechte.entwart = ea.bezeichnung
+                            AND ea.rn = 1
                         LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
                         LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
                         WHERE schaechte.schachttyp = 'Schacht' {self.abfrage_s_and}
@@ -706,9 +758,9 @@ class ExportTask:
                     strasse = SubElement(new_item, "Lage")
                     SubElementText(strasse, "Strassenname", strasse_nam)
                     SubElementText(schacht, "Schachttiefe", round(deckelhoehe - sohlhoehe,2))
-                    _create_children(
-                        SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
-                    )
+                    # _create_children(
+                    #     SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
+                    # )
                     # geom_knoten = SubElement(
                     #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
                     # )
@@ -719,10 +771,10 @@ class ExportTask:
                     _create_children_text(
                         SubElement(geom_knoten, "Punkt"),
                         {
-                            "PunktattributAbwasser": "DMP",
-                            "Punkthoehe": deckelhoehe,
                             "Rechtswert": xsch,
                             "Hochwert": ysch,
+                            "Punkthoehe": deckelhoehe,
+                            "PunktattributAbwasser": "DMP",
                         },
                     )
                     _create_children_text(
@@ -733,10 +785,10 @@ class ExportTask:
                     _create_children_text(
                         SubElement(geom_knoten, "Punkt"),
                         {
-                            "PunktattributAbwasser": "SMP",
-                            "Punkthoehe": sohlhoehe,
                             "Rechtswert": xsch,
                             "Hochwert": ysch,
+                            "Punkthoehe": sohlhoehe,
+                            "PunktattributAbwasser": "SMP",
                         },
                     )
                     x = QgsProject.instance().crs().authid()
@@ -764,25 +816,39 @@ class ExportTask:
                 return
 
             sql = f"""
-            SELECT
-                schaechte.schnam,
-                schaechte.deckelhoehe,
-                schaechte.sohlhoehe,
-                schaechte.durchm,
-                ea.isybau,
-                schaechte.strasse,
-                x(schaechte.geop) AS xsch,
-                y(schaechte.geop) AS ysch,
-                schaechte.kommentar,
-                si.isybau,
-                schaechte.knotentyp,
-                schaechte.baujahr
-            FROM schaechte
-            left join Entwaesserungsarten AS ea
-            ON schaechte.entwart = ea.bezeichnung
-            LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
-            LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
-            WHERE schaechte.schachttyp = 'Speicher' {self.abfrage_s_and}
+            WITH ea_bestaende AS (
+                    SELECT
+                        bezeichnung,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY bezeichnung
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM Entwaesserungsarten
+                )
+                SELECT
+                    schaechte.schnam,
+                    schaechte.deckelhoehe,
+                    schaechte.sohlhoehe,
+                    schaechte.durchm,
+                    schaechte.druckdicht,
+                    ea.isybau,
+                    schaechte.strasse,
+                    schaechte.knotentyp,
+                    schaechte.kommentar,
+                    si.isybau,
+                    x(schaechte.geop) AS xsch,
+                    y(schaechte.geop) AS ysch,
+                    schaechte.baujahr
+                FROM schaechte
+                LEFT JOIN ea_bestaende AS ea
+                    ON schaechte.entwart = ea.bezeichnung
+                    AND ea.rn = 1
+                LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
+                WHERE schaechte.schachttyp = 'Speicher' {self.abfrage_s_and}
             """
 
             if not self.db_qkan.sql(sql, "db_qkan: export_speicher"):
@@ -849,19 +915,19 @@ class ExportTask:
                 _create_children_text(
                     SubElement(geom_knoten, "Punkt"),
                     {
-                        "PunktattributAbwasser": "DMP",
-                        "Punkthoehe": deckelhoehe,
                         "Rechtswert": xsch,
                         "Hochwert": ysch,
+                        "Punkthoehe": deckelhoehe,
+                        "PunktattributAbwasser": "DMP",
                     },
                 )
                 _create_children_text(
                     SubElement(geom_knoten, "Punkt"),
                     {
-                        "PunktattributAbwasser": "SMP",
-                        "Punkthoehe": sohlhoehe,
                         "Rechtswert": xsch,
                         "Hochwert": ysch,
+                        "Punkthoehe": sohlhoehe,
+                        "PunktattributAbwasser": "SMP",
                     },
                 )
                 x = QgsProject.instance().crs().authid()
@@ -880,27 +946,39 @@ class ExportTask:
             root = tree.getroot()
 
             sql = f"""
-                        SELECT
-                            schaechte.schnam,
-                            schaechte.deckelhoehe,
-                            schaechte.sohlhoehe,
-                            schaechte.durchm,
-                            schaechte.druckdicht,
-                            ea.isybau,
-                            schaechte.entwart,
-                            schaechte.strasse,
-                            schaechte.knotentyp,
-                            schaechte.kommentar,
-                            si.isybau,
-                            x(schaechte.geop) AS xsch,
-                            y(schaechte.geop) AS ysch,
-                            schaechte.baujahr
-                        FROM schaechte
-                        LEFT JOIN Entwaesserungsarten AS ea
-                        ON schaechte.entwart = ea.bezeichnung
-                        LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
-                        LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
-                        WHERE schaechte.schachttyp = 'Speicher' {self.abfrage_s_and}
+                        WITH ea_bestaende AS (
+                    SELECT
+                        bezeichnung,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY bezeichnung
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM Entwaesserungsarten
+                )
+                SELECT
+                    schaechte.schnam,
+                    schaechte.deckelhoehe,
+                    schaechte.sohlhoehe,
+                    schaechte.durchm,
+                    schaechte.druckdicht,
+                    ea.isybau,
+                    schaechte.strasse,
+                    schaechte.knotentyp,
+                    schaechte.kommentar,
+                    si.isybau,
+                    x(schaechte.geop) AS xsch,
+                    y(schaechte.geop) AS ysch,
+                    schaechte.baujahr
+                FROM schaechte
+                LEFT JOIN ea_bestaende AS ea
+                    ON schaechte.entwart = ea.bezeichnung
+                    AND ea.rn = 1
+                LEFT JOIN simulationsstatus AS si ON schaechte.simstatus = si.bezeichnung
+                LEFT JOIN material AS ma ON schaechte.material = ma.bezeichnung
+                WHERE schaechte.schachttyp = 'Speicher' {self.abfrage_s_and}
                     """
 
             if not self.db_qkan.sql(sql, u"db_qkan: export_schaechte"):
@@ -973,10 +1051,10 @@ class ExportTask:
                     _create_children_text(
                         SubElement(geom_knoten, "Punkt"),
                         {
-                            "PunktattributAbwasser": "DMP",
-                            "Punkthoehe": deckelhoehe,
                             "Rechtswert": xsch,
                             "Hochwert": ysch,
+                            "Punkthoehe": deckelhoehe,
+                            "PunktattributAbwasser": "DMP",
                         },
                     )
                     _create_children_text(
@@ -987,10 +1065,10 @@ class ExportTask:
                     _create_children_text(
                         SubElement(geom_knoten, "Punkt"),
                         {
-                            "PunktattributAbwasser": "SMP",
-                            "Punkthoehe": sohlhoehe,
                             "Rechtswert": xsch,
                             "Hochwert": ysch,
+                            "Punkthoehe": sohlhoehe,
+                            "PunktattributAbwasser": "SMP",
                         },
                     )
                     x = QgsProject.instance().crs().authid()
@@ -1020,36 +1098,77 @@ class ExportTask:
                 return
 
             sql = f"""
-            SELECT
-                haltungen.haltnam,
-                haltungen.schoben,
-                haltungen.schunten,
-                haltungen.hoehe,
-                haltungen.breite,
-                haltungen.laenge,
-                haltungen.sohleoben,
-                haltungen.sohleunten,
-                pr.isybau,
-                haltungen.strasse,
-                ma.isybau,
-                ea.isybau,
-                haltungen.ks,
-                si.bezeichnung,
-                haltungen.kommentar,
-                x(PointN(haltungen.geom, 1)) AS xschob,
-                y(PointN(haltungen.geom, 1)) AS yschob,
-                x(PointN(haltungen.geom, -1)) AS xschun,
-                y(PointN(haltungen.geom, -1)) AS yschun,
-                haltungen.baujahr,
-                haltungen.aussendurchmesser,
-                haltungen.profilauskleidung,
-                haltungen.innenmaterial
-            FROM haltungen
-            LEFT JOIN simulationsstatus AS si ON haltungen.simstatus = si.bezeichnung
-            LEFT JOIN material AS ma ON haltungen.material = ma.bezeichnung
-            LEFT JOIN profile AS pr ON haltungen.profilnam = pr.profilnam
-            LEFT JOIN Entwaesserungsarten AS ea 
-            ON haltungen.entwart = ea.bezeichnung {self.abfrage_h_where}
+            WITH ea_bestaende AS (
+                    SELECT
+                        bezeichnung,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY bezeichnung
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM Entwaesserungsarten
+                ),
+                ma_bestaende AS (
+                    SELECT
+                        bezeichnung,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY bezeichnung
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM material
+                ),
+                pr_bestaende AS (
+                    SELECT
+                        profilnam,
+                        isybau,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY profilnam
+                            ORDER BY
+                                CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                isybau
+                        ) AS rn
+                    FROM profile
+                )
+                SELECT
+                    haltungen.haltnam,
+                    haltungen.schoben,
+                    haltungen.schunten,
+                    haltungen.hoehe,
+                    haltungen.breite,
+                    haltungen.laenge,
+                    haltungen.sohleoben,
+                    haltungen.sohleunten,
+                    pr.isybau,
+                    haltungen.strasse,
+                    ma.isybau,
+                    ea.isybau,
+                    haltungen.ks,
+                    si.bezeichnung,
+                    haltungen.kommentar,
+                    x(PointN(haltungen.geom, 1)) AS xschob,
+                    y(PointN(haltungen.geom, 1)) AS yschob,
+                    x(PointN(haltungen.geom, -1)) AS xschun,
+                    y(PointN(haltungen.geom, -1)) AS yschun,
+                    haltungen.baujahr,
+                    haltungen.aussendurchmesser,
+                    haltungen.profilauskleidung,
+                    haltungen.innenmaterial
+                FROM haltungen
+                LEFT JOIN simulationsstatus AS si ON haltungen.simstatus = si.bezeichnung
+                LEFT JOIN ma_bestaende AS ma
+                    ON haltungen.material = ma.bezeichnung
+                    AND ma.rn = 1
+                LEFT JOIN pr_bestaende AS pr
+                    ON haltungen.profilnam = pr.profilnam
+                    AND pr.rn = 1
+                LEFT JOIN ea_bestaende AS ea
+                    ON haltungen.entwart = ea.bezeichnung
+                    AND ea.rn = 1 {self.abfrage_h_where}
             """
 
             if not self.db_qkan.sql(sql, "db_qkan: export_haltungen"):
@@ -1085,10 +1204,11 @@ class ExportTask:
                 ) = attr
 
                 obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
-                _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
+                SubElementText(obj, "Objektbezeichnung", haltnam)
+                SubElementText(obj, "HydObjektTyp", 1)
                 _create_children_text(
                     SubElement(obj, "Haltung"),
-                    {"Objektbezeichnung": haltnam, "Berechnungslaenge": laenge,"Rauigkeitsansatz": 1, "RauigkeitsbeiwertKb": ks},
+                    { "Rauigkeitsansatz": 1,"RauigkeitsbeiwertKb": ks, "Berechnungslaenge": round(laenge,2)},
                 )
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
@@ -1136,15 +1256,15 @@ class ExportTask:
                         "ProfilID": None,
                         "SonderprofilVorhanden": 0,
                         "Profilart": profilnam_nr,
-                        "Profilbreite": breite,
-                        "Profilhoehe": hoehe,
+                        "Profilbreite": int(breite),
+                        "Profilhoehe": int(hoehe),
                         "Aussendurchmesser": aussendurchmesser,
                         "Auskleidung": profilauskleidung,
                         "MaterialAuskleidung": innenmaterial,
                     },
                 )
 
-                #SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", laenge)
+                SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", round(laenge,2))
 
                 strasse = SubElement(abw, "Lage")
                 _create_children_text(
@@ -1157,7 +1277,7 @@ class ExportTask:
                 geom = SubElement(abw, "Geometrie")
 
 
-                _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
+                #_create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
                 kante = SubElement(
                     SubElement(SubElement(geom, "Geometriedaten"), "Kanten"), "Kante"
@@ -1167,19 +1287,19 @@ class ExportTask:
                 _create_children_text(
                     SubElement(kante, "Start"),
                     {
-                        "PunktattributAbwasser": "DMP",
                         "Rechtswert": xschob,
                         "Hochwert": yschob,
                         "Punkthoehe": sohleoben,
+                        "PunktattributAbwasser": "DMP",
                     },
                 )
                 _create_children_text(
                     SubElement(kante, "Ende"),
                     {
-                        "PunktattributAbwasser": "DMP",
                         "Rechtswert": xschun,
                         "Hochwert": yschun,
                         "Punkthoehe":sohleunten,
+                        "PunktattributAbwasser": "DMP",
                     },
                 )
                 x = QgsProject.instance().crs().authid()
@@ -1205,50 +1325,75 @@ class ExportTask:
 
             if self.abfrage_h_where:
                 sql = f"""
-                        WITH anschluss_haltung as( SELECT 
-                        a.pk AS anschluss_id, 
-                         haltungen.pk AS haltung_id
-                        FROM anschlussleitungen a
-                        JOIN haltungen 
-                        ON ST_Intersects(a.geom, haltungen.geom)
-                         {self.abfrage_h_where}
+                        WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau
+                            FROM (
+                                SELECT
+                                    bezeichnung,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY bezeichnung
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM Entwaesserungsarten
+                                WHERE bezeichnung IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        ),
+                        
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau
+                            FROM (
+                                SELECT
+                                    bezeichnung,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY bezeichnung
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM material
+                                WHERE bezeichnung IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        ),
+                        
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau
+                            FROM (
+                                SELECT
+                                    profilnam,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY profilnam
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM profile
+                                WHERE profilnam IS NOT NULL
+                            )
+                            WHERE rn = 1
                         )
                         
-                        SELECT
-                        anschlussleitungen.leitnam,
-                        anschlussleitungen.schoben,
-                        anschlussleitungen.schunten,
-                        anschlussleitungen.hoehe,
-                        anschlussleitungen.breite,
-                        anschlussleitungen.laenge,
-                        anschlussleitungen.sohleoben,
-                        anschlussleitungen.sohleunten,
-                        pr.isybau,
-                        ma.isybau,
-                        ea.isybau,
-                        anschlussleitungen.ks,
-                        si.isybau,
-                        anschlussleitungen.kommentar,
-                        x(PointN(anschlussleitungen.geom, 1)) AS xschob,
-                        y(PointN(anschlussleitungen.geom, 1)) AS yschob,
-                        x(PointN(anschlussleitungen.geom, -1)) AS xschun,
-                        y(PointN(anschlussleitungen.geom, -1)) AS yschun
-                    FROM anschlussleitungen
-                    LEFT JOIN Entwaesserungsarten AS ea 
-                    ON anschlussleitungen.entwart = ea.bezeichnung
-                    LEFT JOIN simulationsstatus AS si ON anschlussleitungen.simstatus = si.bezeichnung
-                    LEFT JOIN material AS ma ON anschlussleitungen.material = ma.bezeichnung
-                    LEFT JOIN profile AS pr ON anschlussleitungen.profilnam = pr.profilnam
-                    INNER JOIN anschluss_haltung  ah
-                    ON anschlussleitungen.pk =ah.anschluss_id
-                        """
-
-                if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
-                    return
-
-
-            else:
-                sql = f"""
                         SELECT
                             anschlussleitungen.leitnam,
                             anschlussleitungen.schoben,
@@ -1258,23 +1403,159 @@ class ExportTask:
                             anschlussleitungen.laenge,
                             anschlussleitungen.sohleoben,
                             anschlussleitungen.sohleunten,
-                            pr.isybau,
-                            ma.isybau,
-                            ea.isybau,
+                        
+                            pr.isybau AS profil_isybau,
+                            ma.isybau AS material_isybau,
+                            ea.isybau AS entwart_isybau,
+                        
                             anschlussleitungen.ks,
-                            si.isybau,
+                        
+                            si.isybau AS simstatus_isybau,
+                        
                             anschlussleitungen.kommentar,
+                        
                             x(PointN(anschlussleitungen.geom, 1)) AS xschob,
                             y(PointN(anschlussleitungen.geom, 1)) AS yschob,
                             x(PointN(anschlussleitungen.geom, -1)) AS xschun,
                             y(PointN(anschlussleitungen.geom, -1)) AS yschun
+                        
                         FROM anschlussleitungen
-                        LEFT JOIN Entwaesserungsarten AS ea 
-                        ON anschlussleitungen.entwart = ea.bezeichnung 
-                        LEFT JOIN simulationsstatus AS si ON anschlussleitungen.simstatus = si.bezeichnung
-                        LEFT JOIN material AS ma ON anschlussleitungen.material = ma.bezeichnung
-                        LEFT JOIN profile AS pr ON anschlussleitungen.profilnam = pr.profilnam
-                        """
+                        
+                        LEFT JOIN ea_bestaende AS ea
+                            ON anschlussleitungen.entwart = ea.bezeichnung
+                        
+                        LEFT JOIN simulationsstatus AS si
+                            ON anschlussleitungen.simstatus = si.bezeichnung
+                        
+                        LEFT JOIN ma_bestaende AS ma
+                            ON anschlussleitungen.material = ma.bezeichnung
+                        
+                        LEFT JOIN pr_bestaende AS pr
+                            ON anschlussleitungen.profilnam = pr.profilnam
+                        
+                        WHERE EXISTS (
+                            SELECT 1
+                            FROM haltungen AS h
+                            WHERE ST_Intersects(
+                                anschlussleitungen.geom,
+                                h.geom
+                            )
+                            {self.abfrage_h_where}
+                        );
+                                               """
+
+                if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
+                    return
+
+
+            else:
+                sql = f"""
+                        WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau
+                            FROM (
+                                SELECT
+                                    bezeichnung,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY bezeichnung
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM Entwaesserungsarten
+                                WHERE bezeichnung IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        ),
+                        
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau
+                            FROM (
+                                SELECT
+                                    bezeichnung,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY bezeichnung
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM material
+                                WHERE bezeichnung IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        ),
+                        
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau
+                            FROM (
+                                SELECT
+                                    profilnam,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY profilnam
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM profile
+                                WHERE profilnam IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        )
+                        
+                        SELECT
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.schoben,
+                            anschlussleitungen.schunten,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.breite,
+                            anschlussleitungen.laenge,
+                            anschlussleitungen.sohleoben,
+                            anschlussleitungen.sohleunten,
+                        
+                            pr.isybau AS profil_isybau,
+                            ma.isybau AS material_isybau,
+                            ea.isybau AS entwart_isybau,
+                        
+                            anschlussleitungen.ks,
+                            anschlussleitungen.simstatus,
+                            anschlussleitungen.kommentar,
+                        
+                            x(PointN(anschlussleitungen.geom, 1)) AS xschob,
+                            y(PointN(anschlussleitungen.geom, 1)) AS yschob,
+                            x(PointN(anschlussleitungen.geom, -1)) AS xschun,
+                            y(PointN(anschlussleitungen.geom, -1)) AS yschun
+                        
+                        FROM anschlussleitungen
+                        
+                        LEFT JOIN simulationsstatus AS si
+                            ON anschlussleitungen.simstatus = si.bezeichnung
+                        
+                        LEFT JOIN ma_bestaende AS ma
+                            ON anschlussleitungen.material = ma.bezeichnung
+                        
+                        LEFT JOIN pr_bestaende AS pr
+                            ON anschlussleitungen.profilnam = pr.profilnam
+                        
+                        LEFT JOIN ea_bestaende AS ea
+                            ON anschlussleitungen.entwart = ea.bezeichnung;
+                         """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
                     return
@@ -1304,10 +1585,11 @@ class ExportTask:
                 ) = attr
 
                 obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
-                _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
+                SubElementText(obj, "Objektbezeichnung", leitnam)
+                SubElementText(obj, "HydObjektTyp", 1)
                 _create_children_text(
                     SubElement(obj, "Leitung"),
-                    {"Objektbezeichnung": leitnam, "Berechnungslaenge": laenge, "Rauigkeitsansatz": 1,  "RauigkeitsbeiwertKb": ks},
+                    { "Rauigkeitsansatz": 1,"RauigkeitsbeiwertKb": ks, "Berechnungslaenge": round(laenge,2)},
                 )
 
                 abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
@@ -1343,16 +1625,16 @@ class ExportTask:
                         "ProfilID": None,
                         "SonderprofilVorhanden": 0,
                         "Profilart": profilnam_nr,
-                        "Profilbreite": breite,
-                        "Profilhoehe": hoehe,
+                        "Profilbreite": int(breite),
+                        "Profilhoehe": int(hoehe),
                     },
                 )
 
-                #SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", laenge)
+                SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", round(laenge,2))
 
                 geom = SubElement(abw, "Geometrie")
 
-                _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
+                #_create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
                 kante = SubElement(
                     SubElement(SubElement(geom, "Geometriedaten"), "Kanten"), "Kante"
@@ -1383,7 +1665,7 @@ class ExportTask:
 
             fortschritt("Leitung eingefügt", 0.7)
 
-#TODO abhier weiter die referenzdaten verknüpfen
+
     def _export_zustandsdaten_haltungen(self):
         if self.vorlage == "":
 
@@ -1402,55 +1684,101 @@ class ExportTask:
             if self.auswahl_zustand == "Stammdaten":
 
                 sql = f"""
-                 SELECT
-                    haltungen_untersucht.pk,
-                    haltungen_untersucht.haltnam,
-                    haltungen_untersucht.bezugspunkt,
-                    haltungen_untersucht.schoben,
-                    haltungen_untersucht.schunten,
-                    haltungen_untersucht.hoehe,
-                    haltungen_untersucht.breite,
-                    haltungen_untersucht.laenge,
-                    haltungen_untersucht.baujahr,
-                    haltungen_untersucht.untersuchtag,
-                    haltungen_untersucht.untersucher,
-                    haltungen_untersucht.untersuchrichtung,
-                    haltungen_untersucht.wetter,
-                    haltungen_untersucht.bewertungsart,
-                    haltungen_untersucht.bewertungstag,
-                    haltungen_untersucht.strasse,
-                    haltungen_untersucht.datenart,
-                    haltungen_untersucht.auftragsbezeichnung,
-                    haltungen_untersucht.max_ZD,
-                    haltungen_untersucht.max_ZB,
-                    haltungen_untersucht.max_ZS,
-                    x(PointN(haltungen_untersucht.geom, 1)) AS xschob,
-                    y(PointN(haltungen_untersucht.geom, 1)) AS yschob,
-                    x(PointN(haltungen_untersucht.geom, -1)) AS xschun,
-                    y(PointN(haltungen_untersucht.geom, -1)) AS yschun,
-                    haltungen_untersucht.kommentar,
-                    untersuchdat_haltung.station,
-                    untersuchdat_haltung.timecode,
-                    untersuchdat_haltung.kuerzel,
-                    untersuchdat_haltung.charakt1,
-                    untersuchdat_haltung.charakt2,
-                    untersuchdat_haltung.quantnr1,
-                    untersuchdat_haltung.quantnr2,
-                    untersuchdat_haltung.streckenschaden,
-                    untersuchdat_haltung.streckenschaden_lfdnr,
-                    untersuchdat_haltung.pos_von,
-                    untersuchdat_haltung.pos_bis,
-                    untersuchdat_haltung.foto_dateiname,
-                    untersuchdat_haltung.ZD,
-                    untersuchdat_haltung.ZB,
-                    untersuchdat_haltung.ZS,
-                    haltungen.profilnam,
-                    haltungen.material,
-                    haltungen.entwart
+                 WITH ea_bestaende AS (
+                        SELECT
+                            bezeichnung,
+                            isybau,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY bezeichnung
+                                ORDER BY
+                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                    isybau
+                            ) AS rn
+                        FROM Entwaesserungsarten
+                    ),
+                    ma_bestaende AS (
+                        SELECT
+                            bezeichnung,
+                            isybau,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY bezeichnung
+                                ORDER BY
+                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                    isybau
+                            ) AS rn
+                        FROM material
+                    ),
+                    pr_bestaende AS (
+                        SELECT
+                            profilnam,
+                            isybau,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY profilnam
+                                ORDER BY
+                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                    isybau
+                            ) AS rn
+                        FROM profile
+                    )
+                    SELECT
+                        haltungen_untersucht.pk,
+                        haltungen_untersucht.haltnam,
+                        haltungen_untersucht.bezugspunkt,
+                        haltungen_untersucht.schoben,
+                        haltungen_untersucht.schunten,
+                        haltungen_untersucht.hoehe,
+                        haltungen_untersucht.breite,
+                        haltungen_untersucht.laenge,
+                        haltungen_untersucht.baujahr,
+                        haltungen_untersucht.untersuchtag,
+                        haltungen_untersucht.untersucher,
+                        haltungen_untersucht.untersuchrichtung,
+                        haltungen_untersucht.wetter,
+                        haltungen_untersucht.bewertungsart,
+                        haltungen_untersucht.bewertungstag,
+                        haltungen_untersucht.strasse,
+                        haltungen_untersucht.datenart,
+                        haltungen_untersucht.auftragsbezeichnung,
+                        haltungen_untersucht.max_ZD,
+                        haltungen_untersucht.max_ZB,
+                        haltungen_untersucht.max_ZS,
+                        x(PointN(haltungen_untersucht.geom, 1)) AS xschob,
+                        y(PointN(haltungen_untersucht.geom, 1)) AS yschob,
+                        x(PointN(haltungen_untersucht.geom, -1)) AS xschun,
+                        y(PointN(haltungen_untersucht.geom, -1)) AS yschun,
+                        haltungen_untersucht.kommentar,
+                        untersuchdat_haltung.station,
+                        untersuchdat_haltung.timecode,
+                        untersuchdat_haltung.kuerzel,
+                        untersuchdat_haltung.charakt1,
+                        untersuchdat_haltung.charakt2,
+                        untersuchdat_haltung.quantnr1,
+                        untersuchdat_haltung.quantnr2,
+                        untersuchdat_haltung.streckenschaden,
+                        untersuchdat_haltung.streckenschaden_lfdnr,
+                        untersuchdat_haltung.pos_von,
+                        untersuchdat_haltung.pos_bis,
+                        untersuchdat_haltung.foto_dateiname,
+                        untersuchdat_haltung.ZD,
+                        untersuchdat_haltung.ZB,
+                        untersuchdat_haltung.ZS,
+                        haltungen.profilnam,
+                        haltungen.material,
+                        haltungen.entwart
                     FROM haltungen_untersucht
                     JOIN untersuchdat_haltung 
-                    JOIN haltungen where haltungen_untersucht.haltnam = untersuchdat_haltung.untersuchhal and haltungen_untersucht.haltnam = haltungen.haltnam
-                    {self.abfrage_h_and}
+                        ON haltungen_untersucht.haltnam = untersuchdat_haltung.untersuchhal
+                    JOIN haltungen 
+                        ON haltungen_untersucht.haltnam = haltungen.haltnam
+                    LEFT JOIN ea_bestaende AS ea 
+                            ON haltungen.entwart = ea.bezeichnung
+                            AND ea.rn = 1
+                        LEFT JOIN ma_bestaende AS ma 
+                            ON haltungen.material = ma.bezeichnung
+                            AND ma.rn = 1
+                        LEFT JOIN pr_bestaende AS pr 
+                            ON haltungen.profilnam = pr.profilnam
+                            AND pr.rn = 1 {self.abfrage_h_and}
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1459,6 +1787,42 @@ class ExportTask:
             elif self.auswahl_zustand == "Bewertet (Zustandsklassifizierung)":
 
                 sql = f"""
+                 WITH ea_bestaende AS (
+                        SELECT
+                            bezeichnung,
+                            isybau,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY bezeichnung
+                                ORDER BY
+                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                    isybau
+                            ) AS rn
+                        FROM Entwaesserungsarten
+                    ),
+                    ma_bestaende AS (
+                        SELECT
+                            bezeichnung,
+                            isybau,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY bezeichnung
+                                ORDER BY
+                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                    isybau
+                            ) AS rn
+                        FROM material
+                    ),
+                    pr_bestaende AS (
+                        SELECT
+                            profilnam,
+                            isybau,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY profilnam
+                                ORDER BY
+                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                    isybau
+                            ) AS rn
+                        FROM profile
+                    )
                  SELECT
                     haltungen_untersucht_bewertung.pk,
                     haltungen_untersucht_bewertung.haltnam,
@@ -1501,13 +1865,21 @@ class ExportTask:
                     untersuchdat_haltung_bewertung.ZD,
                     untersuchdat_haltung_bewertung.ZB,
                     untersuchdat_haltung_bewertung.ZS,
-                    haltungen.profilnam,
-                    haltungen.material,
-                    haltungen.entwart
+                    pr.isybau AS profil_isybau,
+                    ma.isybau AS material_isybau,
+                    ea.isybau AS entwart_isybau
                     FROM haltungen_untersucht_bewertung
                     JOIN untersuchdat_haltung_bewertung 
                     JOIN haltungen where haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal and haltungen_untersucht_bewertung.haltnam = haltungen.haltnam
-                    {self.abfrage_h_and}
+                    LEFT JOIN ea_bestaende AS ea 
+                            ON haltungen.entwart = ea.bezeichnung
+                            AND ea.rn = 1
+                        LEFT JOIN ma_bestaende AS ma 
+                            ON haltungen.material = ma.bezeichnung
+                            AND ma.rn = 1
+                        LEFT JOIN pr_bestaende AS pr 
+                            ON haltungen.profilnam = pr.profilnam
+                            AND pr.rn = 1 {self.abfrage_h_and}
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1516,55 +1888,101 @@ class ExportTask:
             elif self.auswahl_zustand == "Bewertet (Substanzklassifizierung)":
 
                 sql = f"""
-                 SELECT
-                    haltungen_substanz_bewertung.pk,
-                    haltungen_substanz_bewertung.haltnam,
-                    NULL,
-                    haltungen_substanz_bewertung.schoben,
-                    haltungen_substanz_bewertung.schunten,
-                    haltungen_substanz_bewertung.hoehe,
-                    haltungen_substanz_bewertung.breite,
-                    haltungen_substanz_bewertung.laenge,
-                    haltungen_substanz_bewertung.baujahr,
-                    haltungen_substanz_bewertung.untersuchtag,
-                    haltungen_substanz_bewertung.untersucher,
-                    NULL,
-                    haltungen_substanz_bewertung.wetter,
-                    haltungen_substanz_bewertung.bewertungsart,
-                    haltungen_substanz_bewertung.bewertungstag,
-                    haltungen_substanz_bewertung.strasse,
-                    haltungen_substanz_bewertung.datenart,
-                    NULL,
-                    haltungen_substanz_bewertung.max_ZD,
-                    haltungen_substanz_bewertung.max_ZB,
-                    haltungen_substanz_bewertung.max_ZS,
-                    x(PointN(haltungen_substanz_bewertung.geom, 1)) AS xschob,
-                    y(PointN(haltungen_substanz_bewertung.geom, 1)) AS yschob,
-                    x(PointN(haltungen_substanz_bewertung.geom, -1)) AS xschun,
-                    y(PointN(haltungen_substanz_bewertung.geom, -1)) AS yschun,
-                    NULL,
-                    substanz_haltung_bewertung.station,
-                    substanz_haltung_bewertung.timecode,
-                    substanz_haltung_bewertung.kuerzel,
-                    substanz_haltung_bewertung.charakt1,
-                    substanz_haltung_bewertung.charakt2,
-                    substanz_haltung_bewertung.quantnr1,
-                    substanz_haltung_bewertung.quantnr2,
-                    substanz_haltung_bewertung.streckenschaden,
-                    substanz_haltung_bewertung.streckenschaden_lfdnr,
-                    substanz_haltung_bewertung.pos_von,
-                    substanz_haltung_bewertung.pos_bis,
-                    substanz_haltung_bewertung.foto_dateiname,
-                    substanz_haltung_bewertung.Zustandsklasse_D,
-                    substanz_haltung_bewertung.Zustandsklasse_B,
-                    substanz_haltung_bewertung.Zustandsklasse_S,
-                    haltungen.profilnam,
-                    haltungen.material,
-                    haltungen.entwart
-                    FROM haltungen_substanz_bewertung
-                    JOIN substanz_haltung_bewertung 
-                    JOIN haltungen where haltungen_substanz_bewertung.haltnam = substanz_haltung_bewertung.untersuchhal and haltungen_substanz_bewertung.haltnam = haltungen.haltnam
-                    {self.abfrage_h_and}
+                 WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM Entwaesserungsarten
+                        ),
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM material
+                        ),
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY profilnam
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM profile
+                        )
+                        SELECT
+                            haltungen_substanz_bewertung.pk,
+                            haltungen_substanz_bewertung.haltnam,
+                            NULL,
+                            haltungen_substanz_bewertung.schoben,
+                            haltungen_substanz_bewertung.schunten,
+                            haltungen_substanz_bewertung.hoehe,
+                            haltungen_substanz_bewertung.breite,
+                            haltungen_substanz_bewertung.laenge,
+                            haltungen_substanz_bewertung.baujahr,
+                            haltungen_substanz_bewertung.untersuchtag,
+                            haltungen_substanz_bewertung.untersucher,
+                            NULL,
+                            haltungen_substanz_bewertung.wetter,
+                            haltungen_substanz_bewertung.bewertungsart,
+                            haltungen_substanz_bewertung.bewertungstag,
+                            haltungen_substanz_bewertung.strasse,
+                            haltungen_substanz_bewertung.datenart,
+                            NULL,
+                            haltungen_substanz_bewertung.max_ZD,
+                            haltungen_substanz_bewertung.max_ZB,
+                            haltungen_substanz_bewertung.max_ZS,
+                            x(PointN(haltungen_substanz_bewertung.geom, 1)) AS xschob,
+                            y(PointN(haltungen_substanz_bewertung.geom, 1)) AS yschob,
+                            x(PointN(haltungen_substanz_bewertung.geom, -1)) AS xschun,
+                            y(PointN(haltungen_substanz_bewertung.geom, -1)) AS yschun,
+                            NULL,
+                            substanz_haltung_bewertung.station,
+                            substanz_haltung_bewertung.timecode,
+                            substanz_haltung_bewertung.kuerzel,
+                            substanz_haltung_bewertung.charakt1,
+                            substanz_haltung_bewertung.charakt2,
+                            substanz_haltung_bewertung.quantnr1,
+                            substanz_haltung_bewertung.quantnr2,
+                            substanz_haltung_bewertung.streckenschaden,
+                            substanz_haltung_bewertung.streckenschaden_lfdnr,
+                            substanz_haltung_bewertung.pos_von,
+                            substanz_haltung_bewertung.pos_bis,
+                            substanz_haltung_bewertung.foto_dateiname,
+                            substanz_haltung_bewertung.Zustandsklasse_D,
+                            substanz_haltung_bewertung.Zustandsklasse_B,
+                            substanz_haltung_bewertung.Zustandsklasse_S,
+                            pr.isybau AS profil_isybau,
+                            ma.isybau AS material_isybau,
+                            ea.isybau AS entwart_isybau
+                        FROM haltungen_substanz_bewertung
+                        JOIN substanz_haltung_bewertung 
+                            ON haltungen_substanz_bewertung.haltnam = substanz_haltung_bewertung.untersuchhal
+                        JOIN haltungen 
+                            ON haltungen_substanz_bewertung.haltnam = haltungen.haltnam
+                        LEFT JOIN ea_bestaende AS ea 
+                            ON haltungen.entwart = ea.bezeichnung
+                            AND ea.rn = 1
+                        LEFT JOIN ma_bestaende AS ma 
+                            ON haltungen.material = ma.bezeichnung
+                            AND ma.rn = 1
+                        LEFT JOIN pr_bestaende AS pr 
+                            ON haltungen.profilnam = pr.profilnam
+                            AND pr.rn = 1 {self.abfrage_h_and}
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1679,21 +2097,37 @@ class ExportTask:
                         },
                     )
 
-                    rgrund = SubElement(rohr, "RGrunddaten")
-                    _create_children_text(
-                        rgrund,
-                        {
-                            "KnotenZulauf": 0,
-                            "KnotenZulauftyp": schoben,
-                            "KnotenAblauf": 0,
-                            "KnotenAblauftyp": schunten,
-                            "Profilhoehe": hoehe,
-                            "Profilbreite": breite,
-                            "Profilart": profilnam_nr,
-                            "Material": material,
-                            "Kanalart": entwart_nr,
-                        },
-                    )
+                    if hoehe and breite not in (0, '0', None, 'NULL'):
+
+                        rgrund = SubElement(rohr, "RGrunddaten")
+                        _create_children_text(
+                            rgrund,
+                            {
+                                "KnotenZulauf": schoben,
+                                "KnotenZulauftyp": 0,
+                                "KnotenAblauf": schunten,
+                                "KnotenAblauftyp": 0,
+                                "Profilhoehe": int(hoehe),
+                                "Profilbreite": int(breite),
+                                "Profilart": profilnam_nr,
+                                "Material": material,
+                                "Kanalart": entwart_nr,
+                            },
+                        )
+                    else:
+                        rgrund = SubElement(rohr, "RGrunddaten")
+                        _create_children_text(
+                            rgrund,
+                            {
+                                "KnotenZulauf": schoben,
+                                "KnotenZulauftyp": 0,
+                                "KnotenAblauf": schunten,
+                                "KnotenAblauftyp": 0,
+                                "Profilart": profilnam_nr,
+                                "Material": material,
+                                "Kanalart": entwart_nr,
+                            },
+                        )
                     inspdat = SubElement(rohr, "Inspektionsdaten")
 
                     last_pk = pk
@@ -1744,16 +2178,200 @@ class ExportTask:
 
                 if self.abfrage_h_where:
                     sql = f"""
-                            WITH anschluss_haltung as( SELECT 
-                                    a.leitnam AS leitnam, 
-                                    haltungen.pk AS haltung_id
-                                FROM anschlussleitungen a
-                                JOIN haltungen 
-                                ON ST_Intersects(a.geom, haltungen.geom)
-                                {self.abfrage_h_where}
+                    
+                            WITH ea_bestaende AS (
+                                    SELECT
+                                        bezeichnung,
+                                        isybau
+                                    FROM (
+                                        SELECT
+                                            bezeichnung,
+                                            isybau,
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY bezeichnung
+                                                ORDER BY
+                                                    CASE
+                                                        WHEN isybau IS NOT NULL THEN 0
+                                                        ELSE 1
+                                                    END,
+                                                    isybau
+                                            ) AS rn
+                                        FROM Entwaesserungsarten
+                                        WHERE bezeichnung IS NOT NULL
+                                    )
+                                    WHERE rn = 1
+                                ),
+                                
+                                ma_bestaende AS (
+                                    SELECT
+                                        bezeichnung,
+                                        isybau
+                                    FROM (
+                                        SELECT
+                                            bezeichnung,
+                                            isybau,
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY bezeichnung
+                                                ORDER BY
+                                                    CASE
+                                                        WHEN isybau IS NOT NULL THEN 0
+                                                        ELSE 1
+                                                    END,
+                                                    isybau
+                                            ) AS rn
+                                        FROM material
+                                        WHERE bezeichnung IS NOT NULL
+                                    )
+                                    WHERE rn = 1
+                                ),
+                                
+                                pr_bestaende AS (
+                                    SELECT
+                                        profilnam,
+                                        isybau
+                                    FROM (
+                                        SELECT
+                                            profilnam,
+                                            isybau,
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY profilnam
+                                                ORDER BY
+                                                    CASE
+                                                        WHEN isybau IS NOT NULL THEN 0
+                                                        ELSE 1
+                                                    END,
+                                                    isybau
+                                            ) AS rn
+                                        FROM profile
+                                        WHERE profilnam IS NOT NULL
+                                    )
+                                    WHERE rn = 1
                                 )
                                 
                                 SELECT
+                                    alu.pk,
+                                    alu.leitnam,
+                                    alu.bezugspunkt,
+                                    alu.schoben,
+                                    alu.schunten,
+                                    alu.hoehe,
+                                    alu.breite,
+                                    alu.laenge,
+                                    alu.baujahr,
+                                    alu.untersuchtag,
+                                    alu.untersucher,
+                                    alu.untersuchrichtung,
+                                    alu.wetter,
+                                    alu.bewertungsart,
+                                    alu.bewertungstag,
+                                    alu.strasse,
+                                    alu.datenart,
+                                    alu.auftragsbezeichnung,
+                                    alu.max_ZD,
+                                    alu.max_ZB,
+                                    alu.max_ZS,
+                                
+                                    x(PointN(alu.geom, 1)) AS xschob,
+                                    y(PointN(alu.geom, 1)) AS yschob,
+                                    x(PointN(alu.geom, -1)) AS xschun,
+                                    y(PointN(alu.geom, -1)) AS yschun,
+                                
+                                    alu.kommentar,
+                                
+                                    uda.station,
+                                    uda.timecode,
+                                    uda.kuerzel,
+                                    uda.charakt1,
+                                    uda.charakt2,
+                                    uda.quantnr1,
+                                    uda.quantnr2,
+                                    uda.streckenschaden,
+                                    uda.streckenschaden_lfdnr,
+                                    uda.pos_von,
+                                    uda.pos_bis,
+                                    uda.foto_dateiname,
+                                    uda.ZD,
+                                    uda.ZB,
+                                    uda.ZS,
+                                
+                                    al.profilnam,
+                                    al.material,
+                                    al.entwart,
+                                
+                                    pr.isybau AS profil_isybau,
+                                    ma.isybau AS material_isybau,
+                                    ea.isybau AS entwart_isybau
+                                
+                                FROM anschlussleitungen_untersucht AS alu
+                                
+                                JOIN untersuchdat_anschlussleitung AS uda
+                                    ON alu.leitnam = uda.untersuchleit
+                                
+                                JOIN anschlussleitungen AS al
+                                    ON alu.leitnam = al.leitnam
+                                
+                                LEFT JOIN ea_bestaende AS ea
+                                    ON al.entwart = ea.bezeichnung
+                                
+                                LEFT JOIN ma_bestaende AS ma
+                                    ON al.material = ma.bezeichnung
+                                
+                                LEFT JOIN pr_bestaende AS pr
+                                    ON al.profilnam = pr.profilnam
+                                
+                                WHERE EXISTS (
+                                    SELECT 1
+                                    FROM haltungen
+                                    WHERE ST_Intersects(
+                                        al.geom,
+                                        haltungen.geom
+                                    )
+                                    {self.abfrage_h_where}
+                                );"""
+
+                    if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
+                        return
+
+                else:
+
+                    sql = f"""
+                     WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM Entwaesserungsarten
+                        ),
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM material
+                        ),
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY profilnam
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM profile
+                        )
+                        SELECT
                             anschlussleitungen_untersucht.pk,
                             anschlussleitungen_untersucht.leitnam,
                             anschlussleitungen_untersucht.bezugspunkt,
@@ -1797,71 +2415,24 @@ class ExportTask:
                             untersuchdat_anschlussleitung.ZS,
                             anschlussleitungen.profilnam,
                             anschlussleitungen.material,
-                            anschlussleitungen.entwart
-                            FROM anschlussleitungen_untersucht
-                            JOIN untersuchdat_anschlussleitung  ON anschlussleitungen_untersucht.leitnam = untersuchdat_anschlussleitung.untersuchleit
-                            JOIN anschlussleitungen ON anschlussleitungen_untersucht.leitnam = anschlussleitungen.leitnam
-                            LEFT JOIN Entwaesserungsarten ea
-                            ON anschlussleitungen.entwart = ea.bezeichnung
-                            INNER JOIN anschluss_haltung ah
-                            ON anschlussleitungen.leitnam = ah.leitnam;
-                                """
-
-                    if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
-                        return
-
-                else:
-
-                    sql = f"""
-                     SELECT
-                        anschlussleitungen_untersucht.pk,
-                        anschlussleitungen_untersucht.leitnam,
-                        anschlussleitungen_untersucht.bezugspunkt,
-                        anschlussleitungen_untersucht.schoben,
-                        anschlussleitungen_untersucht.schunten,
-                        anschlussleitungen_untersucht.hoehe,
-                        anschlussleitungen_untersucht.breite,
-                        anschlussleitungen_untersucht.laenge,
-                        anschlussleitungen_untersucht.baujahr,
-                        anschlussleitungen_untersucht.untersuchtag,
-                        anschlussleitungen_untersucht.untersucher,
-                        anschlussleitungen_untersucht.untersuchrichtung,
-                        anschlussleitungen_untersucht.wetter,
-                        anschlussleitungen_untersucht.bewertungsart,
-                        anschlussleitungen_untersucht.bewertungstag,
-                        anschlussleitungen_untersucht.strasse,
-                        anschlussleitungen_untersucht.datenart,
-                        anschlussleitungen_untersucht.auftragsbezeichnung,
-                        anschlussleitungen_untersucht.max_ZD,
-                        anschlussleitungen_untersucht.max_ZB,
-                        anschlussleitungen_untersucht.max_ZS,
-                        x(PointN(anschlussleitungen_untersucht.geom, 1)) AS xschob,
-                        y(PointN(anschlussleitungen_untersucht.geom, 1)) AS yschob,
-                        x(PointN(anschlussleitungen_untersucht.geom, -1)) AS xschun,
-                        y(PointN(anschlussleitungen_untersucht.geom, -1)) AS yschun,
-                        anschlussleitungen_untersucht.kommentar,
-                        untersuchdat_anschlussleitung.station,
-                        untersuchdat_anschlussleitung.timecode,
-                        untersuchdat_anschlussleitung.kuerzel,
-                        untersuchdat_anschlussleitung.charakt1,
-                        untersuchdat_anschlussleitung.charakt2,
-                        untersuchdat_anschlussleitung.quantnr1,
-                        untersuchdat_anschlussleitung.quantnr2,
-                        untersuchdat_anschlussleitung.streckenschaden,
-                        untersuchdat_anschlussleitung.streckenschaden_lfdnr,
-                        untersuchdat_anschlussleitung.pos_von,
-                        untersuchdat_anschlussleitung.pos_bis,
-                        untersuchdat_anschlussleitung.foto_dateiname,
-                        untersuchdat_anschlussleitung.ZD,
-                        untersuchdat_anschlussleitung.ZB,
-                        untersuchdat_anschlussleitung.ZS,
-                        anschlussleitungen.profilnam,
-                        anschlussleitungen.material,
-                        anschlussleitungen.entwart
+                            anschlussleitungen.entwart,
+                            ea.isybau AS entwart_isybau,
+                            ma.isybau AS material_isybau,
+                            pr.isybau AS profil_isybau
                         FROM anschlussleitungen_untersucht
                         JOIN untersuchdat_anschlussleitung 
-                        JOIN anschlussleitungen where anschlussleitungen_untersucht.leitnam = untersuchdat_anschlussleitung.untersuchleit and anschlussleitungen_untersucht.leitnam = anschlussleitungen.leitnam
-                        """
+                            ON anschlussleitungen_untersucht.leitnam = untersuchdat_anschlussleitung.untersuchleit
+                        JOIN anschlussleitungen 
+                            ON anschlussleitungen_untersucht.leitnam = anschlussleitungen.leitnam
+                        LEFT JOIN ea_bestaende AS ea 
+                            ON anschlussleitungen.entwart = ea.bezeichnung
+                            AND ea.rn = 1
+                        LEFT JOIN ma_bestaende AS ma 
+                            ON anschlussleitungen.material = ma.bezeichnung
+                            AND ma.rn = 1
+                        LEFT JOIN pr_bestaende AS pr 
+                            ON anschlussleitungen.profilnam = pr.profilnam
+                            AND pr.rn = 1"""
 
                     if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
                         return
@@ -1870,67 +2441,106 @@ class ExportTask:
 
                 if self.abfrage_h_where:
                     sql = f"""
-                            WITH anschluss_haltung as( SELECT 
-                                    a.leitnam AS leitnam, 
-                                    haltungen.pk AS haltung_id
-                                FROM anschlussleitungen a
-                                JOIN haltungen 
-                                ON ST_Intersects(a.geom, haltungen.geom)
-                                {self.abfrage_h_where}
-                                )
-
-                                SELECT
-                            anschlussleitungen_untersucht_bewertet.pk,
-                            anschlussleitungen_untersucht_bewertet.leitnam,
-                            anschlussleitungen_untersucht_bewertet.bezugspunkt,
-                            anschlussleitungen_untersucht_bewertet.schoben,
-                            anschlussleitungen_untersucht_bewertet.schunten,
-                            anschlussleitungen_untersucht_bewertet.hoehe,
-                            anschlussleitungen_untersucht_bewertet.breite,
-                            anschlussleitungen_untersucht_bewertet.laenge,
-                            anschlussleitungen_untersucht_bewertet.baujahr,
-                            anschlussleitungen_untersucht_bewertet.untersuchtag,
-                            anschlussleitungen_untersucht_bewertet.untersucher,
-                            anschlussleitungen_untersucht_bewertet.untersuchrichtung,
-                            anschlussleitungen_untersucht_bewertet.wetter,
-                            anschlussleitungen_untersucht_bewertet.bewertungsart,
-                            anschlussleitungen_untersucht_bewertet.bewertungstag,
-                            anschlussleitungen_untersucht_bewertet.strasse,
-                            anschlussleitungen_untersucht_bewertet.datenart,
-                            anschlussleitungen_untersucht_bewertet.auftragsbezeichnung,
-                            anschlussleitungen_untersucht_bewertet.max_ZD,
-                            anschlussleitungen_untersucht_bewertet.max_ZB,
-                            anschlussleitungen_untersucht_bewertet.max_ZS,
-                            x(PointN(anschlussleitungen_untersucht_bewertet.geom, 1)) AS xschob,
-                            y(PointN(anschlussleitungen_untersucht_bewertet.geom, 1)) AS yschob,
-                            x(PointN(anschlussleitungen_untersucht_bewertet.geom, -1)) AS xschun,
-                            y(PointN(anschlussleitungen_untersucht_bewertet.geom, -1)) AS yschun,
-                            anschlussleitungen_untersucht_bewertet.kommentar,
-                            untersuchdat_anschlussleitung_bewertet.station,
-                            untersuchdat_anschlussleitung_bewertet.timecode,
-                            untersuchdat_anschlussleitung_bewertet.kuerzel,
-                            untersuchdat_anschlussleitung_bewertet.charakt1,
-                            untersuchdat_anschlussleitung_bewertet.charakt2,
-                            untersuchdat_anschlussleitung_bewertet.quantnr1,
-                            untersuchdat_anschlussleitung_bewertet.quantnr2,
-                            untersuchdat_anschlussleitung_bewertet.streckenschaden,
-                            untersuchdat_anschlussleitung_bewertet.streckenschaden_lfdnr,
-                            untersuchdat_anschlussleitung_bewertet.pos_von,
-                            untersuchdat_anschlussleitung_bewertet.pos_bis,
-                            untersuchdat_anschlussleitung_bewertet.foto_dateiname,
-                            untersuchdat_anschlussleitung_bewertet.ZD,
-                            untersuchdat_anschlussleitung_bewertet.ZB,
-                            untersuchdat_anschlussleitung_bewertet.ZS,
-                            anschlussleitungen.profilnam,
-                            anschlussleitungen.material,
-                            anschlussleitungen.entwart
-                            FROM anschlussleitungen_untersucht
-                            JOIN untersuchdat_anschlussleitung_bewertet  ON anschlussleitungen_untersucht_bewertet.leitnam = untersuchdat_anschlussleitung_bewertet.untersuchleit
-                            JOIN anschlussleitungen ON anschlussleitungen_untersucht_bewertet.leitnam = anschlussleitungen.leitnam
-                            LEFT JOIN Entwaesserungsarten ea
-                            ON anschlussleitungen.entwart = ea.bezeichnung
-                            INNER JOIN anschluss_haltung ah
-                            ON anschlussleitungen.leitnam = ah.leitnam;
+                            WITH anschluss_haltung AS (
+                                        SELECT 
+                                            a.leitnam AS leitnam, 
+                                            haltungen.pk AS haltung_id
+                                        FROM anschlussleitungen a
+                                        JOIN haltungen 
+                                            ON ST_Intersects(a.geom, haltungen.geom)
+                                            {self.abfrage_h_where}
+                                    ),
+                                    ea_bestaende AS (
+                                        SELECT
+                                            bezeichnung,
+                                            isybau,
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY bezeichnung
+                                                ORDER BY
+                                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                                    isybau
+                                            ) AS rn
+                                        FROM Entwaesserungsarten
+                                    ),
+                                    ma_bestaende AS (
+                                        SELECT
+                                            bezeichnung,
+                                            isybau,
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY bezeichnung
+                                                ORDER BY
+                                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                                    isybau
+                                            ) AS rn
+                                        FROM material
+                                    ),
+                                    pr_bestaende AS (
+                                        SELECT
+                                            profilnam,
+                                            isybau,
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY profilnam
+                                                ORDER BY
+                                                    CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                                    isybau
+                                            ) AS rn
+                                        FROM profile
+                                    )
+                                    SELECT
+                                        anschlussleitungen_untersucht_bewertet.pk,
+                                        anschlussleitungen_untersucht_bewertet.leitnam,
+                                        anschlussleitungen_untersucht_bewertet.bezugspunkt,
+                                        anschlussleitungen_untersucht_bewertet.schoben,
+                                        anschlussleitungen_untersucht_bewertet.schunten,
+                                        anschlussleitungen_untersucht_bewertet.hoehe,
+                                        anschlussleitungen_untersucht_bewertet.breite,
+                                        anschlussleitungen_untersucht_bewertet.laenge,
+                                        anschlussleitungen_untersucht_bewertet.baujahr,
+                                        anschlussleitungen_untersucht_bewertet.untersuchtag,
+                                        anschlussleitungen_untersucht_bewertet.untersucher,
+                                        anschlussleitungen_untersucht_bewertet.untersuchrichtung,
+                                        anschlussleitungen_untersucht_bewertet.wetter,
+                                        anschlussleitungen_untersucht_bewertet.bewertungsart,
+                                        anschlussleitungen_untersucht_bewertet.bewertungstag,
+                                        anschlussleitungen_untersucht_bewertet.strasse,
+                                        anschlussleitungen_untersucht_bewertet.datenart,
+                                        anschlussleitungen_untersucht_bewertet.auftragsbezeichnung,
+                                        anschlussleitungen_untersucht_bewertet.max_ZD,
+                                        anschlussleitungen_untersucht_bewertet.max_ZB,
+                                        anschlussleitungen_untersucht_bewertet.max_ZS,
+                                        x(PointN(anschlussleitungen_untersucht_bewertet.geom, 1)) AS xschob,
+                                        y(PointN(anschlussleitungen_untersucht_bewertet.geom, 1)) AS yschob,
+                                        x(PointN(anschlussleitungen_untersucht_bewertet.geom, -1)) AS xschun,
+                                        y(PointN(anschlussleitungen_untersucht_bewertet.geom, -1)) AS yschun,
+                                        anschlussleitungen_untersucht_bewertet.kommentar,
+                                        untersuchdat_anschlussleitung_bewertet.station,
+                                        untersuchdat_anschlussleitung_bewertet.timecode,
+                                        untersuchdat_anschlussleitung_bewertet.kuerzel,
+                                        untersuchdat_anschlussleitung_bewertet.charakt1,
+                                        untersuchdat_anschlussleitung_bewertet.charakt2,
+                                        untersuchdat_anschlussleitung_bewertet.quantnr1,
+                                        untersuchdat_anschlussleitung_bewertet.quantnr2,
+                                        untersuchdat_anschlussleitung_bewertet.streckenschaden,
+                                        untersuchdat_anschlussleitung_bewertet.streckenschaden_lfdnr,
+                                        untersuchdat_anschlussleitung_bewertet.pos_von,
+                                        untersuchdat_anschlussleitung_bewertet.pos_bis,
+                                        untersuchdat_anschlussleitung_bewertet.foto_dateiname,
+                                        untersuchdat_anschlussleitung_bewertet.ZD,
+                                        untersuchdat_anschlussleitung_bewertet.ZB,
+                                        untersuchdat_anschlussleitung_bewertet.ZS,
+                                        anschlussleitungen.profilnam,
+                                        anschlussleitungen.material,
+                                        anschlussleitungen.entwart
+                                    FROM anschlussleitungen_untersucht_bewertet
+                                    JOIN untersuchdat_anschlussleitung_bewertet  
+                                        ON anschlussleitungen_untersucht_bewertet.leitnam = untersuchdat_anschlussleitung_bewertet.untersuchleit
+                                    JOIN anschlussleitungen 
+                                        ON anschlussleitungen_untersucht_bewertet.leitnam = anschlussleitungen.leitnam
+                                    LEFT JOIN ea_bestaende AS ea
+                                        ON anschlussleitungen.entwart = ea.bezeichnung
+                                        AND ea.rn = 1
+                                    INNER JOIN anschluss_haltung ah
+                                        ON anschlussleitungen.leitnam = ah.leitnam
                                 """
 
                     if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
@@ -1939,56 +2549,156 @@ class ExportTask:
                 else:
 
                     sql = f"""
-                     SELECT
-                        anschlussleitungen_untersucht_bewertet.pk,
-                        anschlussleitungen_untersucht_bewertet.leitnam,
-                        anschlussleitungen_untersucht_bewertet.bezugspunkt,
-                        anschlussleitungen_untersucht_bewertet.schoben,
-                        anschlussleitungen_untersucht_bewertet.schunten,
-                        anschlussleitungen_untersucht_bewertet.hoehe,
-                        anschlussleitungen_untersucht_bewertet.breite,
-                        anschlussleitungen_untersucht_bewertet.laenge,
-                        anschlussleitungen_untersucht_bewertet.baujahr,
-                        anschlussleitungen_untersucht_bewertet.untersuchtag,
-                        anschlussleitungen_untersucht_bewertet.untersucher,
-                        anschlussleitungen_untersucht_bewertet.untersuchrichtung,
-                        anschlussleitungen_untersucht_bewertet.wetter,
-                        anschlussleitungen_untersucht_bewertet.bewertungsart,
-                        anschlussleitungen_untersucht_bewertet.bewertungstag,
-                        anschlussleitungen_untersucht_bewertet.strasse,
-                        anschlussleitungen_untersucht_bewertet.datenart,
-                        anschlussleitungen_untersucht_bewertet.auftragsbezeichnung,
-                        anschlussleitungen_untersucht_bewertet.max_ZD,
-                        anschlussleitungen_untersucht_bewertet.max_ZB,
-                        anschlussleitungen_untersucht_bewertet.max_ZS,
-                        x(PointN(anschlussleitungen_untersucht_bewertet.geom, 1)) AS xschob,
-                        y(PointN(anschlussleitungen_untersucht_bewertet.geom, 1)) AS yschob,
-                        x(PointN(anschlussleitungen_untersucht_bewertet.geom, -1)) AS xschun,
-                        y(PointN(anschlussleitungen_untersucht_bewertet.geom, -1)) AS yschun,
-                        anschlussleitungen_untersucht_bewertet.kommentar,
-                        untersuchdat_anschlussleitung_bewertet.station,
-                        untersuchdat_anschlussleitung_bewertet.timecode,
-                        untersuchdat_anschlussleitung_bewertet.kuerzel,
-                        untersuchdat_anschlussleitung_bewertet.charakt1,
-                        untersuchdat_anschlussleitung_bewertet.charakt2,
-                        untersuchdat_anschlussleitung_bewertet.quantnr1,
-                        untersuchdat_anschlussleitung_bewertet.quantnr2,
-                        untersuchdat_anschlussleitung_bewertet.streckenschaden,
-                        untersuchdat_anschlussleitung_bewertet.streckenschaden_lfdnr,
-                        untersuchdat_anschlussleitung_bewertet.pos_von,
-                        untersuchdat_anschlussleitung_bewertet.pos_bis,
-                        untersuchdat_anschlussleitung_bewertet.foto_dateiname,
-                        untersuchdat_anschlussleitung_bewertet.ZD,
-                        untersuchdat_anschlussleitung_bewertet.ZB,
-                        untersuchdat_anschlussleitung_bewertet.ZS,
-                        anschlussleitungen.profilnam,
-                        anschlussleitungen.material,
-                        anschlussleitungen.entwart
-                        FROM anschlussleitungen_untersucht_bewertet
-                        JOIN untersuchdat_anschlussleitung_bewertet 
-                        JOIN anschlussleitungen where anschlussleitungen_untersucht_bewertet.leitnam = untersuchdat_anschlussleitung_bewertet.untersuchleit and anschlussleitungen_untersucht_bewertet.leitnam = anschlussleitungen.leitnam
 
-                        """
+                        WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau
+                            FROM (
+                                SELECT
+                                    bezeichnung,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY bezeichnung
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM Entwaesserungsarten
+                                WHERE bezeichnung IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        ),
+                        
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau
+                            FROM (
+                                SELECT
+                                    bezeichnung,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY bezeichnung
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM material
+                                WHERE bezeichnung IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        ),
+                        
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau
+                            FROM (
+                                SELECT
+                                    profilnam,
+                                    isybau,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY profilnam
+                                        ORDER BY
+                                            CASE
+                                                WHEN isybau IS NOT NULL THEN 0
+                                                ELSE 1
+                                            END,
+                                            isybau
+                                    ) AS rn
+                                FROM profile
+                                WHERE profilnam IS NOT NULL
+                            )
+                            WHERE rn = 1
+                        )
+                        
+                        SELECT
+                            aub.pk,
+                            aub.leitnam,
+                            aub.bezugspunkt,
+                            aub.schoben,
+                            aub.schunten,
+                            aub.hoehe,
+                            aub.breite,
+                            aub.laenge,
+                            aub.baujahr,
+                            aub.untersuchtag,
+                            aub.untersucher,
+                            aub.untersuchrichtung,
+                            aub.wetter,
+                            aub.bewertungsart,
+                            aub.bewertungstag,
+                            aub.strasse,
+                            aub.datenart,
+                            aub.auftragsbezeichnung,
+                            aub.max_ZD,
+                            aub.max_ZB,
+                            aub.max_ZS,
+                        
+                            x(PointN(aub.geom, 1)) AS xschob,
+                            y(PointN(aub.geom, 1)) AS yschob,
+                            x(PointN(aub.geom, -1)) AS xschun,
+                            y(PointN(aub.geom, -1)) AS yschun,
+                        
+                            aub.kommentar,
+                        
+                            uda.station,
+                            uda.timecode,
+                            uda.kuerzel,
+                            uda.charakt1,
+                            uda.charakt2,
+                            uda.quantnr1,
+                            uda.quantnr2,
+                            uda.streckenschaden,
+                            uda.streckenschaden_lfdnr,
+                            uda.pos_von,
+                            uda.pos_bis,
+                            uda.foto_dateiname,
+                            uda.ZD,
+                            uda.ZB,
+                            uda.ZS,
+                        
+                            al.profilnam,
+                            al.material,
+                            al.entwart,
+                        
+                            ea.isybau AS entwart_isybau,
+                            ma.isybau AS material_isybau,
+                            pr.isybau AS profil_isybau
+                        
+                        FROM anschlussleitungen_untersucht_bewertet AS aub
+                        
+                        JOIN untersuchdat_anschlussleitung_bewertet AS uda
+                            ON aub.leitnam = uda.untersuchleit
+                        
+                        JOIN anschlussleitungen AS al
+                            ON aub.leitnam = al.leitnam
+                        
+                        LEFT JOIN ea_bestaende AS ea
+                            ON al.entwart = ea.bezeichnung
+                        
+                        LEFT JOIN ma_bestaende AS ma
+                            ON al.material = ma.bezeichnung
+                        
+                        LEFT JOIN pr_bestaende AS pr
+                            ON al.profilnam = pr.profilnam
+                        
+                        WHERE EXISTS (
+                            SELECT 1
+                            FROM haltungen
+                            WHERE ST_Intersects(
+                                al.geom,
+                                haltungen.geom
+                            )
+                            {self.abfrage_h_where}
+                        );"""
 
                     if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
                         return
@@ -2110,8 +2820,8 @@ class ExportTask:
                             "KnotenZulauftyp": schoben,
                             "KnotenAblauf": 0,
                             "KnotenAblauftyp": schunten,
-                            "Profilhoehe": hoehe,
-                            "Profilbreite": breite,
+                            "Profilhoehe": int(hoehe),
+                            "Profilbreite": int(breite),
                             "Profilart": profilnam_nr,
                             "Material": material,
                             "Kanalart": entwart_nr,
@@ -2167,46 +2877,96 @@ class ExportTask:
             if self.auswahl_zustand == "Stammdaten":
 
                 sql = f"""
-                    SELECT
-                    schaechte_untersucht.pk,
-                    schaechte_untersucht.schnam,
-                    schaechte_untersucht.bezugspunkt,
-                    schaechte_untersucht.baujahr,
-                    schaechte_untersucht.untersuchtag,
-                    schaechte_untersucht.untersucher,
-                    schaechte_untersucht.wetter,
-                    schaechte_untersucht.bewertungsart,
-                    schaechte_untersucht.bewertungstag,
-                    schaechte_untersucht.strasse,
-                    schaechte_untersucht.datenart,
-                    schaechte_untersucht.auftragsbezeichnung,
-                    schaechte_untersucht.max_ZD,
-                    schaechte_untersucht.max_ZB,
-                    schaechte_untersucht.max_ZS,
-                    x(PointN(schaechte_untersucht.geop, 1)) AS x,
-                    y(PointN(schaechte_untersucht.geop, 1)) AS y,
-                    schaechte_untersucht.kommentar,
-                    untersuchdat_schacht.vertikale_lage,
-                    untersuchdat_schacht.timecode,
-                    untersuchdat_schacht.kuerzel,
-                    untersuchdat_schacht.charakt1,
-                    untersuchdat_schacht.charakt2,
-                    untersuchdat_schacht.quantnr1,
-                    untersuchdat_schacht.quantnr2,
-                    untersuchdat_schacht.streckenschaden,
-                    untersuchdat_schacht.streckenschaden_lfdnr,
-                    untersuchdat_schacht.pos_von,
-                    untersuchdat_schacht.pos_bis,
-                    untersuchdat_schacht.foto_dateiname,
-                    untersuchdat_schacht.ZD,
-                    untersuchdat_schacht.ZB,
-                    untersuchdat_schacht.ZS,
-                    schaechte.material,
-                    schaechte.entwart
-                    FROM schaechte_untersucht
-                    JOIN untersuchdat_schacht 
-                    JOIN schaechte where schaechte_untersucht.schnam = untersuchdat_schacht.untersuchsch and schaechte_untersucht.schnam = schaechte.schnam
-                 {self.abfrage_s_and}
+                        WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM Entwaesserungsarten
+                        ),
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM material
+                        ),
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY profilnam
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM profile
+                        )
+                        SELECT
+                            schaechte_untersucht.pk,
+                            schaechte_untersucht.schnam,
+                            schaechte_untersucht.bezugspunkt,
+                            schaechte_untersucht.baujahr,
+                            schaechte_untersucht.untersuchtag,
+                            schaechte_untersucht.untersucher,
+                            schaechte_untersucht.wetter,
+                            schaechte_untersucht.bewertungsart,
+                            schaechte_untersucht.bewertungstag,
+                            schaechte_untersucht.strasse,
+                            schaechte_untersucht.datenart,
+                            schaechte_untersucht.auftragsbezeichnung,
+                            schaechte_untersucht.max_ZD,
+                            schaechte_untersucht.max_ZB,
+                            schaechte_untersucht.max_ZS,
+                            x(PointN(schaechte_untersucht.geop, 1)) AS x,
+                            y(PointN(schaechte_untersucht.geop, 1)) AS y,
+                            schaechte_untersucht.kommentar,
+                            untersuchdat_schacht.vertikale_lage,
+                            untersuchdat_schacht.timecode,
+                            untersuchdat_schacht.kuerzel,
+                            untersuchdat_schacht.charakt1,
+                            untersuchdat_schacht.charakt2,
+                            untersuchdat_schacht.quantnr1,
+                            untersuchdat_schacht.quantnr2,
+                            untersuchdat_schacht.streckenschaden,
+                            untersuchdat_schacht.streckenschaden_lfdnr,
+                            untersuchdat_schacht.pos_von,
+                            untersuchdat_schacht.pos_bis,
+                            untersuchdat_schacht.foto_dateiname,
+                            untersuchdat_schacht.ZD,
+                            untersuchdat_schacht.ZB,
+                            untersuchdat_schacht.ZS,
+                            schaechte.material,
+                            schaechte.entwart,
+                            ea.isybau AS entwart_isybau,
+                            ma.isybau AS material_isybau,
+                            pr.isybau AS profil_isybau
+                        FROM schaechte_untersucht
+                        JOIN untersuchdat_schacht 
+                            ON schaechte_untersucht.schnam = untersuchdat_schacht.untersuchsch
+                        JOIN schaechte 
+                            ON schaechte_untersucht.schnam = schaechte.schnam
+                        LEFT JOIN ea_bestaende AS ea 
+                            ON schaechte.entwart = ea.bezeichnung
+                            AND ea.rn = 1
+                        LEFT JOIN ma_bestaende AS ma 
+                            ON schaechte.material = ma.bezeichnung
+                            AND ma.rn = 1
+                        LEFT JOIN pr_bestaende AS pr 
+                            ON schaechte.profilnam = pr.profilnam
+                            AND pr.rn = 1
+                        {self.abfrage_s_and}
                  """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -2215,46 +2975,96 @@ class ExportTask:
             elif self.auswahl_zustand == "Bewertet (Zustandsklassifizierung)":
 
                 sql = f"""
-                    SELECT
-                    schaechte_untersucht_bewertet.pk,
-                    schaechte_untersucht_bewertet.schnam,
-                    schaechte_untersucht_bewertet.bezugspunkt,
-                    schaechte_untersucht_bewertet.baujahr,
-                    schaechte_untersucht_bewertet.untersuchtag,
-                    schaechte_untersucht_bewertet.untersucher,
-                    schaechte_untersucht_bewertet.wetter,
-                    schaechte_untersucht_bewertet.bewertungsart,
-                    schaechte_untersucht_bewertet.bewertungstag,
-                    schaechte_untersucht_bewertet.strasse,
-                    schaechte_untersucht_bewertet.datenart,
-                    schaechte_untersucht_bewertet.auftragsbezeichnung,
-                    schaechte_untersucht_bewertet.max_ZD,
-                    schaechte_untersucht_bewertet.max_ZB,
-                    schaechte_untersucht_bewertet.max_ZS,
-                    x(PointN(schaechte_untersucht_bewertet.geop, 1)) AS x,
-                    y(PointN(schaechte_untersucht_bewertet.geop, 1)) AS y,
-                    schaechte_untersucht_bewertet.kommentar,
-                    untersuchdat_schacht_bewertet.vertikale_lage,
-                    untersuchdat_schacht_bewertet.timecode,
-                    untersuchdat_schacht_bewertet.kuerzel,
-                    untersuchdat_schacht_bewertet.charakt1,
-                    untersuchdat_schacht_bewertet.charakt2,
-                    untersuchdat_schacht_bewertet.quantnr1,
-                    untersuchdat_schacht_bewertet.quantnr2,
-                    untersuchdat_schacht_bewertet.streckenschaden,
-                    untersuchdat_schacht_bewertet.streckenschaden_lfdnr,
-                    untersuchdat_schacht_bewertet.pos_von,
-                    untersuchdat_schacht_bewertet.pos_bis,
-                    untersuchdat_schacht_bewertet.foto_dateiname,
-                    untersuchdat_schacht_bewertet.ZD,
-                    untersuchdat_schacht_bewertet.ZB,
-                    untersuchdat_schacht_bewertet.ZS,
-                    schaechte.material,
-                    schaechte.entwart
-                    FROM schaechte_untersucht_bewertet
-                    JOIN untersuchdat_schacht_bewertet 
-                    JOIN schaechte where schaechte_untersucht_bewertet.schnam = untersuchdat_schacht_bewertet.untersuchsch and schaechte_untersucht_bewertet.schnam = schaechte.schnam
-                 {self.abfrage_s_and}
+                        WITH ea_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM Entwaesserungsarten
+                        ),
+                        ma_bestaende AS (
+                            SELECT
+                                bezeichnung,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY bezeichnung
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM material
+                        ),
+                        pr_bestaende AS (
+                            SELECT
+                                profilnam,
+                                isybau,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY profilnam
+                                    ORDER BY
+                                        CASE WHEN isybau IS NOT NULL THEN 0 ELSE 1 END,
+                                        isybau
+                                ) AS rn
+                            FROM profile
+                        )
+                        SELECT
+                            schaechte_untersucht_bewertet.pk,
+                            schaechte_untersucht_bewertet.schnam,
+                            schaechte_untersucht_bewertet.bezugspunkt,
+                            schaechte_untersucht_bewertet.baujahr,
+                            schaechte_untersucht_bewertet.untersuchtag,
+                            schaechte_untersucht_bewertet.untersucher,
+                            schaechte_untersucht_bewertet.wetter,
+                            schaechte_untersucht_bewertet.bewertungsart,
+                            schaechte_untersucht_bewertet.bewertungstag,
+                            schaechte_untersucht_bewertet.strasse,
+                            schaechte_untersucht_bewertet.datenart,
+                            schaechte_untersucht_bewertet.auftragsbezeichnung,
+                            schaechte_untersucht_bewertet.max_ZD,
+                            schaechte_untersucht_bewertet.max_ZB,
+                            schaechte_untersucht_bewertet.max_ZS,
+                            x(PointN(schaechte_untersucht_bewertet.geop, 1)) AS x,
+                            y(PointN(schaechte_untersucht_bewertet.geop, 1)) AS y,
+                            schaechte_untersucht_bewertet.kommentar,
+                            untersuchdat_schacht_bewertet.vertikale_lage,
+                            untersuchdat_schacht_bewertet.timecode,
+                            untersuchdat_schacht_bewertet.kuerzel,
+                            untersuchdat_schacht_bewertet.charakt1,
+                            untersuchdat_schacht_bewertet.charakt2,
+                            untersuchdat_schacht_bewertet.quantnr1,
+                            untersuchdat_schacht_bewertet.quantnr2,
+                            untersuchdat_schacht_bewertet.streckenschaden,
+                            untersuchdat_schacht_bewertet.streckenschaden_lfdnr,
+                            untersuchdat_schacht_bewertet.pos_von,
+                            untersuchdat_schacht_bewertet.pos_bis,
+                            untersuchdat_schacht_bewertet.foto_dateiname,
+                            untersuchdat_schacht_bewertet.ZD,
+                            untersuchdat_schacht_bewertet.ZB,
+                            untersuchdat_schacht_bewertet.ZS,
+                            schaechte.material,
+                            schaechte.entwart,
+                            ea.isybau AS entwart_isybau,
+                            ma.isybau AS material_isybau,
+                            pr.isybau AS profil_isybau
+                        FROM schaechte_untersucht_bewertet
+                        JOIN untersuchdat_schacht_bewertet 
+                            ON schaechte_untersucht_bewertet.schnam = untersuchdat_schacht_bewertet.untersuchsch
+                        JOIN schaechte 
+                            ON schaechte_untersucht_bewertet.schnam = schaechte.schnam
+                        LEFT JOIN ea_bestaende AS ea 
+                            ON schaechte.entwart = ea.bezeichnung
+                            AND ea.rn = 1
+                        LEFT JOIN ma_bestaende AS ma 
+                            ON schaechte.material = ma.bezeichnung
+                            AND ma.rn = 1
+                        LEFT JOIN pr_bestaende AS pr 
+                            ON schaechte.profilnam = pr.profilnam
+                            AND pr.rn = 1
+                        {self.abfrage_s_and}
                  """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -2510,16 +3320,66 @@ class ExportTask:
             {
                 "Datenstatus": '1',
                 "Erstellungsdatum": str(date.today()),
-                "Kommentar": "Created with QKan's XML export module",
+                "Kommentar": "Created with QKan's XML-Export module",
             },
         )
-        kennungen = SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
+        kennungen = SubElement(daten_kollektive, "Kennungen")
+        koll1 = SubElement(kennungen, "Kollektiv")
 
         _create_children_text(
-            kennungen,
+            koll1,
             {
                 "Kennung": "STA01",
                 "Kollektivart": "1",
+            },
+        )
+        koll_eigen = SubElement(SubElement(koll1, "Kollektiveigenschaft"), "Stammdaten")
+
+        _create_children_text(
+            koll_eigen,
+            {
+                "Stammdatentyp": '1',
+                "Bautechnik": '1',
+                "Geometrie": '1',
+                "Sanierung": '0',
+                "Umfeld": '0',
+            },
+        )
+        _create_children_text(
+            koll1,
+            {
+                "Regelwerk": 5,
+                "Bearbeitungsstand": str(date.today()),
+            },
+        )
+
+        koll2 = SubElement(kennungen, "Kollektiv")
+
+        _create_children_text(
+            koll2,
+            {
+                "Kennung": "HYD01",
+                "Kollektivart": "3",
+            },
+        )
+        koll_eigen = SubElement(SubElement(koll2, "Kollektiveigenschaft"), "Hydraulikdaten")
+
+        _create_children_text(
+            koll_eigen,
+            {
+                "Verfahren": '1',
+                "Rechennetz": '1',
+                "Gebiet": '0',
+                "Flaechen": '1',
+                "Belastung": '1',
+                "Berechnung": '1',
+            },
+        )
+        _create_children_text(
+            koll2,
+            {
+                "Regelwerk": 5,
+                "Bearbeitungsstand": str(date.today()),
             },
         )
 
@@ -2530,26 +3390,54 @@ class ExportTask:
         _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
 
         if QKan.config.check_export.zustandsdaten:
+            koll3 = SubElement(kennungen, "Kollektiv")
             _create_children_text(
-                kennungen,
+                koll3,
                 {
                     "Kennung": "ZUS01",
                     "Kollektivart": "2",
+                },
+            )
+            koll_eigen = SubElement(SubElement(koll3, "Kollektiveigenschaft"), "Zustandsdaten")
+
+            _create_children_text(
+                koll_eigen,
+                {
+                    "Inspektion": '1',
+                    "Dichtheit": '1',
+                    "Film": '0',
+                },
+            )
+            _create_children_text(
+                koll3,
+                {
+                    "Regelwerk": 5,
+                    "Bearbeitungsstand": str(date.today()),
                 },
             )
             self.zustand = SubElement(daten_kollektive, "Zustandsdatenkollektiv")
             _create_children_text(self.zustand, {"Kennung": "ZUS01", "Beschreibung": "Zustandsdaten", }, )
             self.auftraege = SubElement(self.zustand, "Auftraege")
             self.auftrag = SubElement(self.auftraege, "Auftrag")
-            _create_children_text( self.auftrag, {"Auftragsbezeichnung": '1', "Auftragsnummer": 1, "Auftragskennung": '1', }, )
+            _create_children_text( self.auftrag, {"Auftragsbezeichnung": '1',
+                                                  "Auftragsnummer": 1,
+                                                  "Auftragskennung": '1',
+                                                  "Auftragsdatum": str(date.today()),
+                                                    "Auftragsart": 1,}, )
 
         hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
         _create_children_text(
             hydro_kollektiv,
-            {"Kennung": "STA01", "Beschreibung": "Hydraulikdaten",},
+            {"Kennung": "HYD01", "Beschreibung": "Hydraulikdaten",},
         )
         rechen = SubElement(hydro_kollektiv, "Rechennetz")
-        SubElement(rechen, "Stammdatenkennung")
+        _create_children_text(
+            rechen,
+            {
+                "Stammdatenkennung": 'STA01',
+            },
+        )
+        #SubElement(rechen, "Stammdatenkennung",'STA01')
         self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekte")
         # endregion
 

@@ -2859,6 +2859,7 @@ class Subkans_funkt:
                         continue
                     except:
                         pass
+
             elif attr[10] == "BDE" and attr[11] in ["A", "C", "D", "E"]:
                 if attr[12] == "A":
                     z = '1'
@@ -3404,7 +3405,7 @@ class Subkans_funkt:
                     SET objektklasse_gesamt = (
                     SELECT
                     CASE
-                    WHEN NOT EXISTS(SELECT 1 FROM untersuchdat_haltung_bewertung WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam)
+                    WHEN NOT EXISTS(SELECT 1 FROM untersuchdat_haltung_bewertung WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_substanz_bewertung.haltnam)
                     THEN '-'
                     WHEN typeof(objektklasse_dichtheit) = 'text' AND  objektklasse_dichtheit != '-' THEN objektklasse_dichtheit
                     WHEN typeof(objektklasse_standsicherheit) = 'text' AND  objektklasse_standsicherheit != '-' THEN objektklasse_standsicherheit
@@ -7583,6 +7584,8 @@ class Subkans_funkt:
             db.sql(sql,parameters=data)
 
         #Bruttoschadenslänge BSL und Abnutzung ABN
+
+
         if self.datetype == 'Befahrungsdatum':
             sql = """SELECT
                         substanz_haltung_bewertung.pk AS pk,
@@ -7682,6 +7685,36 @@ class Subkans_funkt:
             data = (sbk, attr[5])
 
             db.sql(sql,parameters=data)
+
+
+            #Sonderfall nur BDD in Haltung vorhanden als bewerteter Schaden
+
+            sql= """
+                    UPDATE haltungen_substanz_bewertung SET Abnutzung = 0 WHERE 
+                    (     
+                    SELECT untersuchhal
+                        FROM untersuchdat_haltung_bewertung
+                        GROUP BY untersuchhal
+                        HAVING COUNT(CASE WHEN kuerzel = 'BDD' THEN 1 END) > 0
+                           AND COUNT(CASE WHEN kuerzel = 'BCD' THEN 1 END) > 0
+                           AND COUNT(CASE WHEN kuerzel = 'BCE' THEN 1 END) > 0
+                           AND COUNT(CASE WHEN kuerzel NOT IN ('BDD', 'BCD', 'BCE') THEN 1 END) = 0
+                        )"""
+
+            db.sql(sql)
+
+            sql = """
+                    UPDATE haltungen_substanz_bewertung SET Substanzklasse = 5 WHERE (
+                    SELECT untersuchhal
+                        FROM untersuchdat_haltung_bewertung
+                        GROUP BY untersuchhal
+                        HAVING COUNT(CASE WHEN kuerzel = 'BDD' THEN 1 END) > 0
+                           AND COUNT(CASE WHEN kuerzel = 'BCD' THEN 1 END) > 0
+                           AND COUNT(CASE WHEN kuerzel = 'BCE' THEN 1 END) > 0
+                           AND COUNT(CASE WHEN kuerzel NOT IN ('BDD', 'BCD', 'BCE') THEN 1 END) = 0
+                        )"""
+
+            db.sql(sql)
 
         try:
             db1.commit()

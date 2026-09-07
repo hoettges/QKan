@@ -1246,6 +1246,20 @@ class DBConnection:
             # wkt_geom = param1.get("geom")
             sqlnam = 'database_insertdata_symbole'
 
+        elif tabnam == 'kanalreinigung':
+            parlis = ['reinigungsdatum', 'ablagerungen', 'reinigungszeit', 'fahrer', 'beifahrer', 'haltungsnummer',
+                      'bemerkung', 'kontorlle', 'haltnam']
+            for el in parlis:
+                if param1.get(el, None) is None:
+                    if isinstance(parameters, tuple):
+                        for ds in parameters:
+                            ds[el] = None
+                    else:
+                        parameters[el] = None
+
+            # wkt_geom = param1.get("geom")
+            sqlnam = 'database_insertdata_kanalreinigung'
+
         else:
             logger.warning(
                 "dbqkan.DBConnection.insertdata: "

@@ -104,10 +104,12 @@ class Plausi(QKanPlugin):
 
             to_db = []
 
+
             for a, b, c, d, e in dr:
-                c = [c] if c is None else c.split(",")
-                d = [d] if d is None else d.split(",")
-                e = [e] if e is None else e.split(",")
+                c = [None if x.strip().upper() == "NULL" or not x.strip() else x.strip() for x in c.split(",")]
+                d = [None if x.strip().upper() == "NULL" or not x.strip() else x.strip() for x in d.split(",")]
+                e = [None if x.strip().upper() == "NULL" or not x.strip() else x.strip() for x in e.split(",")]
+
                 for i in c:
                     for j in d:
                         for k in e:
@@ -123,6 +125,11 @@ class Plausi(QKanPlugin):
             """,
             to_db,
         )
+        db_qkan.commit()
+
+        db_qkan.sql(""" UPDATE reflist_zustand SET charakterisierung1 = NULL WHERE charakterisierung1 = ''; """)
+        db_qkan.sql(""" UPDATE reflist_zustand SET charakterisierung2 = NULL WHERE charakterisierung2 = ''; """)
+        db_qkan.sql(""" UPDATE reflist_zustand SET bereich = NULL WHERE bereich = ''; """)
         db_qkan.commit()
 
 

@@ -1182,6 +1182,23 @@ INSERT INTO symbolkatalog (bezeichnung, gruppe, kommentar) VALUES
 ('Strassenablauf', 'Entwässerung', NULL),
 ('Vakuumstation', 'Entwässerung', NULL);"
 
+database_create_kanalreinigung: "
+CREATE TABLE kanalreinigung (
+    pk INTEGER PRIMARY KEY,
+    reinigungsdatum TEXT,
+    ablagerungen TEXT,
+    reinigungszeit TEXT,                                  
+    fahrer TEXT,                                  
+    beifahrer TEXT,                                     
+    haltungsnummer INTEGER,
+    bemerkung TEXT,
+    kontrolle TEXT,
+    haltnam TEXT,
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP);"
+
+database_add_untersuchdat_kanalreinigung_geom: "
+"
+
 database_createview_untersuchdat_aktuell: "
 CREATE VIEW v_untersuchdat_hal_last AS
 WITH um AS (
