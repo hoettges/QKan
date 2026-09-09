@@ -244,7 +244,8 @@ inspektion_ref_profile_m150: |-
           ('U', 'u-förmig', 23),
           ('U', 'u-foermig', 24),
           ('Z', 'sonstige profilart', 25),
-          ('DN', 'Kreis-Profil', 26)
+          ('DN', 'Kreis-Profil', 26),
+          ('DN', 'Kreisquerschnitt', 27)
   ),
   referenz AS (
       SELECT
@@ -354,13 +355,16 @@ inspektion_ref_knotenart_m150: |-
   ORDER BY sortierung;
 
 inspektion_export_haltungen_auswahl: SELECT pk, haltnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
-  baujahr, profilnam, entwart, material, profilauskleidung, innenmaterial, ST_AsBinary(geom) AS __geom_wkb FROM {schema}.haltungen WHERE
+  baujahr, profilnam, entwart, abflussart, material, profilauskleidung, innenmaterial, ST_AsBinary(geom) AS __geom_wkb FROM {schema}.haltungen WHERE
   haltnam IN ({auswahl}) AND (haltungstyp IS NULL OR haltungstyp = 'Haltung') ORDER BY pk;
 inspektion_export_schaechte_auswahl: SELECT pk, schnam, sohlhoehe, durchm, entwart, knotentyp, schachttyp, xsch, ysch, ST_AsBinary(geop)
   AS __geom_wkb FROM {schema}.schaechte WHERE schnam IN ({auswahl}) AND schachttyp = 'Schacht' ORDER BY pk;
 inspektion_export_anschlussleitungen_auswahl: SELECT pk, leitnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
   baujahr, haltnam, urstation, ursprung, anschlusstyp, lageanschluss, profilnam, entwart, material, profilauskleidung, innenmaterial,
   ST_AsBinary(geom) AS __geom_wkb FROM {schema}.anschlussleitungen WHERE leitnam IN ({auswahl}) ORDER BY pk;
+inspektion_export_anschlussschaechte_haltungen: SELECT pk, schnam, sohlhoehe, durchm, entwart, strasse, baujahr, haltnam, urstation,
+  knotentyp, simstatus, material, xsch, ysch, kommentar, ST_AsBinary(geom) AS __geom_wkb FROM {schema}.anschlussschaechte
+  ORDER BY pk;
 
 inspektion_import_index_schaechte: SELECT pk, schnam FROM {schema}.schaechte WHERE schnam IS NOT NULL AND schachttyp = 'Schacht' ORDER
   BY pk;
@@ -368,13 +372,13 @@ inspektion_import_index_haltungen: SELECT pk, haltnam FROM {schema}.haltungen WH
   haltungstyp = 'Haltung') ORDER BY pk;
 inspektion_import_index_anschlussleitungen: SELECT pk, leitnam FROM {schema}.anschlussleitungen WHERE leitnam IS NOT NULL ORDER BY
   pk;
-inspektion_import_index_schaechte_untersucht: SELECT pk, schnam, untersuchtag FROM {schema}.schaechte_untersucht ORDER BY pk;
+inspektion_import_index_schaechte_untersucht: SELECT pk, schnam, untersuchtag, id FROM {schema}.schaechte_untersucht ORDER BY pk;
 inspektion_import_index_untersuchdat_schacht: SELECT pk, untersuchsch, untersuchtag, id FROM {schema}.untersuchdat_schacht ORDER BY
   pk;
-inspektion_import_index_haltungen_untersucht: SELECT pk, haltnam, untersuchtag FROM {schema}.haltungen_untersucht ORDER BY pk;
+inspektion_import_index_haltungen_untersucht: SELECT pk, haltnam, untersuchtag, id FROM {schema}.haltungen_untersucht ORDER BY pk;
 inspektion_import_index_untersuchdat_haltung: SELECT pk, untersuchhal, untersuchtag, id FROM {schema}.untersuchdat_haltung ORDER BY
   pk;
-inspektion_import_index_anschlussleitungen_untersucht: SELECT pk, leitnam, untersuchtag FROM {schema}.anschlussleitungen_untersucht
+inspektion_import_index_anschlussleitungen_untersucht: SELECT pk, leitnam, untersuchtag, id FROM {schema}.anschlussleitungen_untersucht
   ORDER BY pk;
 inspektion_import_index_untersuchdat_anschlussleitung: SELECT pk, untersuchleit, untersuchtag, id FROM {schema}.untersuchdat_anschlussleitung
   ORDER BY pk;

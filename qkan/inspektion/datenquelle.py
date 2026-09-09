@@ -32,6 +32,7 @@ LAYER_NAMEN = {
     "haltungen": "Haltungen",
     "schaechte": "Schächte",
     "anschlussleitungen": "HA-Leitungen",
+    "anschlussschaechte": "HA-Schächte",
     "haltungen_untersucht": "Zustand_Haltungen_gesamt",
     "untersuchdat_haltung": "Einzelschäden_Haltungen",
     "schaechte_untersucht": "Zustand_Schächte_gesamt",

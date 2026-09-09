@@ -51,6 +51,7 @@ from qgis.core import (
     QgsPoint,
     QgsPointXY,
     QgsProject,
+    QgsRectangle,
     QgsVectorLayer,
     Qgis,
 )
@@ -272,6 +273,259 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
     # Geometrien. Die Genauigkeit ist eine QKan-Importentscheidung und keine
     # Vorgabe von DWA-M 150.
     GEOM_VERGLEICH_STELLEN = 3
+    ANSCHLUSS_HALTUNG_TOLERANZ_M = 0.25
+    ANSCHLUSSSCHACHT_ENDPOINT_TOLERANZ_M = 0.05
+
+    # M150-Schlüsselfelder, deren Bedeutung über eine Referenztabelle
+    # bestimmt wird. Die Nummern entsprechen der Spalte "Referenztabelle"
+    # im DWA-M-150-Format. KG305/RT116 bleibt von der dynamischen Auflösung
+    # bewusst ausgenommen, da Knotenarten separat behandelt werden.
+    M150_FELD_REFERENZTABELLEN = {
+        "GO002": "300",
+        "GO003": "301",
+        "GP002": "302",
+        "GP008": "101",
+        "GP009": "102",
+        "GP010": "303",
+        "HG006": "128",
+        "HG010": "116",
+        "HG301": "103",
+        "HG302": "104",
+        "HG304": "105",
+        "HG305": "106",
+        "HG308": "107",
+        "HG309": "105",
+        "HG313": "108",
+        "KG302": "104",
+        "KG304": "105",
+        "KG401": "109",
+        "HI004": "201",
+        "HI005": "202",
+        "HI103": "203",
+        "HI106": "204",
+        "HI107": "205",
+        "HI109": "206",
+        "HI114": "207",
+        "HI117": "208",
+        "KI004": "201",
+        "KI005": "202",
+        "KI103": "203",
+        "KI106": "204",
+        "KI107": "205",
+        "KI109": "206",
+        "KI114": "207",
+        "KI117": "208",
+    }
+
+    # DWA-M 150, Abschnitt 7: Standard-Langtexte der Referenztabellen,
+    # die von diesem Modul tatsächlich ausgewertet bzw. geschrieben werden.
+    # Externe RT-Blöcke einer Import-XML haben beim Import Vorrang.
+    M150_STANDARD_RT = {
+        "101": {
+            "D": "Digitalisiert",
+            "G": "Geschätzt",
+            "V": "Vermessen",
+        },
+        "102": {
+            "B": "Berechnet",
+            "G": "Geschätzt",
+            "V": "Vermessen",
+        },
+        "103": {
+            "F": "Offene Freispiegelleitung (Gerinne)",
+            "D": "Druckrohrleitung",
+            "G": "Dränageleitung",
+            "K": "Geschlossene Freispiegelleitung",
+        },
+        "104": {
+            "B": "Bach (Gewässer)",
+            "M": "Mischwasser",
+            "R": "Regenwasser",
+            "S": "Schmutzwasser",
+            "Z": "Sondernutzung",
+        },
+        "105": {
+            "AZ": "Asbestzement",
+            "B": "Beton",
+            "BIT": "Bitumen",
+            "BS": "Betonsegmente",
+            "BSK": "Betonsegmente kunststoffmodifiziert",
+            "BT": "Bitumen",
+            "CN": "Edelstahl",
+            "EIS": "Nichtidentifiziertes Metall (z. B. Eisen und Stahl)",
+            "EPX": "Epoxydharz",
+            "EPSF": "Epoxydharz mit Synthesefaser",
+            "FZ": "Faserzement",
+            "GFK": "Glasfaserverstärkter Kunststoff",
+            "GG": "Grauguß",
+            "GGG": "Duktiles Gußeisen",
+            "KST": "Nichtidentifizierter Kunststoff",
+            "MA": "Mauerwerk",
+            "OB": "Ortbeton",
+            "PC": "Polymerbeton",
+            "PCC": "Polymermodifizierter Zementbeton",
+            "PE": "Polyethylen",
+            "PH": "Polyesterharz",
+            "PHB": "Polyesterharzbeton",
+            "PP": "Polypropylen",
+            "PUR": "Polyurethanharz",
+            "PVCM": "Polyvinylchlorid modifiziert",
+            "PVCU": "Polyvinylchlorid hart",
+            "SFB": "Stahlfaserbeton",
+            "SPB": "Spannbeton",
+            "SB": "Stahlbeton",
+            "ST": "Stahl",
+            "STZ": "Steinzeug",
+            "SZB": "Spritzbeton",
+            "SZBK": "Spritzbeton kunststoffmodifiziert",
+            "TF": "Teerfaser",
+            "UPGF": "Ungesättigtes Polyesterharz mit Glasfaser",
+            "UPSF": "Ungesättigtes Polyesterharz mit Synthesefaser",
+            "VEGF": "Vinylesterharz mit Synthesefaser",
+            "VESF": "Vinylesterharz mit Glasfaser",
+            "VBK": "Verbundrohr Beton-/Stahlbeton-Kunststoff",
+            "VBS": "Verbundrohr Beton-/Stahlbeton-Steinzeug",
+            "W": "Nichtidentifizierter Werkstoff",
+            "WPE": "Wickelrohr (PEHD)",
+            "WPVC": "Wickelrohr (PVCU)",
+            "Z": "Sonstiger Werkstoff",
+            "ZM": "Zementmörtel",
+            "ZG": "Ziegelwerk",
+        },
+        "106": {
+            "BO": (
+                "Bogenförmig (kreisförmiger Scheitel und flache Sohle bei "
+                "parallelen Wänden), Haubenquerschnitt"
+            ),
+            "DN": "Kreisförmig, Kreisquerschnitt",
+            "EI": "Eiförmig, Eiquerschnitt",
+            "GR": "Offener Graben",
+            "MA": "Maulquerschnitt",
+            "OV": (
+                "Oval (kreisförmige Sohle und Scheitel bei parallelen Wänden)"
+            ),
+            "RE": "Rechteckig, Rechteckquerschnitt",
+            "RI": "Rinnenquerschnitt",
+            "U": "U-förmig",
+            "Z": "Sonstige Profilart",
+        },
+        "107": {
+            "A": "Beschichtung werkseitig",
+            "B": "Auskleidung werkseitig",
+            "C": "Schlauchliner",
+            "D": "Close-Fit Liner",
+            "E": "Liner mit Ringraumverfüllung",
+            "F": "Teil-/Vollauskleidung vor Ort",
+            "G": "Teil-/Vollbeschichtung vor Ort",
+            "Z": "Sonstige Auskleidung",
+        },
+        "108": {
+            "A": "Kanal",
+            "B": "Anschlussleitung",
+            "C": "Entlastungsleitung",
+            "Z": "Sonstige",
+        },
+        "109": {
+            "B": "In Betrieb",
+            "N": "Nicht in Betrieb",
+            "P": "Geplant",
+            "V": "Verschlossen",
+            "Z": "Sonstige",
+        },
+        "116": {
+            "A": "Auslass",
+            "B": "Bauwerk",
+            "E": "Straßenablauf",
+            "F": "Fiktiver Schacht",
+            "G": "Gebäudeanschluss",
+            "I": "Inspektionsöffnung",
+            "L": "Lampenschacht",
+            "R": "Reinigungsöffnung",
+            "S": "Schacht",
+            "W": "Sanitärgegenstand",
+            "Z": "Sonstige",
+        },
+        "128": {
+            "H": "Abwasserkanal",
+            "K": "Knoten",
+            "L": "Abwasserleitung",
+        },
+        "201": {
+            "A": "Abnahme",
+            "E": "Ersterfassung",
+            "G": "Gewährleistung",
+            "K": "Eigenkontrollverordnung",
+            "N": "Nachuntersuchung",
+            "S": "Nach Sanierung",
+            "V": "Vor Sanierung",
+            "Z": "Sonstige",
+        },
+        "202": {
+            "ATVM143": "Merkblatt ATV-M 143-2",
+            "DWAM149-2:2006": (
+                "Merkblatt DWA-M 149-2 in Verbindung mit DIN EN 13508-2"
+            ),
+            "EN13508": "DIN EN 13508-2",
+            "ISYBAU96": "ISYBAU 1996",
+            "ISYBAU01": "ISYBAU 2001",
+            "Z": "Sonstige",
+        },
+        "203": {
+            "BG": "Begehung",
+            "KTV": "Kamera-Inspektion",
+            "SP": "Spiegelung/von der Oberfläche inspiziert",
+            "Z": "Sonstige",
+        },
+        "204": {
+            "FROST": "Frost",
+            "REGEN": "Regen",
+            "SCHNEE": "Schnee",
+            "TROCKEN": "Trocken",
+        },
+        "205": {
+            "J": "Wurde vor Inspektion gereinigt",
+            "N": "Wurde vor Inspektion nicht gereinigt",
+        },
+        "206": {
+            "J": "Untersuchung mit Vorflutsicherung wurde durchgeführt",
+            "N": "Untersuchung ohne Vorflutsicherung",
+        },
+        "207": {
+            "CD": "Compact Disk",
+            "DVD": "DVD-Medium",
+            "HD": "Wechselfestplatte (HardDrive)",
+            "MOD": "Magnet-optisches Laufwerk (magneto optical disk)",
+            "SVHS": "SVHS Videokassette",
+            "ST": "USB Stick",
+            "Z": "Sonstige",
+        },
+        "208": {
+            "FOTO": "Foto als Filmabzug",
+            "DIGFOTO": "Digitales Bild",
+            "Z": "Sonstige",
+        },
+        "300": {
+            "B": "Bauwerk",
+            "D": "Deckel",
+            "G": "Gerinne",
+            "H": "Haltung",
+        },
+        "301": {
+            "FL": "Fläche",
+            "KR": "Kreis",
+            "L": "Linie",
+            "PKT": "Punkt",
+            "POLY": "Polygon",
+        },
+        "302": {
+            "GK": "Gauß-Krüger",
+            "UTM": "Universal Transversal Mercator",
+        },
+        "303": {
+            "MNN": "m.ü.NN",
+            "NHN": "Normalhöhennull",
+        },
+    }
 
     # Fachliche Schlüssel für einen wiederholbaren Import. M150 besitzt für
     # HZ/KZ keinen eigenen technischen Primärschlüssel; Einzelschäden werden
@@ -320,6 +574,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         "haltungen",
         "schaechte",
         "anschlussleitungen",
+        "anschlussschaechte",
         "schaechte_untersucht",
         "untersuchdat_schacht",
         "haltungen_untersucht",
@@ -341,6 +596,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         self._knotenart_ref_m150: Dict[str, Dict[str, str]] = {}
         self._entwart_basis_ref_m150: Dict[str, str] = {}
         self._entwart_langtext_ref_m150: Dict[str, str] = {}
+        self._xml_rt_ref_m150: Dict[str, Dict[str, str]] = {}
         self._import_objekte: Dict[
             str, Dict[Tuple[str, ...], ImportZiel]
         ] = {}
@@ -354,10 +610,29 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
     # Benutzeroberfläche und Protokoll
     def _log_hinzufuegen(self, textwert: str) -> None:
-        """Schreibt eine Meldung ausschließlich in das UI-Logbuch."""
+        """Schreibt dieselbe Meldung ins UI und in die Projekt-Logdatei."""
         eintrag = QListWidgetItem(textwert)
         self.logbuch.addItem(eintrag)
         self.logbuch.scrollToBottom()
+
+        projektdatei = QgsProject.instance().fileName()
+        if not projektdatei:
+            return
+
+        log_pfad = os.path.join(
+            os.path.dirname(projektdatei),
+            "M150_Import_Log.txt",
+        )
+        try:
+            with open(log_pfad, "a", encoding="utf-8") as log_datei:
+                log_datei.write(str(textwert) + "\n")
+        except OSError:
+            # Das UI-Log darf durch einen Dateifehler nicht verändert werden.
+            LOGGER.warning(
+                "M150-Import-Logdatei konnte nicht geschrieben werden: %s",
+                log_pfad,
+                exc_info=True,
+            )
 
     def _datei_waehlen(self) -> None:
         """Öffnet die Dateiauswahl für die zu importierende XML-Datei."""
@@ -414,6 +689,13 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             return None
         return int(zahl)
 
+    def _ganzzahl_ohne_null(self, wert: object) -> Optional[int]:
+        """Liest eine Ganzzahl und behandelt 0 als fehlende Angabe."""
+        zahl = self._zahl_ohne_null(wert)
+        if zahl is None:
+            return None
+        return int(zahl)
+
     def _als_text(self, wert: object) -> str:
         """Gibt den bereinigten Wert als Text zurück; fehlende Werte ergeben
         einen Leerstring.
@@ -466,22 +748,106 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             self._als_text(basis).upper()
         )
 
+    def _m150_kanalart_zu_qkan(
+        self, xml_wert: object, aktueller_wert: object
+    ) -> object:
+        """Überführt HG301 in das QKan-Feld ``abflussart``.
+
+        Reihenfolge: externe RT103, bestehende QKan-Zuordnung,
+        DWA-Standard, schließlich Rohwert mit Warnung.
+        """
+        xml_langtext = self._xml_rt_langtext_lesen("103", xml_wert)
+        if xml_langtext is not None:
+            if (
+                self._vergleichstext(aktueller_wert)
+                == self._vergleichstext(xml_langtext)
+                and self._nullify(aktueller_wert) is not None
+            ):
+                return aktueller_wert
+            return xml_langtext
+
+        zielwerte = {
+            "K": "Freispiegel",
+            "D": "Druckleitung",
+            "F": "Offene Freispiegelleitung (Gerinne)",
+            "G": "Dränageleitung",
+        }
+
+        def basis(wert: object) -> Optional[str]:
+            text = self._normalisiere_refwert(wert)
+            if text in {"K", "FREISPIEGEL", "GESCHLOSSENEFREISPIEGELLEITUNG"}:
+                return "K"
+            if text in {"D", "DRUCKLEITUNG", "DRUCKROHRLEITUNG"}:
+                return "D"
+            if text in {"F", "OFFENEFREISPIEGELLEITUNGGERINNE", "OFFENEFREISPIEGELLEITUNG"}:
+                return "F"
+            if text in {"G", "DRÄNAGELEITUNG", "DRAENAGELEITUNG"}:
+                return "G"
+            return None
+
+        neu = basis(xml_wert)
+        if neu is not None:
+            alt = basis(aktueller_wert)
+            if alt == neu and self._nullify(aktueller_wert) is not None:
+                return aktueller_wert
+            return zielwerte[neu]
+
+        standard = self._standard_rt_langtext_lesen("103", xml_wert)
+        if standard is not None:
+            return standard
+
+        rohwert = self._als_text(xml_wert)
+        if rohwert:
+            self._log_hinzufuegen(
+                f"⚠ Kanalart-Code '{rohwert}' konnte nicht zugeordnet "
+                "werden – Rohwert wird übernommen"
+            )
+            return rohwert
+        return aktueller_wert
+
     def _m150_entwart_zu_qkan(
         self, xml_wert: object, aktueller_wert: object
     ) -> object:
-        """Überführt eine M150-Entwässerungsart in den passenden QKan-Wert."""
+        """Überführt eine M150-Kanalnutzung in den passenden QKan-Wert.
+
+        Reihenfolge: externe RT104, bestehende QKan/YAML-Zuordnung,
+        DWA-Standard, schließlich Rohwert mit Warnung.
+        """
+        xml_langtext = self._xml_rt_langtext_lesen("104", xml_wert)
+        if xml_langtext is not None:
+            if (
+                self._vergleichstext(aktueller_wert)
+                == self._vergleichstext(xml_langtext)
+                and self._nullify(aktueller_wert) is not None
+            ):
+                return aktueller_wert
+            return xml_langtext
+
         neuer_basis = self._entwart_basis_lesen(xml_wert)
-        if neuer_basis is None:
-            return aktueller_wert
+        if neuer_basis is not None:
+            aktueller_basis = self._entwart_basis_lesen(aktueller_wert)
+            if (
+                aktueller_basis == neuer_basis
+                and self._nullify(aktueller_wert) is not None
+            ):
+                return aktueller_wert
 
-        aktueller_basis = self._entwart_basis_lesen(aktueller_wert)
-        if (
-            aktueller_basis == neuer_basis
-            and self._nullify(aktueller_wert) is not None
-        ):
-            return aktueller_wert
+            zielwert = self._entwart_langtext_aus_basis(neuer_basis)
+            if zielwert is not None:
+                return zielwert
 
-        return self._entwart_langtext_aus_basis(neuer_basis)
+        standard = self._standard_rt_langtext_lesen("104", xml_wert)
+        if standard is not None:
+            return standard
+
+        rohwert = self._als_text(xml_wert)
+        if rohwert:
+            self._log_hinzufuegen(
+                f"⚠ Kanalnutzung-Code '{rohwert}' konnte nicht zugeordnet "
+                "werden – Rohwert wird übernommen"
+            )
+            return rohwert
+        return aktueller_wert
 
     def _layer_holen(self, tabellenname: str) -> Optional[QgsVectorLayer]:
         """Liefert nur den Layer aus der gewählten QKan-Datenquelle."""
@@ -714,6 +1080,104 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         self._import_indexe_laden(db_qkan)
 
+    def _xml_referenztabellen_laden(self, xml_root: XmlElement) -> None:
+        """Liest die mit der M150-XML übergebenen RT-Blöcke ein.
+
+        RT001 bezeichnet die Referenztabelle, RT002 den Schlüssel und RT004
+        den zu verwendenden Langtext. Nur vollständig gefüllte Einträge
+        werden übernommen.
+        """
+        self._xml_rt_ref_m150 = {}
+        anzahl_eintraege = 0
+
+        for rt in xml_root.findall("RT"):
+            tabelle = self._als_text(rt.findtext("RT001"))
+            schluessel = self._als_text(rt.findtext("RT002"))
+            langtext = self._als_text(rt.findtext("RT004"))
+            if not tabelle or not schluessel or not langtext:
+                continue
+
+            tabelle = tabelle.zfill(3)
+            schluessel_norm = schluessel.upper()
+            tabelle_werte = self._xml_rt_ref_m150.setdefault(tabelle, {})
+            vorhandener_wert = tabelle_werte.get(schluessel_norm)
+            if vorhandener_wert is not None:
+                if vorhandener_wert != langtext:
+                    self._log_hinzufuegen(
+                        f"⚠ RT {tabelle}, Schlüssel '{schluessel}': "
+                        "mehrere Langtexte vorhanden – erster Wert wird "
+                        "verwendet"
+                    )
+                continue
+
+            tabelle_werte[schluessel_norm] = langtext
+            anzahl_eintraege += 1
+
+        # Externe Materialcodes werden beim Vergleich genauso als Codes
+        # erkannt wie die über YAML geladenen Standardcodes.
+        self._material_codes_m150.update(
+            self._xml_rt_ref_m150.get("105", {}).keys()
+        )
+        for code, langtext in self._xml_rt_ref_m150.get("106", {}).items():
+            self._profil_basis_ref_m150[
+                self._normalisiere_refwert(code)
+            ] = code
+            self._profil_basis_ref_m150[
+                self._normalisiere_refwert(langtext)
+            ] = code
+
+        if anzahl_eintraege:
+            self._log_hinzufuegen(
+                "XML-Referenztabellen eingelesen: "
+                f"{len(self._xml_rt_ref_m150)} Tabelle(n), "
+                f"{anzahl_eintraege} Eintrag/Einträge"
+            )
+
+    def _xml_rt_langtext_lesen(
+        self, referenztabelle: str, schluessel: object
+    ) -> Optional[str]:
+        """Liefert RT004 für Tabelle und Schlüssel aus der Import-XML."""
+        code = self._als_text(schluessel).upper()
+        if not code:
+            return None
+        return self._xml_rt_ref_m150.get(
+            self._als_text(referenztabelle).zfill(3), {}
+        ).get(code)
+
+    def _xml_rt_langtext_fuer_feld(
+        self, feld: str, schluessel: object
+    ) -> Optional[str]:
+        """Löst ein M150-Feld über seine fest zugehörige RT-Tabelle auf."""
+        referenztabelle = self.M150_FELD_REFERENZTABELLEN.get(feld)
+        if referenztabelle is None:
+            return None
+        return self._xml_rt_langtext_lesen(referenztabelle, schluessel)
+
+    def _standard_rt_langtext_lesen(
+        self, referenztabelle: str, schluessel: object
+    ) -> Optional[str]:
+        """Liest den DWA-Standardlangtext eines bekannten RT-Schlüssels."""
+        code = self._als_text(schluessel).upper()
+        if not code:
+            return None
+        return self.M150_STANDARD_RT.get(
+            self._als_text(referenztabelle).zfill(3), {}
+        ).get(code)
+
+    def _referenz_langtext_fuer_feld(
+        self, feld: str, schluessel: object
+    ) -> Optional[str]:
+        """Löst zuerst eine externe XML-RT und danach den DWA-Standard auf."""
+        xml_langtext = self._xml_rt_langtext_fuer_feld(feld, schluessel)
+        if xml_langtext is not None:
+            return xml_langtext
+        referenztabelle = self.M150_FELD_REFERENZTABELLEN.get(feld)
+        if referenztabelle is None:
+            return None
+        return self._standard_rt_langtext_lesen(
+            referenztabelle, schluessel
+        )
+
     def _vergleichstext(self, wert: object) -> str:
         """Normalisiert einen Wert für fachliche Textvergleiche."""
         return re.sub(r"\s+", " ", self._als_text(wert).strip()).upper()
@@ -763,9 +1227,17 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         if not code_text:
             return None
 
+        xml_langtext = self._xml_rt_langtext_lesen("105", code_text)
+        if xml_langtext is not None:
+            return xml_langtext
+
         zielwert = self._material_ref_m150.get(code_text)
         if zielwert is not None:
             return self._materialwert_mit_code(code_text, zielwert)
+
+        standard = self._standard_rt_langtext_lesen("105", code_text)
+        if standard is not None:
+            return standard
 
         self._log_hinzufuegen(
             f"⚠ {bezeichnung}-Code '{code_text}' konnte nicht "
@@ -774,16 +1246,33 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         return self._als_text(code)
 
     def _profil_aus_m150_lesen(self, code: object) -> Optional[str]:
-        """Löst einen M150-Profilcode über YAML-Abfragen auf."""
+        """Löst einen M150-Profilcode über XML-RT oder YAML auf."""
         code_text = self._als_text(code).upper()
         if not code_text:
             return None
+        xml_langtext = self._xml_rt_langtext_lesen("106", code_text)
+        if xml_langtext is not None:
+            return xml_langtext
         wert = self._profil_ref_m150.get(code_text)
-        if wert is None:
-            self._log_hinzufuegen(
-                f"⚠ Profil-Code '{code_text}' konnte nicht zugeordnet werden"
-            )
-        return wert
+        if wert is not None:
+            return wert
+
+        # Neben dem RT106-Schlüssel werden bekannte Langtexte/Aliase wie
+        # "Kreisquerschnitt" akzeptiert. Sie sind fachlich derselbe
+        # Profiltyp und dürfen nicht als unbekannter Rohwert geloggt werden.
+        basis = self._profil_basis_lesen(code)
+        if basis is not None:
+            return self._als_text(code)
+
+        standard = self._standard_rt_langtext_lesen("106", code_text)
+        if standard is not None:
+            return standard
+
+        self._log_hinzufuegen(
+            f"⚠ Profil-Code '{code_text}' konnte nicht zugeordnet werden – "
+            "Rohwert wird übernommen"
+        )
+        return self._als_text(code)
 
     def _profil_basis_lesen(self, wert: object) -> Optional[str]:
         """Liest den M150-Basiscode eines Profilnamens aus YAML-Abfragen."""
@@ -807,26 +1296,63 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
     def _profilauskleidung_aus_m150_lesen(
         self, code: object
     ) -> Optional[str]:
-        """Löst einen M150-Auskleidungscode über YAML-Abfragen auf."""
+        """Löst einen M150-Auskleidungscode über XML-RT oder YAML auf."""
         code_text = self._als_text(code).upper()
         if not code_text:
             return None
+        xml_langtext = self._xml_rt_langtext_lesen("107", code_text)
+        if xml_langtext is not None:
+            return xml_langtext
         wert = self._profilauskleidung_ref_m150.get(code_text)
-        if wert is None:
-            self._log_hinzufuegen(
-                f"⚠ Profilauskleidung-Code '{code_text}' konnte nicht "
-                "zugeordnet werden"
-            )
-        return wert
+        if wert is not None:
+            return wert
+
+        standard = self._standard_rt_langtext_lesen("107", code_text)
+        if standard is not None:
+            return standard
+
+        self._log_hinzufuegen(
+            f"⚠ Profilauskleidung-Code '{code_text}' konnte nicht "
+            "zugeordnet werden – Rohwert wird übernommen"
+        )
+        return self._als_text(code)
 
     def _knotenart_aus_m150_lesen(
         self, code: object
     ) -> Optional[Dict[str, str]]:
-        """Löst die M150-Knotenart über YAML-Abfragen auf."""
-        code_text = self._als_text(code).upper()
+        """Löst die M150-Knotenart über XML-RT, YAML und Standardwerte auf."""
+        code_roh = self._als_text(code).strip()
+        code_text = code_roh.upper()
         if not code_text:
             return None
-        return self._knotenart_ref_m150.get(code_text)
+
+        zuordnung = self._knotenart_ref_m150.get(code_text)
+        if zuordnung is not None:
+            ergebnis = dict(zuordnung)
+            xml_langtext = self._xml_rt_langtext_lesen("116", code_text)
+            if xml_langtext is not None:
+                ergebnis["knotentyp"] = xml_langtext
+            return ergebnis
+
+        vergleichswert = self._normalisiere_refwert(code_roh)
+        for standard_code, langtext in self.M150_STANDARD_RT.get(
+            "116", {}
+        ).items():
+            if self._normalisiere_refwert(langtext) != vergleichswert:
+                continue
+            standard_zuordnung = self._knotenart_ref_m150.get(standard_code)
+            if standard_zuordnung is not None:
+                return dict(standard_zuordnung)
+
+        xml_langtext = self._xml_rt_langtext_lesen("116", code_text)
+        if xml_langtext is not None:
+            return {"schachttyp": "Symbol", "knotentyp": xml_langtext}
+
+        self._log_hinzufuegen(
+            f"⚠ Knotenart-Code '{code_roh}' konnte nicht zugeordnet "
+            "werden – Rohwert wird übernommen"
+        )
+        return {"schachttyp": "Symbol", "knotentyp": code_roh}
 
     def _feldnamen_lesen(self, layer: Optional[QgsVectorLayer]) -> List[str]:
         """Gibt die Feldnamen des Layers oder bei fehlendem Layer eine leere
@@ -895,16 +1421,23 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 return
 
         if feld == "entwart":
-            # HG302/KG302 enthalten den M150-Code der Kanalnutzung. Verglichen
-            # wird der Code, gespeichert wird der zugehörige QKan-Langtext.
+            # Bekannte QKan-/M150-Werte werden wie bisher fachlich verglichen.
+            # Ein bereits aufgelöster externer/standardisierter Langtext oder
+            # ein unbekannter Rohwert darf dagegen nicht verworfen werden.
             neuer_basis = self._entwart_basis_lesen(neuer_wert)
-            if neuer_basis is None:
+            if neuer_basis is not None:
+                alter_basis = self._entwart_basis_lesen(alter_wert)
+                if alter_basis == neuer_basis and alter_wert is not None:
+                    return
+                zielwert = self._entwart_langtext_aus_basis(neuer_basis)
+                if zielwert is not None:
+                    neuer_wert = zielwert
+
+        if feld == "abflussart":
+            neuer_wert = self._m150_kanalart_zu_qkan(neuer_wert, alter_wert)
+            if self._nullify(neuer_wert) is None:
                 return
-            alter_basis = self._entwart_basis_lesen(alter_wert)
-            if alter_basis == neuer_basis and alter_wert is not None:
-                return
-            neuer_wert = self._entwart_langtext_aus_basis(neuer_basis)
-            if neuer_wert is None:
+            if self._als_text(neuer_wert) == self._als_text(alter_wert):
                 return
 
         if feld in ("material", "innenmaterial") and alter_wert is not None:
@@ -920,7 +1453,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             # und wird daher durch den allgemeineren M150-Code nicht ersetzt.
             return
 
-        if feld in ("sohleoben", "sohleunten"):
+        if feld in ("sohleoben", "sohleunten", "sohlhoehe", "baujahr"):
             # Manche Austauschdateien verwenden 0 als Platzhalter für eine
             # fehlende Höhe. Diese Kompatibilitätsregel ist QKan-spezifisch.
             zahl = self._zahl_lesen(neuer_wert)
@@ -1010,12 +1543,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
     def _naechsten_haltungsnamen_finden(
         self, punkt: Optional[QgsPointXY], layer: Optional[QgsVectorLayer]
     ) -> Optional[str]:
-        """Gibt haltnam der Haltung mit dem geringsten Abstand zum Punkt
-        zurück.
-        """
+        """Liefert nur innerhalb der Anschluss-Toleranz eine Haltung."""
         if punkt is None or layer is None:
             return None
-        objekt, abstand, _ = self._naechste_haltung_finden(punkt, layer)
+        objekt, abstand, _ = self._naechste_haltung_finden(
+            punkt, layer, self.ANSCHLUSS_HALTUNG_TOLERANZ_M
+        )
         if objekt is None or abstand is None:
             return None
         return (
@@ -1025,11 +1558,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         )
 
     def _naechste_haltung_finden(
-        self, punkt: QgsPointXY, layer: QgsVectorLayer
+        self,
+        punkt: QgsPointXY,
+        layer: QgsVectorLayer,
+        toleranz: Optional[float] = None,
     ) -> Tuple[Optional[QgsFeature], Optional[float], Optional[QgsPointXY]]:
-        """Ermittelt das nächste Haltungs-Feature, seinen Abstand und den auf
-        die Haltung projizierten Punkt.
-        """
+        """Ermittelt die nächste Haltung, optional nur innerhalb Toleranz."""
         punkt_geometrie = QgsGeometry.fromPointXY(punkt)
         bestes_objekt = None
         kleinste_distanz = None
@@ -1037,18 +1571,25 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         for objekt in layer.getFeatures():
             geometrie = objekt.geometry()
-            if not geometrie:
+            if not geometrie or geometrie.isEmpty():
                 continue
             abstand = geometrie.distance(punkt_geometrie)
             if kleinste_distanz is None or abstand < kleinste_distanz:
                 kleinste_distanz = abstand
                 bestes_objekt = objekt
                 snap_punkt = geometrie.nearestPoint(punkt_geometrie)
-                if snap_punkt and not snap_punkt.isEmpty():
-                    bester_snap = snap_punkt.asPoint()
-                else:
-                    bester_snap = None
+                bester_snap = (
+                    snap_punkt.asPoint()
+                    if snap_punkt and not snap_punkt.isEmpty()
+                    else None
+                )
 
+        if (
+            toleranz is not None
+            and kleinste_distanz is not None
+            and kleinste_distanz > toleranz
+        ):
+            return None, kleinste_distanz, None
         return bestes_objekt, kleinste_distanz, bester_snap
 
     def _objekt_finden(
@@ -1108,7 +1649,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         elif hi101 == "G":
             richtung = "gegen Fließrichtung"
         else:
-            return None, None
+            richtung = None
 
         hi102 = self._als_text(hi.findtext("HI102")).upper()
         if hi102 == "A" or not hi102:
@@ -1238,7 +1779,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         """
         for kg in xml_root.findall("KG"):
             if self._als_text(kg.findtext("KG001")) == self._als_text(name):
-                return self._als_text(kg.findtext("KG305")) in ["S", "G"]
+                return self._als_text(kg.findtext("KG305")).upper() == "S"
         return False
 
     def _station_auf_haltung_berechnen(
@@ -1247,45 +1788,26 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         h_layer: Optional[QgsVectorLayer],
         haltnam: Optional[str] = None,
     ) -> Optional[float]:
-        """Berechnet die Station eines Punkts auf einer Haltung.
-
-        :param punkt: Zu projizierender Kartenpunkt.
-        :param h_layer: Haltungs-Layer.
-        :param haltnam: Optional vorgegebener Haltungsname.
-        :return: Station entlang der Haltung oder ``None``.
-        """
+        """Berechnet die Station auf einer benannten oder nahen Haltung."""
         if punkt is None or h_layer is None:
             return None
 
         punkt_geometrie = QgsGeometry.fromPointXY(punkt)
-        bestes_objekt = None
-        kleinste_distanz = None
-
-        for objekt in h_layer.getFeatures():
-            if haltnam and "haltnam" in objekt.fields().names():
-                if (
-                    self._als_text(objekt["haltnam"])
-                    != self._als_text(haltnam)
-                ):
-                    continue
-            geometrie = objekt.geometry()
-            if not geometrie:
-                continue
-            abstand = geometrie.distance(punkt_geometrie)
-            if kleinste_distanz is None or abstand < kleinste_distanz:
-                kleinste_distanz = abstand
-                bestes_objekt = objekt
-
+        if haltnam:
+            bestes_objekt = self._haltung_feature_finden(h_layer, haltnam)
+        else:
+            bestes_objekt, _abstand, _snap = self._naechste_haltung_finden(
+                punkt, h_layer, self.ANSCHLUSS_HALTUNG_TOLERANZ_M
+            )
         if bestes_objekt is None:
             return None
-
         geometrie = bestes_objekt.geometry()
+        if geometrie is None or geometrie.isEmpty():
+            return None
         naechster_punkt = geometrie.nearestPoint(punkt_geometrie)
         if naechster_punkt is None or naechster_punkt.isEmpty():
             return None
-
         station = geometrie.lineLocatePoint(naechster_punkt)
-
         if station is None or station < 0:
             return None
         return float(station)
@@ -1449,6 +1971,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             if feld in feldnamen:
                 alt = self._nullify(zielobjekt[feld])
                 neu = self._nullify(wert)
+
+                if neu is None:
+                    continue
 
                 if feld == "kommentar":
                     if neu is None:
@@ -2200,14 +2725,18 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             )
 
     def _logwert_anzeigen(self, tag: str, wert: object) -> str:
-        """Übersetzt bei HI107 und KI107 die Werte J und N in Ja und Nein."""
+        """Zeigt externe RT-, sonst bekannte DWA-Standardlangtexte im Log."""
         textwert = self._als_text(wert)
+        xml_langtext = self._xml_rt_langtext_fuer_feld(tag, textwert)
+        if xml_langtext is not None:
+            return xml_langtext
         if tag in ("HI107", "KI107"):
             if textwert.upper() == "J":
                 return "Ja"
             if textwert.upper() == "N":
                 return "Nein"
-        return textwert
+        standard = self._referenz_langtext_fuer_feld(tag, textwert)
+        return standard if standard is not None else textwert
 
     def _logwert_zusammenfassung(
         self, bezeichnung: str, tag: str, werte: List[Tuple[str, str]]
@@ -2324,9 +2853,38 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 bezeichnung, tag, werte_nach_tag[tag]
             )
 
+    def _ki_metadaten_loggen(self, xml_root: XmlElement) -> None:
+        """Protokolliert die ausdrücklich ausgewählten KI-Metadaten.
+
+        Geloggt werden nur KI002, KI004, KI006 und KI107. Andere KI-Felder
+        werden hier bewusst nicht zusätzlich protokolliert.
+        """
+        feldliste = [
+            ("KI002", "Projektnummer"),
+            ("KI004", "Inspektionsgrund"),
+            ("KI006", "Kamerasystem"),
+            ("KI107", "Reinigung"),
+        ]
+        werte_nach_tag: Dict[str, List[Tuple[str, str]]] = {
+            tag: [] for tag, _bezeichnung in feldliste
+        }
+
+        for kg in xml_root.findall("KG"):
+            schnam = self._als_text(kg.findtext("KG001"))
+            for ki in kg.findall("KI"):
+                kontext = f"Schacht '{schnam}'"
+                for tag, _bezeichnung in feldliste:
+                    wert = self._logwert_anzeigen(tag, ki.findtext(tag))
+                    werte_nach_tag[tag].append((kontext, wert))
+
+        for tag, bezeichnung in feldliste:
+            self._logwert_zusammenfassung(
+                bezeichnung, tag, werte_nach_tag[tag]
+            )
+
     def _m150_metadaten_loggen(self, xml_root: XmlElement) -> None:
-        """Protokolliert FD001, FD002 sowie die ausgewählten GP- und
-        HI-Metadaten.
+        """Protokolliert FD001, FD002 sowie die ausgewählten GP-, HI- und
+        KI-Metadaten.
         """
         fd001 = self._logwert_anzeigen("FD001", xml_root.findtext("FD/FD001"))
         fd002 = self._logwert_anzeigen("FD002", xml_root.findtext("FD/FD002"))
@@ -2338,6 +2896,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         self._gp_metadaten_loggen(xml_root)
         self._hi_metadaten_loggen(xml_root)
+        self._ki_metadaten_loggen(xml_root)
     # Import der XML-Blöcke
 
     def _import_schaechte(
@@ -2359,9 +2918,8 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
             typ = self._als_text(kg.findtext("KG305"))
 
-            # Nur Schächte und Gebäudeanschlüsse importieren;
-            # fiktive Schächte bleiben unberücksichtigt.
-            if typ not in ["S", "G"]:
+            # Projektregel: In den QKan-Schachtlayer kommt nur KG305=S.
+            if typ.upper() != "S":
                 continue
 
             zuordnung = self._knotenart_aus_m150_lesen(typ)
@@ -2378,14 +2936,30 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
             geometrie = QgsGeometry.fromPointXY(punkt)
 
+            # KG308/KG309 werden in M150 in Millimetern geführt. QKan
+            # speichert für Schächte einen Durchmesser in Metern. Bei
+            # befülltem KG308 wird dieser Wert verwendet; KG309 dient als
+            # Rückfall, falls KG308 fehlt.
+            durchmesser_mm = self._zahl_lesen(kg.findtext("KG308"))
+            if durchmesser_mm is None:
+                durchmesser_mm = self._zahl_lesen(kg.findtext("KG309"))
+            durchmesser_m = (
+                durchmesser_mm / 1000.0
+                if durchmesser_mm is not None
+                else None
+            )
+
             attribute = {
                 "schnam": name,
+                "durchm": durchmesser_m,
                 "sohlhoehe": (
-                    self._zahl_lesen(gp.findtext("GP007"))
+                    self._zahl_ohne_null(gp.findtext("GP007"))
                     if gp is not None
                     else None
                 ),
-                "material": self._nullify(kg.findtext("KG304")),
+                "material": self._material_aus_m150_lesen(
+                    kg.findtext("KG304"), "Schachtmaterial"
+                ),
                 "entwart": self._m150_entwart_zu_qkan(
                     kg.findtext("KG302"), None
                 ),
@@ -2402,6 +2976,288 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 attribute,
                 geometrie,
                 "Schacht/Knoten",
+            )
+
+    def _anschlussschacht_hg_daten_lesen(
+        self,
+        xml_root: XmlElement,
+        kg_name: str,
+        a_layer: Optional[QgsVectorLayer],
+    ) -> Tuple[Optional[str], Optional[float], Optional[str]]:
+        """Liest Haltung, Urstation und Leitungsname zum Anschlussknoten."""
+        for hg in xml_root.findall("HG"):
+            if self._als_text(hg.findtext("HG313")).upper() != "B":
+                continue
+            if self._als_text(hg.findtext("HG005")) != kg_name:
+                continue
+
+            leitnam = self._anschluss_leitnam_lesen(hg)
+            haltnam = self._haltung_name_aus_anschluss_hg_lesen(hg)
+            urstation = self._zahl_lesen(hg.findtext("HG007"))
+
+            if a_layer is not None and leitnam:
+                leitungsobjekt = self._anschluss_match_finden(
+                    a_layer, leitnam
+                )
+                if leitungsobjekt is not None:
+                    feldnamen = leitungsobjekt.fields().names()
+                    if "haltnam" in feldnamen:
+                        haltnam = (
+                            self._als_text(leitungsobjekt["haltnam"])
+                            or haltnam
+                        )
+                    if "urstation" in feldnamen:
+                        gespeicherte_station = self._zahl_lesen(
+                            leitungsobjekt["urstation"]
+                        )
+                        if gespeicherte_station is not None:
+                            urstation = gespeicherte_station
+
+            return haltnam, urstation, leitnam or None
+
+        return None, None, None
+
+    def _anschlussschacht_nach_punkt_finden(
+        self,
+        layer: Optional[QgsVectorLayer],
+        name: str,
+        punkt: QgsPointXY,
+        haltnam: Optional[str],
+        urstation: Optional[float],
+    ) -> Optional[QgsFeature]:
+        """Findet einen vorhandenen Anschlussschacht am Importpunkt.
+
+        Die Geometrie innerhalb der engen Endpunkttoleranz ist zwingend.
+        Haltung und Urstation entscheiden nur zwischen mehreren
+        geometrischen Treffern; der Name darf keinen räumlich abweichenden
+        Datensatz erzwingen.
+        """
+        if layer is None or punkt is None:
+            return None
+
+        toleranz = self.ANSCHLUSSSCHACHT_ENDPOINT_TOLERANZ_M
+        request = QgsFeatureRequest().setFilterRect(
+            QgsRectangle(
+                punkt.x() - toleranz,
+                punkt.y() - toleranz,
+                punkt.x() + toleranz,
+                punkt.y() + toleranz,
+            )
+        )
+        punkt_geometrie = QgsGeometry.fromPointXY(punkt)
+        treffer = []
+
+        for objekt in layer.getFeatures(request):
+            geometrie = objekt.geometry()
+            if geometrie is None or geometrie.isEmpty():
+                continue
+            abstand = geometrie.distance(punkt_geometrie)
+            if abstand > toleranz:
+                continue
+
+            feldnamen = objekt.fields().names()
+            objekt_haltnam = (
+                self._als_text(objekt["haltnam"])
+                if "haltnam" in feldnamen
+                else ""
+            )
+            haltnam_abweichung = (
+                0
+                if haltnam and objekt_haltnam == self._als_text(haltnam)
+                else 1
+            )
+
+            objekt_station = (
+                self._zahl_lesen(objekt["urstation"])
+                if "urstation" in feldnamen
+                else None
+            )
+            if urstation is not None and objekt_station is not None:
+                stationsabweichung = abs(objekt_station - urstation)
+            else:
+                stationsabweichung = float("inf")
+
+            treffer.append((
+                haltnam_abweichung,
+                stationsabweichung,
+                abstand,
+                self._objekt_sortwert(objekt),
+                objekt,
+            ))
+
+        if not treffer:
+            return None
+        treffer.sort(key=lambda eintrag: eintrag[:-1])
+        return treffer[0][-1]
+
+    def _anschlussschacht_erstellen_oder_aktualisieren(
+        self,
+        layer: Optional[QgsVectorLayer],
+        name: str,
+        attribute: Mapping[str, object],
+        geometrie: QgsGeometry,
+        haltnam: Optional[str],
+        urstation: Optional[float],
+    ) -> None:
+        """Klassifiziert einen vorhandenen Anschlusspunkt oder legt ihn an."""
+        if layer is None:
+            self._log_hinzufuegen(
+                "⚠ Layer 'Anschlussschächte' nicht gefunden"
+            )
+            return
+
+        punkt = geometrie.asPoint()
+        self._bearbeitung_starten(layer)
+        objekt = self._anschlussschacht_nach_punkt_finden(
+            layer,
+            name,
+            QgsPointXY(punkt),
+            haltnam,
+            urstation,
+        )
+        feldnamen = self._feldnamen_lesen(layer)
+
+        if objekt is None:
+            neues_objekt = QgsFeature(layer.fields())
+            if layer.isSpatial():
+                neues_objekt.setGeometry(geometrie)
+            for feld, wert in attribute.items():
+                if feld in feldnamen:
+                    neues_objekt[feld] = self._nullify(wert)
+            if not layer.addFeature(neues_objekt):
+                self._log_hinzufuegen(
+                    f"✖ Anschlussknoten '{name}' konnte nicht neu "
+                    "angelegt werden"
+                )
+                return
+            self._log_hinzufuegen(
+                f"➕ Anschlussknoten '{name}' neu angelegt"
+            )
+            return
+
+        aenderungen: List[str] = []
+        for feld, wert in attribute.items():
+            if feld not in feldnamen:
+                continue
+            if feld == "knotentyp":
+                neu = self._nullify(wert)
+                if neu is None:
+                    continue
+                alt = self._nullify(objekt[feld])
+                if self._als_text(alt) != self._als_text(neu):
+                    objekt[feld] = neu
+                    aenderungen.append(
+                        f"knotentyp: {self._als_text(alt)} -> "
+                        f"{self._als_text(neu)}"
+                    )
+                continue
+            self._attribut_sicher_aendern(
+                objekt, feld, wert, aenderungen
+            )
+
+        if layer.isSpatial() and not self._geometrie_gleich_fuer_import(
+            objekt.geometry(), geometrie
+        ):
+            objekt.setGeometry(geometrie)
+            aenderungen.append("Geometrie aktualisiert")
+
+        if aenderungen:
+            if not layer.updateFeature(objekt):
+                self._log_hinzufuegen(
+                    f"✖ Anschlussknoten '{name}' konnte nicht "
+                    "aktualisiert werden"
+                )
+                return
+            self._log_hinzufuegen(
+                f"✎ Anschlussknoten '{name}': " + "; ".join(aenderungen)
+            )
+        else:
+            self._log_hinzufuegen(
+                f"✔ Anschlussknoten '{name}' erkannt"
+            )
+
+    def _import_anschlussschaechte(
+        self,
+        xml_root: XmlElement,
+        layer: Optional[QgsVectorLayer],
+        a_layer: Optional[QgsVectorLayer],
+    ) -> None:
+        """Importiert alle nicht-fiktiven, nicht-Schacht-Knoten als
+        Anschlussschächte und klassifiziert vorhandene Endpunkte neu.
+        """
+        if layer is None:
+            self._log_hinzufuegen(
+                "⚠ Layer 'Anschlussschächte' nicht gefunden"
+            )
+            return
+
+        for kg in xml_root.findall("KG"):
+            name = self._als_text(kg.findtext("KG001"))
+            if not name or name.endswith("_START") or name.endswith("_VIRT"):
+                continue
+
+            typ = self._als_text(kg.findtext("KG305")).upper()
+            if typ in {"", "S", "F"}:
+                continue
+
+            gp = kg.find("GO/GP")
+            punkt = self._punkt_aus_gp_lesen(gp) if gp is not None else None
+            if punkt is None:
+                self._log_hinzufuegen(
+                    f"⚠ Anschlussknoten '{name}' ohne Geometrie "
+                    "übersprungen"
+                )
+                continue
+
+            zuordnung = self._knotenart_aus_m150_lesen(typ)
+            knotentyp = (
+                zuordnung.get("knotentyp")
+                if zuordnung is not None
+                else typ
+            )
+
+            durchmesser_mm = self._zahl_lesen(kg.findtext("KG308"))
+            if durchmesser_mm is None:
+                durchmesser_mm = self._zahl_lesen(kg.findtext("KG309"))
+            durchmesser_m = (
+                durchmesser_mm / 1000.0
+                if durchmesser_mm is not None
+                else None
+            )
+
+            haltnam, urstation, _leitnam = (
+                self._anschlussschacht_hg_daten_lesen(
+                    xml_root, name, a_layer
+                )
+            )
+            geometrie = QgsGeometry.fromPointXY(punkt)
+            attribute = {
+                "schnam": name,
+                "sohlhoehe": self._zahl_lesen(gp.findtext("GP007")),
+                "durchm": durchmesser_m,
+                "entwart": self._m150_entwart_zu_qkan(
+                    kg.findtext("KG302"), None
+                ),
+                "strasse": self._nullify(kg.findtext("KG102")),
+                "baujahr": self._ganzzahl_lesen(kg.findtext("KG303")),
+                "haltnam": haltnam,
+                "urstation": urstation,
+                "knotentyp": knotentyp,
+                "simstatus": self._nullify(kg.findtext("KG401")),
+                "material": self._material_aus_m150_lesen(
+                    kg.findtext("KG304"), "Knotenmaterial"
+                ),
+                "xsch": punkt.x(),
+                "ysch": punkt.y(),
+                "kommentar": self._nullify(kg.findtext("KG999")),
+            }
+            self._anschlussschacht_erstellen_oder_aktualisieren(
+                layer,
+                name,
+                attribute,
+                geometrie,
+                haltnam,
+                urstation,
             )
 
     def _import_haltungen(
@@ -2464,12 +3320,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 "haltnam": name,
                 "schoben": self._nullify(hg.findtext("HG003")),
                 "schunten": self._nullify(hg.findtext("HG004")),
-                "baujahr": self._ganzzahl_lesen(hg.findtext("HG303")),
+                "baujahr": self._ganzzahl_ohne_null(hg.findtext("HG303")),
                 "material": self._material_aus_m150_lesen(
                     hg.findtext("HG304"), "Material"
                 ),
-                "hoehe": self._zahl_lesen(hg.findtext("HG306")),
-                "breite": self._zahl_lesen(hg.findtext("HG307")),
+                "breite": self._zahl_lesen(hg.findtext("HG306")),
+                "hoehe": self._zahl_lesen(hg.findtext("HG307")),
                 "durchm": self._zahl_lesen(hg.findtext("HG306")),
                 "laenge": self._zahl_lesen(hg.findtext("HG310")),
                 "sohleoben": sohleoben,
@@ -2482,6 +3338,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     hg.findtext("HG309"), "Innenmaterial"
                 ),
                 "haltungstyp": "Haltung",
+                "abflussart": self._m150_kanalart_zu_qkan(
+                    hg.findtext("HG301"), None
+                ),
                 "entwart": self._m150_entwart_zu_qkan(
                     hg.findtext("HG302"), None
                 ),
@@ -3283,18 +4142,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     endpunkt, h_layer, haltnam
                 )
 
-            schunten_roh = self._nullify(hg.findtext("HG004"))
-            # Technische/fiktive Endpunkte werden nicht als reale
-            # QKan-Schachtbeziehung gespeichert. Akzeptiert werden nur die
-            # M150-Knotenarten S (Schacht) und G (Gebäudeanschluss).
-            schunten = (
-                schunten_roh
-                if (
-                    schunten_roh
-                    and self._kg_ist_schacht(xml_root, schunten_roh)
-                )
-                else None
-            )
+            # HG003/HG004 sind Knoten der Elternhaltung und werden nicht
+            # als Endknoten der Anschlussleitung übernommen.
+            schunten = None
 
             gp_elemente = hg.findall("GO/GP")
             sohleoben = (
@@ -3316,9 +4166,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 "leitnam": leitnam,
                 "haltnam": haltnam,
                 "urstation": urstation,
-                "schoben": self._nullify(hg.findtext("HG003")),
+                "lageanschluss": self._ganzzahl_lesen(
+                    hg.findtext("HG009")
+                ),
+                "schoben": None,
                 "schunten": schunten,
-                "baujahr": self._ganzzahl_lesen(hg.findtext("HG303")),
+                "baujahr": self._ganzzahl_ohne_null(hg.findtext("HG303")),
                 "material": self._material_aus_m150_lesen(
                     hg.findtext("HG304"), "Material"
                 ),
@@ -3329,8 +4182,8 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 "innenmaterial": self._material_aus_m150_lesen(
                     hg.findtext("HG309"), "Innenmaterial"
                 ),
-                "hoehe": self._zahl_lesen(hg.findtext("HG306")),
-                "breite": self._zahl_lesen(hg.findtext("HG307")),
+                "breite": self._zahl_lesen(hg.findtext("HG306")),
+                "hoehe": self._zahl_lesen(hg.findtext("HG307")),
                 "durchm": self._zahl_lesen(hg.findtext("HG306")),
                 "laenge": self._zahl_lesen(hg.findtext("HG310")),
                 "sohleoben": sohleoben,
@@ -3429,6 +4282,8 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         schadenslinien_schluessel: set[Tuple[str, ...]] = set()
 
         for kg in xml_root.findall("KG"):
+            if self._als_text(kg.findtext("KG305")).upper() != "S":
+                continue
             schnam = self._als_text(kg.findtext("KG001"))
             if (
                 not schnam
@@ -3451,10 +4306,16 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 # max_ZD/max_ZB/max_ZS ist deshalb bewusst 206/208/207.
                 attribute = {
                     "schnam": schnam,
+                    "id": self._ganzzahl_lesen(ki.findtext("KI003")),
                     "untersuchtag": self._nullify(ki.findtext("KI104")),
-                    "untersucher": self._nullify(ki.findtext("KI112")),
-                    "wetter": self._nullify(ki.findtext("KI106")),
-                    "bewertungsart": self._nullify(ki.findtext("KI005")),
+                    "untersucher": (
+                        self._nullify(ki.findtext("KI111"))
+                        or self._nullify(ki.findtext("KI112"))
+                    ),
+                    "wetter": self._ganzzahl_lesen(ki.findtext("KI106")),
+                    "bewertungsart": self._referenz_langtext_fuer_feld(
+                        "KI005", ki.findtext("KI005")
+                    ) or self._nullify(ki.findtext("KI005")),
                     "bewertungstag": self._nullify(ki.findtext("KI204")),
                     "datenart": "DWA",
                     "max_ZD": self._ganzzahl_lesen(ki.findtext("KI206")),
@@ -3510,9 +4371,15 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                         "streckenschaden": self._nullify(kz.findtext("KZ005")),
                         "pos_von": self._ganzzahl_lesen(kz.findtext("KZ006")),
                         "pos_bis": self._ganzzahl_lesen(kz.findtext("KZ007")),
+                        "vertikale_lage": self._zahl_lesen(
+                            kz.findtext("KZ001")
+                        ),
                         "bereich": self._nullify(kz.findtext("KZ013")),
                         "foto_dateiname": self._nullify(kz.findtext("KZ009")),
                         "film_dateiname": self._nullify(ki.findtext("KI116")),
+                        # KI114 wird derzeit bewusst nicht in QKan gespeichert:
+                        # untersuchdat_schacht.filmtyp ist ein Integer-Feld,
+                        # M150 liefert hier Referenzcodes wie "HD".
                         "ZD": self._ganzzahl_lesen(kz.findtext("KZ206")),
                         "ZB": self._ganzzahl_lesen(kz.findtext("KZ208")),
                         "ZS": self._ganzzahl_lesen(kz.findtext("KZ207")),
@@ -3578,10 +4445,10 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 )
                 if richtung is None:
                     self._log_hinzufuegen(
-                        f"⚠ Haltung '{haltnam}' ohne gültige "
-                        "HI101-Untersuchungsrichtung übersprungen"
+                        f"⚠ Haltung '{haltnam}' ohne gültige HI101-"
+                        "Untersuchungsrichtung: Daten werden importiert; "
+                        "richtungsabhängige Geometrie wird nicht erzeugt"
                     )
-                    continue
 
                 hz_elemente = hi.findall("HZ")
 
@@ -3591,16 +4458,19 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     "haltnam": haltnam,
                     "schoben": self._nullify(hg.findtext("HG003")),
                     "schunten": self._nullify(hg.findtext("HG004")),
-                    "hoehe": self._zahl_lesen(hg.findtext("HG306")),
-                    "breite": self._zahl_lesen(hg.findtext("HG307")),
+                    "breite": self._zahl_lesen(hg.findtext("HG306")),
+                    "hoehe": self._zahl_lesen(hg.findtext("HG307")),
                     "durchm": self._zahl_lesen(hg.findtext("HG306")),
                     "laenge": self._zahl_lesen(hg.findtext("HG310")),
+                    "id": self._ganzzahl_lesen(hi.findtext("HI003")),
                     "untersuchtag": self._nullify(hi.findtext("HI104")),
                     "untersucher": self._nullify(hi.findtext("HI112")),
                     "untersuchrichtung": richtung,
                     "bezugspunkt": bezugspunkt,
-                    "wetter": self._nullify(hi.findtext("HI106")),
-                    "bewertungsart": self._nullify(hi.findtext("HI005")),
+                    "wetter": self._ganzzahl_lesen(hi.findtext("HI106")),
+                    "bewertungsart": self._referenz_langtext_fuer_feld(
+                        "HI005", hi.findtext("HI005")
+                    ) or self._nullify(hi.findtext("HI005")),
                     "bewertungstag": self._nullify(hi.findtext("HI204")),
                     "datenart": "DWA",
                     "max_ZD": self._ganzzahl_lesen(hi.findtext("HI206")),
@@ -3737,10 +4607,10 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 )
                 if richtung is None:
                     self._log_hinzufuegen(
-                        f"⚠ Anschlussleitung '{leitnam}' ohne gültige "
-                        "HI101-Untersuchungsrichtung übersprungen"
+                        f"⚠ Anschlussleitung '{leitnam}' ohne gültige HI101-"
+                        "Untersuchungsrichtung: Daten werden importiert; "
+                        "richtungsabhängige Geometrie wird nicht erzeugt"
                     )
-                    continue
 
                 hz_elemente = hi.findall("HZ")
 
@@ -3748,18 +4618,21 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 # einzelnen HZ-Schaden.
                 attribute = {
                     "leitnam": leitnam,
-                    "schoben": self._nullify(hg.findtext("HG003")),
-                    "schunten": self._nullify(hg.findtext("HG004")),
-                    "hoehe": self._zahl_lesen(hg.findtext("HG306")),
-                    "breite": self._zahl_lesen(hg.findtext("HG307")),
+                    "schoben": None,
+                    "schunten": None,
+                    "breite": self._zahl_lesen(hg.findtext("HG306")),
+                    "hoehe": self._zahl_lesen(hg.findtext("HG307")),
                     "durchm": self._zahl_lesen(hg.findtext("HG306")),
                     "laenge": self._zahl_lesen(hg.findtext("HG310")),
+                    "id": self._ganzzahl_lesen(hi.findtext("HI003")),
                     "untersuchtag": self._nullify(hi.findtext("HI104")),
                     "untersucher": self._nullify(hi.findtext("HI112")),
                     "untersuchrichtung": richtung,
                     "bezugspunkt": bezugspunkt,
-                    "wetter": self._nullify(hi.findtext("HI106")),
-                    "bewertungsart": self._nullify(hi.findtext("HI005")),
+                    "wetter": self._ganzzahl_lesen(hi.findtext("HI106")),
+                    "bewertungsart": self._referenz_langtext_fuer_feld(
+                        "HI005", hi.findtext("HI005")
+                    ) or self._nullify(hi.findtext("HI005")),
                     "bewertungstag": self._nullify(hi.findtext("HI204")),
                     "datenart": "DWA",
                     "max_ZD": self._ganzzahl_lesen(hi.findtext("HI206")),
@@ -3806,8 +4679,8 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                         "id": nummer,
                         "untersuchtag": self._nullify(hi.findtext("HI104")),
                         "untersuchrichtung": richtung,
-                        "schoben": self._nullify(hg.findtext("HG003")),
-                        "schunten": self._nullify(hg.findtext("HG004")),
+                        "schoben": None,
+                        "schunten": None,
                         "videozaehler": self._nullify(hz.findtext("HZ008")),
                         "timecode": self._nullify(hz.findtext("HZ008")),
                         "station": self._zahl_lesen(hz.findtext("HZ001")),
@@ -3916,7 +4789,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         erforderliche_tabellen = set()
         if stammdaten_importieren:
             erforderliche_tabellen.update(
-                {"haltungen", "schaechte", "anschlussleitungen"}
+                {
+                    "haltungen",
+                    "schaechte",
+                    "anschlussleitungen",
+                    "anschlussschaechte",
+                }
             )
         if bca_erzeugen:
             erforderliche_tabellen.update(
@@ -3954,11 +4832,13 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         h_layer = self._layer_holen("haltungen")
         s_layer = self._layer_holen("schaechte")
         a_layer = self._layer_holen("anschlussleitungen")
+        as_layer = self._layer_holen("anschlussschaechte")
 
         layer_nach_tabelle = {
             "haltungen": h_layer,
             "schaechte": s_layer,
             "anschlussleitungen": a_layer,
+            "anschlussschaechte": as_layer,
             "schaechte_untersucht": self._layer_holen(
                 "schaechte_untersucht"
             ),
@@ -3992,6 +4872,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     return
                 db_qkan.loadmodule("inspektion")
                 self._yaml_importdaten_laden(db_qkan)
+                self._xml_referenztabellen_laden(xml_root)
         except Exception as err:
             self._log_hinzufuegen(
                 f"✖ YAML-Importabfragen fehlgeschlagen: {err}"
@@ -4008,8 +4889,11 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         for tabelle, layer in layer_nach_tabelle.items():
             # Bereits ungespeicherte QGIS-Änderungen haben Vorrang vor den aus
             # der Datenbank geladenen Indizes und werden in den Abgleich
-            # einbezogen.
-            self._import_editpuffer_uebernehmen(tabelle, layer)
+            # einbezogen. Anschlussschächte werden bewusst räumlich sowie
+            # über Haltung/Urstation zugeordnet und besitzen daher keinen
+            # einfachen Namensindex.
+            if tabelle in self.IMPORT_INDEXE:
+                self._import_editpuffer_uebernehmen(tabelle, layer)
 
         self._log_hinzufuegen("Import gestartet")
         self._m150_metadaten_loggen(xml_root)
@@ -4022,6 +4906,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             self._import_schaechte(xml_root, s_layer)
             self._import_haltungen(xml_root, h_layer)
             self._import_anschlussleitungen(xml_root, a_layer, h_layer)
+            self._import_anschlussschaechte(
+                xml_root, as_layer, a_layer
+            )
             self._log_hinzufuegen("Stammdatenimport abgeschlossen")
         else:
             self._log_hinzufuegen("Stammdatenimport übersprungen")

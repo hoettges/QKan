@@ -249,7 +249,8 @@ inspektion_ref_profile_m150: |-
           ('U', 'u-förmig', 23),
           ('U', 'u-foermig', 24),
           ('Z', 'sonstige profilart', 25),
-          ('DN', 'Kreis-Profil', 26)
+          ('DN', 'Kreis-Profil', 26),
+          ('DN', 'Kreisquerschnitt', 27)
   ),
   referenz AS (
       SELECT
@@ -361,13 +362,16 @@ inspektion_ref_knotenart_m150: |-
 # Exportquellen: Nur gespeicherte Datensätze der aktuellen QKan-Datenbank
 # werden geladen; die Geometrie wird als WKB an QGIS übergeben.
 inspektion_export_haltungen_auswahl: SELECT pk, haltnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
-  baujahr, profilnam, entwart, material, profilauskleidung, innenmaterial, AsBinary(geom) AS __geom_wkb FROM haltungen WHERE
+  baujahr, profilnam, entwart, abflussart, material, profilauskleidung, innenmaterial, AsBinary(geom) AS __geom_wkb FROM haltungen WHERE
   haltnam IN ({auswahl}) AND (haltungstyp IS NULL OR haltungstyp = 'Haltung') ORDER BY pk;
 inspektion_export_schaechte_auswahl: SELECT pk, schnam, sohlhoehe, durchm, entwart, knotentyp, schachttyp, xsch, ysch, AsBinary(geop)
   AS __geom_wkb FROM schaechte WHERE schnam IN ({auswahl}) AND schachttyp = 'Schacht' ORDER BY pk;
 inspektion_export_anschlussleitungen_auswahl: SELECT pk, leitnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
   baujahr, haltnam, urstation, ursprung, anschlusstyp, lageanschluss, profilnam, entwart, material, profilauskleidung, innenmaterial,
   AsBinary(geom) AS __geom_wkb FROM anschlussleitungen WHERE leitnam IN ({auswahl}) ORDER BY pk;
+inspektion_export_anschlussschaechte_haltungen: SELECT pk, schnam, sohlhoehe, durchm, entwart, strasse, baujahr, haltnam, urstation,
+  knotentyp, simstatus, material, xsch, ysch, kommentar, AsBinary(geom) AS __geom_wkb FROM anschlussschaechte
+  ORDER BY pk;
 # Existenzindizes für wiederholbare Importe. Gesamtzustände verwenden
 # Objektname + Inspektionsdatum; Einzelschäden ergänzen ihre laufende
 # QKan-ID.
@@ -377,13 +381,13 @@ inspektion_import_index_haltungen: SELECT pk, haltnam FROM haltungen WHERE haltn
   haltungstyp = 'Haltung') ORDER BY pk;
 inspektion_import_index_anschlussleitungen: SELECT pk, leitnam FROM anschlussleitungen WHERE leitnam IS NOT NULL ORDER BY
   pk;
-inspektion_import_index_schaechte_untersucht: SELECT pk, schnam, untersuchtag FROM schaechte_untersucht ORDER BY pk;
+inspektion_import_index_schaechte_untersucht: SELECT pk, schnam, untersuchtag, id FROM schaechte_untersucht ORDER BY pk;
 inspektion_import_index_untersuchdat_schacht: SELECT pk, untersuchsch, untersuchtag, id FROM untersuchdat_schacht ORDER BY
   pk;
-inspektion_import_index_haltungen_untersucht: SELECT pk, haltnam, untersuchtag FROM haltungen_untersucht ORDER BY pk;
+inspektion_import_index_haltungen_untersucht: SELECT pk, haltnam, untersuchtag, id FROM haltungen_untersucht ORDER BY pk;
 inspektion_import_index_untersuchdat_haltung: SELECT pk, untersuchhal, untersuchtag, id FROM untersuchdat_haltung ORDER BY
   pk;
-inspektion_import_index_anschlussleitungen_untersucht: SELECT pk, leitnam, untersuchtag FROM anschlussleitungen_untersucht
+inspektion_import_index_anschlussleitungen_untersucht: SELECT pk, leitnam, untersuchtag, id FROM anschlussleitungen_untersucht
   ORDER BY pk;
 inspektion_import_index_untersuchdat_anschlussleitung: SELECT pk, untersuchleit, untersuchtag, id FROM untersuchdat_anschlussleitung
   ORDER BY pk;

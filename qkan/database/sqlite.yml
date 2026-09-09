@@ -378,6 +378,7 @@ CREATE TABLE anschlussschaechte (
     urstation REAL,                                 /* Anschlussposition gegen Fließrichtung */
     ursprung TEXT,                                  /* Adresse oder Objektbezeichnung */
     anschlusstyp TEXT,                              /* STRAKAT-Symbolbezeichnung */
+    knotentyp TEXT,                                 /* join knotentypen.knotentyp */
     eigentum TEXT,                                  /* join eigentum.name */
     teilgebiet TEXT,                                /* join teilgebiet.tgnam */
     simstatus TEXT DEFAULT 'vorhanden',             /* join simulationsstatus.bezeichnung */

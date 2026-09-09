@@ -17,6 +17,7 @@ keine Objekte in den verwendeten Layern oder in der QKan-Datenbank.
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import (
     Any,
@@ -54,12 +55,17 @@ from qgis.core import (
 
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsHighlight
 
+from qkan.utils import QkanDbError
+
 from .datenquelle import (
     Datenquelle,
     datenbank_oeffnen,
     datenquelle_waehlen,
     layer_finden,
 )
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 if TYPE_CHECKING:
@@ -429,8 +435,8 @@ class KartenauswahlWerkzeug(QgsMapTool):
 
             abstand = geometrie.distance(punktgeom)
 
-            if abstand is None:
-                return [objekt]
+            if abstand is None or abstand < 0 or abstand > tol:
+                continue
 
             if kleinste_distanz is None or abstand < kleinste_distanz:
                 kleinste_distanz = abstand
@@ -477,6 +483,217 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         "haltungen",
         "schaechte",
         "anschlussleitungen",
+        "anschlussschaechte",
+    }
+
+    # DWA-M 150, Abschnitt 7: Standard-Langtexte der Referenztabellen,
+    # die von diesem Modul tatsächlich ausgewertet bzw. geschrieben werden.
+    # Externe RT-Blöcke einer Import-XML haben beim Import Vorrang.
+    M150_STANDARD_RT = {
+        "101": {
+            "D": "Digitalisiert",
+            "G": "Geschätzt",
+            "V": "Vermessen",
+        },
+        "102": {
+            "B": "Berechnet",
+            "G": "Geschätzt",
+            "V": "Vermessen",
+        },
+        "103": {
+            "F": "Offene Freispiegelleitung (Gerinne)",
+            "D": "Druckrohrleitung",
+            "G": "Dränageleitung",
+            "K": "Geschlossene Freispiegelleitung",
+        },
+        "104": {
+            "B": "Bach (Gewässer)",
+            "M": "Mischwasser",
+            "R": "Regenwasser",
+            "S": "Schmutzwasser",
+            "Z": "Sondernutzung",
+        },
+        "105": {
+            "AZ": "Asbestzement",
+            "B": "Beton",
+            "BIT": "Bitumen",
+            "BS": "Betonsegmente",
+            "BSK": "Betonsegmente kunststoffmodifiziert",
+            "BT": "Bitumen",
+            "CN": "Edelstahl",
+            "EIS": "Nichtidentifiziertes Metall (z. B. Eisen und Stahl)",
+            "EPX": "Epoxydharz",
+            "EPSF": "Epoxydharz mit Synthesefaser",
+            "FZ": "Faserzement",
+            "GFK": "Glasfaserverstärkter Kunststoff",
+            "GG": "Grauguß",
+            "GGG": "Duktiles Gußeisen",
+            "KST": "Nichtidentifizierter Kunststoff",
+            "MA": "Mauerwerk",
+            "OB": "Ortbeton",
+            "PC": "Polymerbeton",
+            "PCC": "Polymermodifizierter Zementbeton",
+            "PE": "Polyethylen",
+            "PH": "Polyesterharz",
+            "PHB": "Polyesterharzbeton",
+            "PP": "Polypropylen",
+            "PUR": "Polyurethanharz",
+            "PVCM": "Polyvinylchlorid modifiziert",
+            "PVCU": "Polyvinylchlorid hart",
+            "SFB": "Stahlfaserbeton",
+            "SPB": "Spannbeton",
+            "SB": "Stahlbeton",
+            "ST": "Stahl",
+            "STZ": "Steinzeug",
+            "SZB": "Spritzbeton",
+            "SZBK": "Spritzbeton kunststoffmodifiziert",
+            "TF": "Teerfaser",
+            "UPGF": "Ungesättigtes Polyesterharz mit Glasfaser",
+            "UPSF": "Ungesättigtes Polyesterharz mit Synthesefaser",
+            "VEGF": "Vinylesterharz mit Synthesefaser",
+            "VESF": "Vinylesterharz mit Glasfaser",
+            "VBK": "Verbundrohr Beton-/Stahlbeton-Kunststoff",
+            "VBS": "Verbundrohr Beton-/Stahlbeton-Steinzeug",
+            "W": "Nichtidentifizierter Werkstoff",
+            "WPE": "Wickelrohr (PEHD)",
+            "WPVC": "Wickelrohr (PVCU)",
+            "Z": "Sonstiger Werkstoff",
+            "ZM": "Zementmörtel",
+            "ZG": "Ziegelwerk",
+        },
+        "106": {
+            "BO": (
+                "Bogenförmig (kreisförmiger Scheitel und flache Sohle bei "
+                "parallelen Wänden), Haubenquerschnitt"
+            ),
+            "DN": "Kreisförmig, Kreisquerschnitt",
+            "EI": "Eiförmig, Eiquerschnitt",
+            "GR": "Offener Graben",
+            "MA": "Maulquerschnitt",
+            "OV": (
+                "Oval (kreisförmige Sohle und Scheitel bei parallelen Wänden)"
+            ),
+            "RE": "Rechteckig, Rechteckquerschnitt",
+            "RI": "Rinnenquerschnitt",
+            "U": "U-förmig",
+            "Z": "Sonstige Profilart",
+        },
+        "107": {
+            "A": "Beschichtung werkseitig",
+            "B": "Auskleidung werkseitig",
+            "C": "Schlauchliner",
+            "D": "Close-Fit Liner",
+            "E": "Liner mit Ringraumverfüllung",
+            "F": "Teil-/Vollauskleidung vor Ort",
+            "G": "Teil-/Vollbeschichtung vor Ort",
+            "Z": "Sonstige Auskleidung",
+        },
+        "108": {
+            "A": "Kanal",
+            "B": "Anschlussleitung",
+            "C": "Entlastungsleitung",
+            "Z": "Sonstige",
+        },
+        "109": {
+            "B": "In Betrieb",
+            "N": "Nicht in Betrieb",
+            "P": "Geplant",
+            "V": "Verschlossen",
+            "Z": "Sonstige",
+        },
+        "116": {
+            "A": "Auslass",
+            "B": "Bauwerk",
+            "E": "Straßenablauf",
+            "F": "Fiktiver Schacht",
+            "G": "Gebäudeanschluss",
+            "I": "Inspektionsöffnung",
+            "L": "Lampenschacht",
+            "R": "Reinigungsöffnung",
+            "S": "Schacht",
+            "W": "Sanitärgegenstand",
+            "Z": "Sonstige",
+        },
+        "128": {
+            "H": "Abwasserkanal",
+            "K": "Knoten",
+            "L": "Abwasserleitung",
+        },
+        "201": {
+            "A": "Abnahme",
+            "E": "Ersterfassung",
+            "G": "Gewährleistung",
+            "K": "Eigenkontrollverordnung",
+            "N": "Nachuntersuchung",
+            "S": "Nach Sanierung",
+            "V": "Vor Sanierung",
+            "Z": "Sonstige",
+        },
+        "202": {
+            "ATVM143": "Merkblatt ATV-M 143-2",
+            "DWAM149-2:2006": (
+                "Merkblatt DWA-M 149-2 in Verbindung mit DIN EN 13508-2"
+            ),
+            "EN13508": "DIN EN 13508-2",
+            "ISYBAU96": "ISYBAU 1996",
+            "ISYBAU01": "ISYBAU 2001",
+            "Z": "Sonstige",
+        },
+        "203": {
+            "BG": "Begehung",
+            "KTV": "Kamera-Inspektion",
+            "SP": "Spiegelung/von der Oberfläche inspiziert",
+            "Z": "Sonstige",
+        },
+        "204": {
+            "FROST": "Frost",
+            "REGEN": "Regen",
+            "SCHNEE": "Schnee",
+            "TROCKEN": "Trocken",
+        },
+        "205": {
+            "J": "Wurde vor Inspektion gereinigt",
+            "N": "Wurde vor Inspektion nicht gereinigt",
+        },
+        "206": {
+            "J": "Untersuchung mit Vorflutsicherung wurde durchgeführt",
+            "N": "Untersuchung ohne Vorflutsicherung",
+        },
+        "207": {
+            "CD": "Compact Disk",
+            "DVD": "DVD-Medium",
+            "HD": "Wechselfestplatte (HardDrive)",
+            "MOD": "Magnet-optisches Laufwerk (magneto optical disk)",
+            "SVHS": "SVHS Videokassette",
+            "ST": "USB Stick",
+            "Z": "Sonstige",
+        },
+        "208": {
+            "FOTO": "Foto als Filmabzug",
+            "DIGFOTO": "Digitales Bild",
+            "Z": "Sonstige",
+        },
+        "300": {
+            "B": "Bauwerk",
+            "D": "Deckel",
+            "G": "Gerinne",
+            "H": "Haltung",
+        },
+        "301": {
+            "FL": "Fläche",
+            "KR": "Kreis",
+            "L": "Linie",
+            "PKT": "Punkt",
+            "POLY": "Polygon",
+        },
+        "302": {
+            "GK": "Gauß-Krüger",
+            "UTM": "Universal Transversal Mercator",
+        },
+        "303": {
+            "MNN": "m.ü.NN",
+            "NHN": "Normalhöhennull",
+        },
     }
 
     def __init__(self, iface: QgisInterface) -> None:
@@ -492,6 +709,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         self._profilauskleidung_ref_m150: Dict[str, str] = {}
         self._knotenart_ref_m150: Dict[str, str] = {}
         self._entwart_ref_m150: Dict[str, str] = {}
+        self._export_ref_warnungen: Set[Tuple[str, str, str]] = set()
         self.hervorhebung: Optional[QgsHighlight] = None
         self._datenquelle: Optional[Datenquelle] = None
 
@@ -695,6 +913,10 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         self.ausgewaehlte_haltungen = {
             str(objekt["haltnam"]) for objekt in objekte if objekt["haltnam"]
         }
+        if not self.ausgewaehlte_haltungen:
+            self._auswahl_zuruecksetzen()
+            return
+
         ausgewaehlte_haltungsobjekte = {
             str(objekt["haltnam"]): objekt
             for objekt in objekte
@@ -995,6 +1217,45 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             if zeichen.isalnum()
         )
 
+    def _standard_rt_code_fuer_wert(
+        self, referenztabelle: str, wert: object
+    ) -> str:
+        """Löst Code oder DWA-Standardlangtext auf den RT-Schlüssel zurück."""
+        text = str(wert or "").strip()
+        if not text or text.upper() == "NULL":
+            return ""
+
+        rt = self.M150_STANDARD_RT.get(str(referenztabelle).zfill(3), {})
+        code_direkt = text.upper()
+        if code_direkt in rt:
+            return code_direkt
+
+        vergleichswert = self._normalisiere_refwert(text)
+        for code, langtext in rt.items():
+            if self._normalisiere_refwert(langtext) == vergleichswert:
+                return code
+        return ""
+
+    def _unbekannten_refwert_exportieren(
+        self, feld: str, referenztabelle: str, wert: object
+    ) -> str:
+        """Gibt einen unbekannten Text unverändert aus und protokolliert ihn."""
+        text = str(wert or "").strip()
+        if not text or text.upper() == "NULL":
+            return ""
+
+        warnung = (feld, str(referenztabelle).zfill(3), text)
+        if warnung not in self._export_ref_warnungen:
+            self._export_ref_warnungen.add(warnung)
+            LOGGER.warning(
+                "M150-Export: %s='%s' ist in RT %s nicht zugeordnet; "
+                "Rohtext wird unverändert exportiert.",
+                feld,
+                text,
+                str(referenztabelle).zfill(3),
+            )
+        return text
+
     def _referenzen_laden(self, db_qkan: object) -> None:
         """Lädt alle Exportzuordnungen aus den Datenbankabfragen.
 
@@ -1142,7 +1403,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
     def _formatiere_zahlen_export(
         self,
         wert: object,
-        standardwert: str = "0.000",
+        standardwert: str = "",
         nachkommastellen: int = 3,
     ) -> str:
         """Formatiert einen Zahlenwert für den XML-Export.
@@ -1169,23 +1430,54 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         return f"{number:.{nachkommastellen}f}" if number is not None else ""
 
     def _entwart_map_in_m150(self, wert: object) -> str:
-        """Wandelt eine Entwässerungsart über das YAML-Mapping in M150 um."""
+        """Mappt Kanalnutzung: QKan/YAML, DWA-Standard, sonst Rohtext."""
         vergleichswert = self._normalisiere_refwert(wert)
-        return self._entwart_ref_m150.get(vergleichswert, "")
+        code = self._entwart_ref_m150.get(vergleichswert, "")
+        if code:
+            return code
+        code = self._standard_rt_code_fuer_wert("104", wert)
+        if code:
+            return code
+        return self._unbekannten_refwert_exportieren(
+            "HG302/KG302", "104", wert
+        )
 
-    def _kanalart_aus_entwart_map_m150(self, wert: object) -> str:
-        """Bestimmt die M150-Kanalart aus der Entwässerungsart."""
-        if wert is None:
-            return "K"
+    def _kanalart_aus_abflussart_map_m150(self, wert: object) -> str:
+        """Wandelt die QKan-Abflussart in die M150-Kanalart um.
 
-        v = str(wert).strip().lower()
-        if not v or v.upper() == "NULL":
-            return "K"
+        Bereits gespeicherte M150-Schlüssel werden unverändert übernommen.
+        Die QKan-Bezeichnungen ``Freispiegel`` und ``Druckleitung`` werden
+        auf die fachlich entsprechenden Schlüssel der Referenztabelle 103
+        abgebildet. Unbekannte Werte werden nicht geraten.
+        """
+        text = str(wert or "").strip()
+        if not text or text.upper() == "NULL":
+            return ""
 
-        if "druck" in v:
-            return "D"
+        code = text.upper()
+        if code in {"F", "D", "G", "K"}:
+            return code
 
-        return "K"
+        vergleichswert = self._normalisiere_refwert(text)
+        zuordnung = {
+            "FREISPIEGEL": "K",
+            "GESCHLOSSENEFREISPIEGELLEITUNG": "K",
+            "DRUCKLEITUNG": "D",
+            "DRUCKROHRLEITUNG": "D",
+            "OFFENEFREISPIEGELLEITUNG": "F",
+            "OFFENEFREISPIEGELLEITUNGGERINNE": "F",
+            "GERINNE": "F",
+            "DRÄNAGELEITUNG": "G",
+            "DRAENAGELEITUNG": "G",
+            "DRAINAGELEITUNG": "G",
+        }
+        code = zuordnung.get(vergleichswert, "")
+        if code:
+            return code
+        code = self._standard_rt_code_fuer_wert("103", wert)
+        if code:
+            return code
+        return self._unbekannten_refwert_exportieren("HG301", "103", wert)
 
     def _material_map_m150(self, wert: object) -> str:
         """Wandelt QKan-Materialwerte über YAML in M150-Codes um."""
@@ -1204,8 +1496,16 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         if erster_teil in self._material_codes_m150:
             return erster_teil
 
-        return self._material_ref_m150.get(
+        code = self._material_ref_m150.get(
             self._normalisiere_refwert(text), ""
+        )
+        if code:
+            return code
+        code = self._standard_rt_code_fuer_wert("105", text)
+        if code:
+            return code
+        return self._unbekannten_refwert_exportieren(
+            "HG304/HG309", "105", text
         )
 
     def _profil_map_m150(self, wert: object) -> str:
@@ -1217,15 +1517,27 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         upper = text.upper()
         if upper in self._profil_codes_m150:
             return upper
-        return self._profil_ref_m150.get(
+        code = self._profil_ref_m150.get(
             self._normalisiere_refwert(text), ""
         )
+        if code:
+            return code
+        code = self._standard_rt_code_fuer_wert("106", text)
+        if code:
+            return code
+        return self._unbekannten_refwert_exportieren("HG305", "106", text)
 
     def _profilauskleidung_map_m150(self, wert: object) -> str:
-        """Wandelt Profilauskleidungen über YAML in M150-Codes um."""
-        return self._profilauskleidung_ref_m150.get(
+        """Mappt Profilauskleidung: YAML, DWA-Standard, sonst Rohtext."""
+        code = self._profilauskleidung_ref_m150.get(
             self._normalisiere_refwert(wert), ""
         )
+        if code:
+            return code
+        code = self._standard_rt_code_fuer_wert("107", wert)
+        if code:
+            return code
+        return self._unbekannten_refwert_exportieren("HG308", "107", wert)
 
     def _knotenart_map_m150(self, wert: object) -> str:
         """Wandelt Knotenarten über YAML in M150-Codes um."""
@@ -1552,9 +1864,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 kleinste_distanz = abstand
                 bestes_objekt = hal_objekt
 
-        if bestes_objekt is not None or haltungen_auswahl:
-            return bestes_objekt
-        return self._finde_naechste_haltung(anschlussgeom, h_quelle)
+        return bestes_objekt
 
     def _proj_punkt_auf_linie(
         self, liniengeom: QgsGeometry, punkt: QgsPointXY
@@ -1646,36 +1956,188 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
     def _anschluss_codewerte(
         self, objekt: ExportZeile
     ) -> Tuple[str, str]:
-        """Leitet HG008 und HG009 aus QKan-Textattributen ab.
+        """Liefert HG008 und HG009 aus den tatsächlich verfügbaren Werten.
 
-        HG008 beschreibt in M150 die Stationierungsrichtung (``I``/``G``),
-        HG009 die Lage am Umfang als Uhrposition. Da QKan dafür hier nur die
-        Texte ``anschlusstyp`` und ``ursprung`` bereitstellt, ist die Zuordnung
-        auf ``G/03`` bzw. ``I/02`` eine projektspezifische Exportheuristik.
+        Für HG008 ist in QKan weiterhin kein eindeutiges Feld vorhanden und
+        es bleibt deshalb leer. HG009 wird direkt aus
+        ``anschlussleitungen.lageanschluss`` übernommen.
         """
-        lage_code = "G"
-        funktionscode = "03"
+        hg008 = ""
+        lageanschluss = self._wert_in_zahl_oder_none(
+            objekt.get("lageanschluss")
+        )
+        if lageanschluss is None:
+            return hg008, ""
 
-        anschlusstyp = str(objekt.get("anschlusstyp") or "").strip().lower()
-        ursprung = str(objekt.get("ursprung") or "").strip().lower()
-        txt = " ".join([anschlusstyp, ursprung]).strip()
+        return hg008, f"{int(lageanschluss):02d}"
 
-        if any(
-            wort in txt
-            for wort in (
-                "innen",
-                "gebäude",
-                "gebaeude",
-                "haus",
-                "hof",
-                "grundstück",
-                "grundstueck",
+    def _finde_anschlussschacht_nach_punkt(
+        self,
+        punkt: Optional[QgsPointXY],
+        quelle: object,
+        haltnam: object = None,
+        urstation: object = None,
+    ) -> Optional[ExportObjekt]:
+        """Findet am freien Leitungsende den passendsten Anschlussschacht.
+
+        Die Geometrie innerhalb der vorhandenen 5-cm-Endpunkttoleranz ist
+        zwingend. Haltung und Urstation entscheiden nur zwischen mehreren
+        geometrischen Treffern; ``pk`` dient als stabile letzte Sortierung.
+        """
+        if punkt is None or quelle is None:
+            return None
+
+        toleranz = self.ANSCHLUSS_ENDPOINT_TOLERANZ_M
+        punkt_geom = QgsGeometry.fromPointXY(QgsPointXY(punkt))
+        ziel_haltnam = str(haltnam or "").strip()
+        ziel_station = self._wert_in_zahl_oder_none(urstation)
+        treffer = []
+
+        for objekt in self._objekte_iterieren(quelle):
+            geometrie = self._objekt_geometrie(objekt)
+            if geometrie is None or geometrie.isEmpty():
+                continue
+            abstand = geometrie.distance(punkt_geom)
+            if abstand > toleranz:
+                continue
+
+            objekt_haltnam = str(
+                self._objekt_wert(objekt, "haltnam") or ""
+            ).strip()
+            haltnam_abweichung = (
+                0
+                if ziel_haltnam and objekt_haltnam == ziel_haltnam
+                else 1
             )
-        ):
-            lage_code = "I"
-            funktionscode = "02"
 
-        return lage_code, funktionscode
+            objekt_station = self._wert_in_zahl_oder_none(
+                self._objekt_wert(objekt, "urstation")
+            )
+            if ziel_station is not None and objekt_station is not None:
+                stationsabweichung = abs(objekt_station - ziel_station)
+            else:
+                stationsabweichung = float("inf")
+
+            pk = self._wert_in_zahl_oder_none(
+                self._objekt_wert(objekt, "pk")
+            )
+            treffer.append((
+                haltnam_abweichung,
+                stationsabweichung,
+                abstand,
+                pk if pk is not None else float("inf"),
+                objekt,
+            ))
+
+        if not treffer:
+            return None
+        treffer.sort(key=lambda eintrag: eintrag[:-1])
+        return treffer[0][-1]
+
+    def _anschlussknoten_exportname_erzeugen(
+        self,
+        leitnam: str,
+        verwendete_namen: Set[str],
+    ) -> str:
+        """Erzeugt für namenlose Anschluss-/Fiktivknoten einen KG001-Namen."""
+        basis = str(leitnam or "ANSCHLUSSKNOTEN").strip()
+        nummer = 1
+        while True:
+            kandidat = f"{basis}_{nummer:02d}"
+            if kandidat not in verwendete_namen:
+                verwendete_namen.add(kandidat)
+                return kandidat
+            nummer += 1
+
+    def _export_anschlussschacht_kg(
+        self,
+        xml_wurzel: _EinfachesXmlElement,
+        objekt: ExportObjekt,
+        kg_id: str,
+        fallback_entwart: object,
+        fallback_punkt: QgsPointXY,
+        fallback_z: object,
+    ) -> None:
+        """Exportiert einen realen QKan-Anschlussschacht als M150-KG."""
+        x, y = self._lese_schacht_koord(objekt)
+        if x is None or y is None:
+            x = fallback_punkt.x()
+            y = fallback_punkt.y()
+
+        entwart_wert = self._objekt_wert(objekt, "entwart")
+        if entwart_wert in (None, "", "NULL"):
+            entwart_wert = fallback_entwart
+        entwart_code = self._entwart_map_in_m150(entwart_wert)
+
+        knotentyp = self._objekt_wert(objekt, "knotentyp")
+        kg305 = self._knotenart_map_m150(knotentyp)
+        if not kg305:
+            if str(knotentyp or "").strip():
+                warnung = ("KG305", "116", str(knotentyp).strip())
+                if warnung not in self._export_ref_warnungen:
+                    self._export_ref_warnungen.add(warnung)
+                    LOGGER.warning(
+                        "M150-Export: Anschlussknoten '%s' hat die nicht "
+                        "zuordenbare Knotenart '%s'; KG305 wird als Z "
+                        "(Sonstige) exportiert.",
+                        kg_id,
+                        knotentyp,
+                    )
+            kg305 = "Z"
+
+        xml_kg = SubElement(xml_wurzel, "KG")
+        SubElement(xml_kg, "KG001").text = kg_id
+        strasse = self._objekt_wert(objekt, "strasse")
+        if strasse not in (None, "", "NULL"):
+            SubElement(xml_kg, "KG102").text = str(strasse)
+        if entwart_code:
+            SubElement(xml_kg, "KG302").text = entwart_code
+
+        baujahr = self._text_in_ganzzahl(
+            self._objekt_wert(objekt, "baujahr")
+        )
+        if baujahr:
+            SubElement(xml_kg, "KG303").text = baujahr
+
+        material_code = self._material_map_m150(
+            self._objekt_wert(objekt, "material")
+        )
+        if material_code:
+            SubElement(xml_kg, "KG304").text = material_code
+        SubElement(xml_kg, "KG305").text = kg305
+
+        durchm_wert = self._wert_in_zahl_oder_none(
+            self._objekt_wert(objekt, "durchm")
+        )
+        if durchm_wert is not None:
+            durchm = str(int(durchm_wert * 1000))
+            SubElement(xml_kg, "KG308").text = durchm
+            SubElement(xml_kg, "KG309").text = durchm
+
+        simstatus = self._objekt_wert(objekt, "simstatus")
+        kg401 = self._standard_rt_code_fuer_wert("109", simstatus)
+        if kg401:
+            SubElement(xml_kg, "KG401").text = kg401
+
+        kommentar = self._objekt_wert(objekt, "kommentar")
+        if kommentar not in (None, "", "NULL"):
+            SubElement(xml_kg, "KG999").text = str(kommentar)
+
+        xml_go = SubElement(xml_kg, "GO")
+        SubElement(xml_go, "GO001").text = kg_id
+        SubElement(xml_go, "GO002").text = "G"
+        SubElement(xml_go, "GO003").text = "Pkt"
+
+        z_value = self._objekt_wert(objekt, "sohlhoehe")
+        if z_value in (None, "", "NULL"):
+            z_value = fallback_z
+        self._erzeuge_gp_block(
+            xml_go,
+            kg_id,
+            x,
+            y,
+            self._formatiere_zahl_oder_leer(z_value),
+        )
 
     def _export_anschlusspunkt_kg(
         self,
@@ -1928,6 +2390,13 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             SubElement(xml_hg, "HG001").text = str(objekt.get("haltnam") or "")
             SubElement(xml_hg, "HG003").text = startname
             SubElement(xml_hg, "HG004").text = endname
+            self._setze_text_oder_leer(
+                xml_hg,
+                "HG301",
+                self._kanalart_aus_abflussart_map_m150(
+                    objekt.get("abflussart")
+                ),
+            )
             SubElement(xml_hg, "HG302").text = self._entwart_map_in_m150(
                 objekt.get("entwart")
             )
@@ -1941,12 +2410,12 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             self._setze_text_oder_leer(
                 xml_hg,
                 "HG306",
-                self._text_in_ganzzahl(objekt.get("hoehe")),
+                self._text_in_ganzzahl(objekt.get("breite")),
             )
             self._setze_text_oder_leer(
                 xml_hg,
                 "HG307",
-                self._text_in_ganzzahl(objekt.get("breite")),
+                self._text_in_ganzzahl(objekt.get("hoehe")),
             )
             self._setze_text_oder_leer(
                 xml_hg, "HG308", profilauskleidung_code
@@ -2038,6 +2507,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         a_objekte: List[ExportZeile],
         h_objekte: List[ExportZeile],
         s_objekte: List[ExportZeile],
+        as_objekte: List[ExportZeile],
     ) -> None:
         """Exportiert ausgewählte Anschlussleitungen in das XML-Dokument.
 
@@ -2050,12 +2520,20 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         :param a_objekte: Geladene Anschlussleitungen.
         :param h_objekte: Geladene Haltungen.
         :param s_objekte: Geladene Schächte.
+        :param as_objekte: Geladene Anschlussschächte.
         """
         haltung_index = {
             str(objekt.get("haltnam")): objekt
             for objekt in h_objekte
             if objekt.get("haltnam")
         }
+        verwendete_knotennamen = {
+            str(objekt.get("schnam")).strip()
+            for objekt in list(s_objekte) + list(as_objekte)
+            if objekt.get("schnam") and str(objekt.get("schnam")).strip()
+        }
+        anschlussknoten_name_nach_pk: Dict[object, str] = {}
+        exportierte_anschlussknoten: Set[object] = set()
 
         for objekt in a_objekte:
             geometrie = objekt.get("__geometry")
@@ -2108,16 +2586,13 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 continue
 
             station = self._wert_in_zahl_oder_none(objekt.get("urstation"))
-            # Bestehende QKan-Stationen haben Vorrang. Nur bei fehlender Angabe
-            # wird HG007 aus dem auf die Haltung projizierten Punkt berechnet.
-            if station is None:
-                station = self._berechne_station_haltung(
-                    h_geom_oriented, anschlusspunkt
-                )
+            material_code = self._material_map_m150(objekt.get("material"))
+            leitnam = str(objekt.get("leitnam") or "").strip()
 
             freies_ende_schacht = self._finde_schacht_nach_punkt(
                 freies_ende, s_objekte
             )
+            freies_ende_anschlussschacht = None
             freies_ende_name = (
                 str(freies_ende_schacht.get("schnam"))
                 if freies_ende_schacht is not None
@@ -2125,6 +2600,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 else None
             )
             endpunkt_typ = "F"
+
             if freies_ende_name and freies_ende_schacht is not None:
                 endpunkt_typ = self._knotenart_map_m150(
                     freies_ende_schacht.get("knotentyp")
@@ -2135,9 +2611,48 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                     )
                 if not endpunkt_typ:
                     endpunkt_typ = "S"
+            else:
+                freies_ende_anschlussschacht = (
+                    self._finde_anschlussschacht_nach_punkt(
+                        freies_ende,
+                        as_objekte,
+                        haltnam=verbundene_haltung.get("haltnam"),
+                        urstation=station,
+                    )
+                )
+                if freies_ende_anschlussschacht is not None:
+                    anschluss_pk = freies_ende_anschlussschacht.get("pk")
+                    gespeicherter_name = str(
+                        freies_ende_anschlussschacht.get("schnam") or ""
+                    ).strip()
+                    if gespeicherter_name:
+                        freies_ende_name = gespeicherter_name
+                    elif anschluss_pk in anschlussknoten_name_nach_pk:
+                        freies_ende_name = anschlussknoten_name_nach_pk[
+                            anschluss_pk
+                        ]
+                    else:
+                        freies_ende_name = (
+                            self._anschlussknoten_exportname_erzeugen(
+                                leitnam, verwendete_knotennamen
+                            )
+                        )
+                        anschlussknoten_name_nach_pk[
+                            anschluss_pk
+                        ] = freies_ende_name
 
-            material_code = self._material_map_m150(objekt.get("material"))
-            leitnam = str(objekt.get("leitnam") or "").strip()
+                    endpunkt_typ = self._knotenart_map_m150(
+                        freies_ende_anschlussschacht.get("knotentyp")
+                    )
+                    if not endpunkt_typ:
+                        endpunkt_typ = "Z"
+                else:
+                    freies_ende_name = (
+                        self._anschlussknoten_exportname_erzeugen(
+                            leitnam, verwendete_knotennamen
+                        )
+                    )
+
             profil_code = self._profil_map_m150(objekt.get("profilnam"))
             innenmaterial_code = self._material_map_m150(
                 objekt.get("innenmaterial")
@@ -2147,7 +2662,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             )
 
             haltnam_clean = str(verbundene_haltung.get("haltnam") or "")
-            ziel_id = freies_ende_name if freies_ende_name else leitnam
+            ziel_id = freies_ende_name or leitnam
             hg005 = ziel_id
             hg011 = leitnam
 
@@ -2157,6 +2672,53 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 h_geom_oriented,
                 self.ANSCHLUSS_ENDPOINT_TOLERANZ_M,
             )
+
+            # HG006/HG007 beziehen sich auf das Objekt, von dem verzweigt
+            # bzw. an das angeschlossen wird. Bei direktem Anschluss ist das
+            # die Haltung (H). Bei einer Verzweigung von einer anderen
+            # Anschlussleitung ist es eine Abwasserleitung (L), und die
+            # Station wird auf dieser Elternleitung geführt.
+            hg006 = "H"
+            if hg012:
+                hg006 = "L"
+                eltern_objekt = next(
+                    (
+                        kandidat
+                        for kandidat in a_objekte
+                        if str(kandidat.get("leitnam") or "").strip() == hg012
+                    ),
+                    None,
+                )
+                eltern_geometrie = (
+                    eltern_objekt.get("__geometry")
+                    if eltern_objekt is not None
+                    else None
+                )
+                if (
+                    station is None
+                    and eltern_geometrie is not None
+                    and not eltern_geometrie.isEmpty()
+                ):
+                    endpunkte = self._anschluss_endpunkte_lesen(objekt)
+                    if endpunkte:
+                        verbindungspunkt = min(
+                            endpunkte,
+                            key=lambda punkt: eltern_geometrie.distance(
+                                QgsGeometry.fromPointXY(QgsPointXY(punkt))
+                            ),
+                        )
+                        projektionspunkt = self._proj_punkt_auf_linie(
+                            eltern_geometrie, verbindungspunkt
+                        )
+                        if projektionspunkt is not None:
+                            station = self._berechne_station_haltung(
+                                eltern_geometrie, projektionspunkt
+                            )
+
+            if station is None and hg006 == "H":
+                station = self._berechne_station_haltung(
+                    h_geom_oriented, anschlusspunkt
+                )
 
             entwart_code = self._entwart_map_in_m150(objekt.get("entwart"))
             hg008, hg009 = self._anschluss_codewerte(objekt)
@@ -2199,17 +2761,24 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             SubElement(xml_hg, "HG003").text = startname
             SubElement(xml_hg, "HG004").text = endname
             SubElement(xml_hg, "HG005").text = hg005
-            SubElement(xml_hg, "HG006").text = "H"
+            SubElement(xml_hg, "HG006").text = hg006
             SubElement(xml_hg, "HG007").text = self._formatiere_zahlen_export(
-                station, standardwert="0.00", nachkommastellen=2
+                station, nachkommastellen=2
             )
             SubElement(xml_hg, "HG008").text = hg008
             SubElement(xml_hg, "HG009").text = hg009
             SubElement(xml_hg, "HG010").text = endpunkt_typ
             SubElement(xml_hg, "HG011").text = hg011
             self._setze_text_oder_leer(xml_hg, "HG012", hg012)
-            SubElement(xml_hg, "HG301").text = (
-                self._kanalart_aus_entwart_map_m150(objekt.get("entwart"))
+            # Anschlussleitungen besitzen in QKan kein eigenes Feld
+            # ``abflussart``. Für HG301 wird deshalb die Abflussart der
+            # zugeordneten Haltung übernommen.
+            self._setze_text_oder_leer(
+                xml_hg,
+                "HG301",
+                self._kanalart_aus_abflussart_map_m150(
+                    verbundene_haltung.get("abflussart")
+                ),
             )
             SubElement(xml_hg, "HG302").text = entwart_code
             self._setze_text_oder_leer(
@@ -2222,12 +2791,12 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             self._setze_text_oder_leer(
                 xml_hg,
                 "HG306",
-                self._text_in_ganzzahl(objekt.get("hoehe")),
+                self._text_in_ganzzahl(objekt.get("breite")),
             )
             self._setze_text_oder_leer(
                 xml_hg,
                 "HG307",
-                self._text_in_ganzzahl(objekt.get("breite")),
+                self._text_in_ganzzahl(objekt.get("hoehe")),
             )
             self._setze_text_oder_leer(
                 xml_hg, "HG308", profilauskleidung_code
@@ -2293,14 +2862,32 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 SubElement(xml_gp, "GP009").text = "G"
                 SubElement(xml_gp, "GP010").text = "mNN"
 
-            if freies_ende_name is None:
-                self._export_anschlusspunkt_kg(
-                    xml_wurzel,
-                    ziel_id,
-                    entwart_code,
-                    freies_ende,
-                    z_end,
-                )
+            if freies_ende_schacht is None:
+                if freies_ende_anschlussschacht is not None:
+                    anschluss_pk = freies_ende_anschlussschacht.get("pk")
+                    export_schluessel = (
+                        ("pk", anschluss_pk)
+                        if anschluss_pk is not None
+                        else ("name", ziel_id)
+                    )
+                    if export_schluessel not in exportierte_anschlussknoten:
+                        self._export_anschlussschacht_kg(
+                            xml_wurzel,
+                            freies_ende_anschlussschacht,
+                            ziel_id,
+                            entwart_code,
+                            freies_ende,
+                            z_end,
+                        )
+                        exportierte_anschlussknoten.add(export_schluessel)
+                else:
+                    self._export_anschlusspunkt_kg(
+                        xml_wurzel,
+                        ziel_id,
+                        entwart_code,
+                        freies_ende,
+                        z_end,
+                    )
 
     def _waehle_speicherort(self) -> None:
         """Öffnet die Dateiauswahl für den XML-Exportpfad."""
@@ -2323,11 +2910,24 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         if not dateipfad:
             return
 
+        if not (
+            self.ausgewaehlte_haltungen
+            or self.ausgewaehlte_schaechte
+            or self.ausgewaehlte_anschlussleitungen
+        ):
+            QMessageBox.warning(
+                self,
+                "M150-Export",
+                "Es sind keine Objekte für den Export ausgewählt.",
+            )
+            return
+
         erforderliche_tabellen = {"schaechte"}
         if self.ausgewaehlte_haltungen:
             erforderliche_tabellen.add("haltungen")
         if self.ausgewaehlte_anschlussleitungen:
             erforderliche_tabellen.add("anschlussleitungen")
+            erforderliche_tabellen.add("anschlussschaechte")
         if not self._datenquelle_waehlen(erforderliche_tabellen):
             return
 
@@ -2349,81 +2949,90 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         self._profilauskleidung_ref_m150.clear()
         self._knotenart_ref_m150.clear()
         self._entwart_ref_m150.clear()
+        self._export_ref_warnungen.clear()
 
-        with datenbank_oeffnen(self._datenquelle) as db_qkan:
-            if not db_qkan.connected:
-                QMessageBox.critical(
-                    self,
-                    "M150-Export",
-                    "Die gewählte QKan-Datenquelle konnte nicht geöffnet "
-                    "werden.",
-                )
-                return
-
-            db_qkan.loadmodule("inspektion")
-
-            h_objekte = self._sql_auswahl_zeilen_laden(
-                db_qkan,
-                "inspektion_export_haltungen_auswahl",
-                self.ausgewaehlte_haltungen,
-            )
-            a_objekte = self._sql_auswahl_zeilen_laden(
-                db_qkan,
-                "inspektion_export_anschlussleitungen_auswahl",
-                self.ausgewaehlte_anschlussleitungen,
-            )
-
-            schacht_namen = set(self.ausgewaehlte_schaechte)
-            for objekt in h_objekte:
-                if objekt.get("schoben"):
-                    schacht_namen.add(str(objekt["schoben"]))
-                if objekt.get("schunten"):
-                    schacht_namen.add(str(objekt["schunten"]))
-            for objekt in a_objekte:
-                if objekt.get("schoben"):
-                    schacht_namen.add(str(objekt["schoben"]))
-                if objekt.get("schunten"):
-                    schacht_namen.add(str(objekt["schunten"]))
-
-            s_objekte = self._sql_auswahl_zeilen_laden(
-                db_qkan,
-                "inspektion_export_schaechte_auswahl",
-                schacht_namen,
-            )
-
-            self._referenzen_laden(db_qkan)
-
-            xml_wurzel = Element(
-                "DATA",
-                {
-                    "xmlns:xsi": (
-                        "http://www.w3.org/2001/XMLSchema-instance"
+        try:
+            with datenbank_oeffnen(self._datenquelle) as db_qkan:
+                if not db_qkan.connected:
+                    QMessageBox.critical(
+                        self,
+                        "M150-Export",
+                        "Die gewählte QKan-Datenquelle konnte nicht geöffnet "
+                        "werden.",
                     )
-                },
-            )
-            fd = SubElement(xml_wurzel, "FD")
-            # FD001 benennt den hier implementierten M150-Ausgabestand;
-            # FD002=A kennzeichnet die Übergabe der Stamm- und Geometriedaten
-            # vom Auftraggeber an das Inspektionsfahrzeug.
-            SubElement(fd, "FD001").text = "04-2010"
-            SubElement(fd, "FD002").text = "A"
+                    return
 
-            self._export_haltungen(
-                xml_wurzel,
-                h_objekte,
-            )
+                db_qkan.loadmodule("inspektion")
 
-            if a_objekte:
-                self._export_anschlussleitungen(
-                    xml_wurzel,
-                    a_objekte,
-                    h_objekte,
-                    s_objekte,
+                h_objekte = self._sql_auswahl_zeilen_laden(
+                    db_qkan,
+                    "inspektion_export_haltungen_auswahl",
+                    self.ausgewaehlte_haltungen,
+                )
+                a_objekte = self._sql_auswahl_zeilen_laden(
+                    db_qkan,
+                    "inspektion_export_anschlussleitungen_auswahl",
+                    self.ausgewaehlte_anschlussleitungen,
                 )
 
-            self._export_schaechte(xml_wurzel, s_objekte)
+                schacht_namen = set(self.ausgewaehlte_schaechte)
+                for objekt in h_objekte:
+                    if objekt.get("schoben"):
+                        schacht_namen.add(str(objekt["schoben"]))
+                    if objekt.get("schunten"):
+                        schacht_namen.add(str(objekt["schunten"]))
+                for objekt in a_objekte:
+                    if objekt.get("schoben"):
+                        schacht_namen.add(str(objekt["schoben"]))
+                    if objekt.get("schunten"):
+                        schacht_namen.add(str(objekt["schunten"]))
 
-            try:
+                s_objekte = self._sql_auswahl_zeilen_laden(
+                    db_qkan,
+                    "inspektion_export_schaechte_auswahl",
+                    schacht_namen,
+                )
+
+                # Keine Vorfilterung nach haltnam: Die Geometrie innerhalb
+                # von 5 cm ist zwingend. haltnam und urstation dienen nur
+                # zur Rangfolge mehrerer geometrischer Treffer.
+                as_objekte = self._sql_zeilen_laden(
+                    db_qkan,
+                    "inspektion_export_anschlussschaechte_haltungen",
+                )
+
+                self._referenzen_laden(db_qkan)
+
+                xml_wurzel = Element(
+                    "DATA",
+                    {
+                        "xmlns:xsi": (
+                            "http://www.w3.org/2001/XMLSchema-instance"
+                        )
+                    },
+                )
+                fd = SubElement(xml_wurzel, "FD")
+                # Das QKan-Austauschprofil verwendet eine individuelle
+                # Auswahl der M150-Felder und wird deshalb als Typ Z geführt.
+                SubElement(fd, "FD001").text = "04-2010"
+                SubElement(fd, "FD002").text = "Z"
+
+                self._export_haltungen(
+                    xml_wurzel,
+                    h_objekte,
+                )
+
+                if a_objekte:
+                    self._export_anschlussleitungen(
+                        xml_wurzel,
+                        a_objekte,
+                        h_objekte,
+                        s_objekte,
+                        as_objekte,
+                    )
+
+                self._export_schaechte(xml_wurzel, s_objekte)
+
                 indent(xml_wurzel, space="  ")
                 xml_daten = tostring(
                     xml_wurzel,
@@ -2438,14 +3047,22 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
 
                 with open(dateipfad, "wb") as datei:
                     datei.write(xml_daten)
-            except (LookupError, OSError, TypeError, UnicodeError) as err:
-                QMessageBox.critical(
-                    self,
-                    "M150-Export",
-                    "Die XML-Datei konnte nicht erzeugt oder gespeichert "
-                    f"werden.\n\n{err}",
-                )
-                return
+        except (
+            LookupError,
+            OSError,
+            QkanDbError,
+            RuntimeError,
+            TypeError,
+            UnicodeError,
+            ValueError,
+        ) as err:
+            QMessageBox.critical(
+                self,
+                "M150-Export",
+                "Der M150-Export konnte nicht vollständig durchgeführt "
+                f"werden.\n\n{err}",
+            )
+            return
 
         QMessageBox.information(
             self, "M150-Export", "M150-Export erfolgreich abgeschlossen."
