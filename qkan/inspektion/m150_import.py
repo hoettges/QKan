@@ -2978,11 +2978,68 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 "Schacht/Knoten",
             )
 
+    def _anschluss_urstation_aus_m150(
+        self,
+        hg: XmlElement,
+        h_layer: Optional[QgsVectorLayer],
+        haltnam: Optional[str],
+    ) -> Optional[float]:
+        """Berücksichtigt HG008 bei der Übernahme von HG007 nach QKan.
+
+        HG007 enthält die Stationierung im übergeordneten Objekt. HG008
+        bestimmt deren Richtung: ``G`` bedeutet gegen Fließrichtung und
+        entspricht damit direkt der QKan-Urstation; bei ``I`` wird die
+        Station an der Länge der Elternhaltung gespiegelt.
+
+        Fehlt HG008, bleibt aus Kompatibilitätsgründen das bisherige
+        Verhalten erhalten. Unbekannte Werte werden ebenfalls unverändert
+        übernommen und im Importlog gemeldet.
+        """
+        station = self._zahl_lesen(hg.findtext("HG007"))
+        if station is None:
+            return None
+
+        richtung = self._als_text(hg.findtext("HG008")).upper()
+        if not richtung or richtung == "G":
+            return station
+
+        leitnam = self._anschluss_leitnam_lesen(hg)
+        if richtung != "I":
+            self._log_hinzufuegen(
+                f"⚠ Anschlussleitung '{leitnam}' mit unbekannter "
+                f"HG008-Stationierungsrichtung '{richtung}': "
+                "HG007 wird unverändert als Urstation übernommen"
+            )
+            return station
+
+        haltung = self._haltung_feature_finden(
+            h_layer, self._als_text(haltnam)
+        )
+        if haltung is None:
+            self._log_hinzufuegen(
+                f"⚠ Anschlussleitung '{leitnam}' mit HG008=I: "
+                "Elternhaltung für die Umrechnung von HG007 nicht gefunden – "
+                "HG007 wird unverändert als Urstation übernommen"
+            )
+            return station
+
+        geometrie = haltung.geometry()
+        if geometrie is None or geometrie.isEmpty():
+            self._log_hinzufuegen(
+                f"⚠ Anschlussleitung '{leitnam}' mit HG008=I: "
+                "Elternhaltung ohne Geometrie – HG007 wird unverändert als "
+                "Urstation übernommen"
+            )
+            return station
+
+        return float(geometrie.length() - station)
+
     def _anschlussschacht_hg_daten_lesen(
         self,
         xml_root: XmlElement,
         kg_name: str,
         a_layer: Optional[QgsVectorLayer],
+        h_layer: Optional[QgsVectorLayer],
     ) -> Tuple[Optional[str], Optional[float], Optional[str]]:
         """Liest Haltung, Urstation und Leitungsname zum Anschlussknoten."""
         for hg in xml_root.findall("HG"):
@@ -2993,7 +3050,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
             leitnam = self._anschluss_leitnam_lesen(hg)
             haltnam = self._haltung_name_aus_anschluss_hg_lesen(hg)
-            urstation = self._zahl_lesen(hg.findtext("HG007"))
+            urstation = self._anschluss_urstation_aus_m150(
+                hg, h_layer, haltnam
+            )
 
             if a_layer is not None and leitnam:
                 leitungsobjekt = self._anschluss_match_finden(
@@ -3227,7 +3286,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
             haltnam, urstation, _leitnam = (
                 self._anschlussschacht_hg_daten_lesen(
-                    xml_root, name, a_layer
+                    xml_root, name, a_layer, self._layer_holen("haltungen")
                 )
             )
             geometrie = QgsGeometry.fromPointXY(punkt)
@@ -4134,9 +4193,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     startpunkt, h_layer
                 )
 
-            urstation = self._zahl_lesen(hg.findtext("HG007"))
-            # HG007 ist die Stationierung im übergeordneten Objekt. Fehlt sie,
-            # wird der Leitungsendpunkt auf die gefundene Haltung projiziert.
+            urstation = self._anschluss_urstation_aus_m150(
+                hg, h_layer, haltnam
+            )
+            # HG007 ist die Stationierung im übergeordneten Objekt; HG008
+            # bestimmt deren Richtung. Fehlt HG007, wird der Leitungsendpunkt
+            # wie bisher auf die gefundene Haltung projiziert.
             if urstation is None:
                 urstation = self._station_auf_haltung_berechnen(
                     endpunkt, h_layer, haltnam
