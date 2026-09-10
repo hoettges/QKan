@@ -2083,7 +2083,9 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                         kg_id,
                         knotentyp,
                     )
-            kg305 = "Z"
+                kg305 = "Z"
+            else:
+                kg305 = "F"
 
         xml_kg = SubElement(xml_wurzel, "KG")
         SubElement(xml_kg, "KG001").text = kg_id
@@ -2641,11 +2643,14 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                             anschluss_pk
                         ] = freies_ende_name
 
-                    endpunkt_typ = self._knotenart_map_m150(
-                        freies_ende_anschlussschacht.get("knotentyp")
+                    knotentyp = freies_ende_anschlussschacht.get(
+                        "knotentyp"
                     )
+                    endpunkt_typ = self._knotenart_map_m150(knotentyp)
                     if not endpunkt_typ:
-                        endpunkt_typ = "Z"
+                        endpunkt_typ = (
+                            "Z" if str(knotentyp or "").strip() else "F"
+                        )
                 else:
                     freies_ende_name = (
                         self._anschlussknoten_exportname_erzeugen(
