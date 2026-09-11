@@ -3182,7 +3182,7 @@ class BefahrungsmedienPlugin:
         icon_path = str(Path(__file__).parent / "res" / "tv_befahrung.png")
         self.pick_action = QKan.instance.add_action(
             icon_path=icon_path,
-            text="TV-Befahrung",
+            text="Befahrungsmedien",
             toolbar="QKan-Inspektion",
             callback=self._qkan_aktion_ausgeloest,
             checkable=True,
@@ -3190,8 +3190,7 @@ class BefahrungsmedienPlugin:
         )
         self.pick_action.setObjectName("qkan_inspektion_tv_befahrung")
         self.pick_action.setToolTip(
-            "Auswahlmodus für Haltung, Anschlussleitung oder Schacht "
-            "ein-/ausschalten"
+            "Fotos, Videos und Schäden einer Befahrung gemeinsam anzeigen"
         )
         self.pick_action.toggled.connect(self._objektauswahl_umschalten)
         self.iface.action_tv_befahrung = self.pick_action
@@ -3274,7 +3273,7 @@ class BefahrungsmedienPlugin:
             self.previous_map_tool = canvas.mapTool()
             canvas.setMapTool(self.identify_tool)
         self.iface.messageBar().pushMessage(
-            "QKan TV-Befahrung",
+            "QKan Befahrungsmedien",
             "Auswahlmodus aktiv: Objekte nacheinander anklicken. "
             "Rechtsklick oder TV-Button beendet den Modus.",
             level=Qgis.Info,

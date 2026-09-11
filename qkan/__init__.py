@@ -475,7 +475,7 @@ class QKan:
             safe_add_action(inspektion, "Haltung verschieben")
             safe_add_action(inspektion, "M150 Export")
             safe_add_action(inspektion, "M150 Import")
-            safe_add_action(inspektion, "TV-Befahrung")
+            safe_add_action(inspektion, "Befahrungsmedien")
             safe_add_action(inspektion, "M150-Dokumentation")
 
             safe_add_action(sync, "Vergleich mit einem anderen QKan-Projekt")
