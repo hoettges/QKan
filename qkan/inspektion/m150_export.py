@@ -64,6 +64,8 @@ from .datenquelle import (
     layer_finden,
 )
 
+from .m150_info import zeige_m150_info
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -724,6 +726,9 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
 
         self.pb_export.clicked.connect(self._waehle_speicherort)
         self.export_2.clicked.connect(self._export_xml)
+        self.pb_info.clicked.connect(
+            lambda: zeige_m150_info(self)
+        )
 
         # Klicks in den drei Auswahllisten mit der Kartenhervorhebung verbinden
         self.haltungen.itemClicked.connect(self._haltung_hervorheben)
@@ -1347,58 +1352,6 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             return float(wert)
         except (TypeError, ValueError):
             return None
-
-    def _hoehe_ist_gueltig(self, wert: object) -> bool:
-        """Prüft die für den QKan-Höhenrückfall akzeptierte Wertspanne.
-
-        Die Grenze ``0 < Höhe <= 4000`` ist eine Plausibilitätsregel dieses
-        Exports und keine durch DWA-M 150 definierte Höhenbeschränkung.
-        """
-        number = self._wert_in_zahl_oder_none(wert)
-        return number is not None and 0.0 < number <= 4000.0
-
-    def _anschlusshoehe_aus_haltung_berechnen(
-        self,
-        haltung_geometrie: QgsGeometry,
-        anschlusspunkt: QgsPointXY,
-        haltungshoehe_start: object,
-        haltungshoehe_ende: object,
-    ) -> Optional[float]:
-        """Interpoliert die Sohlhöhe am Anschlusspunkt.
-
-        :param haltung_geometrie: Geometrie der zugehörigen Haltung.
-        :param anschlusspunkt: Auf die Haltung projizierter Anschlusspunkt.
-        :param haltungshoehe_start: Sohlhöhe am Haltungsanfang.
-        :param haltungshoehe_ende: Sohlhöhe am Haltungsende.
-        :return: Interpolierte Höhe oder ``None`` bei ungültigen Eingangsdaten.
-        """
-        if (
-            haltung_geometrie is None
-            or anschlusspunkt is None
-            or not self._hoehe_ist_gueltig(haltungshoehe_start)
-            or not self._hoehe_ist_gueltig(haltungshoehe_ende)
-        ):
-            return None
-
-        laenge = float(haltung_geometrie.length())
-        if laenge <= 0.0:
-            return None
-
-        station = self._berechne_station_haltung(
-            haltung_geometrie, anschlusspunkt
-        )
-        # Lineare Interpolation zwischen den beiden Sohlhöhen. Der Anteil wird
-        # begrenzt, falls ein projizierter Punkt numerisch knapp außerhalb der
-        # Geometrie liegt.
-        anteil = min(1.0, max(0.0, station / laenge))
-
-        z_start = float(haltungshoehe_start)
-        z_ende = float(haltungshoehe_ende)
-        berechnete_hoehe = z_start + (z_ende - z_start) * anteil
-
-        if not self._hoehe_ist_gueltig(berechnete_hoehe):
-            return None
-        return berechnete_hoehe
 
     def _formatiere_zahlen_export(
         self,
@@ -2490,6 +2443,12 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 SubElement(xml_kg, "KG308").text = durchm
                 SubElement(xml_kg, "KG309").text = durchm
 
+            druckdicht = self._wert_in_zahl_oder_none(
+                objekt.get("druckdicht")
+            )
+            if druckdicht in (0.0, 1.0):
+                SubElement(xml_kg, "KG315").text = str(int(druckdicht))
+
             xml_go = SubElement(xml_kg, "GO")
             SubElement(xml_go, "GO001").text = str(objekt.get("schnam") or "")
             SubElement(xml_go, "GO002").text = "G"
@@ -2731,32 +2690,6 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             z_start = objekt.get("sohleoben")
             z_end = objekt.get("sohleunten")
 
-            berechnete_hoehe_fuer_alle_gp = None
-            # Ist die QKan-Endhöhe leer oder nach der projektspezifischen
-            # Plausibilitätsgrenze ungültig, wird die Haltungshöhe am
-            # Anschlusspunkt linear interpoliert. Dieser Rückfall ist keine
-            # Anforderung von DWA-M 150.
-            if not self._hoehe_ist_gueltig(z_end):
-                haltungshoehe_start, haltungshoehe_ende = (
-                    self._lese_haltung_sohlen(
-                        verbundene_haltung, startname, endname
-                    )
-                )
-                berechnete_anschlusshoehe = (
-                    self._anschlusshoehe_aus_haltung_berechnen(
-                        h_geom_oriented,
-                        anschlusspunkt,
-                        haltungshoehe_start,
-                        haltungshoehe_ende,
-                    )
-                )
-                if berechnete_anschlusshoehe is not None:
-                    z_start = berechnete_anschlusshoehe
-                    z_end = berechnete_anschlusshoehe
-                    berechnete_hoehe_fuer_alle_gp = (
-                        berechnete_anschlusshoehe
-                    )
-
             xml_hg = SubElement(xml_wurzel, "HG")
             # Bedeutung der Anschlussfelder nach DWA-M 150:
             # HG005 Endobjekt, HG006 Typ des Elternobjekts, HG007 Station,
@@ -2844,13 +2777,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
                 SubElement(xml_gp, "GP006").text = (
                     self._formatiere_zahlen_export(linienpunkt.y())
                 )
-                if berechnete_hoehe_fuer_alle_gp is not None:
-                    SubElement(xml_gp, "GP007").text = (
-                        self._formatiere_zahl_oder_leer(
-                            berechnete_hoehe_fuer_alle_gp
-                        )
-                    )
-                elif index == 0:
+                if index == 0:
                     SubElement(xml_gp, "GP007").text = (
                         self._formatiere_zahl_oder_leer(z_start)
                     )

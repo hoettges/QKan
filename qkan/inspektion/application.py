@@ -7,6 +7,7 @@ from qkan.plugin import QKanPlugin
 
 # noinspection PyUnresolvedReferences
 from . import resources  # noqa: F401
+from .befahrungsmedien import BefahrungsmedienPlugin
 
 
 class Inspektion(QKanPlugin):
@@ -20,6 +21,7 @@ class Inspektion(QKanPlugin):
         super().__init__(iface)
         self._tool_hooked = False
         self._running_auto = False
+        self.medienplayer = BefahrungsmedienPlugin(iface)
 
     def initGui(self):
         """Registriert die Aktionen und Symbole in der QKan-Werkzeugleiste."""
@@ -112,6 +114,9 @@ class Inspektion(QKanPlugin):
         self.action_befahrung_import.setCheckable(False)
         self.iface.action_befahrung_import = self.action_befahrung_import
 
+        # TV-Befahrung / Medienplayer
+        self.medienplayer.initGui()
+
         # Dieser Teil verhindert das Default-Verhalten beim Bearbeiten
         # des Layers "Haltungen". Stattdessen wird create_haltung
         # erzwungen: mehr Kontrolle über UI-Formular und Daten.
@@ -145,6 +150,11 @@ class Inspektion(QKanPlugin):
             iface.mapCanvas().mapToolSet.connect(on_tool_changed)
             self._tool_hooked = True
         """
+
+    def unload(self) -> None:
+        """Bereinigt den integrierten Medienplayer beim Entladen."""
+        self.medienplayer.unload()
+        super().unload()
 
     def run_create_schacht(self):
         """Startet das Werkzeug zum Erstellen eines Schachts."""

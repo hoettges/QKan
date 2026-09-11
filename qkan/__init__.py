@@ -15,6 +15,7 @@ from qgis.utils import pluginDirectory
 
 from .config import Config
 from .utils import setup_logging, QkanAbortError
+from .inspektion.m150_info import zeige_m150_info
 
 from qkan import enums
 
@@ -166,7 +167,7 @@ class QKan:
     template_dir: str
     forms: list[str]
 
-    dbVersion = "3.4.10"  # Version der QKan-Datenbank
+    dbVersion = "3.4.12"  # Version der QKan-Datenbank
     qgsVersion = "3.4.19"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
     build = "0000"
 
@@ -360,6 +361,15 @@ class QKan:
         for plugin in self.plugins:
             if hasattr(plugin, 'initGui'):
                 plugin.initGui()
+
+        self.add_action(
+            icon_path="",
+            text="M150-Dokumentation",
+            toolbar="QKan-Inspektion",
+            callback=lambda: zeige_m150_info(self.iface.mainWindow()),
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow(),
+        )
         self.sort_actions()
 
 
@@ -465,6 +475,8 @@ class QKan:
             safe_add_action(inspektion, "Haltung verschieben")
             safe_add_action(inspektion, "M150 Export")
             safe_add_action(inspektion, "M150 Import")
+            safe_add_action(inspektion, "TV-Befahrung")
+            safe_add_action(inspektion, "M150-Dokumentation")
 
             safe_add_action(sync, "Vergleich mit einem anderen QKan-Projekt")
             safe_add_action(sync, "Synchronisation mit einem anderen QKan-Projekt")

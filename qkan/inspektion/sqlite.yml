@@ -364,7 +364,7 @@ inspektion_ref_knotenart_m150: |-
 inspektion_export_haltungen_auswahl: SELECT pk, haltnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
   baujahr, profilnam, entwart, abflussart, material, profilauskleidung, innenmaterial, AsBinary(geom) AS __geom_wkb FROM haltungen WHERE
   haltnam IN ({auswahl}) AND (haltungstyp IS NULL OR haltungstyp = 'Haltung') ORDER BY pk;
-inspektion_export_schaechte_auswahl: SELECT pk, schnam, sohlhoehe, durchm, entwart, knotentyp, schachttyp, xsch, ysch, AsBinary(geop)
+inspektion_export_schaechte_auswahl: SELECT pk, schnam, sohlhoehe, durchm, entwart, knotentyp, schachttyp, druckdicht, xsch, ysch, AsBinary(geop)
   AS __geom_wkb FROM schaechte WHERE schnam IN ({auswahl}) AND schachttyp = 'Schacht' ORDER BY pk;
 inspektion_export_anschlussleitungen_auswahl: SELECT pk, leitnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
   baujahr, haltnam, urstation, ursprung, anschlusstyp, lageanschluss, profilnam, entwart, material, profilauskleidung, innenmaterial,

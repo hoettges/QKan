@@ -8,7 +8,13 @@ from typing import Optional, cast
 from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.PyQt.QtWidgets import QApplication
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import (
+    Qgis,
+    QgsCoordinateReferenceSystem,
+    QgsDataProvider,
+    QgsDataSourceUri,
+    QgsProject,
+)
 from qgis.gui import QgisInterface
 from qgis.utils import iface
 from PyQt5.QtGui import QPixmap
@@ -1006,6 +1012,49 @@ class QKanTools(QKanPlugin):
                     raise QkanDbError(f"{__name__}: {errormsg}")
 
                 dbQK.sql("SELECT RecoverSpatialIndex()")  # Geometrie-Indizes bereinigen
+
+            # Bereits geladene SpatiaLite-Layer behalten ihre beim Laden
+            # ermittelte Feldstruktur. Nach einer Datenbankmigration müssen
+            # deshalb die Provider der Layer aus derselben QKan-Datenbank
+            # neu initialisiert werden, damit neue Spalten sofort in QGIS
+            # verfügbar sind.
+            aktualisierte_datenbank = os.path.normcase(
+                os.path.normpath(cast(str, self.database_name))
+            )
+            provider_optionen = QgsDataProvider.ProviderOptions()
+
+            for layer in QgsProject.instance().mapLayers().values():
+                try:
+                    if layer.providerType() != "spatialite":
+                        continue
+
+                    uri = QgsDataSourceUri(layer.source())
+                    layer_datenbank = uri.database()
+                    if not layer_datenbank:
+                        continue
+
+                    layer_datenbank = os.path.normcase(
+                        os.path.normpath(layer_datenbank)
+                    )
+                    if layer_datenbank != aktualisierte_datenbank:
+                        continue
+
+                    layer.setDataSource(
+                        layer.source(),
+                        layer.name(),
+                        layer.providerType(),
+                        provider_optionen,
+                    )
+                    layer.updateFields()
+                    layer.triggerRepaint()
+
+                except (RuntimeError, TypeError, ValueError) as err:
+                    logger.warning(
+                        "Layer '%s' konnte nach der Datenbankaktualisierung "
+                        "nicht neu geladen werden: %s",
+                        layer.name(),
+                        err,
+                    )
 
             # layersadapt(
             #     database_QKan=cast(str, self.database_name),

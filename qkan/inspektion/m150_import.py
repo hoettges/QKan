@@ -65,6 +65,8 @@ from .datenquelle import (
     layer_finden,
 )
 
+from .m150_info import zeige_m150_info
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -606,6 +608,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         self.pb_import.clicked.connect(self._datei_waehlen)
         self.import_2.clicked.connect(self._xml_import)
+        self.pb_info.clicked.connect(
+            lambda: zeige_m150_info(self)
+        )
         self.logbuch.setFont(QFont("Arial", 10))
 
     # Benutzeroberfläche und Protokoll
@@ -702,6 +707,20 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         """
         wert = self._nullify(wert)
         return "" if wert is None else str(wert)
+
+    def _m150_ja_nein_lesen(
+        self,
+        wert: object,
+        ja_code: str,
+        nein_code: str,
+    ) -> Optional[str]:
+        """Überführt einen festgelegten M150-Code nach Ja/Nein."""
+        code = self._als_text(wert).upper()
+        if code == ja_code.upper():
+            return "Ja"
+        if code == nein_code.upper():
+            return "Nein"
+        return None
 
     def _kommentar_anhaengen(
         self, alter_wert: object, neuer_wert: object
@@ -2966,6 +2985,11 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 "simstatus": self._nullify(kg.findtext("KG401")),
                 "schachttyp": zuordnung["schachttyp"],
                 "knotentyp": zuordnung["knotentyp"],
+                "druckdicht": (
+                    self._ganzzahl_lesen(kg.findtext("KG315"))
+                    if self._ganzzahl_lesen(kg.findtext("KG315")) in (0, 1)
+                    else None
+                ),
                 "kommentar": self._nullify(kg.findtext("KG999")),
             }
             self._erstellen_oder_aktualisieren(
@@ -4375,6 +4399,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                         or self._nullify(ki.findtext("KI112"))
                     ),
                     "wetter": self._ganzzahl_lesen(ki.findtext("KI106")),
+                    "reinigung": self._m150_ja_nein_lesen(
+                        ki.findtext("KI107"), "J", "N"
+                    ),
                     "bewertungsart": self._referenz_langtext_fuer_feld(
                         "KI005", ki.findtext("KI005")
                     ) or self._nullify(ki.findtext("KI005")),
@@ -4433,6 +4460,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                         "streckenschaden": self._nullify(kz.findtext("KZ005")),
                         "pos_von": self._ganzzahl_lesen(kz.findtext("KZ006")),
                         "pos_bis": self._ganzzahl_lesen(kz.findtext("KZ007")),
+                        "verbindung": self._m150_ja_nein_lesen(
+                            kz.findtext("KZ011"), "A", ""
+                        ),
                         "vertikale_lage": self._zahl_lesen(
                             kz.findtext("KZ001")
                         ),
@@ -4530,6 +4560,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     "untersuchrichtung": richtung,
                     "bezugspunkt": bezugspunkt,
                     "wetter": self._ganzzahl_lesen(hi.findtext("HI106")),
+                    "reinigung": self._m150_ja_nein_lesen(
+                        hi.findtext("HI107"), "J", "N"
+                    ),
                     "bewertungsart": self._referenz_langtext_fuer_feld(
                         "HI005", hi.findtext("HI005")
                     ) or self._nullify(hi.findtext("HI005")),
@@ -4598,6 +4631,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                         "streckenschaden_lfdnr": streckenschaden_lfdnr,
                         "pos_von": self._ganzzahl_lesen(hz.findtext("HZ006")),
                         "pos_bis": self._ganzzahl_lesen(hz.findtext("HZ007")),
+                        "auskleidung": self._m150_ja_nein_lesen(
+                            hz.findtext("HZ012"), "1", "0"
+                        ),
                         "foto_dateiname": self._nullify(hz.findtext("HZ009")),
                         "film_dateiname": self._nullify(hi.findtext("HI116")),
                         "ZD": self._ganzzahl_lesen(hz.findtext("HZ206")),
@@ -4692,6 +4728,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     "untersuchrichtung": richtung,
                     "bezugspunkt": bezugspunkt,
                     "wetter": self._ganzzahl_lesen(hi.findtext("HI106")),
+                    "reinigung": self._m150_ja_nein_lesen(
+                        hi.findtext("HI107"), "J", "N"
+                    ),
                     "bewertungsart": self._referenz_langtext_fuer_feld(
                         "HI005", hi.findtext("HI005")
                     ) or self._nullify(hi.findtext("HI005")),
@@ -4757,6 +4796,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                         "streckenschaden_lfdnr": streckenschaden_lfdnr,
                         "pos_von": self._ganzzahl_lesen(hz.findtext("HZ006")),
                         "pos_bis": self._ganzzahl_lesen(hz.findtext("HZ007")),
+                        "auskleidung": self._m150_ja_nein_lesen(
+                            hz.findtext("HZ012"), "1", "0"
+                        ),
                         "foto_dateiname": self._nullify(hz.findtext("HZ009")),
                         "film_dateiname": self._nullify(hi.findtext("HI116")),
                         "ZD": self._ganzzahl_lesen(hz.findtext("HZ206")),

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>445</width>
-    <height>737</height>
+    <height>630</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>280</width>
-    <height>200</height>
+    <width>445</width>
+    <height>630</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -67,7 +67,7 @@
         <x>0</x>
         <y>0</y>
         <width>443</width>
-        <height>724</height>
+        <height>619</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -244,6 +244,56 @@
         </widget>
        </item>
        <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_info">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_info">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>10</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pb_info">
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>70</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Tahoma</family>
+             <pointsize>8</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Informationen zu DWA-M-150-Feldern und Besonderheiten</string>
+           </property>
+           <property name="text">
+            <string>Info</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="enabled">
           <bool>true</bool>
@@ -278,7 +328,7 @@
           <string>Verbundene Elemente einbeziehen:</string>
          </property>
          <layout class="QFormLayout" name="formLayout">
-          <item row="1" column="0" colspan="2">
+          <item row="0" column="0" colspan="2">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
              <widget class="QCheckBox" name="cb_export_haltungen">

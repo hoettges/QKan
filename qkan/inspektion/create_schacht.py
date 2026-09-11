@@ -64,6 +64,14 @@ def create_schacht():
         action.setChecked(False)
         create_schacht._active = False
         create_schacht._datenquelle = None
+
+        handler = getattr(create_schacht, "_feature_added_handler", None)
+        if handler is not None:
+            try:
+                layer.featureAdded.disconnect(handler)
+            except TypeError:
+                pass
+            create_schacht._feature_added_handler = None
         return
 
     # -------------------------------------------------
@@ -142,13 +150,21 @@ def create_schacht():
         create_schacht._active = False
         create_schacht._datenquelle = None
 
-        layer.featureAdded.disconnect(stop_digitizing)
+        try:
+            layer.featureAdded.disconnect(stop_digitizing)
+        except TypeError:
+            pass
+        create_schacht._feature_added_handler = None
 
         create_schacht._running = False
 
     old_handler = getattr(create_schacht, "_feature_added_handler", None)
     if old_handler is not None:
-        layer.featureAdded.disconnect(old_handler)
+        try:
+            layer.featureAdded.disconnect(old_handler)
+        except TypeError:
+            pass
+        create_schacht._feature_added_handler = None
 
     create_schacht._feature_added_handler = stop_digitizing
     layer.featureAdded.connect(stop_digitizing)

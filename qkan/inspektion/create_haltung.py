@@ -92,10 +92,12 @@ def create_haltung():
         create_haltung._active = False
         create_haltung._datenquelle = None
 
-        if getattr(create_haltung, "_feature_added_handler", None):
-            layer.featureAdded.disconnect(
-                create_haltung._feature_added_handler
-            )
+        handler = getattr(create_haltung, "_feature_added_handler", None)
+        if handler is not None:
+            try:
+                layer.featureAdded.disconnect(handler)
+            except TypeError:
+                pass
             create_haltung._feature_added_handler = None
 
         layer.commitChanges()
@@ -121,7 +123,10 @@ def create_haltung():
 
     old_handler = getattr(create_haltung, "_feature_added_handler", None)
     if old_handler is not None:
-        layer.featureAdded.disconnect(old_handler)
+        try:
+            layer.featureAdded.disconnect(old_handler)
+        except TypeError:
+            pass
         create_haltung._feature_added_handler = None
 
     # ------------------------------------------
@@ -386,7 +391,11 @@ def create_haltung():
         create_haltung._active = False
         create_haltung._datenquelle = None
 
-        layer.featureAdded.disconnect(stop_digitizing)
+        try:
+            layer.featureAdded.disconnect(stop_digitizing)
+        except TypeError:
+            pass
+        create_haltung._feature_added_handler = None
 
         create_haltung._running = False
 

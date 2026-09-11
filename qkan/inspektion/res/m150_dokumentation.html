@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>DWA-M 150 – QKan Inspektion</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.45;
+    margin: 18px;
+}
+h1 {
+    font-size: 18pt;
+    margin: 0 0 8px 0;
+}
+h2 {
+    font-size: 14pt;
+    margin-top: 28px;
+    border-bottom: 1px solid #999;
+    padding-bottom: 4px;
+}
+h3 {
+    font-size: 11pt;
+    margin-top: 20px;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8px 0 18px 0;
+}
+th, td {
+    border: 1px solid #aaa;
+    padding: 5px 7px;
+    vertical-align: top;
+    text-align: left;
+}
+th {
+    background: #e8e8e8;
+}
+code {
+    font-family: Consolas, monospace;
+}
+.hinweis {
+    border: 1px solid #aaa;
+    padding: 8px 10px;
+    margin: 12px 0;
+    background: #f7f7f7;
+}
+.ablauf {
+    margin: 6px 0 10px 16px;
+}
+.status {
+    white-space: nowrap;
+}
+.klein {
+    font-size: 9pt;
+}
+.toc a {
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>DWA-M 150 – Import, Export und TV-Befahrung in QKan</h1>
+
+<p>
+Diese Hilfe beschreibt die Funktionen des QKan-Moduls <b>Inspektion</b>
+für Arbeitsabläufe rund um TV-Befahrungen sowie den Import und Export von
+Daten im XML-Austauschformat nach DWA-M 150.
+</p>
+
+<div class="toc">
+<b>Inhalt</b>
+<ol>
+    <li><a href="#funktion">Funktion und Zielsetzung</a></li>
+    <li><a href="#besonderheiten">Datenmodell und Besonderheiten</a></li>
+    <li><a href="#feldliste">Unterstützte DWA-M-150-Feldliste</a></li>
+</ol>
+</div>
+
+
+<h2 id="funktion">1. Funktion und Zielsetzung</h2>
+
+<p>
+Das Inspektionsmodul unterstützt die Vorbereitung, Durchführung und
+Nachbearbeitung von TV-Befahrungen in QKan. Neben dem Datenaustausch über
+DWA-M-150-XML stehen einfache Werkzeuge zur Bearbeitung des Kanalnetzes
+direkt in QGIS zur Verfügung.
+</p>
+
+<h3>1.1 Werkzeuge für die Befahrung</h3>
+
+<p>
+Für die schnelle Bearbeitung des Netzes stehen vier Werkzeuge zur Verfügung:
+<b>Schacht erstellen</b>, <b>Haltung erstellen</b>,
+<b>Schacht verschieben</b> und <b>Haltung verschieben</b>.
+Sie dienen insbesondere dazu, fehlende oder falsch liegende Netzobjekte
+während der Vorbereitung oder Bearbeitung einer Befahrung direkt im
+Kartenfenster zu korrigieren.
+</p>
+
+<h3>1.2 M150-Export</h3>
+
+<p>
+Der Export ist auf die gezielte Übergabe ausgewählter Netzobjekte ausgelegt.
+Ausgangspunkt ist die Auswahl einer oder mehrerer Haltungen im Kartenfenster.
+Die Auswahl kann direkt über das Kartenwerkzeug erfolgen; die erkannten
+Objekte werden anschließend im Exportdialog getrennt als Haltungen,
+Schächte und Anschlussleitungen angezeigt.
+</p>
+
+<ol class="ablauf">
+    <li>Haltung bzw. Haltungen im Kartenfenster auswählen.</li>
+    <li>
+        Optional verbundene Elemente einbeziehen. Dazu gehören die zugehörigen
+        Schächte und – sofern aktiviert – Anschlussleitungen.
+    </li>
+    <li>Auswahl im Dialog kontrollieren.</li>
+    <li>Exportziel und Dateinamen festlegen.</li>
+    <li>Export starten.</li>
+</ol>
+
+<p>
+Der Export liest ausschließlich gespeicherte QKan-Daten. Offene Änderungen
+in exportrelevanten Layern müssen vor dem Export gespeichert werden.
+Der Export selbst verändert keine Netzobjekte.
+</p>
+
+<h3>1.3 M150-Import</h3>
+
+<p>
+Beim Import wird eine M150-XML-Datei ausgewählt und anschließend festgelegt,
+welche Daten übernommen werden sollen. Stamm- und Inspektionsdaten können
+getrennt verarbeitet werden.
+</p>
+
+<ol class="ablauf">
+    <li>M150-XML-Datei auswählen.</li>
+    <li>Import für <b>Inspektionsdaten</b> und/oder <b>Stammdaten</b> wählen.</li>
+    <li>
+        Optional <b>Anschlüsse aus BCA erzeugen</b>, wenn fehlende
+        Anschlussleitungen aus entsprechenden Befahrungsdaten ergänzt werden sollen.
+    </li>
+    <li>Import starten.</li>
+    <li>Ergebnisse, Zuordnungen, Änderungen, Hinweise und Fehler im Logbuch kontrollieren.</li>
+</ol>
+
+<p>
+Das Importprotokoll wird direkt im Dialog angezeigt. Zusätzlich wird derselbe
+Inhalt fortlaufend in der Datei <code>M150_Import_Log.txt</code> im Ordner
+des aktuell geöffneten QGIS-Projekts gespeichert.
+</p>
+
+
+<h2 id="besonderheiten">2. Datenmodell und Besonderheiten</h2>
+
+<h3>2.1 QKan und DWA-M 150</h3>
+
+<p>
+QKan und DWA-M 150 besitzen unterschiedliche Datenmodelle. Deshalb können
+nicht alle Informationen direkt Feld für Feld übertragen werden. Das Modul
+verwendet für den Export ein QKan-spezifisches <b>Typ-Z-Profil</b>.
+Im XML wird dafür <code>FD002 = Z</code> verwendet.
+</p>
+
+<p>
+Die wichtigsten M150-Blöcke werden wie folgt behandelt:
+</p>
+
+<ul>
+    <li><b>HG</b> – Haltungen und Anschlussleitungen</li>
+    <li><b>KG</b> – Schächte und Anschlussknoten</li>
+    <li><b>HI / HZ</b> – Inspektionen und Zustände von Haltungen bzw. Anschlussleitungen</li>
+    <li><b>KI / KZ</b> – Inspektionen und Zustände von Schächten</li>
+    <li><b>GO / GP</b> – Geometrie und Geometriepunkte</li>
+    <li><b>RT</b> – Referenztabellen</li>
+</ul>
+
+<h3>2.2 Anschlussleitungen und Stationierung</h3>
+
+<p>
+Die M150-Felder <code>HG005</code> bis <code>HG012</code> beschreiben
+Anschlussleitungen und ihre Beziehung zum übergeordneten Netzobjekt.
+Besonders wichtig sind <code>HG007</code> und <code>HG008</code>:
+Die Station und ihre Richtung werden beim Import gemeinsam ausgewertet und
+in die QKan-<code>urstation</code> überführt.
+</p>
+
+<p>
+<code>HG009</code> wird als Lage des Anschlusses am Rohrumfang in
+<code>anschlussleitungen.lageanschluss</code> übernommen.
+</p>
+
+<h3>2.3 Anschlussknoten und freie Leitungsenden</h3>
+
+<p>
+M150 unterscheidet Knoten über <code>KG305</code> bzw. Referenztabelle 116.
+QKan behandelt diese Werte beim Import und Export unterschiedlich:
+</p>
+
+<ul>
+    <li><b>S</b> – echter Schacht; Zuordnung zu <code>schaechte</code></li>
+    <li><b>F</b> – fiktiver Schacht; es wird kein reales QKan-Knotenobjekt angelegt</li>
+    <li>
+        andere Knotenarten wie Revisionsschacht oder Straßenablauf –
+        Zuordnung zu <code>anschlussschaechte</code>
+    </li>
+</ul>
+
+<p>
+Beim Export wird am freien Ende einer Anschlussleitung zuerst nach einem
+realen Schacht, anschließend nach einem Anschlussknoten gesucht. Gibt es
+keinen passenden realen Knoten, wird für die M150-Netztopologie ein
+fiktiver Endpunkt ausgegeben, ohne dafür ein neues QKan-Bestandsobjekt
+anzulegen.
+</p>
+
+<h3>2.4 Referenztabellen</h3>
+
+<p>
+Mitgelieferte RT-Blöcke einer Importdatei werden eingelesen und bei der
+Zuordnung von Referenzwerten berücksichtigt. Dadurch können auch
+projektspezifische oder vom DWA-Standard abweichende Referenzwerte
+verarbeitet werden.Bei der Auflösung werden vorhandene XML-Referenzen, QKan-/YAML-Zuordnungen
+und DWA-Standardwerte berücksichtigt.
+</p>
+
+<h3>2.5 Wiederholbarer Import</h3>
+
+<p>
+Ein erneuter Import derselben Daten soll keine unnötigen Dubletten erzeugen.
+Stammobjekte werden anhand ihrer Objektkennungen wiedergefunden.
+Gesamtinspektionen werden über Objekt und Untersuchungsdatum zugeordnet;
+Einzelschäden zusätzlich über ihre laufende Reihenfolge innerhalb der
+Inspektion.
+</p>
+
+<p>
+Leere optionale XML-Felder löschen beim Aktualisieren keine bereits
+vorhandenen QKan-Werte.
+</p>
+
+<h3>2.6 Geometrie und Schadensdarstellung</h3>
+
+<p>
+Geometrien werden über <code>GO</code>- und <code>GP</code>-Blöcke
+übertragen. Für Haltungen und Leitungen wird die Fließrichtung bei der
+Geometrieausgabe berücksichtigt.
+</p>
+
+<p>
+Die nach dem Import in QGIS dargestellten Schadens- und Beschriftungslinien
+sind QKan-spezifische Darstellungen. Sie dienen der übersichtlichen
+Visualisierung im Kartenfenster und sind keine zusätzliche Vorgabe des
+DWA-M 150.
+</p>
+
+<h3>2.7 Informationen nur im Protokoll</h3>
+
+<p>
+Nicht jede M150-Information besitzt ein entsprechendes QKan-Datenbankfeld.
+Einige Angaben werden deshalb bewusst nur im Importprotokoll ausgegeben.
+Welche Felder ausschließlich protokolliert werden, ist in der
+DWA-M-150-Feldliste mit dem Status „Log“ gekennzeichnet.
+</p>
+
+<h2 id="feldliste">3. Unterstützte DWA-M-150-Feldliste</h2>
+
+<p>
+Die folgende Liste basiert auf der DWA-M-150-Tabelle
+<b>„Format Typ Z“</b>. Aufgeführt werden ausschließlich Felder, die im
+aktuellen QKan-Modul tatsächlich importiert, exportiert, für Berechnungen
+oder Zuordnungen verwendet oder im Importprotokoll ausgegeben werden.
+</p>
+
+<div class="hinweis">
+<b>Statuslegende:</b>
+„Ja“ = wird fachlich übernommen oder ausgegeben;
+„Log“ = nur Importprotokoll;
+„Fallback“ = nur als Rückfall;
+„Zuordnung / Berechnung / Sonderlogik“ = steuert eine QKan-spezifische Verarbeitung;
+„Konstant“ = QKan schreibt einen festen Wert;
+„Leer“ = XML-Feld wird erzeugt, bleibt derzeit aber leer;
+„–“ = auf dieser Seite nicht verarbeitet.
+</div>
+
+<h3 id="fd-formatdaten">FD – Formatdaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>FD001</code></td><td>Versionsnummer der Schnittstelle</td><td class="status">Log</td><td class="status">Konstant: 04-2010</td><td>Beim Import im Protokoll ausgegeben; Export kennzeichnet die verwendete M150-Version.</td></tr>
+<tr><td><code>FD002</code></td><td>Formattypbezeichnung</td><td class="status">Log</td><td class="status">Konstant: Z</td><td>Beim Import im Protokoll ausgegeben; QKan exportiert das projektspezifische Typ-Z-Profil.</td></tr>
+</table>
+<h3 id="hg-haltungsgrunddaten">HG – Haltungsgrunddaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>HG001</code></td><td>Haltungsbezeichnung</td><td class="status">Ja</td><td class="status">Ja</td><td>Kennung der Haltung; bei Anschlussleitungen zusätzlich Bezug zur zugehörigen Haltung.</td></tr>
+<tr><td><code>HG002</code></td><td>Alternative Haltungsbezeichnung</td><td class="status">Fallback</td><td class="status">–</td><td>Rückfall für die Objektzuordnung bei Inspektions-/BCA-Daten, wenn HG001 fehlt.</td></tr>
+<tr><td><code>HG003</code></td><td>Knotenbezeichnung oben</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan schoben; wird außerdem bei Inspektionsdaten und BCA-Erzeugung berücksichtigt.</td></tr>
+<tr><td><code>HG004</code></td><td>Knotenbezeichnung unten</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan schunten; wird bei Haltungsinspektionen mitgeführt.</td></tr>
+<tr><td><code>HG005</code></td><td>Bezeichnung Endpunkt</td><td class="status">Zuordnung</td><td class="status">Ja</td><td>Bei Anschlussleitungen zur Endpunkt-/Anschlussknoten-Zuordnung; Export schreibt das reale oder fiktive Endobjekt.</td></tr>
+<tr><td><code>HG006</code></td><td>Objekttyp bei Anschlussleitung</td><td class="status">–</td><td class="status">Ja</td><td>Export: H bei direktem Anschluss an eine Haltung, L bei Verzweigung von einer Anschlussleitung.</td></tr>
+<tr><td><code>HG007</code></td><td>Stationierung der Anschlussleitung</td><td class="status">Berechnung</td><td class="status">Ja</td><td>Grundlage der QKan-urstation. Wird zusammen mit HG008 ausgewertet; Export verwendet urstation bzw. eine geometrisch berechnete Station.</td></tr>
+<tr><td><code>HG008</code></td><td>Stationierungsrichtung der Anschlussleitung</td><td class="status">Berechnung</td><td class="status">Leer</td><td>I = in Fließrichtung, G = gegen Fließrichtung. Beim Import Umrechnung von HG007 in QKan-urstation; Exportfeld bleibt derzeit leer.</td></tr>
+<tr><td><code>HG009</code></td><td>Positionierung bei Anschlussleitungen</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan anschlussleitungen.lageanschluss; Export zweistellig als Uhrlage.</td></tr>
+<tr><td><code>HG010</code></td><td>Typ Endpunkt</td><td class="status">–</td><td class="status">Ja</td><td>Exportiert die Knotenart des freien Endes nach RT116; fiktive/unbestimmte Enden werden nach der QKan-Regel behandelt.</td></tr>
+<tr><td><code>HG011</code></td><td>Leitungsbezeichnung</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan leitnam; zentrale Kennung einer Anschlussleitung.</td></tr>
+<tr><td><code>HG012</code></td><td>Kind von</td><td class="status">–</td><td class="status">Ja</td><td>Exportiert die direkte Eltern-Anschlussleitung bei verzweigten Anschlussnetzen.</td></tr>
+<tr><td><code>HG301</code></td><td>Kanalart</td><td class="status">Ja</td><td class="status">Ja</td><td>Import nach QKan abflussart für Haltungen. Bei Anschlussleitungen übernimmt der Export die Kanalart der zugeordneten Haltung.</td></tr>
+<tr><td><code>HG302</code></td><td>Kanalnutzung</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan entwart; Referenzauflösung über RT104/YAML/Standardwerte.</td></tr>
+<tr><td><code>HG303</code></td><td>Baujahr</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan baujahr.</td></tr>
+<tr><td><code>HG304</code></td><td>Materialart</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan material; Referenzauflösung über RT105/YAML/Standardwerte.</td></tr>
+<tr><td><code>HG305</code></td><td>Profilart</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan profilnam; Referenzauflösung über RT106/YAML/Standardwerte.</td></tr>
+<tr><td><code>HG306</code></td><td>Profilbreite</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan breite; zusätzlich als durchm verwendet, wenn das QKan-Ziel einen Durchmesser führt.</td></tr>
+<tr><td><code>HG307</code></td><td>Profilhöhe</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan hoehe.</td></tr>
+<tr><td><code>HG308</code></td><td>Profilauskleidung</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan profilauskleidung; Referenzauflösung über RT107/YAML/Standardwerte.</td></tr>
+<tr><td><code>HG309</code></td><td>Profilauskleidungsmaterial</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan innenmaterial; Materialauflösung über RT105.</td></tr>
+<tr><td><code>HG310</code></td><td>Haltungslänge</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan laenge; wird auch in untersuchten Haltungen/Anschlussleitungen mitgeführt.</td></tr>
+<tr><td><code>HG313</code></td><td>Haltungsart</td><td class="status">Zuordnung</td><td class="status">Ja</td><td>Steuert die Objektart: A/C/Z werden als Haltung behandelt, B als Anschlussleitung. Export schreibt A bzw. B.</td></tr>
+<tr><td><code>HG999</code></td><td>Bemerkung</td><td class="status">Ja</td><td class="status">–</td><td>Wird beim Stammimport als QKan-Kommentar übernommen.</td></tr>
+</table>
+<h3 id="go-gp-geometrie">GO / GP – Geometrie</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>GO001</code></td><td>Geometrieobjektbezeichnung</td><td class="status">Log-Kontext</td><td class="status">Ja</td><td>Beim Import nur zur genaueren Protokollzuordnung verwendet; Export kennzeichnet Geometrieobjekte.</td></tr>
+<tr><td><code>GO002</code></td><td>Geometrieobjektkennung</td><td class="status">–</td><td class="status">Ja</td><td>Exportiert die Objektkennung der Geometrie, z. B. Haltung/Geometrieobjekt.</td></tr>
+<tr><td><code>GO003</code></td><td>Geometrieobjekttyp</td><td class="status">–</td><td class="status">Ja</td><td>Exportiert Pkt für Punkt- und L für Liniengeometrien.</td></tr>
+<tr><td><code>GP001</code></td><td>Punktbezeichnung</td><td class="status">Log-Kontext</td><td class="status">Ja</td><td>Beim Import zur Protokollzuordnung; Export als Kennung des Geometriepunkts.</td></tr>
+<tr><td><code>GP002</code></td><td>Angabe des Koordinatensystems</td><td class="status">Log</td><td class="status">Konstant: UTM</td><td>Import wird protokolliert; Export schreibt derzeit UTM.</td></tr>
+<tr><td><code>GP003</code></td><td>Rechtswert</td><td class="status">Fallback</td><td class="status">–</td><td>Koordinaten-Rückfall beim Import, wenn GP005/GP006 fehlen.</td></tr>
+<tr><td><code>GP004</code></td><td>Hochwert</td><td class="status">Fallback</td><td class="status">–</td><td>Koordinaten-Rückfall beim Import, wenn GP005/GP006 fehlen.</td></tr>
+<tr><td><code>GP005</code></td><td>Ostkoordinate</td><td class="status">Ja</td><td class="status">Ja</td><td>Primäre X-Koordinate der importierten/exportierten Geometrie.</td></tr>
+<tr><td><code>GP006</code></td><td>Nordkoordinate</td><td class="status">Ja</td><td class="status">Ja</td><td>Primäre Y-Koordinate der importierten/exportierten Geometrie.</td></tr>
+<tr><td><code>GP007</code></td><td>Höhe</td><td class="status">Ja</td><td class="status">Ja</td><td>Sohl-/Punkthöhen. Bei Haltungen werden RA/RE-Rollen für die Zuordnung der Endhöhen verwendet.</td></tr>
+<tr><td><code>GP008</code></td><td>Lagegenauigkeit</td><td class="status">–</td><td class="status">Konstant: G</td><td>Wird bei Anschlussleitungs-Geometriepunkten als G = geschätzt ausgegeben.</td></tr>
+<tr><td><code>GP009</code></td><td>Höhengenauigkeit</td><td class="status">–</td><td class="status">Konstant: G</td><td>Wird bei Anschlussleitungs-Geometriepunkten als G = geschätzt ausgegeben.</td></tr>
+<tr><td><code>GP010</code></td><td>Angabe des Höhensystems</td><td class="status">Log</td><td class="status">Konstant: mNN</td><td>Import wird protokolliert; Export schreibt derzeit mNN.</td></tr>
+<tr><td><code>GP999</code></td><td>Bemerkung</td><td class="status">Sonderlogik</td><td class="status">Sonderlogik</td><td>QKan verwendet bei Haltungen die freien Marker RA/RE zur eindeutigen Zuordnung von Rohranfangs-/Rohrendhöhen.</td></tr>
+</table>
+<h3 id="hi-haltungsinspektionsdaten">HI – Haltungsinspektionsdaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>HI001</code></td><td>Auftraggeber</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll; keine QKan-Datenbankspeicherung.</td></tr>
+<tr><td><code>HI002</code></td><td>Projektnummer</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>HI003</code></td><td>Inspektionsnummer</td><td class="status">Ja</td><td class="status">–</td><td>QKan id der Gesamtinspektion.</td></tr>
+<tr><td><code>HI004</code></td><td>Inspektionsgrund</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll; Referenzwert wird verständlich aufgelöst.</td></tr>
+<tr><td><code>HI005</code></td><td>Kodiersystem</td><td class="status">Ja</td><td class="status">–</td><td>Wird als QKan bewertungsart übernommen; Referenzauflösung über RT202.</td></tr>
+<tr><td><code>HI006</code></td><td>Eingesetztes Kamerasystem</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>HI101</code></td><td>Inspektionsrichtung</td><td class="status">Ja / Berechnung</td><td class="status">–</td><td>I/G wird in die QKan-Untersuchungsrichtung übersetzt und für richtungsabhängige Schadensgeometrie verwendet.</td></tr>
+<tr><td><code>HI102</code></td><td>Bezugspunkt Start</td><td class="status">Ja</td><td class="status">–</td><td>A/leer wird als Rohranfang übernommen; andere gültige Angaben werden auf Gerinnemittelpunkt zusammengeführt.</td></tr>
+<tr><td><code>HI103</code></td><td>Inspektionsart</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>HI104</code></td><td>Inspektionsdatum</td><td class="status">Ja</td><td class="status">–</td><td>QKan untersuchtag; zusammen mit dem Objektnamen zentraler Schlüssel für wiederholbare Importe.</td></tr>
+<tr><td><code>HI106</code></td><td>Wetter</td><td class="status">Ja</td><td class="status">–</td><td>Wird in das vorhandene QKan-Feld wetter übernommen.</td></tr>
+<tr><td><code>HI107</code></td><td>Reinigung</td><td class="status">Ja</td><td class="status">–</td><td>J/N wird als Ja/Nein in QKan übernommen; Speicherung in <code>haltungen_untersucht.reinigung</code> bzw. <code>anschlussleitungen_untersucht.reinigung</code>.</td></tr>
+<tr><td><code>HI111</code></td><td>Firma</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>HI112</code></td><td>Inspekteur</td><td class="status">Ja</td><td class="status">–</td><td>QKan untersucher bei Haltungen und Anschlussleitungen.</td></tr>
+<tr><td><code>HI114</code></td><td>Videospeichermedium</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll; keine DB-Speicherung.</td></tr>
+<tr><td><code>HI115</code></td><td>Name des Speichermediums</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>HI116</code></td><td>Dateiname digitales Video</td><td class="status">Ja</td><td class="status">–</td><td>Wird den Einzelschäden der Inspektion als film_dateiname zugeordnet.</td></tr>
+<tr><td><code>HI204</code></td><td>Datum der Beurteilung</td><td class="status">Ja</td><td class="status">–</td><td>QKan bewertungstag.</td></tr>
+<tr><td><code>HI206</code></td><td>Maximale Zustandsklasse Dichtheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan max_ZD.</td></tr>
+<tr><td><code>HI207</code></td><td>Maximale Zustandsklasse Standsicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan max_ZS.</td></tr>
+<tr><td><code>HI208</code></td><td>Maximale Zustandsklasse Betriebssicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan max_ZB.</td></tr>
+<tr><td><code>HI999</code></td><td>Bemerkung</td><td class="status">Ja</td><td class="status">–</td><td>QKan Kommentar der Gesamtinspektion.</td></tr>
+</table>
+<h3 id="hz-haltungszustandsdaten">HZ – Haltungszustandsdaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>HZ001</code></td><td>Station</td><td class="status">Ja / Berechnung</td><td class="status">–</td><td>QKan station; außerdem bei BCA-Anschlusserzeugung und für die Schadensgeometrie verwendet.</td></tr>
+<tr><td><code>HZ002</code></td><td>Kode</td><td class="status">Ja / Sonderlogik</td><td class="status">–</td><td>QKan kuerzel; kann zusätzlich den BCA-Code zur optionalen Erzeugung fehlender Anschlussleitungen enthalten.</td></tr>
+<tr><td><code>HZ003</code></td><td>Quantifizierung 1</td><td class="status">Ja</td><td class="status">–</td><td>QKan quantnr1; bei BCA zusätzlich für die Erzeugungslogik berücksichtigt.</td></tr>
+<tr><td><code>HZ004</code></td><td>Quantifizierung 2</td><td class="status">Ja</td><td class="status">–</td><td>QKan quantnr2.</td></tr>
+<tr><td><code>HZ005</code></td><td>Streckenschaden</td><td class="status">Ja / Berechnung</td><td class="status">–</td><td>Wird in QKan in Streckenschaden-Kennzeichen und laufende Nummer aufgeteilt.</td></tr>
+<tr><td><code>HZ006</code></td><td>Position von</td><td class="status">Ja / Sonderlogik</td><td class="status">–</td><td>QKan pos_von; bei BCA zusätzlich für die Anschlussrichtung/-lage berücksichtigt.</td></tr>
+<tr><td><code>HZ007</code></td><td>Position nach</td><td class="status">Ja</td><td class="status">–</td><td>QKan pos_bis.</td></tr>
+<tr><td><code>HZ008</code></td><td>Videozählerstand</td><td class="status">Ja</td><td class="status">–</td><td>QKan videozaehler und timecode.</td></tr>
+<tr><td><code>HZ009</code></td><td>Bildname</td><td class="status">Ja</td><td class="status">–</td><td>QKan foto_dateiname.</td></tr>
+<tr><td><code>HZ010</code></td><td>Langtext</td><td class="status">Ja</td><td class="status">–</td><td>QKan langtext.</td></tr>
+<tr><td><code>HZ012</code></td><td>Auskleidung</td><td class="status">Ja</td><td class="status">–</td><td>1/0 wird als Ja/Nein in <code>untersuchdat_haltung.auskleidung</code> bzw. <code>untersuchdat_anschlussleitung.auskleidung</code> übernommen.</td></tr>
+<tr><td><code>HZ014</code></td><td>Charakterisierung 1</td><td class="status">Ja</td><td class="status">–</td><td>QKan charakt1.</td></tr>
+<tr><td><code>HZ015</code></td><td>Charakterisierung 2</td><td class="status">Ja</td><td class="status">–</td><td>QKan charakt2.</td></tr>
+<tr><td><code>HZ206</code></td><td>Zustandsklasse Dichtheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan ZD.</td></tr>
+<tr><td><code>HZ207</code></td><td>Zustandsklasse Standsicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan ZS.</td></tr>
+<tr><td><code>HZ208</code></td><td>Zustandsklasse Betriebssicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan ZB.</td></tr>
+<tr><td><code>HZ999</code></td><td>Bemerkung</td><td class="status">Ja</td><td class="status">–</td><td>QKan Kommentar des Einzelschadens.</td></tr>
+</table>
+<h3 id="kg-knotengrunddaten">KG – Knotengrunddaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>KG001</code></td><td>Knotenbezeichnung</td><td class="status">Ja / Zuordnung</td><td class="status">Ja</td><td>QKan schnam; steuert außerdem die Zuordnung von Schacht- und Anschlussknoten.</td></tr>
+<tr><td><code>KG102</code></td><td>Straßenname</td><td class="status">Ja</td><td class="status">Ja</td><td>Bei Anschlussknoten QKan strasse; Export bei realen Anschlussknoten.</td></tr>
+<tr><td><code>KG302</code></td><td>Kanalnutzung</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan entwart; Referenzauflösung über RT104.</td></tr>
+<tr><td><code>KG303</code></td><td>Baujahr</td><td class="status">Ja</td><td class="status">Ja</td><td>Bei Anschlussknoten QKan baujahr; Export für reale Anschlussknoten.</td></tr>
+<tr><td><code>KG304</code></td><td>Materialart</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan material; Referenzauflösung über RT105.</td></tr>
+<tr><td><code>KG305</code></td><td>Knotenart</td><td class="status">Ja / Zuordnung</td><td class="status">Ja</td><td>S wird als echter Schacht behandelt, F als fiktiver Knoten nicht angelegt, andere Typen als Anschlussknoten klassifiziert. Export nach RT116.</td></tr>
+<tr><td><code>KG308</code></td><td>Schachtlänge</td><td class="status">Ja</td><td class="status">Ja</td><td>Primäre Quelle für QKan durchm; mm werden beim Import in m umgerechnet. Export schreibt den QKan-Durchmesser wieder in mm.</td></tr>
+<tr><td><code>KG309</code></td><td>Schachtbreite</td><td class="status">Fallback</td><td class="status">Ja</td><td>Nur Rückfall für QKan durchm, wenn KG308 fehlt; Export schreibt denselben Durchmesser wie KG308.</td></tr>
+<tr><td><code>KG315</code></td><td>Deckel verschraubt</td><td class="status">Ja</td><td class="status">Ja</td><td>Wird in QKan über das vorhandene Feld <code>schaechte.druckdicht</code> geführt; Import und Export verwenden 1/0.</td></tr>
+<tr><td><code>KG401</code></td><td>Funktionszustand</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan simstatus; Exportauflösung über RT109.</td></tr>
+<tr><td><code>KG999</code></td><td>Bemerkung</td><td class="status">Ja</td><td class="status">Ja</td><td>QKan kommentar.</td></tr>
+</table>
+<h3 id="ki-knoteninspektionsdaten">KI – Knoteninspektionsdaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>KI002</code></td><td>Projektnummer</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>KI003</code></td><td>Inspektionsnummer</td><td class="status">Ja</td><td class="status">–</td><td>QKan id der Schachtinspektion.</td></tr>
+<tr><td><code>KI004</code></td><td>Inspektionsgrund</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>KI005</code></td><td>Kodiersystem</td><td class="status">Ja</td><td class="status">–</td><td>QKan bewertungsart; Referenzauflösung über RT202.</td></tr>
+<tr><td><code>KI006</code></td><td>Eingesetztes Kamerasystem</td><td class="status">Log</td><td class="status">–</td><td>Nur Ausgabe im Importprotokoll.</td></tr>
+<tr><td><code>KI104</code></td><td>Inspektionsdatum</td><td class="status">Ja</td><td class="status">–</td><td>QKan untersuchtag; zusammen mit dem Schachtnamen zentraler Importschlüssel.</td></tr>
+<tr><td><code>KI106</code></td><td>Wetter</td><td class="status">Ja</td><td class="status">–</td><td>Wird in das vorhandene QKan-Feld wetter übernommen.</td></tr>
+<tr><td><code>KI107</code></td><td>Reinigung</td><td class="status">Ja</td><td class="status">–</td><td>J/N wird als Ja/Nein in <code>schaechte_untersucht.reinigung</code> übernommen.</td></tr>
+<tr><td><code>KI111</code></td><td>Firma</td><td class="status">Ja</td><td class="status">–</td><td>Primäre Quelle für QKan untersucher bei Schachtinspektionen.</td></tr>
+<tr><td><code>KI112</code></td><td>Inspekteur</td><td class="status">Fallback</td><td class="status">–</td><td>Rückfall für QKan untersucher, wenn KI111 leer ist.</td></tr>
+<tr><td><code>KI116</code></td><td>Dateiname des digitalen Videos</td><td class="status">Ja</td><td class="status">–</td><td>Wird den KZ-Einzelschäden als film_dateiname zugeordnet.</td></tr>
+<tr><td><code>KI204</code></td><td>Datum der Beurteilung</td><td class="status">Ja</td><td class="status">–</td><td>QKan bewertungstag.</td></tr>
+<tr><td><code>KI206</code></td><td>Maximale Zustandsklasse Dichtheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan max_ZD.</td></tr>
+<tr><td><code>KI207</code></td><td>Maximale Zustandsklasse Standsicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan max_ZS.</td></tr>
+<tr><td><code>KI208</code></td><td>Maximale Zustandsklasse Betriebssicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan max_ZB.</td></tr>
+<tr><td><code>KI999</code></td><td>Bemerkung</td><td class="status">Ja</td><td class="status">–</td><td>QKan Kommentar der Schachtinspektion.</td></tr>
+</table>
+<h3 id="kz-knotenzustandsdaten">KZ – Knotenzustandsdaten</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>KZ001</code></td><td>Tiefe</td><td class="status">Ja</td><td class="status">–</td><td>QKan vertikale_lage.</td></tr>
+<tr><td><code>KZ002</code></td><td>Kode</td><td class="status">Ja</td><td class="status">–</td><td>QKan kuerzel.</td></tr>
+<tr><td><code>KZ003</code></td><td>Quantifizierung 1</td><td class="status">Ja</td><td class="status">–</td><td>QKan quantnr1.</td></tr>
+<tr><td><code>KZ004</code></td><td>Quantifizierung 2</td><td class="status">Ja</td><td class="status">–</td><td>QKan quantnr2.</td></tr>
+<tr><td><code>KZ005</code></td><td>Streckenschaden</td><td class="status">Ja</td><td class="status">–</td><td>QKan streckenschaden.</td></tr>
+<tr><td><code>KZ006</code></td><td>Position Beginn</td><td class="status">Ja</td><td class="status">–</td><td>QKan pos_von.</td></tr>
+<tr><td><code>KZ007</code></td><td>Position Ende</td><td class="status">Ja</td><td class="status">–</td><td>QKan pos_bis.</td></tr>
+<tr><td><code>KZ008</code></td><td>Videozählerstand</td><td class="status">Ja</td><td class="status">–</td><td>QKan videozaehler und timecode.</td></tr>
+<tr><td><code>KZ009</code></td><td>Bildname</td><td class="status">Ja</td><td class="status">–</td><td>QKan foto_dateiname.</td></tr>
+<tr><td><code>KZ010</code></td><td>Langtext des Zustandes</td><td class="status">Ja</td><td class="status">–</td><td>QKan langtext.</td></tr>
+<tr><td><code>KZ011</code></td><td>Verbindung</td><td class="status">Ja</td><td class="status">–</td><td>A/leer wird als Ja/Nein in <code>untersuchdat_schacht.verbindung</code> übernommen.</td></tr>
+<tr><td><code>KZ013</code></td><td>Schachtbereich</td><td class="status">Ja</td><td class="status">–</td><td>QKan bereich.</td></tr>
+<tr><td><code>KZ014</code></td><td>Charakterisierung 1</td><td class="status">Ja</td><td class="status">–</td><td>QKan charakt1.</td></tr>
+<tr><td><code>KZ015</code></td><td>Charakterisierung 2</td><td class="status">Ja</td><td class="status">–</td><td>QKan charakt2.</td></tr>
+<tr><td><code>KZ206</code></td><td>Zustandsklasse Dichtheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan ZD.</td></tr>
+<tr><td><code>KZ207</code></td><td>Zustandsklasse Standsicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan ZS.</td></tr>
+<tr><td><code>KZ208</code></td><td>Zustandsklasse Betriebssicherheit</td><td class="status">Ja</td><td class="status">–</td><td>QKan ZB.</td></tr>
+<tr><td><code>KZ999</code></td><td>Bemerkung</td><td class="status">Ja</td><td class="status">–</td><td>QKan Kommentar des Einzelschadens.</td></tr>
+</table>
+<h3 id="rt-referenztabellen">RT – Referenztabellen</h3>
+<table>
+<tr>
+<th style="width:9%">Feld</th>
+<th style="width:24%">DWA-Bezeichnung</th>
+<th style="width:10%">Import</th>
+<th style="width:10%">Export</th>
+<th>Verwendung / Besonderheit in QKan</th>
+</tr>
+<tr><td><code>RT001</code></td><td>Tabelle</td><td class="status">Ja</td><td class="status">–</td><td>Kennung der mitgelieferten Referenztabelle. XML-Referenzen werden vor QKan-/Standardzuordnungen berücksichtigt.</td></tr>
+<tr><td><code>RT002</code></td><td>Schlüssel</td><td class="status">Ja</td><td class="status">–</td><td>Schlüssel des Referenzeintrags.</td></tr>
+<tr><td><code>RT004</code></td><td>Langtext</td><td class="status">Ja</td><td class="status">–</td><td>Langtext des Referenzeintrags; wird zur Auflösung projektspezifischer Referenzwerte verwendet.</td></tr>
+</table>
+
+<p class="klein">
+Grundlage: DWA-M 150, Ausgabe April 2010, Tabelle 16 „Format Typ Z“.
+</p>
+
+</body>
+</html>
