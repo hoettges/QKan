@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/inspektion">
+        <file>res/dwa_m150_export.png</file>
+        <file>res/dwa_m150_import.png</file>
+        <file>res/icon_change_haltung.png</file>
+        <file>res/icon_change_schacht.png</file>
+        <file>res/icon_create_haltung.png</file>
+        <file>res/icon_create_schacht.png</file>
+    </qresource>
+</RCC>

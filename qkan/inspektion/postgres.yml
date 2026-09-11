@@ -1,0 +1,384 @@
+# PostgreSQL-Abfragen für M150-Import und -Export des Inspektionsmoduls.
+# Das Schema wird erst nach der sicheren Layerauswahl als SQL-Bezeichner
+# eingesetzt. Die fachlichen Zuordnungen entsprechen sqlite.yml.
+
+inspektion_ref_entwaesserungsarten_m150: |-
+  WITH entwart_werte(wert) AS (
+      SELECT bezeichnung
+      FROM {schema}.entwaesserungsarten
+      WHERE bezeichnung IS NOT NULL
+
+      UNION
+
+      SELECT kuerzel
+      FROM {schema}.entwaesserungsarten
+      WHERE kuerzel IS NOT NULL
+
+      UNION SELECT 'M'
+      UNION SELECT 'R'
+      UNION SELECT 'S'
+      UNION SELECT 'Mischwasser'
+      UNION SELECT 'Regenwasser'
+      UNION SELECT 'Schmutzwasser'
+      UNION SELECT 'KM-Kanal'
+      UNION SELECT 'KR-Kanal'
+      UNION SELECT 'KS-Kanal'
+  ),
+  normalisiert AS (
+      SELECT DISTINCT
+          UPPER(
+              REPLACE(
+                  REPLACE(
+                      REPLACE(TRIM(wert), ' ', ''),
+                      '-',
+                      ''
+                  ),
+                  '_',
+                  ''
+              )
+          ) AS vergleichswert
+      FROM entwart_werte
+      WHERE TRIM(wert) <> ''
+  ),
+  zugeordnet AS (
+      SELECT
+          vergleichswert,
+          CASE
+              WHEN vergleichswert = 'M'
+                OR vergleichswert LIKE 'MW%'
+                OR vergleichswert LIKE 'KM%'
+                OR vergleichswert LIKE '%MISCH%'
+                  THEN 'M'
+              WHEN vergleichswert = 'R'
+                OR vergleichswert LIKE 'RW%'
+                OR vergleichswert LIKE 'KR%'
+                OR vergleichswert LIKE '%REGEN%'
+                  THEN 'R'
+              WHEN vergleichswert = 'S'
+                OR vergleichswert LIKE 'SW%'
+                OR vergleichswert LIKE 'KS%'
+                OR vergleichswert LIKE '%SCHMUTZ%'
+                  THEN 'S'
+              ELSE NULL
+          END AS m150_code
+      FROM normalisiert
+  )
+  SELECT
+      vergleichswert,
+      m150_code,
+      CASE m150_code
+          WHEN 'M' THEN 'Mischwasser'
+          WHEN 'R' THEN 'Regenwasser'
+          WHEN 'S' THEN 'Schmutzwasser'
+      END AS langtext
+  FROM zugeordnet
+  WHERE m150_code IS NOT NULL
+  ORDER BY vergleichswert;
+
+inspektion_ref_material_m150: |-
+  WITH standard(vergleichswert, m150_code, sortierung) AS (
+      VALUES
+          ('AZ', 'AZ', 1),
+          ('B', 'B', 2),
+          ('BIT', 'BIT', 3),
+          ('BS', 'BS', 4),
+          ('BSK', 'BSK', 5),
+          ('BT', 'BT', 6),
+          ('CN', 'CN', 7),
+          ('EIS', 'EIS', 8),
+          ('EPSF', 'EPSF', 9),
+          ('EPX', 'EPX', 10),
+          ('FZ', 'FZ', 11),
+          ('GFK', 'GFK', 12),
+          ('GG', 'GG', 13),
+          ('GGG', 'GGG', 14),
+          ('KST', 'KST', 15),
+          ('MA', 'MA', 16),
+          ('OB', 'OB', 17),
+          ('PC', 'PC', 18),
+          ('PCC', 'PCC', 19),
+          ('PE', 'PE', 20),
+          ('PH', 'PH', 21),
+          ('PHB', 'PHB', 22),
+          ('PP', 'PP', 23),
+          ('PUR', 'PUR', 24),
+          ('PVCM', 'PVCM', 25),
+          ('PVCU', 'PVCU', 26),
+          ('SB', 'SB', 27),
+          ('SFB', 'SFB', 28),
+          ('SPB', 'SPB', 29),
+          ('ST', 'ST', 30),
+          ('STZ', 'STZ', 31),
+          ('SZB', 'SZB', 32),
+          ('SZBK', 'SZBK', 33),
+          ('TF', 'TF', 34),
+          ('UPGF', 'UPGF', 35),
+          ('UPSF', 'UPSF', 36),
+          ('VBK', 'VBK', 37),
+          ('VBS', 'VBS', 38),
+          ('VEGF', 'VEGF', 39),
+          ('VESF', 'VESF', 40),
+          ('W', 'W', 41),
+          ('WPE', 'WPE', 42),
+          ('WPVC', 'WPVC', 43),
+          ('Z', 'Z', 44),
+          ('ZG', 'ZG', 45),
+          ('ZM', 'ZM', 46),
+          ('asbestzement', 'AZ', 47),
+          ('beton', 'B', 48),
+          ('bitumen', 'BIT', 49),
+          ('betonsegmente', 'BS', 50),
+          ('betonsegmente kunststoffmodifiziert', 'BSK', 51),
+          ('edelstahl', 'CN', 52),
+          ('nichtidentifiziertes metall', 'EIS', 53),
+          ('nichtidentifiziertes metall (z. b. eisen und stahl)', 'EIS', 54),
+          ('epoxyharz', 'EPX', 55),
+          ('epoxidharz', 'EPX', 56),
+          ('epoxidharz mit synthesefaser', 'EPSF', 57),
+          ('epoxyharz mit synthesefaser', 'EPSF', 58),
+          ('faserzement', 'FZ', 59),
+          ('glasfaserverstärkter kunststoff', 'GFK', 60),
+          ('glasfaserverstaerkter kunststoff', 'GFK', 61),
+          ('grauguss', 'GG', 62),
+          ('duktiles gusseisen', 'GGG', 63),
+          ('nichtidentifizierter kunststoff', 'KST', 64),
+          ('kunststoff', 'KST', 65),
+          ('mauerwerk', 'MA', 66),
+          ('ortbeton', 'OB', 67),
+          ('polymerbeton', 'PC', 68),
+          ('polymermodifizierter zementbeton', 'PCC', 69),
+          ('polyethylen', 'PE', 70),
+          ('polyesterharz', 'PH', 71),
+          ('polyesterharzbeton', 'PHB', 72),
+          ('polypropylen', 'PP', 73),
+          ('polyurethanharz', 'PUR', 74),
+          ('polyvinylchlorid modifiziert', 'PVCM', 75),
+          ('polyvinylchlorid hart', 'PVCU', 76),
+          ('stahlfaserbeton', 'SFB', 77),
+          ('spannbeton', 'SPB', 78),
+          ('stahlbeton', 'SB', 79),
+          ('stahl', 'ST', 80),
+          ('steinzeug', 'STZ', 81),
+          ('spritzbeton', 'SZB', 82),
+          ('spritzbeton kunststoffmodifiziert', 'SZBK', 83),
+          ('teerfaser', 'TF', 84),
+          ('ungesättigtes polyesterharz mit glasfaser', 'UPGF', 85),
+          ('ungesaettigtes polyesterharz mit glasfaser', 'UPGF', 86),
+          ('ungesättigtes polyesterharz mit synthesefaser', 'UPSF', 87),
+          ('ungesaettigtes polyesterharz mit synthesefaser', 'UPSF', 88),
+          ('vinylesterharz mit synthesefaser', 'VEGF', 89),
+          ('vinylesterharz mit glasfaser', 'VESF', 90),
+          ('verbundrohr beton-/stahlbeton-kunststoff', 'VBK', 91),
+          ('verbundrohr beton-stahlbeton-kunststoff', 'VBK', 92),
+          ('verbundrohr beton-/stahlbeton-steinzeug', 'VBS', 93),
+          ('verbundrohr beton-stahlbeton-steinzeug', 'VBS', 94),
+          ('nichtidentifizierter werkstoff', 'W', 95),
+          ('wickelrohr (pehd)', 'WPE', 96),
+          ('wickelrohr pehd', 'WPE', 97),
+          ('wickelrohr (pvcd)', 'WPVC', 98),
+          ('wickelrohr pvcd', 'WPVC', 99),
+          ('sonstiger werkstoff', 'Z', 100),
+          ('zementmörtel', 'ZM', 101),
+          ('zementmoertel', 'ZM', 102),
+          ('ziegelwerk', 'ZG', 103)
+  ),
+  referenz AS (
+      SELECT
+          TRIM(bezeichnung) AS vergleichswert,
+          UPPER(TRIM(m150)) AS m150_code,
+          TRIM(bezeichnung) AS bezeichnung,
+          10000 + pk AS sortierung
+      FROM {schema}.material
+      WHERE bezeichnung IS NOT NULL
+        AND TRIM(bezeichnung) <> ''
+        AND m150 IS NOT NULL
+        AND TRIM(m150) <> ''
+  )
+  SELECT vergleichswert, m150_code, bezeichnung, quelle
+  FROM (
+      SELECT
+          vergleichswert,
+          m150_code,
+          NULL AS bezeichnung,
+          'standard' AS quelle,
+          sortierung
+      FROM standard
+
+      UNION ALL
+
+      SELECT
+          vergleichswert,
+          m150_code,
+          bezeichnung,
+          'tabelle' AS quelle,
+          sortierung
+      FROM referenz
+  ) AS material_zuordnung
+  ORDER BY sortierung;
+
+inspektion_ref_profile_m150: |-
+  WITH standard(m150_code, profilnam, sortierung) AS (
+      VALUES
+          ('BO', 'Bogenförmig (kreisförmiger Scheitel und flache Sohle bei parallelen Wänden), Haubenquerschnitt', 1),
+          ('DN', 'Kreisförmig, Kreisquerschnitt', 2),
+          ('EI', 'Eiförmig, Eiquerschnitt', 3),
+          ('GR', 'Offener Graben', 4),
+          ('MA', 'Maulquerschnitt', 5),
+          ('OV', 'Oval (kreisförmige Sohle und Scheitel bei parallelen Wänden)', 6),
+          ('RE', 'Rechteckig, Rechteckquerschnitt', 7),
+          ('RI', 'Rinnenquerschnitt', 8),
+          ('U', 'U-förmig', 9),
+          ('Z', 'Sonstige Profilart', 10),
+          ('BO', 'bogenförmig (kreisförmiger scheitel und flache sohle bei parallelen wänden), haubenquerschnitt', 11),
+          ('BO', 'bogenfoermig (kreisfoermiger scheitel und flache sohle bei parallelen waenden), haubenquerschnitt', 12),
+          ('DN', 'kreisförmig, kreisquerschnitt', 13),
+          ('DN', 'kreisfoermig, kreisquerschnitt', 14),
+          ('EI', 'eiförmig, eiquerschnitt', 15),
+          ('EI', 'eifoermig, eiquerschnitt', 16),
+          ('GR', 'offener graben', 17),
+          ('MA', 'maulquerschnitt', 18),
+          ('OV', 'oval (kreisförmige sohle und scheitel bei parallelen wänden)', 19),
+          ('OV', 'oval (kreisfoermige sohle und scheitel bei parallelen waenden)', 20),
+          ('RE', 'rechteckig, rechteckquerschnitt', 21),
+          ('RI', 'rinnenquerschnitt', 22),
+          ('U', 'u-förmig', 23),
+          ('U', 'u-foermig', 24),
+          ('Z', 'sonstige profilart', 25),
+          ('DN', 'Kreis-Profil', 26),
+          ('DN', 'Kreisquerschnitt', 27)
+  ),
+  referenz AS (
+      SELECT
+          UPPER(TRIM(m150)) AS m150_code,
+          TRIM(profilnam) AS profilnam,
+          10000 + pk AS sortierung
+      FROM {schema}.profile
+      WHERE m150 IS NOT NULL
+        AND TRIM(m150) <> ''
+        AND profilnam IS NOT NULL
+        AND TRIM(profilnam) <> ''
+  )
+  SELECT m150_code, profilnam
+  FROM (
+      SELECT m150_code, profilnam, sortierung
+      FROM standard
+
+      UNION ALL
+
+      SELECT m150_code, profilnam, sortierung
+      FROM referenz
+  ) AS profil_zuordnung
+  ORDER BY sortierung;
+
+inspektion_ref_profilauskleidung_m150: |-
+  WITH referenz(m150_code, bezeichnung, sortierung) AS (
+      VALUES
+          ('A', 'Beschichtung werkseitig', 1),
+          ('B', 'Auskleidung werkseitig', 2),
+          ('C', 'Schlauchliner', 3),
+          ('D', 'Close-Fit Liner', 4),
+          ('E', 'Liner mit Ringraumverfüllung', 5),
+          ('F', 'Teil-/Vollauskleidung vor Ort', 6),
+          ('G', 'Teil-/Vollbeschichtung vor Ort', 7),
+          ('Z', 'Sonstige Auskleidung', 8),
+          ('A', 'beschichtung werkseitig', 9),
+          ('B', 'auskleidung werkseitig', 10),
+          ('C', 'schlauchliner', 11),
+          ('D', 'close-fit liner', 12),
+          ('E', 'liner mit ringraumverfüllung', 13),
+          ('E', 'liner mit ringraumverfuellung', 14),
+          ('F', 'teil-/vollauskleidung vor ort', 15),
+          ('G', 'teil-/vollbeschichtung vor ort', 16),
+          ('Z', 'sonstige auskleidung', 17)
+  )
+  SELECT m150_code, bezeichnung
+  FROM referenz
+  ORDER BY sortierung;
+
+inspektion_ref_knotenart_m150: |-
+  WITH referenz(m150_code, schachttyp, knotentyp, sortierung) AS (
+      VALUES
+          ('A', 'Auslass', 'Auslass', 1),
+          ('B', 'Speicher', 'Bauwerk', 2),
+          ('E', 'Symbol', 'Straßenablauf', 3),
+          ('F', 'Schacht', 'Fiktiver Schacht', 4),
+          ('G', 'Schacht', 'Gebäudeanschluss', 5),
+          ('I', 'Symbol', 'Inspektionsöffnung', 6),
+          ('L', 'Symbol', 'Lampenschacht', 7),
+          ('R', 'Symbol', 'Reinigungsöffnung', 8),
+          ('S', 'Schacht', 'Schacht', 9),
+          ('W', 'Symbol', 'Sanitärgegenstand', 10),
+          ('Z', 'Symbol', 'Sonstige', 11)
+  ),
+  alias(vergleichswert, m150_code, sortierung) AS (
+      VALUES
+          ('auslass', 'A', 1),
+          ('bauwerk', 'B', 2),
+          ('speicher', 'B', 3),
+          ('straßenablauf', 'E', 4),
+          ('strassenablauf', 'E', 5),
+          ('fiktiver schacht', 'F', 6),
+          ('gebäudeanschluss', 'G', 7),
+          ('gebaeudeanschluss', 'G', 8),
+          ('inspektionsöffnung', 'I', 9),
+          ('inspektionsoeffnung', 'I', 10),
+          ('lampenschacht', 'L', 11),
+          ('reinigungsöffnung', 'R', 12),
+          ('reinigungsoeffnung', 'R', 13),
+          ('schacht', 'S', 14),
+          ('sanitärgegenstand', 'W', 15),
+          ('sanitaergegenstand', 'W', 16),
+          ('symbol', 'Z', 17),
+          ('sonstige', 'Z', 18),
+          ('sonstiges', 'Z', 19)
+  )
+  SELECT m150_code, schachttyp, knotentyp, vergleichswert
+  FROM (
+      SELECT
+          m150_code,
+          schachttyp,
+          knotentyp,
+          NULL AS vergleichswert,
+          sortierung
+      FROM referenz
+
+      UNION ALL
+
+      SELECT
+          m150_code,
+          NULL AS schachttyp,
+          NULL AS knotentyp,
+          vergleichswert,
+          1000 + sortierung AS sortierung
+      FROM alias
+  ) AS knotenart_zuordnung
+  ORDER BY sortierung;
+
+inspektion_export_haltungen_auswahl: SELECT pk, haltnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
+  baujahr, profilnam, entwart, abflussart, material, profilauskleidung, innenmaterial, ST_AsBinary(geom) AS __geom_wkb FROM {schema}.haltungen WHERE
+  haltnam IN ({auswahl}) AND (haltungstyp IS NULL OR haltungstyp = 'Haltung') ORDER BY pk;
+inspektion_export_schaechte_auswahl: SELECT pk, schnam, sohlhoehe, durchm, entwart, knotentyp, schachttyp, druckdicht, xsch, ysch, ST_AsBinary(geop)
+  AS __geom_wkb FROM {schema}.schaechte WHERE schnam IN ({auswahl}) AND schachttyp = 'Schacht' ORDER BY pk;
+inspektion_export_anschlussleitungen_auswahl: SELECT pk, leitnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
+  baujahr, haltnam, urstation, ursprung, anschlusstyp, lageanschluss, profilnam, entwart, material, profilauskleidung, innenmaterial,
+  ST_AsBinary(geom) AS __geom_wkb FROM {schema}.anschlussleitungen WHERE leitnam IN ({auswahl}) ORDER BY pk;
+inspektion_export_anschlussschaechte_haltungen: SELECT pk, schnam, sohlhoehe, durchm, entwart, strasse, baujahr, haltnam, urstation,
+  knotentyp, simstatus, material, xsch, ysch, kommentar, ST_AsBinary(geom) AS __geom_wkb FROM {schema}.anschlussschaechte
+  ORDER BY pk;
+
+inspektion_import_index_schaechte: SELECT pk, schnam FROM {schema}.schaechte WHERE schnam IS NOT NULL AND schachttyp = 'Schacht' ORDER
+  BY pk;
+inspektion_import_index_haltungen: SELECT pk, haltnam FROM {schema}.haltungen WHERE haltnam IS NOT NULL AND (haltungstyp IS NULL OR
+  haltungstyp = 'Haltung') ORDER BY pk;
+inspektion_import_index_anschlussleitungen: SELECT pk, leitnam FROM {schema}.anschlussleitungen WHERE leitnam IS NOT NULL ORDER BY
+  pk;
+inspektion_import_index_schaechte_untersucht: SELECT pk, schnam, untersuchtag, id FROM {schema}.schaechte_untersucht ORDER BY pk;
+inspektion_import_index_untersuchdat_schacht: SELECT pk, untersuchsch, untersuchtag, id FROM {schema}.untersuchdat_schacht ORDER BY
+  pk;
+inspektion_import_index_haltungen_untersucht: SELECT pk, haltnam, untersuchtag, id FROM {schema}.haltungen_untersucht ORDER BY pk;
+inspektion_import_index_untersuchdat_haltung: SELECT pk, untersuchhal, untersuchtag, id FROM {schema}.untersuchdat_haltung ORDER BY
+  pk;
+inspektion_import_index_anschlussleitungen_untersucht: SELECT pk, leitnam, untersuchtag, id FROM {schema}.anschlussleitungen_untersucht
+  ORDER BY pk;
+inspektion_import_index_untersuchdat_anschlussleitung: SELECT pk, untersuchleit, untersuchtag, id FROM {schema}.untersuchdat_anschlussleitung
+  ORDER BY pk;

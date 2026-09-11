@@ -15,6 +15,7 @@ from qgis.utils import pluginDirectory
 
 from .config import Config
 from .utils import setup_logging, QkanAbortError
+from .inspektion.m150_info import zeige_m150_info
 
 from qkan import enums
 
@@ -47,6 +48,7 @@ PLUGIN_LIST = [
     "uploadPostgis.application.UploadPostgis",
     "sync.application.Synchronisation",
     "info.application.Infos",
+    "inspektion.application.Inspektion",
     # "createelements.application.CreateElements",
     "netzuebersicht.application.NetzuebersichtPlugin",
     "datenbankviewer.application.DatenbankviewerPlugin",
@@ -165,7 +167,7 @@ class QKan:
     template_dir: str
     forms: list[str]
 
-    dbVersion = "3.4.10"  # Version der QKan-Datenbank
+    dbVersion = "3.4.12"  # Version der QKan-Datenbank
     qgsVersion = "3.4.19"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
     build = "0000"
 
@@ -290,6 +292,9 @@ class QKan:
         self.toolbar_5 = self.iface.addToolBar("QKan-Elementerzeugung")
         self.toolbar_5.setObjectName("QKan-Elementerzeugung")
 
+        self.toolbar_6 = self.iface.addToolBar("QKan-Inspektion")
+        self.toolbar_6.setObjectName("QKan-Inspektion")
+
         # Add QKan SVG path
         qkanSvgPath = os.path.join(pluginDirectory("qkan"), "templates/svg")
         svgPaths = QgsSettings().value('svg/searchPathsForSVG')
@@ -347,12 +352,24 @@ class QKan:
             self.toolbar_5 = self.iface.addToolBar("QKan-Elementerzeugung")
             self.toolbar_5.setObjectName("QKan-Elementerzeugung")
 
+            self.toolbar_6 = self.iface.addToolBar("QKan-Inspektion")
+            self.toolbar_6.setObjectName("QKan-Inspektion")
+
 
 
 
         for plugin in self.plugins:
             if hasattr(plugin, 'initGui'):
                 plugin.initGui()
+
+        self.add_action(
+            icon_path="",
+            text="M150-Dokumentation",
+            toolbar="QKan-Inspektion",
+            callback=lambda: zeige_m150_info(self.iface.mainWindow()),
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow(),
+        )
         self.sort_actions()
 
 
@@ -388,6 +405,7 @@ class QKan:
             strakat = self.menu.addMenu("STRAKAT")
             flaechen = self.menu.addMenu("Flächenverarbeitung")
             zustand = self.menu.addMenu("Zustandsbewertung")
+            inspektion = self.menu.addMenu("Inspektion")
             substanz = self.menu.addMenu("Substanzbewertung")
             flood2D = self.menu.addMenu("Überflutung")
             info = self.menu.addMenu("Info")
@@ -450,6 +468,15 @@ class QKan:
             safe_add_action(zustand, "Dateipfade suchen")
             safe_add_action(zustand, "Inspektionsdaten anpassen")
             safe_add_action(zustand, "Haltungsbericht")
+
+            safe_add_action(inspektion, "Schacht erstellen")
+            safe_add_action(inspektion, "Haltung erstellen")
+            safe_add_action(inspektion, "Schacht verschieben")
+            safe_add_action(inspektion, "Haltung verschieben")
+            safe_add_action(inspektion, "M150 Export")
+            safe_add_action(inspektion, "M150 Import")
+            safe_add_action(inspektion, "Befahrungsmedien")
+            safe_add_action(inspektion, "M150-Dokumentation")
 
             safe_add_action(sync, "Vergleich mit einem anderen QKan-Projekt")
             safe_add_action(sync, "Synchronisation mit einem anderen QKan-Projekt")
@@ -516,7 +543,7 @@ class QKan:
                 self.actions = []
 
             #Alle Toolbars entfernen
-            toolbar_names = ['toolbar', 'toolbar_2', 'toolbar_3', 'toolbar_4', 'toolbar_5']
+            toolbar_names = ['toolbar', 'toolbar_2', 'toolbar_3', 'toolbar_4', 'toolbar_5', 'toolbar_6']
             for toolbar_name in toolbar_names:
                 if hasattr(self, toolbar_name) and getattr(self, toolbar_name) is not None:
                     toolbar = getattr(self, toolbar_name)
@@ -682,6 +709,17 @@ class QKan:
                     return action
 
                 self.toolbar_5.addAction(action)
+
+            elif toolbar == 'QKan-Inspektion':
+                if self.toolbar_6 is None:
+                    QgsMessageLog.logMessage(
+                        "toolbar_6 ist None",
+                        "QKan",
+                        Qgis.Warning
+                    )
+                    return action
+
+                self.toolbar_6.addAction(action)
 
         if add_to_menu and self.menu:
             self.menu.addAction(action)
