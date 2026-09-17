@@ -319,8 +319,6 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         "KI117": "208",
     }
 
-    # DWA-M 150, Abschnitt 7: Standard-Langtexte der Referenztabellen,
-    # die von diesem Modul tatsächlich ausgewertet bzw. geschrieben werden.
     # Externe RT-Blöcke einer Import-XML haben beim Import Vorrang.
     M150_STANDARD_RT = {
         "101": {
@@ -354,7 +352,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             "BSK": "Betonsegmente kunststoffmodifiziert",
             "BT": "Bitumen",
             "CN": "Edelstahl",
-            "EIS": "Nichtidentifiziertes Metall (z. B. Eisen und Stahl)",
+            "EIS": "Nichtidentifiziertes Metall",
             "EPX": "Epoxydharz",
             "EPSF": "Epoxydharz mit Synthesefaser",
             "FZ": "Faserzement",
@@ -1528,9 +1526,8 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         """Liest alle gültigen GP-Koordinaten eines GO-Blocks in ihrer
         XML-Reihenfolge.
 
-        DWA-M 150 fordert Linien von Haltungen und Leitungen in Fließrichtung.
-        Der Import übernimmt diese Reihenfolge unverändert und korrigiert sie
-        nicht anhand der Höhen.
+        Die Punktreihenfolge aus der Importdatei wird unverändert übernommen und
+        nicht anhand der Höhen korrigiert.
         """
         linienpunkte: List[QgsPointXY] = []
         for gp in block.findall("GO/GP"):

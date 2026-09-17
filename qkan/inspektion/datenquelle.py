@@ -212,6 +212,44 @@ def layer_finden(
     return treffer[0] if len(treffer) == 1 else None
 
 
+def tabellenlayer_oeffnen(
+    projekt: QgsProject,
+    tabellenname: str,
+    datenquelle: Datenquelle,
+    geometriespalte: str = "",
+    primaerschluessel: str = "pk",
+) -> Optional[QgsVectorLayer]:
+    """Öffnet eine QKan-Tabelle aus der gewählten Datenquelle als QGIS-Layer.
+
+    Ein bereits geladener eindeutiger QKan-Layer wird wiederverwendet. Andernfalls
+    wird ein temporärer Provider-Layer für SpatiaLite oder PostgreSQL erzeugt.
+    """
+    layer = layer_finden(projekt, tabellenname, datenquelle)
+    if layer is not None:
+        return layer
+
+    if datenquelle.provider == "spatialite":
+        layer = QgsVectorLayer(
+            f"{datenquelle.sqlite_pfad}|layername={tabellenname}",
+            tabellenname,
+            "ogr",
+        )
+    elif datenquelle.provider == "postgres":
+        uri = QgsDataSourceUri(datenquelle.verbindungs_uri)
+        uri.setDataSource(
+            datenquelle.schema,
+            tabellenname,
+            geometriespalte,
+            "",
+            primaerschluessel,
+        )
+        layer = QgsVectorLayer(uri.uri(False), tabellenname, "postgres")
+    else:
+        return None
+
+    return layer if layer.isValid() else None
+
+
 def datenquellen_finden(
     projekt: QgsProject,
     tabellennamen: Iterable[str],

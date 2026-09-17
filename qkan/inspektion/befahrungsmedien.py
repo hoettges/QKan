@@ -1,6 +1,7 @@
 """In das QKan-Inspektionsmodul integrierte Befahrungsmedienansicht.
 
-Das Plugin liest Befahrungs- und Mediendaten aus einer QKan-SQLite-Datenbank.
+Das Plugin liest Befahrungs- und Mediendaten aus einer QKan-Datenquelle.
+Unterstützt werden SpatiaLite und PostgreSQL/PostGIS.
 Die verbindlichen Foto- und Video-Stammordner werden aus der laufenden
 QKan-Konfiguration oder aus QKans eigener Datei ``qkan.json`` gelesen. Änderungen an Einzelschäden und der
 Gesamtbewertung werden erst über den Button „Speichern“ übernommen.
@@ -14,7 +15,6 @@ import os
 import re
 import shutil
 import site
-import sqlite3
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime
@@ -38,7 +38,6 @@ from qgis.PyQt.QtGui import (
     QColor,
     QDesktopServices,
     QFont,
-    QIcon,
     QPageSize,
     QPainter,
     QPdfWriter,
@@ -48,42 +47,37 @@ from qgis.PyQt.QtGui import (
 from qgis.PyQt.QtWidgets import (
     QAbstractItemView,
     QAction,
-    QApplication,
     QComboBox,
     QDialog,
     QDialogButtonBox,
     QFileDialog,
-    QFormLayout,
-    QFrame,
-    QGroupBox,
-    QHBoxLayout,
     QHeaderView,
-    QLabel,
-    QLineEdit,
     QMessageBox,
-    QProgressDialog,
-    QPushButton,
-    QSplitter,
-    QTabWidget,
-    QTableWidget,
     QTableWidgetItem,
-    QTextBrowser,
-    QVBoxLayout,
     QWidget,
 )
 from qgis.core import (
     Qgis,
     QgsFeature,
+    QgsFeatureRequest,
     QgsGeometry,
     QgsMessageLog,
     QgsPoint,
     QgsPointXY,
     QgsProject,
     QgsMapLayerType,
+    QgsRectangle,
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapToolIdentify
 
+from .datenquelle import (
+    Datenquelle,
+    datenbank_oeffnen,
+    datenquelle_waehlen,
+    layerdaten,
+    tabellenlayer_oeffnen,
+)
 from .inspektionsgrafik import Inspektionsgrafik
 
 
@@ -119,6 +113,7 @@ VIDEO_EXTENSIONS = {
 
 OBJECT_CONFIG = {
     "Haltung": {
+        "sql_key": "haltung",
         "detail_table": "untersuchdat_haltung",
         "object_column": "untersuchhal",
         "overall_table": "haltungen_untersucht",
@@ -126,6 +121,7 @@ OBJECT_CONFIG = {
         "length_column": "laenge",
     },
     "Anschlussleitung": {
+        "sql_key": "anschlussleitung",
         "detail_table": "untersuchdat_anschlussleitung",
         "object_column": "untersuchleit",
         "overall_table": "anschlussleitungen_untersucht",
@@ -133,12 +129,28 @@ OBJECT_CONFIG = {
         "length_column": "laenge",
     },
     "Schacht": {
+        "sql_key": "schacht",
         "detail_table": "untersuchdat_schacht",
         "object_column": "untersuchsch",
         "overall_table": "schaechte_untersucht",
         "overall_object_column": "schnam",
         "length_column": "durchm",
     },
+}
+
+
+MEDIEN_DATENQUELLEN_TABELLEN = ("haltungen", "schaechte", "anschlussleitungen")
+
+TABELLEN_GEOMETRIEFELDER = {
+    "haltungen": "geom",
+    "schaechte": "geop",
+    "anschlussleitungen": "geom",
+    "haltungen_untersucht": "geom",
+    "schaechte_untersucht": "geop",
+    "anschlussleitungen_untersucht": "geom",
+    "untersuchdat_haltung": "geom",
+    "untersuchdat_schacht": "geom",
+    "untersuchdat_anschlussleitung": "geom",
 }
 
 
@@ -172,11 +184,6 @@ def _loggen(message: str, level: Qgis.MessageLevel = Qgis.Info) -> None:
     QgsMessageLog.logMessage(message, "QKan Medieninspektor", level)
 
 
-def _sql_bezeichner_quotieren(identifier: str) -> str:
-    """Maskiert einen SQLite-Bezeichner."""
-    return '"' + identifier.replace('"', '""') + '"'
-
-
 def _pfadtext_normalisieren(value: Any) -> str:
     """Normalisiert Pfadtext für Vergleiche ohne Beachtung der Groß-/Kleinschreibung."""
     text = "" if value is None else str(value)
@@ -201,13 +208,13 @@ def _dateistamm_aus_pfad(value: Any) -> str:
 
 
 def _aufzeichnungscode_aus_dateiname(value: Any) -> str:
-    """Liest den führenden historischen Aufzeichnungscode aus einem Mediendateinamen."""
+    """Liest den führenden Aufzeichnungscode für den Legacy-Fallback älterer Medienablagen."""
     match = re.match(r"[^0-9]*(\d{6,})", Path(_dateiname_aus_pfad(value)).stem)
     return match.group(1) if match else ""
 
 
 def _aufzeichnungscode_in_sekunden(code: str) -> Optional[int]:
-    """Interpretiert die letzten fünf Codeziffern historischer TV-Daten als M[M]MSS."""
+    """Interpretiert die letzten fünf Codeziffern des Legacy-Fallbacks als M[M]MSS."""
     if not code or len(code) < 5 or not code[-5:].isdigit():
         return None
     clock = code[-5:]
@@ -302,7 +309,7 @@ def _medien_suchwurzeln(media_type: str, media_root_path: str) -> list[Path]:
 
 
 def _video_bandordner(media_root: Path, code: str) -> Optional[Path]:
-    """Ermittelt einen historischen Bandordner innerhalb des verbindlichen
+    """Ermittelt für den Legacy-Fallback einen Bandordner innerhalb des verbindlichen
     QKan-Video-Stammordners.
     """
     if len(code) <= 5:
@@ -318,9 +325,9 @@ def _video_bandordner(media_root: Path, code: str) -> Optional[Path]:
 def _direkte_medientreffer(
     media_type: str, stored_path: str, media_root_path: str
 ) -> tuple[Medientreffer, ...]:
-    """Löst historische QKan-Medienpfade ohne vollständige Archivsuche auf. Für Fotos
-    werden die bewährten direkten Pfade geprüft. Für Videos wird zusätzlich aus dem
-    führenden Aufzeichnungscode genau ein Bandordner abgeleitet und geprüft.
+    """Löst QKan-Medienpfade ohne vollständige Archivsuche auf. Direkte Pfade haben
+    Vorrang. Für ältere Datenablagen ergänzt ein Legacy-Fallback die Suche, indem aus
+    dem führenden Aufzeichnungscode genau ein Bandordner abgeleitet und geprüft wird.
     """
     normalized = _pfadtext_normalisieren(stored_path)
     filename = _dateiname_aus_pfad(stored_path)
@@ -351,9 +358,9 @@ def _direkte_medientreffer(
         for candidate_root in roots:
             paths.append((candidate_root / f"band{band_number}" / filename, "bereinigter Bandpfad", 98))
 
-    # Bei historischen Videos besteht der führende Code aus der Bandnummer gefolgt
-    # von einem fünfstelligen Aufzeichnungszähler: 17300000 -> band00173,
-    # 240971358 -> band02409. Es wird ausschließlich dieser eine Ordner geprüft.
+    # Legacy-Fallback für ältere Medienablagen: Der führende Code kann aus Bandnummer
+    # und fünfstelligem Aufzeichnungszähler bestehen. Es wird ausschließlich der
+    # daraus abgeleitete Ordner ``bandXXXXX`` geprüft.
     prefix_candidate: Optional[Path] = None
     if media_type == "Video":
         number_match = re.match(r"[^0-9]*(\d{6,})", Path(filename).stem)
@@ -425,7 +432,7 @@ class MediensucheArbeiter(QObject):
             video_root = Path(self.video_root_path) if self.video_root_path else None
 
             def zeitachse_fuer_ordner(folder: Path) -> list[tuple[str, int, Path]]:
-                """Liefert sortierte Videostarts für einen historischen Bandordner."""
+                """Liefert sortierte Videostarts für einen Bandordner des Legacy-Fallbacks."""
                 cache_key = _pfadtext_normalisieren(folder)
                 cached = video_timeline_cache.get(cache_key)
                 if cached is not None:
@@ -585,15 +592,12 @@ class MediensucheArbeiter(QObject):
                     break
 
             # Ist das Befahrungsvideo bekannt, enthalten die Schadenszeilen aber keine
-            # ausdrückliche Filmreferenz, werden die Videopositionen aus dem historischen
-            # Aufzeichnungscode des Fotodateinamens oder aus
+            # Legacy-Fallback für ältere Datenablagen ohne auflösbare Filmreferenz:
+            # Videopositionen werden aus dem Aufzeichnungscode des Fotodateinamens oder aus
             # ``bandnr`` + ``videozaehler`` abgeleitet. Direkte Videozeilen bleiben unverändert
-            # und haben immer Vorrang.
-            # Nur eine tatsächlich aufgelöste Videozeile verhindert den Rückfall. Historische
-            # Datensätze können für jeden Schaden einen nicht auflösbaren ``film_dateiname``
-            # enthalten, obwohl im Bandordner ein gültiges Befahrungsvideo vorhanden ist.
-            # Diese nicht aufgelösten Zeilen müssen durch berechnete Positionen ersetzt
-            # werden, statt den Rückfall zu unterdrücken.
+            # und haben immer Vorrang. Nicht auflösbare Filmreferenzen unterdrücken den
+            # Legacy-Fallback nicht, wenn im abgeleiteten Bandordner ein gültiges
+            # Befahrungsvideo vorhanden ist.
             resolved_video_damage_indexes = {
                 video.damage_index for video in videos if video.candidates
             }
@@ -751,36 +755,6 @@ def _timecode_lesen(value: Any, offset: Any = 0.0) -> float:
     return max(result, 0.0)
 
 
-def _sqlite_verbindung(path: str, query_only: bool = False) -> sqlite3.Connection:
-    """Öffnet SQLite mit benannten Spalten und optionalem Nur-Lese-Schutz."""
-    connection = sqlite3.connect(path)
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA busy_timeout = 30000")
-    if query_only:
-        connection.execute("PRAGMA query_only = ON")
-    return connection
-
-
-def _tabellennamen_lesen(connection: sqlite3.Connection) -> set[str]:
-    """Liefert die Namen aller regulären Tabellen."""
-    return {
-        _text_sicher_lesen(row[0])
-        for row in connection.execute(
-            "SELECT name FROM sqlite_master WHERE type = 'table'"
-        ).fetchall()
-    }
-
-
-def _tabellenspalten_lesen(connection: sqlite3.Connection, table: str) -> set[str]:
-    """Liefert die Spalten einer SQLite-Tabelle."""
-    return {
-        _text_sicher_lesen(row[1])
-        for row in connection.execute(
-            f"PRAGMA table_info({_sql_bezeichner_quotieren(table)})"
-        ).fetchall()
-    }
-
-
 def _dialog_ausfuehren(dialog: QDialog) -> int:
     """Führt einen Dialog sowohl mit Qt 5 als auch Qt 6 aus."""
     execute = getattr(dialog, "exec", None)
@@ -792,7 +766,7 @@ def _dialog_ausfuehren(dialog: QDialog) -> int:
 class ObjektauswahlWerkzeug(QgsMapToolIdentify):
     """Wählt ein angeklicktes QKan-Objekt aus und hält den Auswahlmodus aktiv."""
 
-    object_picked = pyqtSignal(str, str)
+    object_picked = pyqtSignal(str, str, object)
     selection_cancelled = pyqtSignal()
 
     # ``leitnam`` muss vor ``haltnam`` geprüft werden, weil QKan-
@@ -834,12 +808,84 @@ class ObjektauswahlWerkzeug(QgsMapToolIdentify):
                 return object_type, object_name
         return None
 
+    @staticmethod
+    def _schacht_suchradius(layer: QgsVectorLayer) -> float:
+        """Liefert ungefähr einen Meter in den Koordinateneinheiten des Schachtlayers."""
+        try:
+            if layer.crs().isGeographic():
+                return 1.0 / 111320.0
+        except (AttributeError, RuntimeError):
+            pass
+        return 1.0
+
+    def _schacht_im_schutzradius(
+        self, map_point: QgsPointXY
+    ) -> Optional[tuple[str, Datenquelle]]:
+        """Sucht vor Linienobjekten nach einem Schacht im Ein-Meter-Schutzradius."""
+        candidates: list[tuple[float, str, Datenquelle]] = []
+        for layer in self.canvas().layers():
+            if layer is None or layer.type() != QgsMapLayerType.VectorLayer:
+                continue
+            field_names = {field.name().casefold(): field.name() for field in layer.fields()}
+            schnam_field = field_names.get("schnam")
+            layer_text = f"{layer.name()} {layer.source()}".casefold()
+            if schnam_field is None or not any(
+                hint in layer_text for hint in ("schacht", "schaechte", "schächte")
+            ):
+                continue
+            layer_info = layerdaten(layer)
+            if layer_info is None:
+                continue
+            _table_name, datenquelle = layer_info
+            try:
+                layer_point = self.canvas().mapSettings().mapToLayerCoordinates(
+                    layer, map_point
+                )
+            except Exception:
+                continue
+            radius = self._schacht_suchradius(layer)
+            request = QgsFeatureRequest().setFilterRect(
+                QgsRectangle(
+                    layer_point.x() - radius,
+                    layer_point.y() - radius,
+                    layer_point.x() + radius,
+                    layer_point.y() + radius,
+                )
+            )
+            click_geometry = QgsGeometry.fromPointXY(layer_point)
+            for feature in layer.getFeatures(request):
+                geometry = feature.geometry()
+                if geometry is None or geometry.isEmpty():
+                    continue
+                distance = geometry.distance(click_geometry)
+                if distance > radius:
+                    continue
+                object_name = _text_sicher_lesen(feature[schnam_field]).strip()
+                if object_name:
+                    candidates.append((float(distance), object_name, datenquelle))
+
+        if not candidates:
+            return None
+        _distance, object_name, datenquelle = min(candidates, key=lambda item: item[0])
+        return object_name, datenquelle
+
     def canvasReleaseEvent(self, event: Any) -> None:
         """Ermittelt das nächstgelegene angeklickte QKan-Objekt; Rechtsklick beendet
-        den Modus.
+        den Modus. Schächte haben innerhalb eines Meters Vorrang vor Linienobjekten.
         """
         if event.button() == Qt.RightButton:
             self.selection_cancelled.emit()
+            return
+
+        try:
+            map_point = event.mapPoint()
+        except AttributeError:
+            map_point = self.toMapCoordinates(event.pos())
+
+        protected_manhole = self._schacht_im_schutzradius(map_point)
+        if protected_manhole is not None:
+            object_name, datenquelle = protected_manhole
+            self.object_picked.emit("Schacht", object_name, datenquelle)
             return
 
         results = self.identify(
@@ -848,12 +894,7 @@ class ObjektauswahlWerkzeug(QgsMapToolIdentify):
             self.TopDownAll,
             self.VectorLayer,
         )
-        matches: list[tuple[float, int, str, str, str]] = []
-        try:
-            map_point = event.mapPoint()
-        except AttributeError:
-            map_point = self.toMapCoordinates(event.pos())
-
+        matches: list[tuple[float, int, str, str, Optional[Datenquelle]]] = []
         for result_index, result in enumerate(results):
             layer = result.mLayer
             feature = result.mFeature
@@ -863,16 +904,22 @@ class ObjektauswahlWerkzeug(QgsMapToolIdentify):
             if resolved is None:
                 continue
             object_type, object_name = resolved
+            layer_info = layerdaten(layer)
+            datenquelle = layer_info[1] if layer_info is not None else None
 
             distance = float("inf")
             geometry = feature.geometry()
             if geometry is not None and not geometry.isEmpty():
                 try:
-                    layer_point = self.canvas().mapSettings().mapToLayerCoordinates(layer, map_point)
+                    layer_point = self.canvas().mapSettings().mapToLayerCoordinates(
+                        layer, map_point
+                    )
                     distance = geometry.distance(QgsGeometry.fromPointXY(layer_point))
                 except Exception:
                     distance = float(result_index)
-            matches.append((distance, result_index, object_type, object_name, layer.name()))
+            matches.append(
+                (distance, result_index, object_type, object_name, datenquelle)
+            )
 
         if not matches:
             QMessageBox.warning(
@@ -884,8 +931,8 @@ class ObjektauswahlWerkzeug(QgsMapToolIdentify):
             return
 
         matches.sort(key=lambda item: (item[0], item[1]))
-        _distance, _result_index, object_type, object_name, _layer_name = matches[0]
-        self.object_picked.emit(object_type, object_name)
+        _distance, _result_index, object_type, object_name, datenquelle = matches[0]
+        self.object_picked.emit(object_type, object_name, datenquelle)
 
 
 class BefahrungsmedienDialog(QDialog):
@@ -897,7 +944,7 @@ class BefahrungsmedienDialog(QDialog):
         self.viewer_only = viewer_only
         self.setWindowTitle("QKan Medieninspektor – Objektansicht" if viewer_only else "QKan Medieninspektor")
 
-        self.qkan_database = ""
+        self.datenquelle: Optional[Datenquelle] = None
         self.damage_rows: list[dict[str, Any]] = []
         self.photo_items: list[Medieneintrag] = []
         self.video_items: list[Medieneintrag] = []
@@ -910,7 +957,7 @@ class BefahrungsmedienDialog(QDialog):
         self.current_all_dates = False
         self.foto_root_path = ""
         self.video_root_path = ""
-        self._deleted_damage_rowids: set[int] = set()
+        self._deleted_damage_pks: set[int] = set()
         self._table_dirty = False
         self._rating_dirty = False
         self._filling_damage_table = False
@@ -924,7 +971,6 @@ class BefahrungsmedienDialog(QDialog):
 
         self._oberflaeche_aufbauen()
         self._signale_verbinden()
-        self._projekteinstellungen_laden()
         QTimer.singleShot(0, self._datenquellen_initialisieren)
 
     def _oberflaeche_aufbauen(self) -> None:
@@ -996,131 +1042,110 @@ class BefahrungsmedienDialog(QDialog):
         self.pb_panoramo_oeffnen.clicked.connect(self._panoramo_oeffnen)
         self.pb_panoramo_ordner_oeffnen.clicked.connect(self._panoramoordner_oeffnen)
 
-    def _projekteinstellungen_laden(self) -> None:
-        """Stellt den projektspezifischen QKan-Datenbankpfad wieder her."""
-        project = QgsProject.instance()
-        self.qkan_database = self._gespeicherten_pfad_aufloesen(
-            _text_sicher_lesen(project.readEntry(PLUGIN_GROUP, "qkanDatabase", "")[0]),
-            _text_sicher_lesen(project.readEntry(PLUGIN_GROUP, "qkanDatabaseRelative", "")[0]),
-        )
-        self.le_datenbank.setText(self.qkan_database)
-
-    def _gespeicherten_pfad_aufloesen(self, absolute: str, relative: str) -> str:
-        """Löst zuerst einen projekt-relativen und danach den gespeicherten absoluten
-        Pfad auf.
-        """
-        project_directory = QgsProject.instance().absolutePath()
-        if relative and project_directory:
-            candidate = Path(project_directory) / relative
-            if candidate.is_file():
-                return str(candidate)
-        return absolute
-
-    def _projektpfad_speichern(self, key: str, path: str) -> None:
-        """Speichert absolute und projekt-relative Pfade im QGIS-Projekt."""
-        project = QgsProject.instance()
-        project.writeEntry(PLUGIN_GROUP, key, path)
-        relative = ""
-        project_directory = project.absolutePath()
-        if project_directory and path:
-            try:
-                relative = os.path.relpath(path, project_directory)
-            except ValueError:
-                relative = ""
-        project.writeEntry(PLUGIN_GROUP, key + "Relative", relative)
-        project.setDirty(True)
-
     def _datenquellen_initialisieren(self) -> None:
-        """Ermittelt die QKan-Datenbank; die kompakte Ansicht wartet auf das
-        angeklickte Objekt.
+        """Wählt für die vollständige Ansicht eine geladene QKan-Datenquelle aus.
+
+        Die kompakte Kartenansicht übernimmt die Datenquelle direkt vom angeklickten
+        QKan-Layer.
         """
-        if not self.qkan_database or not Path(self.qkan_database).is_file():
-            inferred = self._qkan_datenbank_ermitteln()
-            if inferred:
-                self._datenbank_setzen(inferred, objekte_laden=not self.viewer_only)
-                return
-        if (
-            not self.viewer_only
-            and self.qkan_database
-            and Path(self.qkan_database).is_file()
-        ):
-            self._objekte_laden()
+        if self.viewer_only:
+            return
+        datenquelle = datenquelle_waehlen(
+            QgsProject.instance(),
+            MEDIEN_DATENQUELLEN_TABELLEN,
+            self,
+            "QKan – Befahrungsmedien",
+            self.datenquelle,
+        )
+        if datenquelle is None:
+            self.le_datenbank.setText("")
+            return
+        self._datenquelle_setzen(datenquelle)
 
-    def _qkan_datenbank_ermitteln(self) -> str:
-        """Sucht in den geladenen Projektlayern nach einem QKan-SQLite-Pfad."""
-        pattern = re.compile(r"([A-Za-z]:[/\\][^|\"']+\.(?:sqlite|db|gpkg))", re.I)
-        for layer in QgsProject.instance().mapLayers().values():
-            source = _text_sicher_lesen(layer.source())
-            plain = source.split("|", 1)[0].strip('"').strip("'")
-            candidates = [plain]
-            match = pattern.search(source)
-            if match:
-                candidates.append(match.group(1))
-            for candidate in candidates:
-                if candidate and Path(candidate).is_file() and self._ist_qkan_datenbank(candidate):
-                    return candidate
-        return ""
-
-    @staticmethod
-    def _ist_qkan_datenbank(path: str) -> bool:
-        """Prüft auf die drei unterstützten Inspektionsdetailtabellen."""
-        try:
-            connection = _sqlite_verbindung(path, query_only=True)
-            try:
-                existing = _tabellennamen_lesen(connection)
-                return any(
-                    config["detail_table"] in existing
-                    for config in OBJECT_CONFIG.values()
-                )
-            finally:
-                connection.close()
-        except sqlite3.Error:
-            return False
-
-
-    def _datenbank_setzen(self, path: str, objekte_laden: bool = True) -> None:
-        """Prüft und speichert die ausgewählte QKan-Datenbank."""
-        if not self._ist_qkan_datenbank(path):
-            raise RuntimeError("Die Datei enthält keine unterstützten QKan-Inspektionstabellen.")
-        self.qkan_database = path
-        self.le_datenbank.setText(path)
-        self._projektpfad_speichern("qkanDatabase", path)
+    def _datenquelle_setzen(
+        self, datenquelle: Datenquelle, objekte_laden: bool = True
+    ) -> None:
+        """Setzt eine SpatiaLite- oder PostgreSQL-QKan-Datenquelle."""
+        self.datenquelle = datenquelle
+        self.le_datenbank.setText(datenquelle.bezeichnung)
         if objekte_laden:
             self._objekte_laden()
 
     def _datenbank_waehlen(self) -> None:
-        """Wählt eine QKan-SQLite-Datenbank aus."""
-        path, _selected_filter = QFileDialog.getOpenFileName(
+        """Wählt eine geladene QKan-Datenquelle für SpatiaLite oder PostgreSQL."""
+        datenquelle = datenquelle_waehlen(
+            QgsProject.instance(),
+            MEDIEN_DATENQUELLEN_TABELLEN,
             self,
-            "QKan-SQLite auswählen",
-            str(Path(self.qkan_database).parent) if self.qkan_database else "",
-            "SQLite-Datenbanken (*.sqlite *.sqlite3 *.db *.gpkg);;Alle Dateien (*)",
+            "QKan – Befahrungsmedien",
+            self.datenquelle,
         )
-        if not path:
+        if datenquelle is None:
+            QMessageBox.warning(
+                self,
+                "Keine QKan-Datenquelle",
+                "Es wurde keine vollständige QKan-Datenquelle mit Haltungen, "
+                "Schächten und Anschlussleitungen gefunden. Unterstützt werden "
+                "SpatiaLite und PostgreSQL/PostGIS.",
+            )
             return
-        try:
-            self._datenbank_setzen(path)
-        except Exception as error:
-            QMessageBox.critical(self, "Ungültige QKan-Datenbank", _text_sicher_lesen(error))
+        self._datenquelle_setzen(datenquelle)
 
+    def _datenbankabfrage(
+        self, sql_name: str, parameters: Optional[dict[str, Any]] = None
+    ) -> list[dict[str, Any]]:
+        """Führt eine benannte Inspektionsabfrage providerneutral aus."""
+        if self.datenquelle is None:
+            return []
+        with datenbank_oeffnen(self.datenquelle) as db_qkan:
+            db_qkan.loadmodule("inspektion")
+            if not db_qkan.sqlyml(
+                sql_name,
+                "inspektion.befahrungsmedien",
+                parameters=parameters or {},
+            ):
+                raise RuntimeError(f"Datenbankabfrage fehlgeschlagen: {sql_name}")
+            columns = [str(column[0]) for column in db_qkan.cursl.description]
+            return [dict(zip(columns, row)) for row in db_qkan.fetchall()]
 
-    def _objekt_auswaehlen(self, object_type: str, object_name: str) -> None:
-        """Öffnet genau das auf der Karte ausgewählte Objekt, ohne vorher einen fremden
-        Listeneintrag zu laden.
-        """
+    def _tabellenlayer(self, table_name: str) -> Optional[QgsVectorLayer]:
+        """Öffnet eine Tabelle der aktuell gewählten QKan-Datenquelle."""
+        if self.datenquelle is None:
+            return None
+        return tabellenlayer_oeffnen(
+            QgsProject.instance(),
+            table_name,
+            self.datenquelle,
+            TABELLEN_GEOMETRIEFELDER.get(table_name, ""),
+        )
+
+    def _objekt_auswaehlen(
+        self,
+        object_type: str,
+        object_name: str,
+        datenquelle: Optional[Datenquelle] = None,
+    ) -> None:
+        """Öffnet genau das auf der Karte ausgewählte Objekt aus seiner Datenquelle."""
         if object_type not in OBJECT_CONFIG:
             raise ValueError(f"Unbekannte Objektart: {object_type}")
 
-        if not self.qkan_database or not Path(self.qkan_database).is_file():
-            inferred = self._qkan_datenbank_ermitteln()
-            if inferred:
-                self._datenbank_setzen(inferred, objekte_laden=False)
-        if not self.qkan_database or not Path(self.qkan_database).is_file():
+        if datenquelle is not None and datenquelle != self.datenquelle:
+            self._datenquelle_setzen(datenquelle, objekte_laden=False)
+        if self.datenquelle is None:
+            datenquelle = datenquelle_waehlen(
+                QgsProject.instance(),
+                MEDIEN_DATENQUELLEN_TABELLEN,
+                self,
+                "QKan – Befahrungsmedien",
+            )
+            if datenquelle is not None:
+                self._datenquelle_setzen(datenquelle, objekte_laden=False)
+        if self.datenquelle is None:
             self._ansicht_leeren()
             QMessageBox.warning(
                 self,
-                "Keine QKan-Datenbank",
-                "Die QKan-Datenbank konnte aus dem aktuellen Projekt nicht ermittelt werden.",
+                "Keine QKan-Datenquelle",
+                "Für das ausgewählte Objekt konnte keine QKan-Datenquelle ermittelt werden.",
             )
             return
 
@@ -1149,7 +1174,7 @@ class BefahrungsmedienDialog(QDialog):
             QMessageBox.information(
                 self,
                 "Keine Befahrungsdaten",
-                f"Für {object_type} {object_name} wurden in der gewählten QKan-Datenbank "
+                f"Für {object_type} {object_name} wurden in der gewählten QKan-Datenquelle "
                 "keine Inspektionsdaten gefunden.",
             )
             return
@@ -1187,30 +1212,18 @@ class BefahrungsmedienDialog(QDialog):
         self.cb_objekt.blockSignals(False)
         self.cb_befahrung.clear()
         self._ansicht_leeren()
-        if not self.qkan_database or not Path(self.qkan_database).is_file():
+        if self.datenquelle is None:
             return
         config = OBJECT_CONFIG[self.cb_objektart.currentText()]
-        connection = _sqlite_verbindung(self.qkan_database, query_only=True)
-        try:
-            if config["detail_table"] not in _tabellennamen_lesen(connection):
-                self.lbl_status.setText(
-                    f"Tabelle {config['detail_table']} ist in dieser Datenbank nicht vorhanden."
-                )
-                return
-            rows = connection.execute(
-                f"""
-                SELECT DISTINCT {_sql_bezeichner_quotieren(config['object_column'])}
-                FROM {_sql_bezeichner_quotieren(config['detail_table'])}
-                WHERE TRIM(COALESCE({_sql_bezeichner_quotieren(config['object_column'])}, '')) <> ''
-                ORDER BY {_sql_bezeichner_quotieren(config['object_column'])}
-                """
-            ).fetchall()
-            self.cb_objekt.blockSignals(True)
-            self.cb_objekt.addItems([_text_sicher_lesen(row[0]) for row in rows])
-            self.cb_objekt.blockSignals(False)
-            self.lbl_status.setText(f"{len(rows):,} Objekte geladen.")
-        finally:
-            connection.close()
+        rows = self._datenbankabfrage(
+            f"inspektion_medien_objekte_{config['sql_key']}"
+        )
+        self.cb_objekt.blockSignals(True)
+        self.cb_objekt.addItems(
+            [_text_sicher_lesen(row.get("object_name")) for row in rows]
+        )
+        self.cb_objekt.blockSignals(False)
+        self.lbl_status.setText(f"{len(rows):,} Objekte geladen.")
         if ansicht_laden:
             self._befahrungen_laden()
 
@@ -1222,39 +1235,28 @@ class BefahrungsmedienDialog(QDialog):
         self.cb_befahrung.addItem("Alle Befahrungen")
         self.cb_befahrung.blockSignals(False)
         object_name = self.cb_objekt.currentText().strip()
-        if not object_name or not self.qkan_database:
+        if not object_name or self.datenquelle is None:
             self._ansicht_leeren()
             return
         config = OBJECT_CONFIG[self.cb_objektart.currentText()]
-        connection = _sqlite_verbindung(self.qkan_database, query_only=True)
-        try:
-            rows = connection.execute(
-                f"""
-                SELECT DISTINCT untersuchtag
-                FROM {_sql_bezeichner_quotieren(config['detail_table'])}
-                WHERE {_sql_bezeichner_quotieren(config['object_column'])} = ?
-                  AND TRIM(COALESCE(untersuchtag, '')) <> ''
-                """,
-                (object_name,),
-            ).fetchall()
-            date_values = sorted(
-                (_text_sicher_lesen(row[0]) for row in rows),
-                key=_befahrungsdatum_sortierwert,
-                reverse=True,
-            )
-            self.cb_befahrung.blockSignals(True)
-            for date_value in date_values:
-                self.cb_befahrung.addItem(date_value)
-            self.cb_befahrung.blockSignals(False)
-        finally:
-            connection.close()
+        rows = self._datenbankabfrage(
+            f"inspektion_medien_befahrungen_{config['sql_key']}",
+            {"object_name": object_name},
+        )
+        date_values = sorted(
+            (_text_sicher_lesen(row.get("untersuchtag")) for row in rows),
+            key=_befahrungsdatum_sortierwert,
+            reverse=True,
+        )
+        self.cb_befahrung.blockSignals(True)
+        for date_value in date_values:
+            self.cb_befahrung.addItem(date_value)
+        self.cb_befahrung.blockSignals(False)
         if ansicht_laden:
             self._ansicht_laden()
 
-    def _ausgewaehltes_datum(self, connection: sqlite3.Connection) -> tuple[str, bool]:
-        """Löst die aktuelle Datumsauswahl in ein ISO-Datum und ein Kennzeichen für
-        alle Daten auf.
-        """
+    def _ausgewaehltes_datum(self) -> tuple[str, bool]:
+        """Löst die aktuelle Datumsauswahl und das Kennzeichen für alle Daten auf."""
         selection = self.cb_befahrung.currentText()
         if selection == "Alle Befahrungen":
             return "", True
@@ -1267,40 +1269,28 @@ class BefahrungsmedienDialog(QDialog):
     def _ansicht_laden(self, _value: str = "") -> None:
         """Lädt Schäden, Gesamtbewertung, Schema und Medienlisten."""
         object_name = self.cb_objekt.currentText().strip()
-        if not object_name or not self.qkan_database or not Path(self.qkan_database).is_file():
+        if not object_name or self.datenquelle is None:
             self._ansicht_leeren()
             return
         config = OBJECT_CONFIG[self.cb_objektart.currentText()]
-        connection = _sqlite_verbindung(self.qkan_database, query_only=True)
-        try:
-            date_value, all_dates = self._ausgewaehltes_datum(connection)
-            where = f"{_sql_bezeichner_quotieren(config['object_column'])} = ?"
-            parameters: list[Any] = [object_name]
-            if not all_dates:
-                where += " AND untersuchtag = ?"
-                parameters.append(date_value)
-            detail_columns = _tabellenspalten_lesen(connection, config["detail_table"])
-            if "station" in detail_columns:
-                position_order = "COALESCE(station, 0)"
-            elif "vertikale_lage" in detail_columns:
-                position_order = "COALESCE(vertikale_lage, 0)"
-            else:
-                position_order = "rowid"
-            query = (
-                f"SELECT rowid AS source_rowid, * "
-                f"FROM {_sql_bezeichner_quotieren(config['detail_table'])} "
-                f"WHERE {where} "
-                f"ORDER BY untersuchtag DESC, {position_order}, rowid"
-            )
-            self.damage_rows = [dict(row) for row in connection.execute(query, parameters)]
-            overall = self._gesamtbewertung_laden(connection, object_name, date_value, all_dates)
-        finally:
-            connection.close()
+        date_value, all_dates = self._ausgewaehltes_datum()
+        parameters = {
+            "object_name": object_name,
+            "date_value": date_value,
+            "all_dates": 1 if all_dates else 0,
+        }
+        self.damage_rows = self._datenbankabfrage(
+            f"inspektion_medien_schaeden_{config['sql_key']}",
+            parameters,
+        )
+        overall = self._gesamtbewertung_laden(
+            object_name, date_value, all_dates
+        )
 
         self.current_date_value = date_value
         self.current_all_dates = all_dates
         self.current_overall = overall
-        self._deleted_damage_rowids.clear()
+        self._deleted_damage_pks.clear()
         self._table_dirty = False
         self._rating_dirty = False
         self._schadenstabelle_fuellen()
@@ -1319,34 +1309,21 @@ class BefahrungsmedienDialog(QDialog):
 
     def _gesamtbewertung_laden(
         self,
-        connection: sqlite3.Connection,
         object_name: str,
         date_value: str,
         all_dates: bool,
     ) -> Optional[dict[str, Any]]:
-        """Liest die Gesamtbewertung des aktuellen Objekts und der aktuellen
-        Inspektion.
-        """
+        """Liest die Gesamtbewertung des aktuellen Objekts und der Inspektion."""
         config = OBJECT_CONFIG[self.cb_objektart.currentText()]
-        existing = _tabellennamen_lesen(connection)
-        if config["overall_table"] not in existing:
-            return None
-        where = f"{_sql_bezeichner_quotieren(config['overall_object_column'])} = ?"
-        parameters: list[Any] = [object_name]
-        if not all_dates and date_value:
-            where += " AND untersuchtag = ?"
-            parameters.append(date_value)
-        row = connection.execute(
-            f"""
-            SELECT rowid AS source_rowid, *
-            FROM {_sql_bezeichner_quotieren(config['overall_table'])}
-            WHERE {where}
-            ORDER BY untersuchtag DESC, rowid DESC
-            LIMIT 1
-            """,
-            parameters,
-        ).fetchone()
-        return dict(row) if row is not None else None
+        rows = self._datenbankabfrage(
+            f"inspektion_medien_gesamt_{config['sql_key']}",
+            {
+                "object_name": object_name,
+                "date_value": date_value,
+                "all_dates": 1 if all_dates else 0,
+            },
+        )
+        return rows[0] if rows else None
 
     def _objektlaenge_bestimmen(self, overall: Optional[dict[str, Any]]) -> float:
         """Bestimmt die Darstellungsstrecke aus Gesamt- oder Schadensdaten."""
@@ -1436,13 +1413,13 @@ class BefahrungsmedienDialog(QDialog):
         date_value: str,
         base_fallback: bool = False,
     ) -> Optional[dict[str, Any]]:
-        """Lädt Attribute und Geometrie eines untersuchten Objekts über QGIS/OGR."""
+        """Lädt Attribute und Geometrie eines untersuchten Objekts über QGIS."""
         config = OBJECT_CONFIG[object_type]
         table_name = config["overall_table"]
         object_column = config["overall_object_column"]
-        layer = QgsVectorLayer(f"{self.qkan_database}|layername={table_name}", table_name, "ogr")
+        layer = self._tabellenlayer(table_name)
         candidates: list[QgsFeature] = []
-        if layer.isValid():
+        if layer is not None and layer.isValid():
             for feature in layer.getFeatures():
                 if self._wert_fuer_vergleich(feature[object_column]) != object_name:
                     continue
@@ -1466,10 +1443,8 @@ class BefahrungsmedienDialog(QDialog):
             "Schacht": ("schaechte", "schnam"),
         }
         base_table, base_column = base_config[object_type]
-        base_layer = QgsVectorLayer(
-            f"{self.qkan_database}|layername={base_table}", base_table, "ogr"
-        )
-        if not base_layer.isValid():
+        base_layer = self._tabellenlayer(base_table)
+        if base_layer is None or not base_layer.isValid():
             return None
         for feature in base_layer.getFeatures():
             if self._wert_fuer_vergleich(feature[base_column]) == object_name:
@@ -1552,12 +1527,8 @@ class BefahrungsmedienDialog(QDialog):
         if total_length <= 0.000001:
             return []
 
-        layer = QgsVectorLayer(
-            f"{self.qkan_database}|layername=anschlussleitungen",
-            "anschlussleitungen",
-            "ogr",
-        )
-        if not layer.isValid() or "haltnam" not in layer.fields().names():
+        layer = self._tabellenlayer("anschlussleitungen")
+        if layer is None or not layer.isValid() or "haltnam" not in layer.fields().names():
             return []
 
         result: list[dict[str, Any]] = []
@@ -1750,33 +1721,16 @@ class BefahrungsmedienDialog(QDialog):
 
     def _verfuegbare_schadenscodes_laden(self) -> list[str]:
         """Lädt vorhandene QKan-Schadenskodes, ohne daraus Langtexte abzuleiten."""
-        if not self.qkan_database or not Path(self.qkan_database).is_file():
+        if self.datenquelle is None:
             return []
-        connection = _sqlite_verbindung(self.qkan_database, query_only=True)
-        try:
-            existing = _tabellennamen_lesen(connection)
-            codes: set[str] = set()
-            for table_name in (
-                "reflist_zustand",
-                "untersuchdat_haltung",
-                "untersuchdat_anschlussleitung",
-                "untersuchdat_schacht",
-            ):
-                if table_name not in existing:
-                    continue
-                columns = _tabellenspalten_lesen(connection, table_name)
-                code_column = "hauptcode" if "hauptcode" in columns else "kuerzel" if "kuerzel" in columns else ""
-                if not code_column:
-                    continue
-                rows = connection.execute(
-                    f"SELECT DISTINCT {_sql_bezeichner_quotieren(code_column)} "
-                    f"FROM {_sql_bezeichner_quotieren(table_name)} "
-                    f"WHERE TRIM(COALESCE({_sql_bezeichner_quotieren(code_column)}, '')) <> ''"
-                ).fetchall()
-                codes.update(_text_sicher_lesen(row[0]).strip().upper() for row in rows if _text_sicher_lesen(row[0]).strip())
-            return sorted(codes)
-        finally:
-            connection.close()
+        rows = self._datenbankabfrage("inspektion_medien_schadenscodes")
+        return sorted(
+            {
+                _text_sicher_lesen(row.get("code")).strip().upper()
+                for row in rows
+                if _text_sicher_lesen(row.get("code")).strip()
+            }
+        )
 
     def _schadenseintrag_hinzufuegen(self) -> None:
         """Öffnet die Eingabemaske und fügt den Eintrag erst nach »Übernehmen« hinzu."""
@@ -1820,7 +1774,7 @@ class BefahrungsmedienDialog(QDialog):
         position_column = self._stationsspalte_bestimmen()
         overall_values = self.current_overall or {}
         new_row: dict[str, Any] = {
-            "source_rowid": None,
+            "source_pk": None,
             config["object_column"]: self.cb_objekt.currentText().strip(),
             "untersuchtag": date_value or datetime.now().strftime("%Y-%m-%d"),
             position_column: dialog.dsb_station.value(),
@@ -1858,9 +1812,9 @@ class BefahrungsmedienDialog(QDialog):
             return
         self._tabelle_in_schadensdaten_uebernehmen()
         row = self.damage_rows.pop(row_index)
-        source_rowid = row.get("source_rowid")
-        if source_rowid not in (None, ""):
-            self._deleted_damage_rowids.add(int(source_rowid))
+        source_pk = row.get("source_pk")
+        if source_pk not in (None, ""):
+            self._deleted_damage_pks.add(int(source_pk))
         self._table_dirty = True
         self._schadenstabelle_fuellen()
         if self.damage_rows:
@@ -2114,12 +2068,8 @@ class BefahrungsmedienDialog(QDialog):
         if self.current_all_dates or not self.current_date_value:
             raise RuntimeError("Für „Alle Befahrungen“ kann keine einzelne Gesamtbewertung gespeichert werden.")
         config = OBJECT_CONFIG[self.cb_objektart.currentText()]
-        layer = QgsVectorLayer(
-            f"{self.qkan_database}|layername={config['overall_table']}",
-            config["overall_table"],
-            "ogr",
-        )
-        if not layer.isValid():
+        layer = self._tabellenlayer(config["overall_table"])
+        if layer is None or not layer.isValid():
             raise RuntimeError(
                 f"Die Tabelle {config['overall_table']} konnte nicht geöffnet werden."
             )
@@ -2172,15 +2122,15 @@ class BefahrungsmedienDialog(QDialog):
 
     def _schadensaenderungen_speichern(self) -> None:
         """Speichert vorgemerkte Änderungen an Schäden, Geometrien und Gesamtbewertung."""
-        if not self._table_dirty and not self._deleted_damage_rowids and not self._rating_dirty:
+        if not self._table_dirty and not self._deleted_damage_pks and not self._rating_dirty:
             QMessageBox.information(self, "Speichern", "Es gibt keine ungespeicherten Änderungen.")
             return
-        if not self.qkan_database or not Path(self.qkan_database).is_file():
-            QMessageBox.warning(self, "Speichern", "Die QKan-Datenbank ist nicht verfügbar.")
+        if self.datenquelle is None:
+            QMessageBox.warning(self, "Speichern", "Die QKan-Datenquelle ist nicht verfügbar.")
             return
 
         self._tabelle_in_schadensdaten_uebernehmen()
-        details_changed = self._table_dirty or bool(self._deleted_damage_rowids)
+        details_changed = self._table_dirty or bool(self._deleted_damage_pks)
         details_saved = False
 
         if details_changed:
@@ -2199,12 +2149,8 @@ class BefahrungsmedienDialog(QDialog):
                 )
                 return
 
-            layer = QgsVectorLayer(
-                f"{self.qkan_database}|layername={table_name}",
-                table_name,
-                "ogr",
-            )
-            if not layer.isValid():
+            layer = self._tabellenlayer(table_name)
+            if layer is None or not layer.isValid():
                 QMessageBox.critical(
                     self,
                     "Speichern fehlgeschlagen",
@@ -2251,20 +2197,35 @@ class BefahrungsmedienDialog(QDialog):
                 "film_dateiname",
             ]
             insert_fields = [field for field in insert_fields if fields.indexFromName(field) >= 0]
+            if fields.indexFromName("pk") < 0:
+                layer.rollBack()
+                QMessageBox.critical(
+                    self,
+                    "Speichern fehlgeschlagen",
+                    f"Das Primärschlüsselfeld pk fehlt in {table_name}.",
+                )
+                return
+            feature_ids_by_pk: dict[int, int] = {}
+            for feature in layer.getFeatures():
+                try:
+                    feature_ids_by_pk[int(feature["pk"])] = int(feature.id())
+                except (TypeError, ValueError):
+                    continue
 
             try:
-                for source_rowid in sorted(self._deleted_damage_rowids):
-                    if not layer.deleteFeature(int(source_rowid)):
-                        raise RuntimeError(f"Eintrag {source_rowid} konnte nicht gelöscht werden.")
+                for source_pk in sorted(self._deleted_damage_pks):
+                    feature_id = feature_ids_by_pk.get(int(source_pk))
+                    if feature_id is None or not layer.deleteFeature(feature_id):
+                        raise RuntimeError(f"Eintrag {source_pk} konnte nicht gelöscht werden.")
 
                 for row_index, row in enumerate(self.damage_rows):
-                    source_rowid = row.get("source_rowid")
+                    source_pk = row.get("source_pk")
                     geometry = geometries.get(row_index)
                     if layer.isSpatial() and (geometry is None or geometry.isEmpty()):
                         raise RuntimeError(
                             f"Für den Einzelschaden in Zeile {row_index + 1} konnte keine Geometrie erzeugt werden."
                         )
-                    if source_rowid in (None, ""):
+                    if source_pk in (None, ""):
                         feature = QgsFeature(fields)
                         if layer.isSpatial() and geometry is not None:
                             feature.setGeometry(geometry)
@@ -2278,17 +2239,21 @@ class BefahrungsmedienDialog(QDialog):
                         if not layer.addFeature(feature):
                             raise RuntimeError("Ein neuer Eintrag konnte nicht angelegt werden.")
                     else:
-                        feature_id = int(source_rowid)
+                        feature_id = feature_ids_by_pk.get(int(source_pk))
+                        if feature_id is None:
+                            raise RuntimeError(
+                                f"Eintrag {source_pk} wurde in {table_name} nicht gefunden."
+                            )
                         for field in editable_fields:
                             field_index = fields.indexFromName(field)
                             if not layer.changeAttributeValue(feature_id, field_index, row.get(field)):
                                 raise RuntimeError(
-                                    f"Eintrag {source_rowid}, Feld {field}, konnte nicht geändert werden."
+                                    f"Eintrag {source_pk}, Feld {field}, konnte nicht geändert werden."
                                 )
                         if layer.isSpatial() and geometry is not None:
                             if not layer.changeGeometry(feature_id, geometry):
                                 raise RuntimeError(
-                                    f"Die Geometrie von Eintrag {source_rowid} konnte nicht aktualisiert werden."
+                                    f"Die Geometrie von Eintrag {source_pk} konnte nicht aktualisiert werden."
                                 )
 
                 if not layer.commitChanges():
@@ -2317,7 +2282,7 @@ class BefahrungsmedienDialog(QDialog):
                 )
                 if details_saved:
                     self._table_dirty = False
-                    self._deleted_damage_rowids.clear()
+                    self._deleted_damage_pks.clear()
                     prefix = (
                         "Die Einzelschäden wurden gespeichert, die Gesamtbewertung "
                         "beziehungsweise der Bearbeitungszeitpunkt jedoch nicht."
@@ -2336,11 +2301,11 @@ class BefahrungsmedienDialog(QDialog):
 
         self._table_dirty = False
         self._rating_dirty = False
-        self._deleted_damage_rowids.clear()
+        self._deleted_damage_pks.clear()
         QMessageBox.information(
             self,
             "Gespeichert",
-            "Die Änderungen wurden in der QKan-Datenbank gespeichert.",
+            "Die Änderungen wurden in der QKan-Datenquelle gespeichert.",
         )
         self._ansicht_laden()
 
@@ -2453,25 +2418,21 @@ class BefahrungsmedienDialog(QDialog):
         # 300 dpi entsprechen etwa 11,81 Pixeln pro Millimeter.
         px_per_mm = 300.0 / 25.4
         header_px = 600
-        footer_px = 190
         top_bottom_margin_px = 260
-        required_height_px = header_px + required_line_height_px + footer_px + 2 * top_bottom_margin_px
+        required_height_px = header_px + required_line_height_px + 2 * top_bottom_margin_px
         page_height_mm = max(297.0, required_height_px / px_per_mm)
 
         writer = QPdfWriter(str(target))
         writer.setPageSize(QPageSize(QSizeF(210.0, page_height_mm), QPageSize.Millimeter, "Befahrungsgrafik"))
         writer.setResolution(300)
         writer.setTitle(f"Befahrungsgrafik {object_type} {object_name}")
-        writer.setCreator("EV-A-Kan TV Media")
         painter = QPainter(writer)
         if not painter.isActive():
             raise RuntimeError("PDF-Zeichner konnte nicht gestartet werden.")
 
         page_width = writer.width()
-        page_height = writer.height()
         margin = int(page_width * 0.045)
         header_height = header_px
-        footer_height = footer_px
         top = margin + header_height
         bottom = top + required_line_height_px
         center_x = page_width // 2
@@ -2479,21 +2440,74 @@ class BefahrungsmedienDialog(QDialog):
         title_font = QFont("Arial", 14, QFont.Bold)
         heading_font = QFont("Arial", 9, QFont.Bold)
         body_font = QFont("Arial", 7)
-        small_font = QFont("Arial", 7)
 
-        painter.setRenderHint(QPainter.Antialiasing)
-        painter.setPen(Qt.black)
-        painter.setFont(title_font)
-        painter.drawText(QRectF(margin, margin, page_width - 2 * margin, 120), Qt.AlignLeft | Qt.AlignVCenter, "Befahrungsgrafik")
-        painter.setFont(heading_font)
-        info = (
-            f"{object_type}: {object_name}    Befahrung: {date_value or '-'}    "
-            f"Länge/Abmessung: {length:.2f} m    "
+        def zahl_formatieren(value: Any, decimals: int = 2) -> str:
+            return f"{_gleitkommazahl_sicher_lesen(value, 0.0):.{decimals}f}".replace(".", ",")
+
+        def datum_formatieren(value: str) -> str:
+            text = _text_sicher_lesen(value).strip()
+            for date_format in ("%Y-%m-%d", "%Y-%m-%d %H:%M:%S"):
+                try:
+                    return datetime.strptime(text, date_format).strftime("%d.%m.%Y")
+                except ValueError:
+                    continue
+            return text or "–"
+
+        overall = self.current_overall or {}
+        title = f"Befahrungsgrafik {object_type}: {object_name} – {datum_formatieren(date_value)}"
+
+        info_lines: list[str] = []
+        primary_info: list[str] = []
+        if object_type == "Schacht":
+            diameter = _gleitkommazahl_sicher_lesen(overall.get("durchm"), 0.0)
+            if diameter > 0:
+                primary_info.append(f"Durchmesser: {zahl_formatieren(diameter)} m")
+        else:
+            primary_info.append(f"Länge: {zahl_formatieren(length)} m")
+            height = _gleitkommazahl_sicher_lesen(overall.get("hoehe"), 0.0)
+            width = _gleitkommazahl_sicher_lesen(overall.get("breite"), 0.0)
+            if height > 0 and width > 0:
+                primary_info.append(
+                    f"Abmessung: {zahl_formatieren(height, 0)} × {zahl_formatieren(width, 0)} mm"
+                )
+
+        construction_year = int(_gleitkommazahl_sicher_lesen(overall.get("baujahr"), 0.0))
+        if construction_year > 0:
+            primary_info.append(f"Baujahr: {construction_year}")
+        if primary_info:
+            info_lines.append("    ".join(primary_info))
+
+        additional_info: list[str] = []
+        order_name = _text_sicher_lesen(overall.get("auftragsbezeichnung")).strip()
+        if order_name:
+            additional_info.append(f"Auftrag: {order_name}")
+        street = _text_sicher_lesen(overall.get("strasse")).strip()
+        if street:
+            additional_info.append(f"Straße: {street}")
+        if additional_info:
+            info_lines.append("    ".join(additional_info))
+
+        info_lines.append(
+            f"Inspektionseinträge: {len(self.damage_rows)}    "
             f"ZD: {self.rating_zd_label.text().replace('ZD: ', '')}    "
             f"ZB: {self.rating_zb_label.text().replace('ZB: ', '')}    "
             f"ZS: {self.rating_zs_label.text().replace('ZS: ', '')}"
         )
-        painter.drawText(QRectF(margin, margin + 120, page_width - 2 * margin, header_height - 170), Qt.TextWordWrap, info)
+
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setPen(Qt.black)
+        painter.setFont(title_font)
+        painter.drawText(
+            QRectF(margin, margin, page_width - 2 * margin, 120),
+            Qt.AlignLeft | Qt.AlignVCenter,
+            title,
+        )
+        painter.setFont(heading_font)
+        painter.drawText(
+            QRectF(margin, margin + 120, page_width - 2 * margin, header_height - 170),
+            Qt.TextWordWrap,
+            "\n".join(info_lines),
+        )
         painter.drawLine(margin, margin + header_height - 35, page_width - margin, margin + header_height - 35)
 
         # Dieselben Farben wie in der Grafik der Oberfläche verwenden.
@@ -2539,14 +2553,6 @@ class BefahrungsmedienDialog(QDialog):
             label = f"{station:.2f} m  {_text_sicher_lesen(row.get('kuerzel'))}  {_text_sicher_lesen(row.get('langtext'))}".strip()
             painter.drawText(text_rect, alignment, label)
 
-        painter.setFont(small_font)
-        footer = f"{len(self.damage_rows)} Einzelschäden | Erstellt mit EV-A-Kan TV Media"
-        painter.setPen(Qt.black)
-        painter.drawText(
-            QRectF(margin, page_height - margin - footer_height, page_width - 2 * margin, footer_height),
-            Qt.AlignCenter,
-            footer,
-        )
         painter.end()
 
     def _medienlisten_erstellen(self) -> None:
@@ -3140,7 +3146,7 @@ class BefahrungsmedienDialog(QDialog):
         self.current_all_dates = False
         self._table_dirty = False
         self._rating_dirty = False
-        self._deleted_damage_rowids.clear()
+        self._deleted_damage_pks.clear()
         self.tw_schaeden.setRowCount(0)
         self.tw_videos.setRowCount(0)
         self.inspektionsgrafik.daten_setzen([], self.cb_objektart.currentText(), 1.0, [])
@@ -3319,6 +3325,7 @@ class BefahrungsmedienPlugin:
         self,
         object_type: str,
         object_name: str,
+        datenquelle: Optional[Datenquelle],
     ) -> None:
         """Öffnet die kompakte Objektansicht und lässt den Auswahlmodus aktiv."""
         if self.viewer_dialog is None:
@@ -3339,6 +3346,7 @@ class BefahrungsmedienPlugin:
                 and self.viewer_dialog._objekt_auswaehlen(
                     object_type,
                     object_name,
+                    datenquelle,
                 )
             ),
         )

@@ -488,8 +488,6 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         "anschlussschaechte",
     }
 
-    # DWA-M 150, Abschnitt 7: Standard-Langtexte der Referenztabellen,
-    # die von diesem Modul tatsächlich ausgewertet bzw. geschrieben werden.
     # Externe RT-Blöcke einer Import-XML haben beim Import Vorrang.
     M150_STANDARD_RT = {
         "101": {
@@ -2691,7 +2689,7 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             z_end = objekt.get("sohleunten")
 
             xml_hg = SubElement(xml_wurzel, "HG")
-            # Bedeutung der Anschlussfelder nach DWA-M 150:
+            # Zuordnung der Anschlussfelder im Export:
             # HG005 Endobjekt, HG006 Typ des Elternobjekts, HG007 Station,
             # HG008 Stationierungsrichtung, HG009 Uhrlage, HG010 Endpunkttyp,
             # HG011 Leitungsname und HG012 direkte Elternleitung.

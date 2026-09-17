@@ -1,12 +1,12 @@
 """Registriert die Werkzeuge des Inspektionsmoduls in der QKan-Oberfläche."""
 
+from pathlib import Path
+
 from qgis.gui import QgisInterface
 
 from qkan import QKan
 from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources  # noqa: F401
 from .befahrungsmedien import BefahrungsmedienPlugin
 
 
@@ -27,8 +27,8 @@ class Inspektion(QKanPlugin):
         """Registriert die Aktionen und Symbole in der QKan-Werkzeugleiste."""
 
         # Schacht erstellen
-        icon_create_schacht = (
-            ":/plugins/qkan/inspektion/res/icon_create_schacht.png"
+        icon_create_schacht = str(
+            Path(__file__).parent / "res" / "icon_create_schacht.png"
         )
 
         self.action_create_schacht = QKan.instance.add_action(
@@ -42,8 +42,8 @@ class Inspektion(QKanPlugin):
         self.iface.action_create_schacht = self.action_create_schacht
 
         # Haltung erstellen
-        icon_create_haltung = (
-            ":/plugins/qkan/inspektion/res/icon_create_haltung.png"
+        icon_create_haltung = str(
+            Path(__file__).parent / "res" / "icon_create_haltung.png"
         )
 
         self.action_create_haltung = QKan.instance.add_action(
@@ -57,8 +57,8 @@ class Inspektion(QKanPlugin):
         self.iface.action_create_haltung = self.action_create_haltung
 
         # Schacht ändern
-        icon_change_schacht = (
-            ":/plugins/qkan/inspektion/res/icon_change_schacht.png"
+        icon_change_schacht = str(
+            Path(__file__).parent / "res" / "icon_change_schacht.png"
         )
 
         self.action_change_schacht = QKan.instance.add_action(
@@ -72,8 +72,8 @@ class Inspektion(QKanPlugin):
         self.iface.action_change_schacht = self.action_change_schacht
 
         # Haltung ändern
-        icon_change_haltung = (
-            ":/plugins/qkan/inspektion/res/icon_change_haltung.png"
+        icon_change_haltung = str(
+            Path(__file__).parent / "res" / "icon_change_haltung.png"
         )
 
         self.action_change_haltung = QKan.instance.add_action(
@@ -87,7 +87,9 @@ class Inspektion(QKanPlugin):
         self.iface.action_change_haltung = self.action_change_haltung
 
         # M150 Export
-        icon_export = ":/plugins/qkan/inspektion/res/dwa_m150_export.png"
+        icon_export = str(
+            Path(__file__).parent / "res" / "dwa_m150_export.png"
+        )
 
         self.action_befahrung_export = QKan.instance.add_action(
             icon_export,
@@ -101,7 +103,9 @@ class Inspektion(QKanPlugin):
         self.iface.action_befahrung_export = self.action_befahrung_export
 
         # M150 Import
-        icon_import = ":/plugins/qkan/inspektion/res/dwa_m150_import.png"
+        icon_import = str(
+            Path(__file__).parent / "res" / "dwa_m150_import.png"
+        )
 
         self.action_befahrung_import = QKan.instance.add_action(
             icon_import,

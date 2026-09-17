@@ -56,20 +56,24 @@ class Inspektionsgrafik(QWidget):
 
     @staticmethod
     def schadensfarbe_bestimmen(row: dict[str, Any]) -> QColor:
-        """Ordnet Bewertungswerte einer zurückhaltenden Markierungsfarbe zu."""
-        values = [
-            int(_gleitkommazahl_sicher_lesen(row.get("ZD"), 0)),
-            int(_gleitkommazahl_sicher_lesen(row.get("ZB"), 0)),
-            int(_gleitkommazahl_sicher_lesen(row.get("ZS"), 0)),
-        ]
-        positive = [value for value in values if 1 <= value <= 5]
-        rating = min(positive) if positive else 0
+        """Verwendet für ZD/ZB/ZS die QKan-Farben der maßgeblichen Zustandsklasse."""
+        values = []
+        for field_name in ("ZD", "ZB", "ZS"):
+            raw_value = row.get(field_name)
+            if raw_value in (None, ""):
+                continue
+            value = int(_gleitkommazahl_sicher_lesen(raw_value, -1))
+            if 0 <= value <= 5:
+                values.append(value)
+
+        rating = min(values) if values else None
         return {
-            1: QColor("#b91c1c"),
-            2: QColor("#ea580c"),
-            3: QColor("#eab308"),
-            4: QColor("#65a30d"),
-            5: QColor("#15803d"),
+            0: QColor("#ff0000"),
+            1: QColor("#ff7f00"),
+            2: QColor("#ffff00"),
+            3: QColor("#8fcf4f"),
+            4: QColor("#00af4f"),
+            5: QColor("#007fff"),
         }.get(rating, QColor("#64748b"))
 
     def paintEvent(self, _event: Any) -> None:

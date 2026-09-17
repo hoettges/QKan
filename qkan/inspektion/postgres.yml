@@ -382,3 +382,91 @@ inspektion_import_index_anschlussleitungen_untersucht: SELECT pk, leitnam, unter
   ORDER BY pk;
 inspektion_import_index_untersuchdat_anschlussleitung: SELECT pk, untersuchleit, untersuchtag, id FROM {schema}.untersuchdat_anschlussleitung
   ORDER BY pk;
+
+# Befahrungsmedien: providerneutrale Leseabfragen für SpatiaLite und PostgreSQL.
+inspektion_medien_objekte_haltung: |-
+  SELECT DISTINCT untersuchhal AS object_name
+  FROM {schema}.untersuchdat_haltung
+  WHERE TRIM(COALESCE(untersuchhal, '')) <> ''
+  ORDER BY untersuchhal;
+inspektion_medien_objekte_anschlussleitung: |-
+  SELECT DISTINCT untersuchleit AS object_name
+  FROM {schema}.untersuchdat_anschlussleitung
+  WHERE TRIM(COALESCE(untersuchleit, '')) <> ''
+  ORDER BY untersuchleit;
+inspektion_medien_objekte_schacht: |-
+  SELECT DISTINCT untersuchsch AS object_name
+  FROM {schema}.untersuchdat_schacht
+  WHERE TRIM(COALESCE(untersuchsch, '')) <> ''
+  ORDER BY untersuchsch;
+
+inspektion_medien_befahrungen_haltung: |-
+  SELECT DISTINCT untersuchtag
+  FROM {schema}.untersuchdat_haltung
+  WHERE untersuchhal = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> '';
+inspektion_medien_befahrungen_anschlussleitung: |-
+  SELECT DISTINCT untersuchtag
+  FROM {schema}.untersuchdat_anschlussleitung
+  WHERE untersuchleit = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> '';
+inspektion_medien_befahrungen_schacht: |-
+  SELECT DISTINCT untersuchtag
+  FROM {schema}.untersuchdat_schacht
+  WHERE untersuchsch = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> '';
+
+inspektion_medien_schaeden_haltung: |-
+  SELECT pk AS source_pk, *
+  FROM {schema}.untersuchdat_haltung
+  WHERE untersuchhal = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+  ORDER BY untersuchtag DESC, COALESCE(station, 0), pk;
+inspektion_medien_schaeden_anschlussleitung: |-
+  SELECT pk AS source_pk, *
+  FROM {schema}.untersuchdat_anschlussleitung
+  WHERE untersuchleit = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+  ORDER BY untersuchtag DESC, COALESCE(station, 0), pk;
+inspektion_medien_schaeden_schacht: |-
+  SELECT pk AS source_pk, *
+  FROM {schema}.untersuchdat_schacht
+  WHERE untersuchsch = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+  ORDER BY untersuchtag DESC, COALESCE(vertikale_lage, 0), pk;
+
+inspektion_medien_gesamt_haltung: |-
+  SELECT pk AS source_pk, *
+  FROM {schema}.haltungen_untersucht
+  WHERE haltnam = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+  ORDER BY untersuchtag DESC, pk DESC
+  LIMIT 1;
+inspektion_medien_gesamt_anschlussleitung: |-
+  SELECT pk AS source_pk, *
+  FROM {schema}.anschlussleitungen_untersucht
+  WHERE leitnam = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+  ORDER BY untersuchtag DESC, pk DESC
+  LIMIT 1;
+inspektion_medien_gesamt_schacht: |-
+  SELECT pk AS source_pk, *
+  FROM {schema}.schaechte_untersucht
+  WHERE schnam = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+  ORDER BY untersuchtag DESC, pk DESC
+  LIMIT 1;
+
+inspektion_medien_schadenscodes: |-
+  SELECT DISTINCT code
+  FROM (
+      SELECT hauptcode AS code FROM {schema}.reflist_zustand
+      UNION ALL
+      SELECT kuerzel AS code FROM {schema}.untersuchdat_haltung
+      UNION ALL
+      SELECT kuerzel AS code FROM {schema}.untersuchdat_anschlussleitung
+      UNION ALL
+      SELECT kuerzel AS code FROM {schema}.untersuchdat_schacht
+  ) AS schadenscodes
+  WHERE TRIM(COALESCE(code, '')) <> ''
+  ORDER BY code;
