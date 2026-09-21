@@ -1502,6 +1502,12 @@ VALUES (
 :bezeichnung, :art, :gruppe, :kommentar,
 GeomFromWKB(:geom, :epsg));"
 
+database_insertdata_kanalreinigung: "
+INSERT INTO kanalreinigung
+  (reinigungsdatum, ablagerungen, reinigungszeit, fahrer, beifahrer, haltungsnummer, bemerkung, kontrolle, haltnam)
+VALUES (
+:reinigungsdatum, :ablagerungen, :reinigungszeit, :fahrer, :beifahrer, :haltungsnummer, :bemerkung, :kontrolle, :haltnam);"
+
 database_insertdata_fotos: "
 INSERT INTO fotos
   (name, untersuchtag, objekt, datei, createdat)

@@ -73,6 +73,7 @@ TABLES_GEOM = [
     "einleit",
     "aussengebiete",
     "symbole",
+    "kanalreinigung",
 ]
 
 TABLES_GEOP = [

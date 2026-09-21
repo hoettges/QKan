@@ -1135,39 +1135,39 @@ class ExportTask:
                     FROM profile
                 )
                 SELECT
-                    haltungen.haltnam,
-                    haltungen.schoben,
-                    haltungen.schunten,
-                    haltungen.hoehe,
-                    haltungen.breite,
-                    haltungen.laenge,
-                    haltungen.sohleoben,
-                    haltungen.sohleunten,
+                    ha.haltnam,
+                    ha.schoben,
+                    ha.schunten,
+                    ha.hoehe,
+                    ha.breite,
+                    ha.laenge,
+                    ha.sohleoben,
+                    ha.sohleunten,
                     pr.isybau,
-                    haltungen.strasse,
+                    ha.strasse,
                     ma.isybau,
                     ea.isybau,
-                    haltungen.ks,
+                    ha.ks,
                     si.bezeichnung,
-                    haltungen.kommentar,
-                    x(PointN(haltungen.geom, 1)) AS xschob,
-                    y(PointN(haltungen.geom, 1)) AS yschob,
-                    x(PointN(haltungen.geom, -1)) AS xschun,
-                    y(PointN(haltungen.geom, -1)) AS yschun,
-                    haltungen.baujahr,
-                    haltungen.aussendurchmesser,
-                    haltungen.profilauskleidung,
-                    haltungen.innenmaterial
-                FROM haltungen
-                LEFT JOIN simulationsstatus AS si ON haltungen.simstatus = si.bezeichnung
+                    ha.kommentar,
+                    x(PointN(ha.geom, 1)) AS xschob,
+                    y(PointN(ha.geom, 1)) AS yschob,
+                    x(PointN(ha.geom, -1)) AS xschun,
+                    y(PointN(ha.geom, -1)) AS yschun,
+                    ha.baujahr,
+                    ha.aussendurchmesser,
+                    ha.profilauskleidung,
+                    ha.innenmaterial
+                FROM haltungen AS ha
+                LEFT JOIN simulationsstatus AS si ON ha.simstatus = si.bezeichnung
                 LEFT JOIN ma_bestaende AS ma
-                    ON haltungen.material = ma.bezeichnung
+                    ON ha.material = ma.bezeichnung
                     AND ma.rn = 1
                 LEFT JOIN pr_bestaende AS pr
-                    ON haltungen.profilnam = pr.profilnam
+                    ON ha.profilnam = pr.profilnam
                     AND pr.rn = 1
                 LEFT JOIN ea_bestaende AS ea
-                    ON haltungen.entwart = ea.bezeichnung
+                    ON ha.entwart = ea.bezeichnung
                     AND ea.rn = 1 {self.abfrage_h_where}
             """
 
@@ -1778,7 +1778,7 @@ class ExportTask:
                             AND ma.rn = 1
                         LEFT JOIN pr_bestaende AS pr 
                             ON haltungen.profilnam = pr.profilnam
-                            AND pr.rn = 1 {self.abfrage_h_and}
+                            AND pr.rn = 1 {self.abfrage_h_sub_and}
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1879,7 +1879,7 @@ class ExportTask:
                             AND ma.rn = 1
                         LEFT JOIN pr_bestaende AS pr 
                             ON haltungen.profilnam = pr.profilnam
-                            AND pr.rn = 1 {self.abfrage_h_and}
+                            AND pr.rn = 1 {self.abfrage_h_sub_and}
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1936,7 +1936,7 @@ class ExportTask:
                             haltungen_substanz_bewertung.baujahr,
                             haltungen_substanz_bewertung.untersuchtag,
                             haltungen_substanz_bewertung.untersucher,
-                            NULL,
+                            haltungen_substanz_bewertung.untersuchrichtung,
                             haltungen_substanz_bewertung.wetter,
                             haltungen_substanz_bewertung.bewertungsart,
                             haltungen_substanz_bewertung.bewertungstag,
@@ -1982,7 +1982,7 @@ class ExportTask:
                             AND ma.rn = 1
                         LEFT JOIN pr_bestaende AS pr 
                             ON haltungen.profilnam = pr.profilnam
-                            AND pr.rn = 1 {self.abfrage_h_and}
+                            AND pr.rn = 1 {self.abfrage_h_sub_and}
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -2086,6 +2086,11 @@ class ExportTask:
                         )
 
 
+                    if untersuchrichtung == 'in Gegenrichtung':
+                        untersuchrichtung = 'U'
+                    else:
+                        untersuchrichtung = 'O'
+
                     rohr = SubElement(opt, "Rohrleitung")
                     _create_children_text(
                         rohr,
@@ -2104,9 +2109,9 @@ class ExportTask:
                             rgrund,
                             {
                                 "KnotenZulauf": schoben,
-                                "KnotenZulauftyp": 0,
+                                "KnotenZulaufTyp": 0,
                                 "KnotenAblauf": schunten,
-                                "KnotenAblauftyp": 0,
+                                "KnotenAblaufTyp": 0,
                                 "Profilhoehe": int(hoehe),
                                 "Profilbreite": int(breite),
                                 "Profilart": profilnam_nr,
@@ -2120,9 +2125,9 @@ class ExportTask:
                             rgrund,
                             {
                                 "KnotenZulauf": schoben,
-                                "KnotenZulauftyp": 0,
+                                "KnotenZulaufTyp": 0,
                                 "KnotenAblauf": schunten,
-                                "KnotenAblauftyp": 0,
+                                "KnotenAblaufTyp": 0,
                                 "Profilart": profilnam_nr,
                                 "Material": material,
                                 "Kanalart": entwart_nr,
@@ -2132,13 +2137,22 @@ class ExportTask:
 
                     last_pk = pk
 
+                    parts = timekode.split(':')
+                    h = int(parts[0])
+                    m = int(parts[1])
+                    s = int(parts[2])
+                    f = 0  # Da keine Frames angegeben sind, setzen wir sie auf 0
+
+                    # Als kompakten, 8-stelligen String zusammensetzen (Format: HHMMSSFF)
+                    ziel_timecode = f"{h:02d}{m:02d}{s:02d}{f:02d}"
+
 
                     rzu = SubElement(inspdat, "RZustand")
                     _create_children_text(
                         rzu,
                         {
                             "Station": station,
-                            "Timecode": timekode,
+                            "Timecode": ziel_timecode,
                             "InspektionsKode": kuerzel,
                             "Charakterisierung1": charakt1,
                             "Charakterisierung2": charakt2,
@@ -2152,14 +2166,41 @@ class ExportTask:
                         },
                     )
                     kl = SubElement(rzu, "Klassifizierung")
+                    d = SubElement(kl, "Dichtheit")
+                    s = SubElement(kl, "Standsicherheit")
+                    b = SubElement(kl, "Betriebssicherheit")
+
                     _create_children_text(
-                        kl,
+                        d,
                         {
-                            "Dichtheit": zd,
-                            "Standsicherheit": zs,
-                            "Betriebssicherheit": zb,
+                            "SKDvAuto": zd,
+                            "SKDvManu": zd,
+                            "SZDvAuto": 0,
+                            "SZDeAuto": 0,
+                            "SKDeAuto": zd,
                         },
                     )
+                    _create_children_text(
+                        s,
+                        {
+                            "SKSvAuto": zs,
+                            "SKSvManu": zs,
+                            "SZSvAuto": 0,
+                            "SZSeAuto": 0,
+                            "SKSeAuto": zs,
+                        },
+                    )
+                    _create_children_text(
+                        b,
+                        {
+                            "SKBvAuto": zb,
+                            "SKBvManu": zb,
+                            "SZBvAuto": 0,
+                            "SZBeAuto": 0,
+                            "SKBeAuto": zb,
+                        },
+                    )
+
 
     def _export_zustandsdaten_anschlussleitungen(self):
         if self.vorlage == "":
@@ -2816,10 +2857,10 @@ class ExportTask:
                     _create_children_text(
                         rgrund,
                         {
-                            "KnotenZulauf": 0,
-                            "KnotenZulauftyp": schoben,
-                            "KnotenAblauf": 0,
-                            "KnotenAblauftyp": schunten,
+                            "KnotenZulauf": schoben,
+                            "KnotenZulaufTyp": 0,
+                            "KnotenAblauf": schunten,
+                            "KnotenAblaufTyp": 0,
                             "Profilhoehe": int(hoehe),
                             "Profilbreite": int(breite),
                             "Profilart": profilnam_nr,
@@ -2831,12 +2872,21 @@ class ExportTask:
 
                     last_pk = pk
 
+                    parts = timekode.split(':')
+                    h = int(parts[0])
+                    m = int(parts[1])
+                    s = int(parts[2])
+                    f = 0  # Da keine Frames angegeben sind, setzen wir sie auf 0
+
+                    # Als kompakten, 8-stelligen String zusammensetzen (Format: HHMMSSFF)
+                    ziel_timecode = f"{h:02d}{m:02d}{s:02d}{f:02d}"
+
                     rzu = SubElement(inspdat, "RZustand")
                     _create_children_text(
                         rzu,
                         {
                             "Station": station,
-                            "Timecode": timekode,
+                            "Timecode": ziel_timecode,
                             "InspektionsKode": kuerzel,
                             "Charakterisierung1": charakt1,
                             "Charakterisierung2": charakt2,
@@ -2851,12 +2901,38 @@ class ExportTask:
                     )
                     kl = SubElement(rzu, "Klassifizierung")
 
+                    d = SubElement(kl, "Dichtheit")
+                    s = SubElement(kl, "Standsicherheit")
+                    b = SubElement(kl, "Betriebssicherheit")
+
                     _create_children_text(
-                        kl,
+                        d,
                         {
-                            "Dichtheit": zd,
-                            "Standsicherheit": zs,
-                            "Betriebssicherheit": zb,
+                            "SKDvAuto": zd,
+                            "SKDvManu": zd,
+                            "SZDvAuto": 0,
+                            "SZDeAuto": 0,
+                            "SKDeAuto": zd,
+                        },
+                    )
+                    _create_children_text(
+                        s,
+                        {
+                            "SKSvAuto": zs,
+                            "SKSvManu": zs,
+                            "SZSvAuto": 0,
+                            "SZSeAuto": 0,
+                            "SKSeAuto": zs,
+                        },
+                    )
+                    _create_children_text(
+                        b,
+                        {
+                            "SKBvAuto": zb,
+                            "SKBvManu": zb,
+                            "SZBvAuto": 0,
+                            "SZBeAuto": 0,
+                            "SKBeAuto": zb,
                         },
                     )
 
@@ -3181,12 +3257,21 @@ class ExportTask:
 
                     last_pk = pk
 
+                parts = timekode.split(':')
+                h = int(parts[0])
+                m = int(parts[1])
+                s = int(parts[2])
+                f = 0  # Da keine Frames angegeben sind, setzen wir sie auf 0
+
+                # Als kompakten, 8-stelligen String zusammensetzen (Format: HHMMSSFF)
+                ziel_timecode = f"{h:02d}{m:02d}{s:02d}{f:02d}"
+
                 rzu = SubElement(inspdat, "RZustand")
                 _create_children_text(
                     rzu,
                     {
                         "VertikaleLage": vertikale_lage,
-                        "Timecode": timekode,
+                        "Timecode": ziel_timecode,
                         "InspektionsKode": kuerzel,
                         "Charakterisierung1": charakt1,
                         "Charakterisierung2": charakt2,
@@ -3201,12 +3286,38 @@ class ExportTask:
                 )
                 kl = SubElement(rzu, "Klassifizierung")
 
+                d = SubElement(kl, "Dichtheit")
+                s = SubElement(kl, "Standsicherheit")
+                b = SubElement(kl, "Betriebssicherheit")
+
                 _create_children_text(
-                    kl,
+                    d,
                     {
-                        "Dichtheit": zd,
-                        "Standsicherheit": zs,
-                        "Betriebssicherheit": zb,
+                        "SKDvAuto": zd,
+                        "SKDvManu": zd,
+                        "SZDvAuto": 0,
+                        "SZDeAuto": 0,
+                        "SKDeAuto": zd,
+                    },
+                )
+                _create_children_text(
+                    s,
+                    {
+                        "SKSvAuto": zs,
+                        "SKSvManu": zs,
+                        "SZSvAuto": 0,
+                        "SZSeAuto": 0,
+                        "SKSeAuto": zs,
+                    },
+                )
+                _create_children_text(
+                    b,
+                    {
+                        "SKBvAuto": zb,
+                        "SKBvManu": zb,
+                        "SZBvAuto": 0,
+                        "SZBeAuto": 0,
+                        "SKBeAuto": zb,
                     },
                 )
 
@@ -3484,15 +3595,18 @@ class ExportTask:
 
             self.abfrage_s_where = f"WHERE schaechte.pk in {select_s_t}"
 
-            self.abfrage_h_and = f"AND haltungen.pk in {select_h_t}"
+            self.abfrage_h_and = f"AND ha.pk in {select_h_t}"
 
-            self.abfrage_h_where = f"WHERE haltungen.pk in {select_h_t}"
+            self.abfrage_h_where = f"WHERE ha.pk in {select_h_t}"
+
+            self.abfrage_h_sub_and = f"AND haltungen.pk IN {select_h_t}"
 
         else:
             self.abfrage_s_and = ""
             self.abfrage_s_where = ""
             self.abfrage_h_and = ""
             self.abfrage_h_where = ""
+            self.abfrage_h_sub_an = ""
 
 
         # Export
