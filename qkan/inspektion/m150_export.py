@@ -1468,9 +1468,19 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         upper = text.upper()
         if upper in self._profil_codes_m150:
             return upper
-        code = self._profil_ref_m150.get(
-            self._normalisiere_refwert(text), ""
-        )
+        vergleichswert = self._normalisiere_refwert(text)
+        direkte_profile = {
+            "KREIS": "DN",
+            "EI": "EI",
+            "BOGEN": "BO",
+            "OVAL": "OV",
+            "RECHTECKIG": "RE",
+            "RINNE": "RI",
+        }
+        code = direkte_profile.get(vergleichswert, "")
+        if code:
+            return code
+        code = self._profil_ref_m150.get(vergleichswert, "")
         if code:
             return code
         code = self._standard_rt_code_fuer_wert("106", text)

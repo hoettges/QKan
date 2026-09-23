@@ -76,6 +76,15 @@ ImportQuelle = Union[QgsFeature, Mapping[str, object]]
 ImportZiel = Union[int, QgsFeature]
 
 
+class _UnaufgeloesterReferenzwert(str):
+    """Rohwert mit bis zur tatsächlichen Änderung verzögerter Warnung."""
+
+    def __new__(cls, wert: str, warnung: str) -> "_UnaufgeloesterReferenzwert":
+        objekt = str.__new__(cls, wert)
+        objekt._m150_warnung = warnung
+        return objekt
+
+
 class XmlElement:
     """Minimales XML-Element für den M150-Import ohne Python-XML-Parser."""
 
@@ -815,11 +824,11 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         rohwert = self._als_text(xml_wert)
         if rohwert:
-            self._log_hinzufuegen(
+            return _UnaufgeloesterReferenzwert(
+                rohwert,
                 f"⚠ Kanalart-Code '{rohwert}' konnte nicht zugeordnet "
-                "werden – Rohwert wird übernommen"
+                "werden – Rohwert wird übernommen",
             )
-            return rohwert
         return aktueller_wert
 
     def _m150_entwart_zu_qkan(
@@ -859,11 +868,11 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         rohwert = self._als_text(xml_wert)
         if rohwert:
-            self._log_hinzufuegen(
+            return _UnaufgeloesterReferenzwert(
+                rohwert,
                 f"⚠ Kanalnutzung-Code '{rohwert}' konnte nicht zugeordnet "
-                "werden – Rohwert wird übernommen"
+                "werden – Rohwert wird übernommen",
             )
-            return rohwert
         return aktueller_wert
 
     def _layer_holen(self, tabellenname: str) -> Optional[QgsVectorLayer]:
@@ -1256,11 +1265,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         if standard is not None:
             return standard
 
-        self._log_hinzufuegen(
+        rohwert = self._als_text(code)
+        return _UnaufgeloesterReferenzwert(
+            rohwert,
             f"⚠ {bezeichnung}-Code '{code_text}' konnte nicht "
-            "zugeordnet werden – Rohwert wird übernommen"
+            "zugeordnet werden – Rohwert wird übernommen",
         )
-        return self._als_text(code)
 
     def _profil_aus_m150_lesen(self, code: object) -> Optional[str]:
         """Löst einen M150-Profilcode über XML-RT oder YAML auf."""
@@ -1285,17 +1295,28 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         if standard is not None:
             return standard
 
-        self._log_hinzufuegen(
+        rohwert = self._als_text(code)
+        return _UnaufgeloesterReferenzwert(
+            rohwert,
             f"⚠ Profil-Code '{code_text}' konnte nicht zugeordnet werden – "
-            "Rohwert wird übernommen"
+            "Rohwert wird übernommen",
         )
-        return self._als_text(code)
 
     def _profil_basis_lesen(self, wert: object) -> Optional[str]:
         """Liest den M150-Basiscode eines Profilnamens aus YAML-Abfragen."""
         vergleichswert = self._normalisiere_refwert(wert)
         if not vergleichswert:
             return None
+        direkte_profile = {
+            "KREIS": "DN",
+            "EI": "EI",
+            "BOGEN": "BO",
+            "OVAL": "OV",
+            "RECHTECKIG": "RE",
+            "RINNE": "RI",
+        }
+        if vergleichswert in direkte_profile:
+            return direkte_profile[vergleichswert]
         return self._profil_basis_ref_m150.get(vergleichswert)
 
     def _profilwerte_gleichwertig(
@@ -1328,11 +1349,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         if standard is not None:
             return standard
 
-        self._log_hinzufuegen(
+        rohwert = self._als_text(code)
+        return _UnaufgeloesterReferenzwert(
+            rohwert,
             f"⚠ Profilauskleidung-Code '{code_text}' konnte nicht "
-            "zugeordnet werden – Rohwert wird übernommen"
+            "zugeordnet werden – Rohwert wird übernommen",
         )
-        return self._als_text(code)
 
     def _knotenart_aus_m150_lesen(
         self, code: object
@@ -1365,11 +1387,12 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         if xml_langtext is not None:
             return {"schachttyp": "Symbol", "knotentyp": xml_langtext}
 
-        self._log_hinzufuegen(
+        knotentyp = _UnaufgeloesterReferenzwert(
+            code_roh,
             f"⚠ Knotenart-Code '{code_roh}' konnte nicht zugeordnet "
-            "werden – Rohwert wird übernommen"
+            "werden – Rohwert wird übernommen",
         )
-        return {"schachttyp": "Symbol", "knotentyp": code_roh}
+        return {"schachttyp": "Symbol", "knotentyp": knotentyp}
 
     def _feldnamen_lesen(self, layer: Optional[QgsVectorLayer]) -> List[str]:
         """Gibt die Feldnamen des Layers oder bei fehlendem Layer eine leere
@@ -1425,6 +1448,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             return
 
         alter_wert = self._nullify(objekt[feld])
+        referenzwarnung = getattr(neuer_wert, "_m150_warnung", None)
         neuer_wert = self._nullify(neuer_wert)
 
         # Leere optionale XML-Felder bedeuten "keine Angabe". Sie dürfen bei
@@ -1452,7 +1476,10 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
 
         if feld == "abflussart":
             neuer_wert = self._m150_kanalart_zu_qkan(neuer_wert, alter_wert)
-            if self._nullify(neuer_wert) is None:
+            if referenzwarnung is None:
+                referenzwarnung = getattr(neuer_wert, "_m150_warnung", None)
+            neuer_wert = self._nullify(neuer_wert)
+            if neuer_wert is None:
                 return
             if self._als_text(neuer_wert) == self._als_text(alter_wert):
                 return
@@ -1499,6 +1526,8 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         neuer_vergleich = str(neuer_wert)
 
         if alter_vergleich != neuer_vergleich:
+            if referenzwarnung:
+                self._log_hinzufuegen(referenzwarnung)
             objekt[feld] = neuer_wert
             aenderungen.append(
                 f"{feld}: {alter_vergleich} -> {neuer_vergleich}"
@@ -1886,6 +1915,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 neues_objekt.setGeometry(geometrie)
             for feld, wert in attribute.items():
                 if feld in feldnamen:
+                    referenzwarnung = getattr(wert, "_m150_warnung", None)
+                    if referenzwarnung:
+                        self._log_hinzufuegen(referenzwarnung)
                     neues_objekt[feld] = self._nullify(wert)
             if not layer.addFeature(neues_objekt):
                 self._log_hinzufuegen(
@@ -3203,6 +3235,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 neues_objekt.setGeometry(geometrie)
             for feld, wert in attribute.items():
                 if feld in feldnamen:
+                    referenzwarnung = getattr(wert, "_m150_warnung", None)
+                    if referenzwarnung:
+                        self._log_hinzufuegen(referenzwarnung)
                     neues_objekt[feld] = self._nullify(wert)
             if not layer.addFeature(neues_objekt):
                 self._log_hinzufuegen(
@@ -4070,6 +4105,11 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                             neues_objekt.setGeometry(geometrie)
                         for feld, wert in attribute.items():
                             if feld in feldnamen:
+                                referenzwarnung = getattr(
+                                    wert, "_m150_warnung", None
+                                )
+                                if referenzwarnung:
+                                    self._log_hinzufuegen(referenzwarnung)
                                 neues_objekt[feld] = self._nullify(wert)
                         if not a_layer.addFeature(neues_objekt):
                             uebersprungen += 1
@@ -4287,6 +4327,9 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                     neues_objekt.setGeometry(geometrie)
                 for feld, wert in attribute.items():
                     if feld in feldnamen:
+                        referenzwarnung = getattr(wert, "_m150_warnung", None)
+                        if referenzwarnung:
+                            self._log_hinzufuegen(referenzwarnung)
                         neues_objekt[feld] = self._nullify(wert)
                 if not a_layer.addFeature(neues_objekt):
                     self._log_hinzufuegen(
