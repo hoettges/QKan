@@ -1,0 +1,125 @@
+Prüfung der Patterns in der Datei C:\FHAC\hoettges\Kanalprogramme\QKan\qkan\patterns.yml
+
+anschlussleitungen_untersucht                         - Tabelle fehlt
+untersuchdat_anschlussleitung                         - Tabelle fehlt
+linkfl                                                - Tabelle fehlt
+linksw                                                - Tabelle fehlt
+aussengebiete                                         - Tabelle fehlt
+linkageb                                              - Tabelle fehlt
+flaechen_he8                                          - Tabelle fehlt
+simulationsstatus
+ - bezeichnung                                        - fehlt
+ - kuerzel                                            - fehlt
+ - he_nr                                              - fehlt
+ - mu_nr                                              - fehlt
+ - kp_nr                                              - fehlt
+ - isybau                                             - fehlt
+ - m150                                               - fehlt
+ - m145                                               - fehlt
+ - kommentar                                          - fehlt
+material                                              - Tabelle fehlt
+auslasstypen                                          - Tabelle fehlt
+abflussparameter
+ - benetzung_startwert                                - fehlt
+ - rauheit_kst                                        - fehlt
+ - pctZero                                            - fehlt
+ - flaechentyp                                        - fehlt
+flaechentypen                                         - Tabelle fehlt
+bodenklassen                                          - Tabelle fehlt
+abflusstypen                                          - Tabelle fehlt
+knotentypen                                           - Tabelle fehlt
+schachttypen                                          - Tabelle fehlt
+dynahal                                               - Tabelle fehlt
+gruppen                                               - Tabelle fehlt
+profile
+ - m150                                               - fehlt
+ - m145                                               - fehlt
+entwaesserungsarten
+ - bezeichnung                                        - fehlt
+ - kuerzel                                            - fehlt
+ - he_nr                                              - fehlt
+ - kp_nr                                              - fehlt
+ - isybau                                             - fehlt
+ - m150                                               - fehlt
+ - m145                                               - fehlt
+ - bemerkung                                          - fehlt
+haltungstypen                                         - Tabelle fehlt
+untersuchrichtung                                     - Tabelle fehlt
+wetter                                                - Tabelle fehlt
+bewertungsart                                         - Tabelle fehlt
+pumpentypen                                           - Tabelle fehlt
+refdata                                               - Tabelle fehlt
+pruefliste                                            - Tabelle fehlt
+reflist_zustand                                       - Tabelle fehlt
+info                                                  - Tabelle fehlt
+symbolkatalog                                         - Tabelle fehlt
+{tabnam}                                              - Tabelle fehlt
+{tabnam}_t                                            - Tabelle fehlt
+sel_haltungen                                         - Tabelle fehlt
+sel_schaechte                                         - Tabelle fehlt
+sel_flaechen                                          - Tabelle fehlt
+
+
+Prüfung der insert_data-Anweisungen in der Datei C:\FHAC\hoettges\Kanalprogramme\QKan\qkan\database\sqlite.yml
+
+database_insertdata_haltungen                        
+ - xschob                                             - fehlt
+ - yschob                                             - fehlt
+ - xschun                                             - fehlt
+ - yschun                                             - fehlt
+database_insertdata_haltungen_untersucht             
+ - xschob                                             - fehlt
+ - yschob                                             - fehlt
+ - xschun                                             - fehlt
+ - yschun                                             - fehlt
+database_insertdata_anschlussleitungen               
+ - xschob                                             - fehlt
+ - yschob                                             - fehlt
+ - xschun                                             - fehlt
+ - yschun                                             - fehlt
+database_insertdata_anschlussleitungen_untersucht    
+ - xschob                                             - fehlt
+ - yschob                                             - fehlt
+ - xschun                                             - fehlt
+ - yschun                                             - fehlt
+database_insertdata_schaechte                        
+ - xsch                                               - fehlt
+ - ysch                                               - fehlt
+database_insertdata_anschlussschaechte               
+ - xsch                                               - fehlt
+ - ysch                                               - fehlt
+database_insertdata_linkfl                            - SQL-Anweisung fehlt
+database_insertdata_linksw                            - SQL-Anweisung fehlt
+database_insertdata_aussengebiete                     - SQL-Anweisung fehlt
+database_insertdata_linkageb                          - SQL-Anweisung fehlt
+database_insertdata_flaechen_he8                      - SQL-Anweisung fehlt
+database_insertdata_simulationsstatus                 - SQL-Anweisung fehlt
+database_insertdata_material                          - SQL-Anweisung fehlt
+database_insertdata_auslasstypen                      - SQL-Anweisung fehlt
+database_insertdata_abflussparameter                  - SQL-Anweisung fehlt
+database_insertdata_flaechentypen                     - SQL-Anweisung fehlt
+database_insertdata_bodenklassen                      - SQL-Anweisung fehlt
+database_insertdata_abflusstypen                      - SQL-Anweisung fehlt
+database_insertdata_knotentypen                       - SQL-Anweisung fehlt
+database_insertdata_schachttypen                      - SQL-Anweisung fehlt
+database_insertdata_dynahal                           - SQL-Anweisung fehlt
+database_insertdata_gruppen                           - SQL-Anweisung fehlt
+database_insertdata_profile                           - SQL-Anweisung fehlt
+database_insertdata_entwaesserungsarten               - SQL-Anweisung fehlt
+database_insertdata_haltungstypen                     - SQL-Anweisung fehlt
+database_insertdata_untersuchrichtung                 - SQL-Anweisung fehlt
+database_insertdata_wetter                            - SQL-Anweisung fehlt
+database_insertdata_bewertungsart                     - SQL-Anweisung fehlt
+database_insertdata_pumpentypen                       - SQL-Anweisung fehlt
+database_insertdata_refdata                           - SQL-Anweisung fehlt
+database_insertdata_pruefliste                        - SQL-Anweisung fehlt
+database_insertdata_reflist_zustand                   - SQL-Anweisung fehlt
+database_insertdata_info                              - SQL-Anweisung fehlt
+database_insertdata_symbolkatalog                     - SQL-Anweisung fehlt
+database_insertdata_kanalreinigung                   
+ - createdat                                          - fehlt
+database_insertdata_{tabnam}                          - SQL-Anweisung fehlt
+database_insertdata_{tabnam}_t                        - SQL-Anweisung fehlt
+database_insertdata_sel_haltungen                     - SQL-Anweisung fehlt
+database_insertdata_sel_schaechte                     - SQL-Anweisung fehlt
+database_insertdata_sel_flaechen                      - SQL-Anweisung fehlt

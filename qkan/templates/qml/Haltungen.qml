@@ -210,7 +210,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -254,7 +254,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -287,7 +287,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -330,7 +330,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -385,7 +385,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -429,7 +429,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -462,7 +462,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -505,7 +505,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -592,7 +592,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="0.6 + 3 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="0.6 + 3 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -647,7 +647,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.44 + 2.2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.44 + 2.2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -691,7 +691,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -724,7 +724,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -767,7 +767,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -869,7 +869,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -913,7 +913,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -983,7 +983,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -1038,7 +1038,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1082,7 +1082,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1124,7 +1124,7 @@
                   <Option name="properties" type="Map">
                     <Option name="interval" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                     <Option name="outlineWidth" type="Map">
@@ -1172,7 +1172,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -1227,7 +1227,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1.1 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1271,7 +1271,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1304,7 +1304,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1347,7 +1347,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -1402,7 +1402,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1435,7 +1435,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1478,7 +1478,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -1533,7 +1533,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1603,7 +1603,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -1658,7 +1658,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1728,7 +1728,7 @@
                       <Option name="properties" type="Map">
                         <Option name="size" type="Map">
                           <Option value="true" name="active" type="bool"/>
-                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                          <Option value="1 + 4 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                           <Option value="3" name="type" type="int"/>
                         </Option>
                       </Option>
@@ -1783,7 +1783,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.44 + 2.2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.44 + 2.2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>
@@ -1827,7 +1827,7 @@
                   <Option name="properties" type="Map">
                     <Option name="outlineWidth" type="Map">
                       <Option value="true" name="active" type="bool"/>
-                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1), breite)/1000.0" name="expression" type="QString"/>
+                      <Option value="0.4 + 2 * if(coalesce(breite, 0) = 0,coalesce(hoehe, 1000.0), breite)/1000.0" name="expression" type="QString"/>
                       <Option value="3" name="type" type="int"/>
                     </Option>
                   </Option>

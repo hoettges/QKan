@@ -1340,7 +1340,7 @@ WHERE  stk.laenge > 0.045 AND
        stb.hausanschlid = '00000000-0000-0000-0000-000000000000' AND
        (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0) AND               /* kein Symbol */ 
        (substr(stb.atv_kuerzel, 1, 1) not in ('C', 'D') OR substr(stb.atv_kuerzel, 2, 1) = '-') 
-GROUP BY stk.strakatid, stb.datum;"
+GROUP BY stk.strakatid, stb.datum, stb.untersuchungsrichtung;"
 
 strakat_untersuchdat_haltung: "
 WITH strassen AS (
@@ -1400,6 +1400,7 @@ FROM
        usd.schoben =                stk.schacht_oben AND
        usd.schunten =               stk.schacht_unten AND
        usd.untersuchtag =           stb.datum AND
+       usd.untersuchrichtung =      stb.untersuchrichtung AND
        usd.bandnr =                 stb.bandnr AND
        usd.kuerzel =                stb.atv_kuerzel AND
        usd.streckenschaden_lfdnr =   stb.fortsetzung AND

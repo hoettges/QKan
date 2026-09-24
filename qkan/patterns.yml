@@ -1666,3 +1666,27 @@ pruefsql:
   - "*aender*"
   - "*änder*"
   - "*Ã¤nder*"
+kanalreinigung:
+  reinigungsdatum:
+  - "reinigungsdatum"
+  ablagerungen:
+  - "ablagerungen"
+  reinigungszeit:
+  - "reinigungszeit"
+  fahrer:
+  - "fahrer"
+  beifahrer:
+  - "beifahrer"
+  haltungsnummer:
+  - "haltungsnummer"
+  bemerkung:
+  - "bemerk*"
+  kontrolle:
+  - "kontrolle"
+  haltnam:
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"

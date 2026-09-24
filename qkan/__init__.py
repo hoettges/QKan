@@ -73,7 +73,6 @@ TABLES_GEOM = [
     "einleit",
     "aussengebiete",
     "symbole",
-    "kanalreinigung",
 ]
 
 TABLES_GEOP = [
@@ -124,6 +123,7 @@ TABLES_ATTR = [
     "refdata",
     "fotos",
     "videos",
+    "kanalreinigung",
 ]
 
 GEO_TYPES = [
@@ -166,8 +166,8 @@ class QKan:
     template_dir: str
     forms: list[str]
 
-    dbVersion = "3.4.10"  # Version der QKan-Datenbank
-    qgsVersion = "3.4.19"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+    dbVersion = "3.4.20"  # Version der QKan-Datenbank
+    qgsVersion = "3.4.20"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
     build = "0000"
 
     # SQL-Statements werden abhängig vom Datenbanktyp und Modul geladen.

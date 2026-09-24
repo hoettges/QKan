@@ -1196,9 +1196,6 @@ CREATE TABLE kanalreinigung (
     haltnam TEXT,
     createdat TEXT DEFAULT CURRENT_TIMESTAMP);"
 
-database_add_untersuchdat_kanalreinigung_geom: "
-"
-
 database_createview_untersuchdat_aktuell: "
 CREATE VIEW v_untersuchdat_hal_last AS
 WITH um AS (

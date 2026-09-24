@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE qgis PUBLIC "http://mrcc.com/qgis.dtd" "SYSTEM">
-<qgis styleCategories="AllStyleCategories" maxScale="0" minScale="250" labelsEnabled="1" simplifyLocal="1" simplifyAlgorithm="0" readOnly="0" version="3.28.13-Firenze" simplifyDrawingHints="0" symbologyReferenceScale="-1" hasScaleBasedVisibilityFlag="1" simplifyDrawingTol="1" simplifyMaxScale="1">
+<qgis styleCategories="AllStyleCategories" maxScale="0" minScale="1000" labelsEnabled="1" simplifyLocal="1" simplifyAlgorithm="0" readOnly="0" version="3.28.13-Firenze" simplifyDrawingHints="0" symbologyReferenceScale="-1" hasScaleBasedVisibilityFlag="1" simplifyDrawingTol="1" simplifyMaxScale="1">
 <flags>
         <Identifiable>1</Identifiable>
         <Removable>1</Removable>

@@ -1,3 +1,6 @@
+# Extrahieren aller Stildateien aus der Projektdatei
+# Erstellt von Jörg Höttges, 07.07.2026
+
 from lxml import etree
 from pathlib import Path
 

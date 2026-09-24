@@ -148,12 +148,12 @@
       <userNotes value="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;>&#10;&lt;html>&lt;head>&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; />&lt;style type=&quot;text/css&quot;>&#10;p, li { white-space: pre-wrap; }&#10;&lt;/style>&lt;/head>&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:400; font-style:normal;&quot;>&#10;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;>&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;>Zur Anzeige von Videos und Fotos entsprechende Aktion auswählen&lt;/li>&#10;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;>Zur Filterung der angezeigten Schäden entsprechende Aktion im Layer &amp;quot;Zustand_Haltungen_gesamt&amp;quot; auswählen&lt;/li>&lt;/ul>&#10;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;>&lt;br />&lt;/p>&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;>&lt;a href=&quot;https://qkan.eu&quot;>&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;>Zur QKan-Dokumentation&lt;/span>&lt;/a>&lt;/p>&lt;/body>&lt;/html>"/>
       <renderer-v2 enableorderby="0" forceraster="0" referencescale="-1" type="RuleRenderer" symbollevels="0">
         <rules key="{4c108ca8-1203-477a-9f48-96d4e381b74c}">
-          <rule label="Zustandsklasse 0, starker Mangel, Gefahr im Verzug" key="{14f6fa52-828b-4173-9779-a734185c7d50}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 0" symbol="0"/>
-          <rule label="Zustandsklasse 1, starker Mangel" key="{6ac64b31-87c5-46df-b895-c8f9618ff645}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 1" symbol="1"/>
-          <rule label="Zustandsklasse 2, mittlerer Mangel" key="{9c39bafb-a521-44a9-a29e-0fb200ff73c2}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 2" symbol="2"/>
-          <rule label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 3" symbol="3"/>
-          <rule label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 4" symbol="4"/>
-          <rule label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 5" symbol="5"/>
+          <rule label="Zustandsklasse 0, starker Mangel, Gefahr im Verzug" key="{14f6fa52-828b-4173-9779-a734185c7d50}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 0 AND id = 1" symbol="0"/>
+          <rule label="Zustandsklasse 1, starker Mangel" key="{6ac64b31-87c5-46df-b895-c8f9618ff645}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 1 AND id = 1" symbol="1"/>
+          <rule label="Zustandsklasse 2, mittlerer Mangel" key="{9c39bafb-a521-44a9-a29e-0fb200ff73c2}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 2 AND id = 1" symbol="2"/>
+          <rule label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 3 AND id = 1" symbol="3"/>
+          <rule label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 4 AND id = 1" symbol="4"/>
+          <rule label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 5 AND id = 1" symbol="5"/>
           <rule label="nicht ermittelt" checkstate="0" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" filter="ELSE" symbol="6"/>
         </rules>
         <symbols>
@@ -1047,7 +1047,7 @@
         <alias field="pos_bis" index="23" name="Position Ende"/>
         <alias field="foto_dateiname" index="24" name="Dateiname Foto"/>
         <alias field="film_dateiname" index="25" name="Dateiname Film"/>
-        <alias field="ordner_bild" index="26" name="Ordner Bild"/>
+        <alias field="ordner_bild" index="26" name="Ordner Foto"/>
         <alias field="ordner_video" index="27" name="Ordner Video"/>
         <alias field="filmtyp" index="28" name=""/>
         <alias field="video_start" index="29" name=""/>
@@ -1179,7 +1179,7 @@
       <expressionfields/>
       <attributeactions>
         <defaultAction value="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" key="Canvas"/>
-        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Bild öffnen" icon="" shortTitle="Bild öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#13;&#10;from qkan.config import Config&#13;&#10;    &#13;&#10;name=None&#13;&#10;datum=None&#13;&#10;timecode=None&#13;&#10;video_offset= None&#13;&#10;x='[%foto_dateiname%]'&#13;&#10;ShowVideo(name, datum, timecode, video_offset, 'Haltung', x).show_bild()&#13;&#10;" type="1">
+        <actionsetting id="{bb35f5ca-7e7f-44b7-bfaa-ffea0d960666}" capture="0" isEnabledOnlyWhenEditable="0" name="Foto öffnen" icon="" shortTitle="Foto öffnen" notificationMessage="" action="from qkan.tools.zeige_video import ShowVideo&#13;&#10;from qkan.config import Config&#13;&#10;    &#13;&#10;name=None&#13;&#10;datum=None&#13;&#10;timecode=None&#13;&#10;video_offset= None&#13;&#10;x='[%replace(foto_dateiname,'\\', '/')%]'&#13;&#10;ShowVideo(name, datum, timecode, video_offset, 'Haltung', x).show_bild()&#13;&#10;" type="1">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -1366,6 +1366,6 @@
       </reuseLastValue>
       <dataDefinedFieldProperties/>
       <widgets/>
-      <previewExpression>"film_dateiname"</previewExpression>
+      <previewExpression>format_date( untersuchtag, 'dd.MM.yyyy: ') || langtext</previewExpression>
       <mapTip/>
     </qgis>
