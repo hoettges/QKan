@@ -42,6 +42,20 @@ LAYER_NAMEN = {
 }
 
 
+M150_TABELLEN_GEOMETRIEFELDER = {
+    "haltungen": "geom",
+    "schaechte": "geop",
+    "anschlussleitungen": "geom",
+    "anschlussschaechte": "geom",
+    "haltungen_untersucht": "geom",
+    "untersuchdat_haltung": "geom",
+    "schaechte_untersucht": "geop",
+    "untersuchdat_schacht": "geom",
+    "anschlussleitungen_untersucht": "geom",
+    "untersuchdat_anschlussleitung": "geom",
+}
+
+
 @dataclass(frozen=True)
 class Datenquelle:
     """Eindeutige SpatiaLite- oder PostgreSQL-QKan-Datenquelle."""
@@ -127,11 +141,100 @@ def layerdaten(layer: object) -> Optional[Tuple[str, Datenquelle]]:
         return None
 
 
+
+def datenbanklayer_oeffnen(
+    tabellenname: str,
+    datenquelle: Datenquelle,
+    geometriespalte: str = "",
+    primaerschluessel: str = "pk",
+) -> Optional[QgsVectorLayer]:
+    """Öffnet eine Tabelle direkt aus SQLite/PostgreSQL ohne Projektlayer."""
+    geometriespalte = geometriespalte or M150_TABELLEN_GEOMETRIEFELDER.get(
+        tabellenname, ""
+    )
+
+    if datenquelle.provider == "spatialite":
+        layer = QgsVectorLayer(
+            f"{datenquelle.sqlite_pfad}|layername={tabellenname}",
+            tabellenname,
+            "ogr",
+        )
+    elif datenquelle.provider == "postgres":
+        uri = QgsDataSourceUri(datenquelle.verbindungs_uri)
+        uri.setDataSource(
+            datenquelle.schema,
+            tabellenname,
+            geometriespalte,
+            "",
+            primaerschluessel,
+        )
+        layer = QgsVectorLayer(uri.uri(False), tabellenname, "postgres")
+    else:
+        return None
+
+    return layer if layer.isValid() else None
+
+
+def datenquelle_hat_tabellen(
+    datenquelle: Datenquelle,
+    tabellennamen: Iterable[str],
+) -> bool:
+    """Prüft benötigte Tabellen direkt in SQLite/PostgreSQL."""
+    for tabellenname in dict.fromkeys(tabellennamen):
+        if datenbanklayer_oeffnen(tabellenname, datenquelle) is None:
+            return False
+    return True
+
+
+def datenquelle_waehlen_direkt(
+    projekt: QgsProject,
+    erforderliche_tabellen: Iterable[str],
+    parent: object,
+    titel: str,
+    bevorzugte_datenquelle: Optional[Datenquelle] = None,
+) -> Optional[Datenquelle]:
+    """Wählt eine geladene DB-Verbindung und prüft die Tabellen direkt darin."""
+    quellen: Dict[Datenquelle, None] = {}
+    for layer in projekt.mapLayers().values():
+        daten = layerdaten(layer)
+        if daten is not None:
+            quellen[daten[1]] = None
+
+    tabellen = tuple(dict.fromkeys(erforderliche_tabellen))
+    kandidaten = [
+        datenquelle
+        for datenquelle in quellen
+        if datenquelle_hat_tabellen(datenquelle, tabellen)
+    ]
+    kandidaten.sort(key=lambda quelle: quelle.bezeichnung.casefold())
+
+    if not kandidaten:
+        return None
+    if bevorzugte_datenquelle in kandidaten:
+        return bevorzugte_datenquelle
+    if len(kandidaten) == 1:
+        return kandidaten[0]
+
+    beschriftungen = [quelle.bezeichnung for quelle in kandidaten]
+    auswahl, bestaetigt = QInputDialog.getItem(
+        parent,
+        titel,
+        "Mehrere vollständige QKan-Datenquellen sind geladen.\n"
+        "Bitte die zu bearbeitende Datenquelle auswählen:",
+        beschriftungen,
+        0,
+        False,
+    )
+    if not bestaetigt:
+        return None
+
+    return kandidaten[beschriftungen.index(auswahl)]
+
 def _passende_layer(
     projekt: QgsProject,
     tabellennamen: Iterable[str],
 ) -> Dict[Datenquelle, Dict[str, List[QgsVectorLayer]]]:
-    """Gruppiert exakt benannte QKan-Layer nach ihrer Datenquelle."""
+    """Gruppiert QKan-Layer anhand ihrer DB-Tabelle nach Datenquelle."""
     erwartete_tabellen = set(tabellennamen)
     gruppen: Dict[Datenquelle, Dict[str, List[QgsVectorLayer]]] = {}
 
@@ -161,7 +264,7 @@ def datenquelle_waehlen(
     """Wählt eine vollständige, eindeutige QKan-Datenquelle aus.
 
     Bei mehreren vollständigen Quellen entscheidet der Benutzer ausdrücklich.
-    Quellen mit doppelten oder fehlenden Pflichtlayern werden nicht angeboten.
+    Quellen mit fehlenden Pflichtlayern werden nicht angeboten; mehrere Layer derselben Tabelle sind zulässig.
     """
     tabellen = tuple(dict.fromkeys(erforderliche_tabellen))
     gruppen = _passende_layer(projekt, tabellen)
@@ -203,7 +306,7 @@ def layer_finden(
     tabellenname: str,
     datenquelle: Datenquelle,
 ) -> Optional[QgsVectorLayer]:
-    """Findet genau einen QKan-Layer in der gewählten Datenquelle."""
+    """Findet einen geeigneten QKan-Layer der Tabelle in der gewählten Datenquelle."""
     treffer = _passende_layer(projekt, (tabellenname,)).get(
         datenquelle, {}
     ).get(tabellenname, [])
@@ -233,7 +336,7 @@ def tabellenlayer_oeffnen(
 ) -> Optional[QgsVectorLayer]:
     """Öffnet eine QKan-Tabelle aus der gewählten Datenquelle als QGIS-Layer.
 
-    Ein bereits geladener eindeutiger QKan-Layer wird wiederverwendet. Andernfalls
+    Ein bereits geladener geeigneter QKan-Layer wird wiederverwendet. Andernfalls
     wird ein temporärer Provider-Layer für SpatiaLite oder PostgreSQL erzeugt.
     """
     layer = layer_finden(projekt, tabellenname, datenquelle)
@@ -266,7 +369,7 @@ def datenquellen_finden(
     projekt: QgsProject,
     tabellennamen: Iterable[str],
 ) -> List[Datenquelle]:
-    """Liefert Quellen mit mindestens einem exakt passenden QKan-Layer."""
+    """Liefert Quellen mit mindestens einem Layer der passenden QKan-Tabelle."""
     return sorted(
         _passende_layer(projekt, tabellennamen),
         key=lambda quelle: quelle.bezeichnung.casefold(),

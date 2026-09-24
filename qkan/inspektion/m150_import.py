@@ -61,8 +61,8 @@ from qgis.gui import QgisInterface
 from .datenquelle import (
     Datenquelle,
     datenbank_oeffnen,
-    datenquelle_waehlen,
-    layer_finden,
+    datenquelle_waehlen_direkt,
+    tabellenlayer_oeffnen,
 )
 
 from .m150_info import zeige_m150_info
@@ -610,6 +610,7 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
             str, Dict[Tuple[str, ...], ImportZiel]
         ] = {}
         self._datenquelle: Optional[Datenquelle] = None
+        self._tabellenlayer_cache: Dict[str, QgsVectorLayer] = {}
 
         self.setupUi(self)
 
@@ -876,14 +877,22 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
         return aktueller_wert
 
     def _layer_holen(self, tabellenname: str) -> Optional[QgsVectorLayer]:
-        """Liefert nur den Layer aus der gewählten QKan-Datenquelle."""
+        """Öffnet die Zieltabelle providerseitig aus der gewählten Datenquelle."""
         if self._datenquelle is None:
             return None
-        return layer_finden(
+
+        layer = self._tabellenlayer_cache.get(tabellenname)
+        if layer is not None and layer.isValid():
+            return layer
+
+        layer = tabellenlayer_oeffnen(
             QgsProject.instance(),
             tabellenname,
             self._datenquelle,
         )
+        if layer is not None:
+            self._tabellenlayer_cache[tabellenname] = layer
+        return layer
 
     def _sql_zeilen_laden(
         self, db_qkan: object, sqlnam: str
@@ -4956,19 +4965,22 @@ class BefahrungImportDialog(QDialog, FORM_CLASS):
                 }
             )
 
-        self._datenquelle = datenquelle_waehlen(
+        alte_datenquelle = self._datenquelle
+        self._datenquelle = datenquelle_waehlen_direkt(
             QgsProject.instance(),
             erforderliche_tabellen,
             self,
             "M150-Import – QKan-Datenquelle",
+            self._datenquelle,
         )
+        if self._datenquelle != alte_datenquelle:
+            self._tabellenlayer_cache.clear()
         if self._datenquelle is None:
             meldung = (
                 "Es wurde keine vollständige QKan-Datenquelle für die "
                 "gewählten Importoptionen gefunden oder die Auswahl wurde "
-                "abgebrochen. Benötigt werden die exakt benannten QKan-"
-                "Layer aus einer gemeinsamen SpatiaLite- oder PostgreSQL-"
-                "Datenquelle."
+                "abgebrochen. Benötigt werden die erforderlichen QKan-Tabellen "
+                "in einer gemeinsamen SpatiaLite- oder PostgreSQL-Datenquelle."
             )
             QMessageBox.critical(self, "M150-Import", meldung)
             return

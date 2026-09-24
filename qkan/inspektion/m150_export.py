@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from typing import (
     Any,
     Callable,
@@ -60,8 +61,9 @@ from qkan.utils import QkanDbError
 from .datenquelle import (
     Datenquelle,
     datenbank_oeffnen,
-    datenquelle_waehlen,
-    layer_finden,
+    datenquelle_hat_tabellen,
+    datenquelle_waehlen_direkt,
+    layerdaten,
 )
 
 from .m150_info import zeige_m150_info
@@ -743,42 +745,75 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         tabellen = tuple(dict.fromkeys(erforderliche_tabellen))
         if (
             self._datenquelle is not None
-            and all(
-                layer_finden(
-                    QgsProject.instance(), tabelle, self._datenquelle
-                ) is not None
-                for tabelle in tabellen
-            )
+            and datenquelle_hat_tabellen(self._datenquelle, tabellen)
         ):
             return True
 
-        self._datenquelle = datenquelle_waehlen(
+        self._datenquelle = datenquelle_waehlen_direkt(
             QgsProject.instance(),
             tabellen,
             self,
             "M150-Export – QKan-Datenquelle",
+            self._datenquelle,
         )
         if self._datenquelle is not None:
             return True
 
         meldung = (
-            "Es wurde keine vollständige QKan-Datenquelle mit den benötigten "
-            "Layern gefunden oder die Auswahl wurde abgebrochen. Unterstützt "
-            "werden SpatiaLite und PostgreSQL/PostGIS; alle Layer müssen aus "
-            "derselben Datenquelle stammen."
+            "Es wurde keine QKan-Datenquelle mit den benötigten Tabellen "
+            "gefunden oder die Auswahl wurde abgebrochen. Unterstützt werden "
+            "SpatiaLite und PostgreSQL/PostGIS."
         )
         QMessageBox.warning(self, "M150-Export", meldung)
         return False
 
     def _layer_holen(self, tabellenname: str) -> Optional[QgsVectorLayer]:
-        """Liefert nur den Layer aus der gewählten QKan-Datenquelle."""
+        """Liefert den sichtbaren Projektlayer nur für Auswahl und Markierung."""
         if self._datenquelle is None:
             return None
-        return layer_finden(
-            QgsProject.instance(),
-            tabellenname,
-            self._datenquelle,
-        )
+
+        kandidaten = []
+        for layer in self.iface.mapCanvas().layers():
+            daten = layerdaten(layer)
+            if daten is None:
+                continue
+            tabelle, datenquelle = daten
+            if tabelle == tabellenname and datenquelle == self._datenquelle:
+                kandidaten.append(layer)
+
+        if len(kandidaten) == 1:
+            return kandidaten[0]
+        if not kandidaten:
+            return None
+
+        # QKan stellt haltungen/schaechte absichtlich in mehreren gefilterten
+        # Projektlayern dar. Für die Kartenbedienung wird der fachliche
+        # Hauptlayer anhand seines Tabellenfilters gewählt; der sichtbare
+        # Layername ist dafür ausdrücklich irrelevant.
+        haupttypen = {
+            "haltungen": ("haltungstyp", "Haltung"),
+            "schaechte": ("schachttyp", "Schacht"),
+        }
+        haupttyp = haupttypen.get(tabellenname)
+        if haupttyp is not None:
+            feldname, feldwert = haupttyp
+            muster = re.compile(
+                rf'(?i)(?:"?{re.escape(feldname)}"?)\s*=\s*[\'"]'
+                rf'{re.escape(feldwert)}[\'"]'
+            )
+            treffer = [
+                layer
+                for layer in kandidaten
+                if muster.search(layer.subsetString())
+            ]
+            if len(treffer) == 1:
+                return treffer[0]
+
+        aktiver_layer = self.iface.activeLayer()
+        if aktiver_layer in kandidaten:
+            return aktiver_layer
+
+        return None
 
     # Hervorhebung im Kartenfenster
 
@@ -851,8 +886,8 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 "M150-Export",
-                "Der QKan-Layer 'Haltungen' aus der Tabelle 'haltungen' "
-                "ist in der gewählten Datenquelle nicht eindeutig geladen.",
+                "Für die Kartenauswahl konnte kein eindeutiger sichtbarer "
+                "Layer der Tabelle 'haltungen' ermittelt werden.",
             )
             return
         self.iface.setActiveLayer(layer)
@@ -1205,9 +1240,19 @@ class BefahrungExportDialog(QDialog, FORM_CLASS):
         """Liefert exportrelevante Layer mit offenen Änderungen."""
         geaendert: List[str] = []
 
-        for tabellenname in self.EXPORT_TABELLEN:
-            layer = self._layer_holen(tabellenname)
-            if layer is not None and layer.isModified():
+        if self._datenquelle is None:
+            return geaendert
+
+        for layer in QgsProject.instance().mapLayers().values():
+            daten = layerdaten(layer)
+            if daten is None:
+                continue
+            tabellenname, datenquelle = daten
+            if (
+                datenquelle == self._datenquelle
+                and tabellenname in self.EXPORT_TABELLEN
+                and layer.isModified()
+            ):
                 geaendert.append(layer.name())
 
         return geaendert
