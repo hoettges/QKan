@@ -7,23 +7,24 @@ logger = get_logger("QKan.database.migrations.0043")
 def run(dbcon: DBConnection) -> bool:
     # Ergänzung von Kanalreinigungstabelle
 
-    sqls = [
-        """CREATE TABLE IF NOT EXISTS kanalreinigung(
-            pk INTEGER PRIMARY KEY,
-            reinigungsdatum TEXT,
-            ablagerungen TEXT,
-            reinigungszeit TEXT,                                  
-            fahrer TEXT,                                  
-            beifahrer TEXT,                                     
-            haltungsnummer INT,
-            bemerkung TEXT,
-            kontrolle TEXT,
-            haltnam TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
-    ]
-    for sql in sqls:
-        if not dbcon.sql(sql, f"migration 0043, Version {VERSION}: "
-                              f"Erstellen der Tabelle kanalreinigung"):
-            return False
+    sql = """CREATE TABLE IF NOT EXISTS kanalreinigung(
+        pk INTEGER PRIMARY KEY,
+        reinigungsdatum TEXT,
+        ablagerungen TEXT,
+        reinigungszeit TEXT,                                  
+        fahrer TEXT,                                  
+        beifahrer TEXT,                                     
+        haltungsnummer INT,
+        bemerkung TEXT,
+        kontrolle TEXT,
+        haltnam TEXT,
+        createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
+    try:
+        dbcon.sql(
+            sql=sql,
+            stmt_category=f"migration 0043, Version {VERSION}: Erstellen der Tabelle kanalreinigung"
+        )
+    except:
+        logger.error_code('Fehlgeschlagen: migration_0043, Tabelle kanalreinigung ergänzen')
 
     return True

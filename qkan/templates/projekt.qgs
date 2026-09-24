@@ -1,6 +1,6 @@
-<qgis projectname="QKan (3.4.20)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.40.14-Bratislava" saveDateTime="2026-05-04T11:39:23">
+<qgis projectname="QKan (3.4.21)" saveUserFull="Höttges, Jörg" saveUser="Hoettges" version="3.40.14-Bratislava" saveDateTime="2026-05-04T11:39:23">
   <homePath path="" />
-  <title>QKan (3.4.20)</title>
+  <title>QKan (3.4.21)</title>
   <transaction mode="Disabled" />
   <projectFlags set="" />
   <projectCrs>
@@ -42858,7 +42858,7 @@ def closeProject():
     <parentidentifier />
     <language />
     <type />
-    <title>Demo (3.4.20)</title>
+    <title>Demo (3.4.21)</title>
     <abstract />
     <contact>
       <name />

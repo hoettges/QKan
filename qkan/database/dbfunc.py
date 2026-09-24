@@ -905,7 +905,7 @@ class DBConnection:
         # if self.actDbVersion > self.current_dbversion:
         #     logger.warning("Die QKan-Version ist älter als die QKan-Datenbank. "
         #                    "Bitte führen Sie ein Upgrade des QKan-Plugins aus")
-        return True
+        return self.isCurrentDbVersion
 
 
     # Ändern der Attribute einer Tabelle
@@ -1243,6 +1243,7 @@ class DBConnection:
 
         # Database is already on the current version
         if self.check_version():
+            logger.debug("Version ist aktuell, keine Updates notwendig")
             return True
 
         logger.debug(
@@ -1270,6 +1271,7 @@ class DBConnection:
 
             # Update progress bar
             progress_bar.setValue(100 // len(migrations) * (i + 1))
+            logger.info(f"Datenbank wurde auf Version {migration.version} upgedatet")
 
         self.commit()
 
