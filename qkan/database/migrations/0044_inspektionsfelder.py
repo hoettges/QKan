@@ -1,7 +1,7 @@
 from qkan.database.dbfunc import DBConnection
-from qkan.utils import get_logger, QkanDbError
+from qkan.utils import get_logger
 
-VERSION = "3.4.12"  #platzhalter
+VERSION = "3.4.12"  # must be higher than previous one and correspond with QKan.dbVersion
 
 logger = get_logger("QKan.database.migrations.0044")
 
@@ -11,7 +11,7 @@ def run(dbcon: DBConnection) -> bool:
 
     if "reinigung" not in dbcon.attrlist("haltungen_untersucht"):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam="haltungen_untersucht",
                 attributes_new=[
                     "haltnam TEXT",
@@ -43,15 +43,17 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
                 ],
-            )
-        except:
+            ):
+                return False
+        except Exception as err:
             logger.error_code(
-                "Fehlgeschlagen: migration_0044, reinigung in haltungen_untersucht ergänzen"
+                f"Fehlgeschlagen: migration_0044, reinigung in haltungen_untersucht ergänzen: {err}"
             )
+            return False
 
     if "reinigung" not in dbcon.attrlist("anschlussleitungen_untersucht"):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam="anschlussleitungen_untersucht",
                 attributes_new=[
                     "leitnam TEXT",
@@ -83,15 +85,17 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
                 ],
-            )
-        except:
+            ):
+                return False
+        except Exception as err:
             logger.error_code(
-                "Fehlgeschlagen: migration_0044, reinigung in anschlussleitungen_untersucht ergänzen"
+                f"Fehlgeschlagen: migration_0044, reinigung in anschlussleitungen_untersucht ergänzen: {err}"
             )
+            return False
 
     if "reinigung" not in dbcon.attrlist("schaechte_untersucht"):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam="schaechte_untersucht",
                 attributes_new=[
                     "schnam TEXT",
@@ -114,15 +118,17 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
                 ],
-            )
-        except:
+            ):
+                return False
+        except Exception as err:
             logger.error_code(
-                "Fehlgeschlagen: migration_0044, reinigung in schaechte_untersucht ergänzen"
+                f"Fehlgeschlagen: migration_0044, reinigung in schaechte_untersucht ergänzen: {err}"
             )
+            return False
 
     if "auskleidung" not in dbcon.attrlist("untersuchdat_haltung"):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam="untersuchdat_haltung",
                 attributes_new=[
                     "untersuchhal TEXT",
@@ -163,15 +169,17 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
                 ],
-            )
-        except:
+            ):
+                return False
+        except Exception as err:
             logger.error_code(
-                "Fehlgeschlagen: migration_0044, auskleidung in untersuchdat_haltung ergänzen"
+                f"Fehlgeschlagen: migration_0044, auskleidung in untersuchdat_haltung ergänzen: {err}"
             )
+            return False
 
     if "auskleidung" not in dbcon.attrlist("untersuchdat_anschlussleitung"):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam="untersuchdat_anschlussleitung",
                 attributes_new=[
                     "untersuchleit TEXT",
@@ -211,15 +219,17 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
                 ],
-            )
-        except:
+            ):
+                return False
+        except Exception as err:
             logger.error_code(
-                "Fehlgeschlagen: migration_0044, auskleidung in untersuchdat_anschlussleitung ergänzen"
+                f"Fehlgeschlagen: migration_0044, auskleidung in untersuchdat_anschlussleitung ergänzen: {err}"
             )
+            return False
 
     if "verbindung" not in dbcon.attrlist("untersuchdat_schacht"):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam="untersuchdat_schacht",
                 attributes_new=[
                     "untersuchsch TEXT",
@@ -238,9 +248,9 @@ def run(dbcon: DBConnection) -> bool:
                     "streckenschaden_lfdnr INTEGER",
                     "pos_von INTEGER",
                     "pos_bis INTEGER",
+                    "verbindung TEXT",
                     "vertikale_lage REAL",
                     "inspektionslaenge REAL",
-                    "verbindung TEXT",
                     "bereich TEXT",
                     "foto_dateiname TEXT",
                     "ordner_bild TEXT",
@@ -256,10 +266,12 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP",
                 ],
-            )
-        except:
+            ):
+                return False
+        except Exception as err:
             logger.error_code(
-                "Fehlgeschlagen: migration_0044, verbindung in untersuchdat_schacht ergänzen"
+                f"Fehlgeschlagen: migration_0044, verbindung in untersuchdat_schacht ergänzen: {err}"
             )
+            return False
 
     return True
