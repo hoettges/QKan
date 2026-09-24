@@ -1101,10 +1101,10 @@ SELECT
   :bewertungstag, :datenart, :max_ZD, :max_ZB, :max_ZS
 FROM
   (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
-  LEFT JOIN schaechte_untersucht AS suo ON qkan.suo.schnam = ha.schoben
-  LEFT JOIN schaechte_untersucht AS suu ON qkan.suu.schnam = ha.schunten
-  LEFT JOIN schaechte AS so ON qkan.so.schnam = ha.schoben
-  LEFT JOIN schaechte AS su ON qkan.su.schnam = ha.schunten;"
+  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"
 
 database_insertdata_untersuchdat_haltung: "
 INSERT INTO qkan.untersuchdat_haltung
@@ -1179,10 +1179,10 @@ SELECT
   :bewertungstag, :datenart, :max_ZD, :max_ZB, :max_ZS
 FROM
   (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
-  LEFT JOIN schaechte_untersucht AS suo ON qkan.suo.schnam = ha.schoben
-  LEFT JOIN schaechte_untersucht AS suu ON qkan.suu.schnam = ha.schunten
-  LEFT JOIN schaechte AS so ON qkan.so.schnam = ha.schoben
-  LEFT JOIN schaechte AS su ON qkan.su.schnam = ha.schunten;"
+  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"
 
 database_insertdata_untersuchdat_anschlussleitung: "
 INSERT INTO qkan.untersuchdat_anschlussleitung
@@ -1240,7 +1240,7 @@ SELECT
   :max_ZD, :max_ZB, :max_ZS
 FROM
   (SELECT :schnam AS schnam) AS val
-  LEFT JOIN schaechte AS sch ON qkan.val.schnam = sch.schnam;"
+  LEFT JOIN schaechte AS sch ON val.schnam = sch.schnam;"
 
 database_insertdata_untersuchdat_schacht: "
 INSERT INTO qkan.untersuchdat_schacht
@@ -1461,9 +1461,9 @@ WITH flintersect AS (
            END AS flaeche
     FROM linkfl AS lf
     INNER JOIN flaechen AS fl
-    ON qkan.lf.flnam = fl.flnam
+    ON lf.flnam = fl.flnam
     LEFT JOIN tezg AS tg
-    ON qkan.lf.tezgnam = tg.flnam)
+    ON lf.tezgnam = tg.flnam)
 SELECT fa.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
        AREA(fa.geom) AS fl_ori, sum(fi.flaeche) - AREA(fa.geom) AS diff
 FROM flaechen AS fa
@@ -1480,9 +1480,9 @@ WITH flintersect AS (
            END AS flaeche
     FROM linkfl AS lf
     INNER JOIN flaechen AS fl
-    ON qkan.lf.flnam = fl.flnam
+    ON lf.flnam = fl.flnam
     LEFT JOIN tezg AS tg
-    ON qkan.lf.tezgnam = tg.flnam)
+    ON lf.tezgnam = tg.flnam)
 SELECT tg.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
        AREA(tg.geom) AS fl_ori, sum(fi.flaeche) - AREA(tg.geom) AS diff
 FROM tezg AS tg
