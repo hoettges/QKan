@@ -1,6 +1,6 @@
 from qkan.database.dbfunc import DBConnection
-from qkan.utils import get_logger, QkanDbError
-VERSION = "3.4.11"  #platzhalter
+from qkan.utils import get_logger
+VERSION = "3.4.11"  # must be higher than previous one and correspond with QKan.dbVersion
 
 logger = get_logger("QKan.database.migrations.0043")
 
@@ -9,7 +9,7 @@ def run(dbcon: DBConnection) -> bool:
 
     if 'knotentyp' not in dbcon.attrlist('anschlussschaechte'):
         try:
-            dbcon.alter_table(
+            if not dbcon.alter_table(
                 tabnam='anschlussschaechte',
                 attributes_new=[
                     "schnam TEXT",
@@ -34,8 +34,12 @@ def run(dbcon: DBConnection) -> bool:
                     "kommentar TEXT",
                     "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
                 ]
+            ):
+                return False
+        except Exception as err:
+            logger.error_code(
+                f"Fehlgeschlagen: migration_0043, knotentyp ergänzen: {err}"
             )
-        except:
-            logger.error_code('Fehlgeschlagen: migration_0043, knotentyp ergänzen')
+            return False
 
     return True
