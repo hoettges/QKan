@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>EinzelschadenDialog</class>
+ <widget class="QDialog" name="EinzelschadenDialog">
+  <property name="windowTitle"><string>Einzelschaden hinzufügen</string></property>
+  <property name="font"><font><pointsize>10</pointsize></font></property>
+  <property name="minimumSize"><size><width>520</width><height>430</height></size></property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy"><enum>QFormLayout::AllNonFixedFieldsGrow</enum></property>
+     <item row="0" column="0"><widget class="QLabel" name="position_label"><property name="text"><string>Station [m]</string></property></widget></item>
+     <item row="0" column="1"><widget class="QDoubleSpinBox" name="dsb_station"><property name="decimals"><number>2</number></property><property name="maximum"><double>999999.000000000000000</double></property></widget></item>
+     <item row="1" column="0"><widget class="QLabel" name="label_id"><property name="text"><string>ID</string></property></widget></item>
+     <item row="1" column="1"><widget class="QLineEdit" name="le_id" /></item>
+     <item row="2" column="0"><widget class="QLabel" name="label_code"><property name="text"><string>Kürzel</string></property></widget></item>
+     <item row="2" column="1"><widget class="QComboBox" name="cb_kuerzel"><property name="editable"><bool>true</bool></property><property name="insertPolicy"><enum>QComboBox::NoInsert</enum></property></widget></item>
+     <item row="3" column="0"><widget class="QLabel" name="label_longtext"><property name="text"><string>Langtext</string></property></widget></item>
+     <item row="3" column="1"><widget class="QPlainTextEdit" name="pte_langtext"><property name="minimumSize"><size><width>0</width><height>130</height></size></property></widget></item>
+     <item row="4" column="0"><widget class="QLabel" name="label_zd"><property name="text"><string>ZD</string></property></widget></item>
+     <item row="4" column="1"><widget class="QComboBox" name="cb_zd" /></item>
+     <item row="5" column="0"><widget class="QLabel" name="label_zb"><property name="text"><string>ZB</string></property></widget></item>
+     <item row="5" column="1"><widget class="QComboBox" name="cb_zb" /></item>
+     <item row="6" column="0"><widget class="QLabel" name="label_zs"><property name="text"><string>ZS</string></property></widget></item>
+     <item row="6" column="1"><widget class="QComboBox" name="cb_zs" /></item>
+     <item row="7" column="0"><widget class="QLabel" name="label_timecode"><property name="text"><string>Timecode</string></property></widget></item>
+     <item row="7" column="1"><widget class="QLineEdit" name="le_timecode" /></item>
+    </layout>
+   </item>
+   <item><widget class="QDialogButtonBox" name="bb_dialog"><property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property></widget></item>
+  </layout>
+ </widget>
+ <connections>
+  <connection><sender>bb_dialog</sender><signal>accepted()</signal><receiver>EinzelschadenDialog</receiver><slot>accept()</slot></connection>
+  <connection><sender>bb_dialog</sender><signal>rejected()</signal><receiver>EinzelschadenDialog</receiver><slot>reject()</slot></connection>
+ </connections>
+</ui>

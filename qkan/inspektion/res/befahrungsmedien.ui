@@ -1,0 +1,766 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+  <class>BefahrungsmedienDialog</class>
+  <widget class="QDialog" name="BefahrungsmedienDialog">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1380</width>
+        <height>760</height>
+      </rect>
+    </property>
+    <property name="minimumSize">
+      <size>
+        <width>1080</width>
+        <height>620</height>
+      </size>
+    </property>
+    <property name="windowTitle">
+      <string>QKan Medieninspektor – Objektansicht</string>
+    </property>
+    <property name="font">
+      <font>
+        <pointsize>10</pointsize>
+      </font>
+    </property>
+    <layout class="QVBoxLayout" name="rootLayout" stretch="0,0,1,0,0">
+      <property name="bottomMargin">
+        <number>8</number>
+      </property>
+      <property name="rightMargin">
+        <number>8</number>
+      </property>
+      <property name="topMargin">
+        <number>8</number>
+      </property>
+      <property name="leftMargin">
+        <number>8</number>
+      </property>
+      <property name="spacing">
+        <number>6</number>
+      </property>
+      <item>
+        <widget class="QGroupBox" name="sources_group">
+          <property name="title">
+            <string>Datenquellen</string>
+          </property>
+          <layout class="QFormLayout" name="sourcesLayout">
+            <item row="0" column="0">
+              <widget class="QLabel" name="database_label">
+                <property name="text">
+                  <string>QKan-Datenbank:</string>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="1">
+              <layout class="QHBoxLayout" name="databaseRowLayout">
+                <item>
+                  <widget class="QLineEdit" name="le_datenbank">
+                    <property name="readOnly">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="pb_datenbank_waehlen">
+                    <property name="text">
+                      <string>QKan-SQLite wählen …</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="QGroupBox" name="selection_group">
+          <property name="title">
+            <string>Auswahl</string>
+          </property>
+          <layout class="QHBoxLayout" name="selectionLayout">
+            <property name="spacing">
+              <number>8</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="object_type_label">
+                <property name="text">
+                  <string>Objektart:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QComboBox" name="cb_objektart">
+                <property name="minimumSize">
+                  <size>
+                    <width>145</width>
+                    <height>0</height>
+                  </size>
+                </property>
+                <property name="maximumSize">
+                  <size>
+                    <width>165</width>
+                    <height>16777215</height>
+                  </size>
+                </property>
+                <item>
+                  <property name="text">
+                    <string>Haltung</string>
+                  </property>
+                </item>
+                <item>
+                  <property name="text">
+                    <string>Anschlussleitung</string>
+                  </property>
+                </item>
+                <item>
+                  <property name="text">
+                    <string>Schacht</string>
+                  </property>
+                </item>
+              </widget>
+            </item>
+            <item>
+              <widget class="QLabel" name="object_label">
+                <property name="text">
+                  <string>Objekt:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QComboBox" name="cb_objekt">
+                <property name="minimumSize">
+                  <size>
+                    <width>220</width>
+                    <height>0</height>
+                  </size>
+                </property>
+                <property name="maximumSize">
+                  <size>
+                    <width>300</width>
+                    <height>16777215</height>
+                  </size>
+                </property>
+                <property name="editable">
+                  <bool>true</bool>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QLabel" name="inspection_label">
+                <property name="text">
+                  <string>Befahrung:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QComboBox" name="cb_befahrung">
+                <property name="minimumSize">
+                  <size>
+                    <width>180</width>
+                    <height>0</height>
+                  </size>
+                </property>
+                <property name="maximumSize">
+                  <size>
+                    <width>220</width>
+                    <height>16777215</height>
+                  </size>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <spacer name="selection_spacer">
+                <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                  <size>
+                    <width>40</width>
+                    <height>20</height>
+                  </size>
+                </property>
+              </spacer>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="QSplitter" name="main_splitter">
+          <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QWidget" name="left_panel">
+            <layout class="QVBoxLayout" name="leftLayout" stretch="0,0,1,0">
+              <item>
+                <widget class="QGroupBox" name="rating_group">
+                  <property name="title">
+                    <string>Gesamtbewertung</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="ratingLayout">
+                    <item>
+                      <widget class="QLabel" name="rating_object_label">
+                        <property name="text">
+                          <string>Objekt: –</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="rating_date_label">
+                        <property name="text">
+                          <string>Befahrung: –</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="rating_zd_label">
+                        <property name="text">
+                          <string>ZD: –</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="rating_zb_label">
+                        <property name="text">
+                          <string>ZB: –</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="rating_zs_label">
+                        <property name="text">
+                          <string>ZS: –</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="rating_info_label">
+                        <property name="text">
+                          <string>Länge/Abmessung: –</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_neu_bewerten">
+                        <property name="text">
+                          <string>Neu bewerten</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <spacer name="rating_spacer">
+                        <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                          <size>
+                            <width>40</width>
+                            <height>20</height>
+                          </size>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </widget>
+              </item>
+              <item>
+                <widget class="Inspektionsgrafik" name="inspektionsgrafik">
+                  <property name="minimumSize">
+                    <size>
+                      <width>0</width>
+                      <height>175</height>
+                    </size>
+                  </property>
+                  <property name="toolTip">
+                    <string>Interaktive Inspektionsgrafik</string>
+                  </property>
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                    </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                    <size>
+                      <width>16777215</width>
+                      <height>250</height>
+                    </size>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QTableWidget" name="tw_schaeden">
+                  <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                  </property>
+                  <property name="selectionMode">
+                    <enum>QAbstractItemView::SingleSelection</enum>
+                  </property>
+                  <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
+                  <property name="columnCount">
+                    <number>11</number>
+                  </property>
+                  <column>
+                    <property name="text">
+                      <string>Datum</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>Station/Lage</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>ID</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>Kürzel</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>Langtext</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>ZD</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>ZB</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>ZS</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>Foto</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>Video</string>
+                    </property>
+                  </column>
+                  <column>
+                    <property name="text">
+                      <string>Timecode</string>
+                    </property>
+                  </column>
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                    </sizepolicy>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <layout class="QHBoxLayout" name="damageButtonLayout">
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="pb_grafik_exportieren">
+                      <property name="text">
+                        <string>Grafik exportieren</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="damage_button_spacer">
+                      <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                        <size>
+                          <width>40</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                    </spacer>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="pb_eintrag_hinzufuegen">
+                      <property name="text">
+                        <string>Eintrag hinzufügen</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="pb_eintrag_loeschen">
+                      <property name="text">
+                        <string>Eintrag löschen</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="pb_speichern">
+                      <property name="text">
+                        <string>Speichern</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </widget>
+          <widget class="QTabWidget" name="tab_medien">
+            <property name="currentIndex">
+              <number>0</number>
+            </property>
+            <widget class="QWidget" name="photo_tab">
+              <attribute name="title">
+                <string>Fotos</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="photoLayout" stretch="1,0,0">
+                <item>
+                  <widget class="QLabel" name="lbl_fotovorschau">
+                    <property name="minimumSize">
+                      <size>
+                        <width>430</width>
+                        <height>280</height>
+                      </size>
+                    </property>
+                    <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                    </property>
+                    <property name="frameShadow">
+                      <enum>QFrame::Sunken</enum>
+                    </property>
+                    <property name="text">
+                      <string>Kein Foto ausgewählt</string>
+                    </property>
+                    <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="wordWrap">
+                      <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                      <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                      </size>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="photo_caption">
+                    <property name="text">
+                      <string />
+                    </property>
+                    <property name="wordWrap">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <layout class="QHBoxLayout" name="photoButtonLayout">
+                    <item>
+                      <widget class="QPushButton" name="pb_foto_vorheriges">
+                        <property name="text">
+                          <string>◀ Vorheriges</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_foto_naechstes">
+                        <property name="text">
+                          <string>Nächstes ▶</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_foto_ordner_oeffnen">
+                        <property name="text">
+                          <string>Ordner öffnen</string>
+                        </property>
+                        <property name="enabled">
+                          <bool>false</bool>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_foto_extern_oeffnen">
+                        <property name="text">
+                          <string>Extern öffnen</string>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </widget>
+            <widget class="QWidget" name="video_tab">
+              <attribute name="title">
+                <string>Videos</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="videoLayout" stretch="1,0,0,0">
+                <item>
+                  <widget class="QTableWidget" name="tw_videos">
+                    <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <property name="selectionMode">
+                      <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
+                    <property name="editTriggers">
+                      <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="columnCount">
+                      <number>6</number>
+                    </property>
+                    <column>
+                      <property name="text">
+                        <string>Datum</string>
+                      </property>
+                    </column>
+                    <column>
+                      <property name="text">
+                        <string>Station</string>
+                      </property>
+                    </column>
+                    <column>
+                      <property name="text">
+                        <string>Kürzel</string>
+                      </property>
+                    </column>
+                    <column>
+                      <property name="text">
+                        <string>Timecode</string>
+                      </property>
+                    </column>
+                    <column>
+                      <property name="text">
+                        <string>Status</string>
+                      </property>
+                    </column>
+                    <column>
+                      <property name="text">
+                        <string>Datei</string>
+                      </property>
+                    </column>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="video_details">
+                    <property name="text">
+                      <string />
+                    </property>
+                    <property name="wordWrap">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="inspection_video_status">
+                    <property name="text">
+                      <string>Befahrungsvideo verlinkt: Nein</string>
+                    </property>
+                    <property name="wordWrap">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <layout class="QHBoxLayout" name="videoButtonLayout">
+                    <item>
+                      <widget class="QPushButton" name="pb_befahrungsvideo_oeffnen">
+                        <property name="text">
+                          <string>Befahrungsvideo öffnen</string>
+                        </property>
+                        <property name="enabled">
+                          <bool>false</bool>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_video_ordner_oeffnen">
+                        <property name="text">
+                          <string>Ordner öffnen</string>
+                        </property>
+                        <property name="enabled">
+                          <bool>false</bool>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <spacer name="video_spacer">
+                        <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                          <size>
+                            <width>40</width>
+                            <height>20</height>
+                          </size>
+                        </property>
+                      </spacer>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_schadensvideo_oeffnen">
+                        <property name="text">
+                          <string>Video an Schadensstelle öffnen</string>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </widget>
+            <widget class="QWidget" name="panoramo_tab">
+              <attribute name="title">
+                <string>Panoramo</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="panoramoLayout" stretch="1,0">
+                <item>
+                  <widget class="QLabel" name="panoramo_info">
+                    <property name="text">
+                      <string>Kein Panoramo-Befahrungsvideo verlinkt</string>
+                    </property>
+                    <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="wordWrap">
+                      <bool>true</bool>
+                    </property>
+                    <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                    </property>
+                    <property name="frameShadow">
+                      <enum>QFrame::Sunken</enum>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <layout class="QHBoxLayout" name="panoramoButtonLayout">
+                    <item>
+                      <spacer name="panoramo_spacer_left">
+                        <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                          <size>
+                            <width>40</width>
+                            <height>20</height>
+                          </size>
+                        </property>
+                      </spacer>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_panoramo_oeffnen">
+                        <property name="text">
+                          <string>Panoramo öffnen</string>
+                        </property>
+                        <property name="enabled">
+                          <bool>false</bool>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="pb_panoramo_ordner_oeffnen">
+                        <property name="text">
+                          <string>Ordner öffnen</string>
+                        </property>
+                        <property name="enabled">
+                          <bool>false</bool>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <spacer name="panoramo_spacer_right">
+                        <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                          <size>
+                            <width>40</width>
+                            <height>20</height>
+                          </size>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </widget>
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+          </widget>
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QLabel" name="lbl_status">
+          <property name="text">
+            <string />
+          </property>
+          <property name="wordWrap">
+            <bool>true</bool>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QDialogButtonBox" name="button_box">
+          <property name="standardButtons">
+            <set>QDialogButtonBox::Close</set>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <customwidgets>
+    <customwidget>
+      <class>Inspektionsgrafik</class>
+      <extends>QWidget</extends>
+      <header>qkan.inspektion.inspektionsgrafik</header>
+      <container>1</container>
+    </customwidget>
+  </customwidgets>
+  <resources />
+  <connections>
+    <connection>
+      <sender>button_box</sender>
+      <signal>rejected()</signal>
+      <receiver>BefahrungsmedienDialog</receiver>
+      <slot>close()</slot>
+      <hints>
+        <hint type="sourcelabel">
+          <x>1260</x>
+          <y>790</y>
+        </hint>
+        <hint type="destinationlabel">
+          <x>660</x>
+          <y>410</y>
+        </hint>
+      </hints>
+    </connection>
+  </connections>
+</ui>
