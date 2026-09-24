@@ -143,8 +143,6 @@ def _passende_layer(
         tabelle, datenquelle = daten
         if tabelle not in erwartete_tabellen:
             continue
-        if layer.name() != LAYER_NAMEN.get(tabelle):
-            continue
 
         gruppen.setdefault(datenquelle, {}).setdefault(tabelle, []).append(
             layer
@@ -171,7 +169,7 @@ def datenquelle_waehlen(
         datenquelle
         for datenquelle, layer_nach_tabelle in gruppen.items()
         if all(
-            len(layer_nach_tabelle.get(tabelle, [])) == 1
+            len(layer_nach_tabelle.get(tabelle, [])) >= 1
             for tabelle in tabellen
         )
     ]
@@ -209,7 +207,21 @@ def layer_finden(
     treffer = _passende_layer(projekt, (tabellenname,)).get(
         datenquelle, {}
     ).get(tabellenname, [])
-    return treffer[0] if len(treffer) == 1 else None
+    if len(treffer) == 1:
+        return treffer[0]
+    if not treffer:
+        return None
+
+    ungefilterte_treffer = [
+        layer for layer in treffer if not layer.subsetString().strip()
+    ]
+    if len(ungefilterte_treffer) == 1:
+        return ungefilterte_treffer[0]
+
+    if len({layer.source() for layer in treffer}) == 1:
+        return treffer[0]
+
+    return None
 
 
 def tabellenlayer_oeffnen(

@@ -789,11 +789,12 @@ class ObjektauswahlWerkzeug(QgsMapToolIdentify):
         Feldnamen.
         """
         field_names = {field.name().casefold(): field.name() for field in layer.fields()}
-        layer_text = f"{layer.name()} {layer.source()}".casefold()
+        layer_info = layerdaten(layer)
+        table_name = layer_info[0] if layer_info is not None else ""
 
         for object_type, expected_field, hints in cls.LAYER_HINTS:
             actual_field = field_names.get(expected_field.casefold())
-            if actual_field is None or not any(hint in layer_text for hint in hints):
+            if actual_field is None or table_name not in hints:
                 continue
             object_name = _text_sicher_lesen(feature[actual_field]).strip()
             if object_name:
@@ -828,15 +829,12 @@ class ObjektauswahlWerkzeug(QgsMapToolIdentify):
                 continue
             field_names = {field.name().casefold(): field.name() for field in layer.fields()}
             schnam_field = field_names.get("schnam")
-            layer_text = f"{layer.name()} {layer.source()}".casefold()
-            if schnam_field is None or not any(
-                hint in layer_text for hint in ("schacht", "schaechte", "schächte")
-            ):
-                continue
             layer_info = layerdaten(layer)
             if layer_info is None:
                 continue
-            _table_name, datenquelle = layer_info
+            table_name, datenquelle = layer_info
+            if schnam_field is None or table_name != "schaechte":
+                continue
             try:
                 layer_point = self.canvas().mapSettings().mapToLayerCoordinates(
                     layer, map_point
