@@ -1,7 +1,7 @@
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger, QkanDbError
 
-VERSION = "3.4.12"  # must be higher than previous one and correspond with QKan.dbVersion
+VERSION = "3.4.12"  #platzhalter
 
 logger = get_logger("QKan.database.migrations.0044")
 
