@@ -31,13 +31,12 @@ def wktmod(wkt_geom):
 class ReadData:  # type: ignore
     def __init__(
         self,
-        plugin: "QKanTools",
-        proceed: bool = False,
         parent: Optional[QWidget] = None,
     ):
         super().__init__()
 
-        self.iface = plugin.iface
+        self.iface = QKan.instance.iface
+        # self.iface = plugin.iface
 
         # Set up the database loader
         # self.tf_qkanDB.textChanged.connect(self.reload_database)
@@ -51,11 +50,24 @@ class ReadData:  # type: ignore
         filename = Path(pluginDirectory("qkan")) / 'patterns.yml'
         self.clipPatterns = Patterns(filename)
 
-        self.proceed = proceed
+        self.proceed = True
+
+    def show(self) -> None:
+        """print mapping list for attributes from clipboard"""
+        self.proceed = False
+        self.paste()
 
     def run(self) -> None:
         """Immediately run paste procedure, when proceed == True, otherwise only print mapping list"""
+        self.proceed = True
+        self.paste()
 
+        layer = self.iface.activeLayer()
+        layer.dataProvider().reloadData()
+        layer.updateExtents()
+        layer.triggerRepaint()
+
+    def paste(self) -> None:
         self.table_name: str  # Mit ausgewähltem Layer verknüpfter Tabellenname
         self.table_geom: str  # Mit ausgewähltem Layer verknüpfte Geometriespalte
         self.table_sql: str  # Mit ausgewähltem Layer verknüpfter Filterausdruck
@@ -103,9 +115,11 @@ class ReadData:  # type: ignore
     ) -> Any:
         """Typkonvertierung mit Fehlermeldung"""
         if value is None:
-            logger.error(f"Zeile {nrow}, Spalte {column}: Feldwert ist leer")
+            # logger.error(f"Zeile {nrow}, Spalte {column}: Feldwert ist leer")
             return None
-        elif value == '':
+        elif value == 'None' or value == 'NULL':
+            return None
+        elif value == '' and (isinstance(func(), float) or isinstance(func(), int)):
             return None
 
         try:
@@ -414,11 +428,11 @@ class ReadData:  # type: ignore
 
                     if _type.lower() == "integer":
                         field = self.convert(int, nrow, column, _value)
-                    elif _type.lower() == "real":
+                    elif _type.lower() in ("real", "float"):
                         field = self.convert(float, nrow, column, _value)
                     elif _type.lower() == "text":
                         # no conversion necessary
-                        field = _value
+                        field = self.convert(str, nrow, column, _value)
                     elif _type.lower() in (
                             "point",
                             "linestring",

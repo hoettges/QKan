@@ -2,20 +2,19 @@ from pathlib import Path
 
 # noinspection PyUnresolvedReferences
 from typing import Dict, List, Optional, Union
-#from xml.dom import minidom
-#from xml.etree.ElementTree import Element, SubElement, tostring
-from lxml.etree import Element, SubElement
-from lxml import etree
+from xml.dom import minidom
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsGeometry
 
-from qkan import QKan
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import fortschritt
 from qkan.utils import get_logger, QkanDbError, QkanAbortError
 
 logger = get_logger("QKan.xml.export")
+
 
 def _create_children(parent: Element, names: List[str]) -> None:
     for child in names:
@@ -54,11 +53,26 @@ def cutm150(text: Union[str, None], limit: int = 16):
         return text
 
 
+def _format_hoehen_system(value) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return "mNN" if value == "Hoehensystem.METER_UEBER_NN" else value
+    name = getattr(value, "name", None)
+    if name == "METER_UEBER_NN":
+        return "mNN"
+    enum_value = getattr(value, "value", None)
+    if isinstance(enum_value, str):
+        return enum_value
+    return str(value)
+
+
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan: DBConnection, export_file: str):
+    def __init__(self, db_qkan: DBConnection, export_file: str, export_zustand: bool = False):
         self.db_qkan = db_qkan
         self.export_file = export_file
+        self.export_zustand = export_zustand
         self.liste_teilgebiete = QKan.config.selections.teilgebiete
 
         # XML base
@@ -66,6 +80,10 @@ class ExportTask:
         self.hydraulik_objekte: Optional[Element] = None
 
         self.root: Element = None
+        self._seen_schaechte = set()
+        self._seen_haltungen = set()
+        self._seen_anschlussschaechte = set()
+        self._seen_anschlussleitungen = set()
 
         if round(QKan.config.epsg - 5, -1) in (25830, 3040):
             self.ksys = 'UTM'
@@ -99,6 +117,523 @@ class ExportTask:
                     "RT004": bezext,
                 },
             )
+
+
+
+    def _map_hi101(self, untersuchrichtung: Optional[str]) -> Optional[str]:
+        if untersuchrichtung == "in Fließrichtung":
+            return "I"
+        if untersuchrichtung == "gegen Fließrichtung":
+            return "G"
+        return None
+
+    def _map_hi102(self, bezugspunkt: Optional[str]) -> Optional[str]:
+        if bezugspunkt == enums.UntersuchBezugpunkt.ROHRANFANG.value:
+            return "A"
+        if bezugspunkt == enums.UntersuchBezugpunkt.GERINNEMITTELPUNKT.value:
+            return "C"
+        return None
+
+    @staticmethod
+    def _inspection_key(
+        objektname: str,
+        untersuchtag: Optional[str],
+        untersuchrichtung: Optional[str],
+        untersuchungs_id: Optional[int],
+    ) -> tuple:
+        """Build a stable key for one inspection header.
+
+        QKan's ``id`` is the intended inspection identifier.  Older imports did
+        not always populate it, so object, date and direction remain part of
+        the key and form the compatibility fallback.
+        """
+        key = (
+            objektname,
+            untersuchtag or "",
+            untersuchrichtung or "",
+        )
+        if untersuchungs_id is not None:
+            return key + (untersuchungs_id,)
+        return key
+
+    @staticmethod
+    def _first_film_dateiname(rows: List[tuple], index: int) -> Optional[str]:
+        """Return the first non-empty film filename from detail rows."""
+        for row in rows:
+            value = row[index]
+            if value is not None and str(value).strip():
+                return str(value)
+        return None
+
+    def _video_dateiname(
+        self,
+        objektname: str,
+        untersuchtag: Optional[str],
+        untersuchrichtung: Optional[str],
+        objekttyp: str,
+    ) -> Optional[str]:
+        """Read at most one deterministic fallback filename from ``videos``."""
+        sql = """
+            SELECT datei
+            FROM videos
+            WHERE name = ?
+              AND coalesce(untersuchtag, '') = coalesce(?, '')
+              AND objekt = ?
+              AND (
+                    ? IS NULL
+                    OR coalesce(untersuchrichtung, '') = coalesce(?, '')
+                  )
+              AND nullif(trim(datei), '') IS NOT NULL
+            ORDER BY pk
+            LIMIT 2
+        """
+        if not self.db_qkan.sql(
+            sql,
+            f"{self.__class__.__name__}._video_dateiname",
+            parameters=(
+                objektname,
+                untersuchtag,
+                objekttyp,
+                untersuchrichtung,
+                untersuchrichtung,
+            ),
+        ):
+            raise QkanDbError
+
+        rows = self.db_qkan.fetchall()
+        if len(rows) > 1:
+            logger.warning(
+                "Mehrere Videos für %s '%s' (%s, %s); "
+                "für den M150-Block wird die erste Datei verwendet",
+                objekttyp,
+                objektname,
+                untersuchtag,
+                untersuchrichtung,
+            )
+        return rows[0][0] if rows else None
+
+    @staticmethod
+    def _build_hz005(
+        streckenschaden: Optional[str],
+        streckenschaden_lfdnr: Optional[int],
+    ) -> Optional[str]:
+        if streckenschaden is None:
+            return None
+        if streckenschaden_lfdnr in (None, 0, "", "0"):
+            return streckenschaden
+        return f"{streckenschaden}{streckenschaden_lfdnr}"
+
+    def _export_schacht_zustand(self, x_elem: Element, schnam: str) -> None:
+        if not self.export_zustand:
+            return
+
+        sql_ki = """
+            SELECT
+                su.pk,
+                su.id,
+                su.untersuchtag,
+                su.untersucher,
+                su.bezugspunkt,
+                su.wetter,
+                su.bewertungsart,
+                su.bewertungstag,
+                su.auftragsbezeichnung,
+                su.kommentar,
+                su.max_ZD,
+                su.max_ZB,
+                su.max_ZS
+            FROM schaechte_untersucht su
+            WHERE su.schnam = ?
+            ORDER BY coalesce(su.untersuchtag, ''),
+                     CASE WHEN su.id IS NULL THEN 1 ELSE 0 END,
+                     su.id,
+                     su.pk
+        """
+        if not self.db_qkan.sql(
+            sql_ki,
+            f"{self.__class__.__name__}._export_schacht_zustand(ki)",
+            parameters=(schnam,),
+        ):
+            raise QkanDbError
+
+        seen_inspections = set()
+        for (
+            _untersuchung_pk,
+            untersuchungs_id,
+            untersuchtag,
+            untersucher,
+            _bezugspunkt,
+            wetter,
+            bewertungsart,
+            bewertungstag,
+            auftragsbezeichnung,
+            kommentar,
+            max_zd,
+            max_zb,
+            max_zs,
+        ) in self.db_qkan.fetchall():
+            inspection_key = self._inspection_key(
+                schnam, untersuchtag, None, untersuchungs_id
+            )
+            if inspection_key in seen_inspections:
+                logger.warning(
+                    "Doppelter Schacht-Inspektionskopf für '%s' (%s, ID %s) "
+                    "wird nicht erneut exportiert",
+                    schnam,
+                    untersuchtag,
+                    untersuchungs_id,
+                )
+                continue
+            seen_inspections.add(inspection_key)
+
+            sql_kz = """
+                SELECT
+                    pk,
+                    id,
+                    videozaehler,
+                    timecode,
+                    kuerzel,
+                    langtext,
+                    charakt1,
+                    charakt2,
+                    quantnr1,
+                    quantnr2,
+                    streckenschaden,
+                    streckenschaden_lfdnr,
+                    pos_von,
+                    pos_bis,
+                    vertikale_lage,
+                    inspektionslaenge,
+                    bereich,
+                    foto_dateiname,
+                    film_dateiname,
+                    kommentar,
+                    ZD,
+                    ZB,
+                    ZS
+                FROM untersuchdat_schacht
+                WHERE untersuchsch = ?
+                  AND coalesce(untersuchtag, '') = coalesce(?, '')
+                  AND (? IS NULL OR id = ?)
+                ORDER BY coalesce(vertikale_lage, inspektionslaenge, 0),
+                         coalesce(videozaehler, ''),
+                         coalesce(kuerzel, ''),
+                         pk
+            """
+            if not self.db_qkan.sql(
+                sql_kz,
+                f"{self.__class__.__name__}._export_schacht_zustand(kz)",
+                parameters=(
+                    schnam,
+                    untersuchtag,
+                    untersuchungs_id,
+                    untersuchungs_id,
+                ),
+            ):
+                raise QkanDbError
+
+            kz_rows = self.db_qkan.fetchall()
+            film_dateiname = self._first_film_dateiname(kz_rows, 18)
+            if film_dateiname is None:
+                film_dateiname = self._video_dateiname(
+                    schnam, untersuchtag, None, "Schacht"
+                )
+
+            ki_elem = SubElement(x_elem, "KI")
+            _create_children_text(
+                ki_elem,
+                {
+                    "KI002": auftragsbezeichnung,
+                    "KI005": bewertungsart,
+                    "KI104": untersuchtag,
+                    "KI106": wetter,
+                    "KI112": untersucher,
+                    "KI116": film_dateiname,
+                    "KI204": bewertungstag,
+                    "KI206": max_zd,
+                    "KI207": max_zs,
+                    "KI208": max_zb,
+                    "KI999": kommentar,
+                },
+            )
+
+            for (
+                _schaden_pk,
+                _schaden_id,
+                videozaehler,
+                timecode,
+                kuerzel,
+                langtext,
+                charakt1,
+                charakt2,
+                quantnr1,
+                quantnr2,
+                streckenschaden,
+                streckenschaden_lfdnr,
+                pos_von,
+                pos_bis,
+                vertikale_lage,
+                inspektionslaenge,
+                bereich,
+                foto_dateiname,
+                _schaden_film_dateiname,
+                schaden_kommentar,
+                zd,
+                zb,
+                zs,
+            ) in kz_rows:
+                kz_elem = SubElement(ki_elem, "KZ")
+                _create_children_text(
+                    kz_elem,
+                    {
+                        "KZ001": formatm150(vertikale_lage),
+                        "KZ002": kuerzel,
+                        "KZ003": formatm150(quantnr1),
+                        "KZ004": formatm150(quantnr2),
+                        "KZ005": self._build_hz005(streckenschaden, streckenschaden_lfdnr),
+                        "KZ006": None if pos_von is None else f"{int(pos_von):02d}",
+                        "KZ007": None if pos_bis is None else f"{int(pos_bis):02d}",
+                        "KZ008": timecode if timecode is not None else videozaehler,
+                        "KZ009": foto_dateiname,
+                        "KZ010": langtext,
+                        "KZ013": bereich,
+                        "KZ014": charakt1,
+                        "KZ015": charakt2,
+                        "KZ017": schaden_kommentar,
+                        "KZ206": zd,
+                        "KZ207": zs,
+                        "KZ208": zb,
+                        "KZ999": schaden_kommentar,
+                    },
+                )
+
+    def _export_rohr_zustand(
+        self,
+        x_elem: Element,
+        objektname: str,
+        untersuchungstabelle: str,
+        schadentabelle: str,
+        untersuchungsname_feld: str,
+        schadensname_feld: str,
+        video_objekttyp: str,
+    ) -> None:
+        if not self.export_zustand:
+            return
+
+        sql_hi = f"""
+            SELECT
+                u.pk,
+                u.id,
+                u.untersuchtag,
+                u.untersucher,
+                u.untersuchrichtung,
+                u.bezugspunkt,
+                u.wetter,
+                u.bewertungsart,
+                u.bewertungstag,
+                u.auftragsbezeichnung,
+                u.kommentar,
+                u.max_ZD,
+                u.max_ZB,
+                u.max_ZS
+            FROM {untersuchungstabelle} u
+            WHERE u.{untersuchungsname_feld} = ?
+            ORDER BY coalesce(u.untersuchtag, ''),
+                     coalesce(u.untersuchrichtung, ''),
+                     CASE WHEN u.id IS NULL THEN 1 ELSE 0 END,
+                     u.id,
+                     u.pk
+        """
+        if not self.db_qkan.sql(
+            sql_hi,
+            f"{self.__class__.__name__}._export_rohr_zustand(hi)",
+            parameters=(objektname,),
+        ):
+            raise QkanDbError
+
+        hi_rows = self.db_qkan.fetchall()
+        seen_inspections = set()
+        for (
+            _untersuchung_pk,
+            untersuchungs_id,
+            untersuchtag,
+            untersucher,
+            untersuchrichtung,
+            bezugspunkt,
+            wetter,
+            bewertungsart,
+            bewertungstag,
+            auftragsbezeichnung,
+            kommentar,
+            max_zd,
+            max_zb,
+            max_zs,
+        ) in hi_rows:
+            inspection_key = self._inspection_key(
+                objektname,
+                untersuchtag,
+                untersuchrichtung,
+                untersuchungs_id,
+            )
+            if inspection_key in seen_inspections:
+                logger.warning(
+                    "Doppelter %s-Inspektionskopf für '%s' (%s, %s, ID %s) "
+                    "wird nicht erneut exportiert",
+                    video_objekttyp,
+                    objektname,
+                    untersuchtag,
+                    untersuchrichtung,
+                    untersuchungs_id,
+                )
+                continue
+            seen_inspections.add(inspection_key)
+
+            sql_hz = f"""
+                SELECT
+                    pk,
+                    id,
+                    videozaehler,
+                    station,
+                    timecode,
+                    kuerzel,
+                    langtext,
+                    charakt1,
+                    charakt2,
+                    quantnr1,
+                    quantnr2,
+                    streckenschaden,
+                    streckenschaden_lfdnr,
+                    pos_von,
+                    pos_bis,
+                    foto_dateiname,
+                    film_dateiname,
+                    kommentar,
+                    ZD,
+                    ZB,
+                    ZS
+                FROM {schadentabelle}
+                WHERE {schadensname_feld} = ?
+                  AND coalesce(untersuchtag, '') = coalesce(?, '')
+                  AND coalesce(untersuchrichtung, '') = coalesce(?, '')
+                  AND (? IS NULL OR id = ?)
+                ORDER BY coalesce(station, 0),
+                         coalesce(videozaehler, ''),
+                         coalesce(kuerzel, ''),
+                         pk
+            """
+            if not self.db_qkan.sql(
+                sql_hz,
+                f"{self.__class__.__name__}._export_rohr_zustand(hz)",
+                parameters=(
+                    objektname,
+                    untersuchtag,
+                    untersuchrichtung,
+                    untersuchungs_id,
+                    untersuchungs_id,
+                ),
+            ):
+                raise QkanDbError
+            hz_rows = self.db_qkan.fetchall()
+
+            film_dateiname = self._first_film_dateiname(hz_rows, 16)
+            if film_dateiname is None:
+                film_dateiname = self._video_dateiname(
+                    objektname,
+                    untersuchtag,
+                    untersuchrichtung,
+                    video_objekttyp,
+                )
+
+            hi_elem = SubElement(x_elem, "HI")
+            _create_children_text(
+                hi_elem,
+                {
+                    "HI002": auftragsbezeichnung,
+                    "HI005": bewertungsart,
+                    "HI101": self._map_hi101(untersuchrichtung),
+                    "HI102": self._map_hi102(bezugspunkt),
+                    "HI104": untersuchtag,
+                    "HI106": wetter,
+                    "HI112": untersucher,
+                    "HI116": film_dateiname,
+                    "HI204": bewertungstag,
+                    "HI206": max_zd,
+                    "HI207": max_zs,
+                    "HI208": max_zb,
+                    "HI999": kommentar,
+                },
+            )
+
+            for (
+                _schaden_pk,
+                _schaden_id,
+                videozaehler,
+                station,
+                timecode,
+                kuerzel,
+                langtext,
+                charakt1,
+                charakt2,
+                quantnr1,
+                quantnr2,
+                streckenschaden,
+                streckenschaden_lfdnr,
+                pos_von,
+                pos_bis,
+                foto_dateiname,
+                _schaden_film_dateiname,
+                schaden_kommentar,
+                zd,
+                zb,
+                zs,
+            ) in hz_rows:
+                hz_elem = SubElement(hi_elem, "HZ")
+                _create_children_text(
+                    hz_elem,
+                    {
+                        "HZ001": formatm150(station),
+                        "HZ002": kuerzel,
+                        "HZ003": formatm150(quantnr1),
+                        "HZ004": formatm150(quantnr2),
+                        "HZ005": self._build_hz005(streckenschaden, streckenschaden_lfdnr),
+                        "HZ006": None if pos_von is None else f"{int(pos_von):02d}",
+                        "HZ007": None if pos_bis is None else f"{int(pos_bis):02d}",
+                        "HZ008": timecode if timecode is not None else videozaehler,
+                        "HZ009": foto_dateiname,
+                        "HZ010": langtext,
+                        "HZ014": charakt1,
+                        "HZ015": charakt2,
+                        "HZ017": schaden_kommentar,
+                        "HZ206": zd,
+                        "HZ207": zs,
+                        "HZ208": zb,
+                        "HZ999": schaden_kommentar,
+                    },
+                )
+
+    def _export_haltung_zustand(self, x_elem: Element, haltnam: str) -> None:
+        self._export_rohr_zustand(
+            x_elem=x_elem,
+            objektname=haltnam,
+            untersuchungstabelle="haltungen_untersucht",
+            schadentabelle="untersuchdat_haltung",
+            untersuchungsname_feld="haltnam",
+            schadensname_feld="untersuchhal",
+            video_objekttyp="Haltung",
+        )
+
+    def _export_anschlussleitung_zustand(
+        self, x_elem: Element, leitnam: str
+    ) -> None:
+        self._export_rohr_zustand(
+            x_elem=x_elem,
+            objektname=leitnam,
+            untersuchungstabelle="anschlussleitungen_untersucht",
+            schadentabelle="untersuchdat_anschlussleitung",
+            untersuchungsname_feld="leitnam",
+            schadensname_feld="untersuchleit",
+            video_objekttyp="Anschlussleitung",
+        )
 
     def _export_wehre(self) -> None:
         if not QKan.config.check_export.wehre:
@@ -185,7 +720,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -208,7 +743,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -323,7 +858,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -346,7 +881,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -409,6 +944,10 @@ class ExportTask:
             geobpoint,
         ) in self.db_qkan.fetchall():
 
+            if schnam in self._seen_schaechte:
+                continue
+            self._seen_schaechte.add(schnam)
+
             geop = QgsGeometry()
             geop.fromWkb(geobpoint)
             ptsch = geop.asPoint()
@@ -462,7 +1001,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -485,9 +1024,11 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
+
+            self._export_schacht_zustand(x_elem, schnam)
 
             # Geometrieobjekt. Wenn ptlis = [] wird diese Schleife übersprungen
             for i, part in enumerate(ptlis):
@@ -523,7 +1064,7 @@ class ExportTask:
             x_elem,
             {
                 "FD001": '04-2010',
-                "FD002": 'A',
+                "FD002": 'B',
             },
         )
 
@@ -560,6 +1101,10 @@ class ExportTask:
             geobpoint,
         ) in self.db_qkan.fetchall():
 
+            if schnam in self._seen_schaechte:
+                continue
+            self._seen_schaechte.add(schnam)
+
             geop = QgsGeometry()
             geop.fromWkb(geobpoint)
             ptsch = geop.asPoint()
@@ -613,7 +1158,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -636,9 +1181,11 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
+
+            self._export_schacht_zustand(x_elem, schnam)
 
             # Geometrieobjekt. Wenn ptlis = [] wird diese Schleife übersprungen
             for i, part in enumerate(ptlis):
@@ -752,7 +1299,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -775,9 +1322,11 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
+
+            self._export_schacht_zustand(x_elem, schnam)
 
             # Geometrieobjekt. Wenn ptlis = [] wird diese Schleife übersprungen
             for i, part in enumerate(ptlis):
@@ -842,6 +1391,10 @@ class ExportTask:
             gline,
         ) in self.db_qkan.fetchall():
 
+            if haltnam in self._seen_haltungen:
+                continue
+            self._seen_haltungen.add(haltnam)
+
             x_elem = SubElement(self.root, "HG")
             _create_children_text(
                 x_elem,
@@ -856,8 +1409,8 @@ class ExportTask:
                     "HG303": None if baujahr is None else f'{baujahr:d}',
                     "HG304": material,
                     "HG305": profil,
-                    "HG306": formatm150(int(breite)),
-                    "HG307": formatm150(int(hoehe)),
+                    "HG306": formatm150(breite),
+                    "HG307": formatm150(hoehe),
                     "HG310": formatm150(laenge),
                     "HG313": 'A',
                     "HG314": rohrlaenge,
@@ -930,6 +1483,8 @@ class ExportTask:
                 },
             )
 
+            self._export_haltung_zustand(x_elem, haltnam)
+
     def _export_anschlussleitungen(self) -> None:
         if not QKan.config.check_export.anschlussleitungen:
             # or not self.hydraulik_objekte
@@ -972,6 +1527,10 @@ class ExportTask:
             kommentar,
             gline
         ) in self.db_qkan.fetchall():
+            if leitnam in self._seen_anschlussleitungen:
+                continue
+            self._seen_anschlussleitungen.add(leitnam)
+
             x_elem = SubElement(self.root, "HG")
             _create_children_text(
                 x_elem,
@@ -992,8 +1551,9 @@ class ExportTask:
                     "HG302": entwart,
                     "HG303": None if baujahr is None else f'{baujahr:d}',
                     "HG304": material,
-                    "HG306": formatm150(int(breite)),
-                    "HG307": formatm150(int(hoehe)),
+                    "HG305": profil,
+                    "HG306": formatm150(breite),
+                    "HG307": formatm150(hoehe),
                     "HG308": profilauskleidung,
                     "HG309": innenmaterial,
                     "HG310": formatm150(laenge),
@@ -1067,6 +1627,8 @@ class ExportTask:
                 },
             )
 
+            self._export_anschlussleitung_zustand(x_elem, leitnam)
+
 
     def _export_anschlussschaechte(self) -> None:
         if not QKan.config.check_export.anschlussschaechte:
@@ -1098,6 +1660,10 @@ class ExportTask:
             kommentar,
             geopoint,
         ) in self.db_qkan.fetchall():
+
+            if schnam in self._seen_anschlussschaechte:
+                continue
+            self._seen_anschlussschaechte.add(schnam)
 
             geop = QgsGeometry()
             geop.fromWkb(geopoint)
@@ -1144,7 +1710,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(sohlhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -1167,7 +1733,7 @@ class ExportTask:
                     self.gp_x: formatm150(xsch),
                     self.gp_y: formatm150(ysch),
                     "GP007": formatm150(deckelhoehe),
-                    "GP010": QKan.config.check_export.hoehensystem.value,
+                    "GP010": _format_hoehen_system(QKan.config.check_export.hoehensystem),
                 },
             )
 
@@ -1192,9 +1758,7 @@ class ExportTask:
         fortschritt("Export startet...", 0.05)
 
         # region Create XML structure
-        self.root = Element(
-            "DATA",
-            nsmap={"xsi": "http://www.w3.org/2001/XMLSchema-instance"}
+        self.root = Element("DATA", {"xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance", }
         )
 
         # Export
@@ -1221,9 +1785,12 @@ class ExportTask:
         # self._export_schaechte_inspektion() ; fortschritt("Schächte geschrieben", 0.4)
         self._export_refdata()              ; fortschritt("Referenzdaten geschrieben", 0.95)
 
-
-        Path(self.export_file).write_text(
-            etree.tostring(self.root, pretty_print=True, encoding="unicode")
+        Path(self.export_file).write_bytes(
+            minidom.parseString(tostring(self.root)).toprettyxml(
+                indent="  ",
+                standalone = False,
+                encoding = 'iso-8859-1'
+            )
         )
 
         # Close connection

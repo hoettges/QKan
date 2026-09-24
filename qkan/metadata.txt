@@ -22,6 +22,10 @@ repository=https://github.com/hoettges/QKan
 
 changelog= 
 
+    3.4.20:
+        - Haltungsberichte können jetzt auch mit einer beliebigen freien Auswahl von Haltungen aufgerufen werden
+        - Clipboard überarbeitet. Damit werden jetzt fast alle Tabellen und alle Attribute berücksichtigt
+        - Attribut "filmtyp" hat jetzt den Datentyp TEXT
     3.4.19:
         - Neues Modul: Transformation aller QKan-Tabellen aus einer anderen Projektion
         - STRAKAT-Import berücksichtigt jetzt auch Hausanschlussschächte mit den entsprechenden Symbolbezeichnungen

@@ -160,6 +160,9 @@ def bericht(
         haltungen_layer = QgsProject.instance().mapLayersByName("Haltungen")[0]
         geom_type = QgsWkbTypes.displayString(haltungen_layer.wkbType())
 
+        # Auswahl übernehmen
+        db_qkan.getSelection()
+
         sql = f"""
                 SELECT pk from sel_haltungen
                 """

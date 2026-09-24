@@ -1,9 +1,11 @@
 # patterns must be lower case
+# must comply with create statements in qkan.database.sqlite.yml
 schaechte:
   schnam:
   - "scha*"
   - "schna*"
   - "nam*"
+  - "*nam*"
   xsch:
   - "x*"
   - "laengs*"
@@ -30,17 +32,32 @@ schaechte:
   strasse:
   - "stras*"
   - "straß*"
-  - "straß*"
+  - "straÃŸ*"
   eigentum:
   - "eigent*"
   - "besitz*"
   baujahr:
   - "bauj*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   teilgebiet:
   - "teilg*"
+  druckdicht:
+  - "druckdicht"
+  ueberstauflaeche:
+  - "ueberstaufl*"
+  - "überstaufl*"
+  - "Ã¼berstaufl*"
+  knotentyp:
+  - "knotentyp"
+  - "knotenart"
+  auslasstyp:
+  - "auslasstyp"
+  - "auslassart"
+  schachttyp:
+  - "schachttyp"
+  - "schachtart"
   kommentar:
   - "kommen*"
   - "zusatzt*"
@@ -48,19 +65,23 @@ schaechte:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "geom"
   geop:
   - "wkt_geom"
   - "geop"
+  - "geometry"
 haltungen:
   haltnam:
   - "haltn*"
   - "haltu*"
   - "kanaln*"
   - "nam*"
+  - "*nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -69,6 +90,85 @@ haltungen:
   - "sch*un*"
   - "sch*end"
   - "end*sch*"
+  hoehe:
+  - "hoe*"
+  - "höh*"
+  - "hÃ¶h*"
+  - "rohrhoe*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
+  - "prof*hoe*"
+  - "prof*hö*"
+  - "prof*hÃ¶*"
+  - "durchm*"
+  breite:
+  - "brei*"
+  - "rohrbrei*"
+  - "prof*brei*"
+  laenge:
+  - "laen*"
+  - "län*"
+  - "lÃ¤ng*"
+  aussendurchmesser:
+  - "au*durchm*"
+  - "out*diam*"
+  sohleoben:
+  - "sohl*ob*"
+  - "sohl*anf"
+  sohleunten:
+  - "sohl*un*"
+  - "sohl*end*"
+  baujahr:
+  - "bauj*"
+  eigentum:
+  - "eigent*"
+  - "besitz*"
+  teilgebiet:
+  - "teilg*"
+  strasse:
+  - "stras*"
+  - "straß*"
+  - "straÃŸ*"
+  profilnam:
+  - "profil*"
+  entwart:
+  - "entw*art"
+  - "entw*typ*"
+  - "entw*ver*"
+  - "kanalart*"
+  abflussart:
+  - "abflussart"
+  - "abflusstyp"
+  material:
+  - "mat*"
+  profilauskleidung:
+  - "profilauskleidung"
+  - "auskleidung"
+  innenmaterial:
+  - "innenmat*"
+  haltungstyp:
+  - "haltungsart"
+  - "haltungstyp"
+  simstatus:
+  - "sim*stat"
+  - "stat"
+  rwanschluss:
+  - "rwanschluss"
+  druckdicht:
+  - "druckdicht"
+  ks:
+  - "ks*"
+  - "rauh*"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
   xschob:
   - "xob*"
   - "xschob*"
@@ -81,72 +181,15 @@ haltungen:
   yschun:
   - "yun*"
   - "yschun*"
-  breite:
-  - "brei*"
-  - "rohrbrei*"
-  - "prof*brei*"
-  hoehe:
-  - "hoe*"
-  - "höh*"
-  - "höh*"
-  - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
-  - "prof*hoe*"
-  - "prof*höh*"
-  - "prof*hö*"
-  - "durchm*"
-  laenge:
-  - "laen*"
-  - "läng*"
-  sohleoben:
-  - "sohl*ob*"
-  - "sohl*anf"
-  sohleunten:
-  - "sohl*un*"
-  - "sohl*end*"
-  profilnam:
-  - "profil*"
-  ks:
-  - "ks*"
-  - "rauh*"
-  strasse:
-  - "stras*"
-  - "straß*"
-  - "straß*"
-  eigentum:
-  - "eigent*"
-  - "besitz*"
-  baujahr:
-  - "bauj*"
-  simstat:
-  - "sim*stat"
-  - "stat"
-  teilgebiet:
-  - "teilg*"
-  entwart:
-  - "entw*art"
-  - "entw*typ*"
-  - "entw*ver*"
-  - "kanalart*"
-  material:
-  - "mat*"
-  kommentar:
-  - "kommen*"
-  - "zusatzt*"
-  - "bemerk*"
-  createdat:
-  - "crea*da*"
-  - "erst*"
-  - "*änder*"
-  - "*änder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 pumpen:
   pnam:
   - "p*nam*"
   - "nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -168,7 +211,7 @@ pumpen:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -183,15 +226,18 @@ pumpen:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 wehre:
   wnam:
   - "w*nam*"
   - "nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -209,7 +255,7 @@ wehre:
   - "kamm*h*"
   laenge:
   - "*laen*"
-  - "*läng*"
+  - "*lÃ¤ng*"
   eigentum:
   - "eigent*"
   - "besitz*"
@@ -217,7 +263,7 @@ wehre:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -232,15 +278,18 @@ wehre:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 drosseln:
   name:
   - "*nam*"
   - "nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -258,7 +307,7 @@ drosseln:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -273,15 +322,18 @@ drosseln:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 schieber:
   name:
   - "nam*"
   - "*nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -296,14 +348,14 @@ schieber:
   - "prof*brei*"
   hoehe:
   - "hoe*"
-  - "höh*"
-  - "höh*"
+  - "hö*"
+  - "hÃ¶*"
   - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
   - "prof*hoe*"
-  - "prof*höh*"
   - "prof*hö*"
+  - "prof*hÃ¶*"
   - "durchm*"
   sohleoben:
   - "sohl*ob*"
@@ -320,7 +372,7 @@ schieber:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -335,15 +387,18 @@ schieber:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 grundseitenanlaesse:
   name:
   - "nam*"
   - "*nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -358,14 +413,14 @@ grundseitenanlaesse:
   - "prof*brei*"
   hoehe:
   - "hoe*"
-  - "höh*"
-  - "höh*"
+  - "hö*"
+  - "hÃ¶*"
   - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
   - "prof*hoe*"
-  - "prof*höh*"
   - "prof*hö*"
+  - "prof*hÃ¶*"
   - "durchm*"
   sohleoben:
   - "sohl*ob*"
@@ -382,7 +437,7 @@ grundseitenanlaesse:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -397,15 +452,18 @@ grundseitenanlaesse:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 qregler:
   name:
   - "nam*"
   - "*nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -420,18 +478,19 @@ qregler:
   - "prof*brei*"
   hoehe:
   - "hoe*"
-  - "höh*"
-  - "höh*"
+  - "hö*"
+  - "hÃ¶*"
   - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
   - "prof*hoe*"
-  - "prof*höh*"
   - "prof*hö*"
+  - "prof*hÃ¶*"
   - "durchm*"
   laenge:
   - "laen*"
-  - "läng*"
+  - "län*"
+  - "lÃ¤ng*"
   sohleoben:
   - "sohl*ob*"
   - "sohl*anf"
@@ -450,7 +509,7 @@ qregler:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -465,15 +524,18 @@ qregler:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 hregler:
   name:
   - "nam*"
   - "*nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -488,18 +550,19 @@ hregler:
   - "prof*brei*"
   hoehe:
   - "hoe*"
-  - "höh*"
-  - "höh*"
+  - "hö*"
+  - "hÃ¶*"
   - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
   - "prof*hoe*"
-  - "prof*höh*"
   - "prof*hö*"
+  - "prof*hÃ¶*"
   - "durchm*"
   laenge:
   - "laen*"
-  - "läng*"
+  - "län*"
+  - "lÃ¤ng*"
   sohleoben:
   - "sohl*ob*"
   - "sohl*anf"
@@ -518,7 +581,7 @@ hregler:
   - "bauj*"
   teilgebiet:
   - "teilg*"
-  simstat:
+  simstatus:
   - "sim*stat"
   - "stat"
   entwart:
@@ -533,14 +596,17 @@ hregler:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 abflussparameter:
   apnam:
   - "nam*"
+  - "*nam*"
   - "bez*"
   anfangsabflussbeiwert:
   - "*"
@@ -563,22 +629,52 @@ abflussparameter:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
 tezg:
   flnam:
   - "nam*"
+  - "*nam*"
   - "bez*"
-  flaeche:
-  - "flae*"
-  - "flä*"
-  - "flN*"
+  haltnam:
+  - "haltn*"
+  - "haltu*"
+  - "kanaln*"
+  schnam:
+  - "sch*"
+  neigkl:
+  - "neig*kl*"
+  neigung:
+  - "neigung"
+  - "neig*grad"
   befgrad:
   - "*bef*"
   - "*und*"
+  schwerpunktlaufzeit:
+  - "schwerpunktlaufz*"
+  regenschreiber:
+  - "regen*"
+  teilgebiet:
+  - "teilg*"
+  abflussparameter:
+  - "abfluss*"
+  - "*parameter"
+  - "*typ"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 flaechen:
   flnam:
   - "f*nam*"
@@ -588,6 +684,7 @@ flaechen:
   - "haltu*"
   - "kanaln*"
   - "nam*"
+  - "*nam*"
   schnam:
   - "sch*"
   neigkl:
@@ -595,8 +692,16 @@ flaechen:
   neigung:
   - "neigung"
   - "neig*grad"
+  teilgebiet:
+  - "teilg*"
   regenschreiber:
   - "regen*"
+  abflussparameter:
+  - "abfluss*"
+  - "*parameter"
+  - "*typ"
+  aufteilen:
+  - "aufteilen"
   kommentar:
   - "kommen*"
   - "zusatzt*"
@@ -604,14 +709,17 @@ flaechen:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 teilgebiete:
   tgnam:
   - "nam*"
+  - "*nam*"
   - "bez*"
   kommentar:
   - "kommen*"
@@ -620,19 +728,98 @@ teilgebiete:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
+anschlussschaechte:
+  schnam:
+  - "scha*"
+  - "schna*"
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  xsch:
+  - "x*"
+  - "laengs*"
+  - "breit*"
+  ysch:
+  - "y*"
+  - "hoch*"
+  - "hoeh*"
+  sohlhoehe:
+  - "sohl*"
+  - "sohl*h*"
+  deckelhoehe:
+  - "deckel*"
+  durchm:
+  - "durchm*"
+  - "diam*"
+  druckdicht:
+  - "druckd*"
+  - "verschl*"
+  entwart:
+  - "entw*art"
+  - "entw*typ*"
+  - "entw*ver*"
+  - "kanalart*"
+  strasse:
+  - "stras*"
+  - "straß*"
+  - "straÃŸ*"
+  baujahr:
+  - "bauj*"
+  urstation:
+  - "ursta*"
+  ursprung:
+  - "urspr*"
+  - "anschluss*"
+  eigentum:
+  - "eigent*"
+  - "besitz*"
+  teilgebiet:
+  - "teilg*"
+  anschlusstyp:
+  - "anschlussty*"
+  - "anschlußty*"
+  - "anschluÃŸty*"
+  - "anschlussart*"
+  - "anschlußart"
+  - "anschluÃŸart"
+  haltnam:
+  - "haltn*"
+  - "haltu*"
+  - "kanaln*"
+  simstatus:
+  - "sim*stat"
+  - "stat"
+  material:
+  - "mat*"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+  geom:
+  - "geom"
+  geop:
+  - "wkt_geom"
+  - "geop"
+  - "geometry"
 anschlussleitungen:
   leitnam:
   - "leit*"
-  - "haltn*"
-  - "haltu*"
-  - "bez*"
-  - "kanaln*"
   - "nam*"
+  - "*nam*"
+  - "bez*"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -641,6 +828,83 @@ anschlussleitungen:
   - "sch*un*"
   - "sch*end"
   - "end*sch*"
+  hoehe:
+  - "hoe*"
+  - "hö*"
+  - "hÃ¶*"
+  - "rohrhoe*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
+  - "prof*hoe*"
+  - "prof*hö*"
+  - "prof*hÃ¶*"
+  - "durchm*"
+  breite:
+  - "brei*"
+  - "rohrbrei*"
+  - "prof*brei*"
+  laenge:
+  - "laen*"
+  - "län*"
+  - "lÃ¤ng*"
+  aussendurchmesser:
+  - "außend*"
+  - "aussend*"
+  - "auÃŸ*end*"
+  sohleoben:
+  - "sohl*ob*"
+  - "sohl*anf"
+  sohleunten:
+  - "sohl*un*"
+  - "sohl*end*"
+  baujahr:
+  - "bauj*"
+  - "jahr*"
+  haltnam:
+  - "haltn*"
+  - "haltu*"
+  - "kanaln*"
+  urstation:
+  - "urstation"
+  ursprung:
+  - "urspr*"
+  - "anschluss*"
+  anschlusstyp:
+  - "anschlussty*"
+  - "anschlußty*"
+  - "anschluÃŸty*"
+  - "anschlussart*"
+  - "anschlußart"
+  - "anschluÃŸart"
+  lageanschluss:
+  - "lageanschluss"
+  - "lageanschluß"
+  - "lageanschluÃŸ"
+  teilgebiet:
+  - "teilg*"
+  strasse:
+  - "stras*"
+  - "straß*"
+  - "straÃŸ*"
+  profilnam:
+  - "profil*"
+  entwart:
+  - "entw*art"
+  - "entw*typ*"
+  - "kanalart*"
+  material:
+  - "mat*"
+  profilauskleidung:
+  - "profilauskleidung"
+  - "auskleidung"
+  innenmaterial:
+  - "innenmat*"
+  ks:
+  - "ks*"
+  - "rauh*"
+  simstatus:
+  - "sim*stat"
+  - "stat"
   xschob:
   - "xob*"
   - "xschob*"
@@ -653,45 +917,6 @@ anschlussleitungen:
   yschun:
   - "yun*"
   - "yschun*"
-  breite:
-  - "brei*"
-  - "rohrbrei*"
-  - "prof*brei*"
-  hoehe:
-  - "hoe*"
-  - "höh*"
-  - "höh*"
-  - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
-  - "prof*hoe*"
-  - "prof*höh*"
-  - "prof*hö*"
-  - "durchm*"
-  laenge:
-  - "laen*"
-  - "läng*"
-  sohleoben:
-  - "sohl*ob*"
-  - "sohl*anf"
-  sohleunten:
-  - "sohl*un*"
-  - "sohl*end*"
-  deckeloben:
-  - "deckel*ob*"
-  - "deckel*anf"
-  deckelunten:
-  - "deckel*un*"
-  - "deckel*end*"
-  profilnam:
-  - "profil*"
-  ks:
-  - "ks*"
-  - "rauh*"
-  entwart:
-  - "entw*art"
-  - "entw*typ*"
-  - "kanalart*"
   kommentar:
   - "kommen*"
   - "zusatzt*"
@@ -699,11 +924,13 @@ anschlussleitungen:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geo*"
+  - "geometry"
 untersuchdat_haltung:
   untersuchhal:
   - "untersuchh*"
@@ -727,29 +954,36 @@ untersuchdat_haltung:
   - "unters*d*"
   - "dat*unters*"
   - "unters*tag"
+  - "unters*dat*"
   - "tag*unters*"
   bandnr:
   - "bandn*"
   videozaehler:
   - "zaehl*"
-  - "zähl*"
+  - "zÃ¤hl*"
   - "videozaehl*"
-  - "videozähl*"
+  - "videozÃ¤hl*"
   inspektionslaenge:
   - "inspekt*l*"
   - "l*inspek*"
   station:
   - "stati*"
+  stationtext:
+  - "stationtext"
   timecode:
   - "timec*"
   - "zeit*"
   video_offset:
   - "*offset"
+  langtext:
+  - "langtext"
   kuerzel:
+  - "kuerz*"
+  - "kürz*"
+  - "kÃ¼rz*"
   - "scha*kuerz*"
-  - "kuerz"
   - "scha*kürz*"
-  - "kürz"
+  - "scha*kÃ¼rz*"
   charakt1:
   - "cara*1"
   - "chara*1"
@@ -799,8 +1033,19 @@ untersuchdat_haltung:
   - "vid*_pfad"
   - "film_dir"
   - "vid*_dir"
-  richtung:
-  - "richt*"
+  filmtyp:
+  - "filmtyp"
+  - "filmart"
+  video_start:
+  - "*start"
+  video_ende:
+  - "*ende*"
+  bw_bs:
+  - "bw_bs"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
   ZD:
   - "zd"
   - "zkd"
@@ -813,8 +1058,9 @@ untersuchdat_haltung:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geom"
@@ -824,6 +1070,9 @@ haltungen_untersucht:
   - "haltu*"
   - "kanaln*"
   - "nam*"
+  - "*nam*"
+  bezugspunkt:
+  - "bezugspunkt"
   schoben:
   - "sch*ob*"
   - "sch*anf"
@@ -834,14 +1083,14 @@ haltungen_untersucht:
   - "end*sch*"
   hoehe:
   - "hoe*"
-  - "höh*"
-  - "höh*"
+  - "hö*"
+  - "hÃ¶*"
   - "rohrhoe*"
-  - "rohrhöh*"
-  - "rohrhöh*"
+  - "rohrhö*"
+  - "rohrhÃ¶*"
   - "prof*hoe*"
-  - "prof*höh*"
   - "prof*hö*"
+  - "prof*hÃ¶*"
   - "durchm*"
   breite:
   - "brei*"
@@ -849,34 +1098,44 @@ haltungen_untersucht:
   - "prof*brei*"
   laenge:
   - "laen*"
-  - "läng*"
+  - "län*"
+  - "lÃ¤ng*"
   baujahr:
   - "bauj*"
   - "jahr*"
+  id:
+  - "id"
   untersuchtag:
   - "inspekt*d*"
   - "dat*inspekt*"
   - "unters*d*"
   - "dat*unters*"
   - "unters*tag"
+  - "unters*dat*"
   - "tag*unters*"
   untersucher:
   - "untersucher"
   - "inspekteur"
   - "*firma*"
+  untersuchrichtung:
+  - "untersuchrich*"
+  - "untersuchungsrich*"
   wetter:
   - "wetter*"
   strasse:
   - "stras*"
   - "straß*"
-  - "straß*"
+  - "straÃŸ*"
   bewertungsart:
   - "bewer*art"
   bewertungstag:
   - "bewer*tag"
+  - "bewer*dat*"
   datenart:
   - "dat*art"
   - "dat*typ"
+  auftragsbezeichnung:
+  - "auftrag*"
   max_ZD:
   - "max*zd"
   - "max*zkd"
@@ -914,8 +1173,9 @@ haltungen_untersucht:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geom:
   - "wkt_geom"
   - "geom"
@@ -924,6 +1184,7 @@ schaechte_untersucht:
   - "scha*"
   - "schna*"
   - "nam*"
+  - "*nam*"
   durchm:
   - "durchm*"
   - "diam*"
@@ -938,12 +1199,17 @@ schaechte_untersucht:
   baujahr:
   - "bauj*"
   - "jahr*"
+  bezugspunkt:
+  - "bezugspunkt"
+  id:
+  - "id"
   untersuchtag:
   - "inspekt*d*"
   - "dat*inspekt*"
   - "unters*d*"
   - "dat*unters*"
   - "unters*tag"
+  - "unters*dat*"
   - "tag*unters*"
   untersucher:
   - "untersucher"
@@ -952,14 +1218,17 @@ schaechte_untersucht:
   strasse:
   - "stras*"
   - "straß*"
-  - "straß*"
+  - "straÃŸ*"
   bewertungsart:
   - "bewer*art"
   bewertungstag:
   - "bewer*tag"
+  - "bewer*dat*"
   datenart:
   - "dat*art"
   - "dat*typ"
+  auftragsbezeichnung:
+  - "auftrag*"
   max_ZD:
   - "max*zd"
   - "max*zkd"
@@ -985,17 +1254,20 @@ schaechte_untersucht:
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geop:
   - "wkt_geom"
   - "geop"
+  - "geometry"
 untersuchdat_schacht:
   untersuchsch:
   - "untersuchsch*"
   - "scha*"
   - "schna*"
   - "nam*"
+  - "*nam*"
   id:
   - "id"
   untersuchtag:
@@ -1004,6 +1276,7 @@ untersuchdat_schacht:
   - "unters*d*"
   - "dat*unters*"
   - "unters*tag"
+  - "unters*dat*"
   - "tag*unters*"
   bandnr:
   - "bandn*"
@@ -1012,10 +1285,15 @@ untersuchdat_schacht:
   timecode:
   - "timeco*"
   - "zeitco*"
+  langtext:
+  - "langtext"
   kuerzel:
   - "kuerz*"
   - "kürz*"
-  - "kürz*"
+  - "kÃ¼rz*"
+  - "scha*kuerz*"
+  - "scha*kürz*"
+  - "scha*kÃ¼rz*"
   charakt1:
   - "cara*1"
   - "chara*1"
@@ -1052,12 +1330,31 @@ untersuchdat_schacht:
   - "pfad_foto"
   - "dir_foto"
   - "dir_bild"
-  video_dateiname:
-  - "*datei*video"
+  film_dateiname:
+  - "fil*datei*"
+  - "vid*datei"
   ordner_video:
-  - "ordner_video"
-  - "pfad_video"
-  - "dir_video"
+  - "ordner_film"
+  - "ordner_vid*"
+  - "pfad_film"
+  - "pfad_vid*"
+  - "dir_film"
+  - "dir_vid*"
+  - "film_ordner"
+  - "vid*_ordner"
+  - "film_pfad"
+  - "vid*_pfad"
+  - "film_dir"
+  - "vid*_dir"
+  filmtyp:
+  - "filmtyp"
+  - "filmart"
+  video_start:
+  - "*start"
+  video_ende:
+  - "*ende*"
+  bw_bs:
+  - "bw_bs"
   ZD:
   - "zd"
   - "zkd"
@@ -1067,32 +1364,39 @@ untersuchdat_schacht:
   ZS:
   - "zs"
   - "zks"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
   createdat:
   - "crea*da*"
   - "erst*"
+  - "*aender*"
   - "*änder*"
-  - "*änder*"
+  - "*Ã¤nder*"
   geop:
   - "wkt_geom"
   - "geop"
+  - "geometry"
 entwaesserungsarten:
   stillgelegt:
   - "*stillg*"
   außer Betrieb:
+  - "*auÃŸe*betr*"
   - "*auße*betr*"
   - "*ausse*betr*"
   verdämmert:
-  - "*verdämm*"
+  - "*verdÃ¤mm*"
   - "*verdaemm*"
   - "*verdämm*"
   fiktiv:
   - "fikt*"
   rückgebaut:
-  - "zurückgeb*"
+  - "zurÃ¼ckgeb*"
   - "zurueckgeb*"
   - "zurückgeb*"
-  - "rückgeb*"
-  - "rueckgeb*"
+  - "*rÃ¼ckgeb*"
+  - "*rueckgeb*"
   - "*rückgeb*"
   Mischwasser:
   - "mischw*"
@@ -1115,12 +1419,13 @@ entwaesserungsarten:
   - "rk"
   - "kr-kanal"
   - "stauk* regenw*"
-  Rinnen/Gräben:
+  Rinnen/GrÃ¤ben:
   - "*rinne*"
-  - "*gräbe*"
+  - "*grÃ¤be*"
   - "*grabe*"
 simulationsstatus:
   außer Betrieb:
+  - "*auÃŸe*betr*"
   - "*auße*betr*"
   - "*ausse*betr*"
   geplant:
@@ -1130,15 +1435,234 @@ simulationsstatus:
   stillgelegt:
   - "*stillg*"
   verdämmert:
-  - "*verdämm*"
+  - "*verdÃ¤mm*"
   - "*verdaemm*"
   - "*verdämm*"
   fiktiv:
   - "fikt*"
   rückgebaut:
-  - "zurückgeb*"
+  - "zurÃ¼ckgeb*"
   - "zurueckgeb*"
   - "zurückgeb*"
-  - "rückgeb*"
-  - "rueckgeb*"
+  - "*rÃ¼ckgeb*"
+  - "*rueckgeb*"
   - "*rückgeb*"
+symbole:
+  bezeichnung:
+  - "bezeich*"
+  - "nam*"
+  - "*nam*"
+  art:
+  - "art"
+  - "*typ"
+  gruppe:
+  - "gruppe"
+  link:
+  - "link"
+  - "verkn*pf*"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+  geom:
+  - "geom"
+  - "geometry"
+notizen:
+  notiz:
+  - "not*"
+  - "bemerk*"
+  - "komment*"
+  - "anmerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+  geom:
+  - "geom"
+  - "geometry"
+einzugsgebiete:
+  tgnam:
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  ewdichte:
+  - "ew"
+  - "e*dichte"
+  wverbrauch:
+  - "wasserverbr*"
+  - "wverbr*"
+  stdmittel:
+  - "stdmittel"
+  - "stun*mit*"
+  fremdwas:
+  - "fremdwas*"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+  geom:
+  - "wkt_geom"
+  - "geo*"
+  - "geometry"
+einleit:
+  elnam:
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  haltnam:
+  - "haltn*"
+  - "haltu*"
+  - "kanaln*"
+  schnam:
+  - "sch*"
+  teilgebiet:
+  - "teilg*"
+  zufluss:
+  - "zuflu*"
+  - "q*"
+  ew:
+  - "ew"
+  - "einwohner"
+  einzugsgebiet:
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+  geom:
+  - "wkt_geom"
+  - "geo*"
+  - "geometry"
+eigentum:
+  name:
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+profile:
+  profilnam:
+  - "profil*"
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  kuerzel:
+  - "kuerz*"
+  - "kürz*"
+  - "kÃ¼rz*"
+  - "scha*kuerz*"
+  - "scha*kürz*"
+  - "scha*kÃ¼rz*"
+  he_nr:
+  - "he_nr"
+  mu_nr:
+  - "mu_nr"
+  kp_key:
+  - "kp_key"
+  isybau:
+  - "isybau"
+  kommentar:
+  - "kommen*"
+  - "zusatzt*"
+  - "bemerk*"
+fotos:
+  name:
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  untersuchtag:
+  - "inspekt*d*"
+  - "dat*inspekt*"
+  - "unters*d*"
+  - "dat*unters*"
+  - "unters*tag"
+  - "unters*dat*"
+  - "tag*unters*"
+  objekt:
+  - "objekt"
+  datei:
+  - "datei"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+videos:
+  name:
+  - "nam*"
+  - "*nam*"
+  - "bez*"
+  untersuchtag:
+  - "inspekt*d*"
+  - "dat*inspekt*"
+  - "unters*d*"
+  - "dat*unters*"
+  - "unters*tag"
+  - "unters*dat*"
+  - "tag*unters*"
+  untersuchrichtung:
+  - "untersuchrich*"
+  - "untersuchungsrich*"
+  objekt:
+  - "objekt"
+  datei:
+  - "datei"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"
+pruefsql:
+  gruppe:
+  - "gruppe"
+  warntext:
+  - "warntext"
+  warntyp:
+  - "warntyp"
+  warnlevel:
+  - "warnlevel"
+  - "level"
+  sql:
+  - "sql"
+  - "view"
+  - "query"
+  - "abfrage"
+  layername:
+  - "layer*"
+  attrname:
+  - "attrname"
+  - "attribut"
+  - "key"
+  - "id"
+  createdat:
+  - "crea*da*"
+  - "erst*"
+  - "*aender*"
+  - "*änder*"
+  - "*Ã¤nder*"

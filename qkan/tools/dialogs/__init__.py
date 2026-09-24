@@ -97,6 +97,7 @@ class QKanDBDialog(QKanDialog):
 
         if os.path.dirname(filename) != "":
             self.tf_qkanDB.setText(filename)
+            self.plugin.default_dir = os.path.abspath(filename)
 
 
 class QKanProjectDialog(QKanDialog):
@@ -121,3 +122,4 @@ class QKanProjectDialog(QKanDialog):
 
         if os.path.dirname(filename) != "":
             self.tf_projectFile.setText(filename)
+            self.plugin.default_dir = os.path.abspath(filename)

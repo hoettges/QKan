@@ -62,8 +62,7 @@ class QKanTools(QKanPlugin):
         self.dlgpr = QgsAdaptDialog(self)
         self.dlgro = RunoffParamsDialog(self)
         self.dlged = EmptyDBDialog(self)
-        self.dlgrd = ReadData(self, proceed=True)
-        self.dlgrc = ReadData(self, proceed=False)
+        self.dlgrc = ReadData(self)
         self.dlgdb = DbAdaptDialog(self)
         self.dlghp = QgsHelpDialog(self)
         self.dlgfp = QgsFileDialog(self)
@@ -130,7 +129,7 @@ class QKanTools(QKanPlugin):
             icon_readCheck_path,
             text=self.tr("Tabellendaten aus Clipboard: Zuordnung anzeigen"),
             toolbar='QKan-Allgemein',
-            callback=self.dlgrc.run,
+            callback=self.dlgrc.show,
             parent=self.iface.mainWindow(),
         )
 
@@ -139,7 +138,7 @@ class QKanTools(QKanPlugin):
             icon_readData_path,
             text=self.tr("Tabellendaten aus Clipboard einfügen"),
             toolbar='QKan-Allgemein',
-            callback=self.dlgrd.run,
+            callback=self.dlgrc.run,
             parent=self.iface.mainWindow(),
         )
 

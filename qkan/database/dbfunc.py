@@ -107,6 +107,11 @@ class DBConnection:
         self.sqlnam = None
         self.sqls = {}
 
+        # Patterns und Tabelle initialisieren
+        self.patternDict = None
+        self.tableDict = None
+        self.tablename = None
+
         self._connect()
 
     def __enter__(self) -> "DBConnection":
@@ -605,7 +610,7 @@ class DBConnection:
             try:
                 self.sql_txt = self.sqls[sqlnam].replace('*/ ', '*/\n').strip()
             except:
-                logger.error_code(
+                logger.error(
                     f'{self.__class__.__name__}: '
                     f'SQL {sqlnam} nicht gefunden\n'
                     f'{stmt_category=}'
@@ -634,7 +639,7 @@ class DBConnection:
                 ignore=ignore
             )
         except:
-            logger.error_code(
+            logger.error(
                 f'{self.__class__.__name__}: \n'
                 f'SQL-Name: {sqlnam}'
             )
@@ -720,7 +725,7 @@ class DBConnection:
             stmt_category: str = "allgemein",
             mute_logger: bool = False,
             ignore: bool = False,  # ignore error and continue
-            parameters: dict[Union[str, Any], Union[Union[str, float, int], Any]] = None
+            parameters: Union[tuple, dict[Union[str, Any], Union[Union[str, float, int], Any]]] = None
     ) -> bool:
         """Fügt einen Datensatz mit Geo-Objekt hinzu
 
@@ -738,32 +743,14 @@ class DBConnection:
         else:
             param1 = parameters
 
-        if tabnam == "schaechte":
-            parlis = [
-                "schnam",
-                "sohlhoehe",
-                "deckelhoehe",
-                "durchm",
-                "druckdicht",
-                "ueberstauflaeche",
-                "entwart",
-                "strasse",
-                "baujahr",
-                "teilgebiet",
-                "knotentyp",
-                "auslasstyp",
-                "schachttyp",
-                "simstatus",
-                "material",
-                "kommentar",
-                "createdat",
-                "xsch",
-                "ysch",
-                "geom",
-                "geop",
-                "epsg",
-            ]
-            for el in parlis:
+        # Patterns laden, falls noch nicht geschehen
+        if self.patternDict is None:
+            filename = os.path.join(pluginDirectory("qkan"), 'patterns.yml')
+            with open(filename) as fr:
+                self.patternDict = yaml.safe_load(fr.read())
+
+        if (parlis:= self.patternDict.get(tabnam, None)) is not None:
+            for el in (parlis | {'epsg': 'epsg'}):
                 if param1.get(el, None) is None:
                     if isinstance(parameters, tuple):
                         for ds in parameters:
@@ -771,481 +758,7 @@ class DBConnection:
                     else:
                         parameters[el] = None
 
-            sqlnam = 'database_insertdata_schaechte'
-
-        elif tabnam == "haltungen":
-            parlis = [
-                "haltnam",
-                "baujahr",
-                "schoben",
-                "schunten",
-                "hoehe",
-                "breite",
-                "laenge",
-                "aussendurchmesser",
-                "sohleoben",
-                "sohleunten",
-                "teilgebiet",
-                "profilnam",
-                "entwart",
-                "strasse",
-                "material",
-                "profilauskleidung",
-                "innenmaterial",
-                "ks",
-                "haltungstyp",
-                "simstatus",
-                "kommentar",
-                "createdat",
-                "xschob",
-                "yschob",
-                "xschun",
-                "yschun",
-                "geom",
-                "epsg",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_haltungen'
-
-        elif tabnam == "haltungen_untersucht":
-            parlis = [
-                "haltnam",
-                "bezugspunkt",
-                "untersuchrichtung",
-                "schoben",
-                "schunten",
-                "hoehe",
-                "breite",
-                "breite",
-                "laenge",
-                "kommentar",
-                "createdat",
-                "baujahr",
-                "xschob",
-                "yschob",
-                "xschun",
-                "yschun",
-                "untersuchtag",
-                "untersucher",
-                "wetter",
-                "auftragsbezeichnung",
-                "strasse",
-                "bewertungsart",
-                "bewertungstag",
-                "datenart",
-                "max_ZD",
-                "max_ZB",
-                "max_ZS",
-                "xschob",
-                "yschob",
-                "xschun",
-                "yschun",
-                "geom",
-                "epsg",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_haltungen_untersucht'
-
-        elif tabnam == "untersuchdat_haltung":
-            parlis = [
-                "untersuchhal",
-                "schoben",
-                "schunten",
-                "id",
-                "untersuchtag",
-                "untersuchrichtung",
-                "bandnr",
-                "videozaehler",
-                "inspektionslaenge",
-                "station",
-                "timecode",
-                "video_offset",
-                "kuerzel",
-                "langtext",
-                "charakt1",
-                "charakt2",
-                "quantnr1",
-                "quantnr2",
-                "streckenschaden",
-                "streckenschaden_lfdnr",
-                "pos_von",
-                "pos_bis",
-                "foto_dateiname",
-                "film_dateiname",
-                "ordner_bild",
-                "ordner_video",
-                "ZD",
-                "ZB",
-                "ZS",
-                "createdat",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_untersuchdat_haltung'
-
-        elif tabnam == "anschlussleitungen":
-            parlis = [
-                "leitnam",
-                "schoben",
-                "schunten",
-                "hoehe",
-                "breite",
-                "laenge",
-                "aussendurchmesser",
-                "sohleoben",
-                "sohleunten",
-                "baujahr",
-                "haltnam",
-                "urstation",
-                "ursprung",
-                "anschlusstyp",
-                "lageanschluss",
-                "teilgebiet",
-                "strasse",
-                "profilnam",
-                "entwart",
-                "material",
-                "profilauskleidung",
-                "innenmaterial",
-                "ks",
-                "simstatus",
-                "kommentar",
-                "createdat",
-                "xschob",
-                "yschob",
-                "xschun",
-                "yschun",
-                "geom",
-                "epsg",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_anschlussleitungen'
-
-            logger.debug(
-                f"insert anschlussleitung - sql: {sqlnam}\n" f"parameter: {param1}"
-            )
-
-        elif tabnam == "anschlussleitungen_untersucht":
-            parlis = [
-                "leitnam",
-                "bezugspunkt",
-                "untersuchrichtung",
-                "schoben",
-                "schunten",
-                "hoehe",
-                "breite",
-                "breite",
-                "laenge",
-                "kommentar",
-                "createdat",
-                "baujahr",
-                "xschob",
-                "yschob",
-                "xschun",
-                "yschun",
-                "untersuchtag",
-                "untersucher",
-                "wetter",
-                "auftragsbezeichnung",
-                "strasse",
-                "bewertungsart",
-                "bewertungstag",
-                "datenart",
-                "max_ZD",
-                "max_ZB",
-                "max_ZS",
-                "xschob",
-                "yschob",
-                "xschun",
-                "yschun",
-                "geom",
-                "epsg",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_anschlussleitungen_untersucht'
-
-            logger.debug(
-                f"insert anschlussleitung - sql: {sqlnam}\n" f"parameter: {param1}"
-            )
-
-        elif tabnam == "untersuchdat_anschlussleitung":
-            parlis = [
-                "untersuchleit",
-                "schoben",
-                "schunten",
-                "id",
-                "untersuchtag",
-                "bandnr",
-                "videozaehler",
-                "inspektionslaenge",
-                "station",
-                "timecode",
-                "video_offset",
-                "kuerzel",
-                "langtext",
-                "charakt1",
-                "charakt2",
-                "quantnr1",
-                "quantnr2",
-                "streckenschaden",
-                "streckenschaden_lfdnr",
-                "pos_von",
-                "pos_bis",
-                "foto_dateiname",
-                "film_dateiname",
-                "ordner_bild",
-                "ordner_video",
-                "ZD",
-                "ZB",
-                "ZS",
-                "createdat",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_untersuchdat_anschlussleitung'
-
-        elif tabnam == "anschlussschaechte":
-            parlis = [
-                "schnam",
-                "sohlhoehe",
-                "deckelhoehe",
-                "durchm",
-                "druckdicht",
-                "ueberstauflaeche",
-                "entwart",
-                "strasse",
-                "baujahr",
-                "teilgebiet",
-                "knotentyp",
-                "auslasstyp",
-                "schachttyp",
-                "simstatus",
-                "material",
-                "kommentar",
-                "createdat",
-                "xsch",
-                "ysch",
-                "geom",
-                "epsg",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_anschlussschaechte'
-
-        elif tabnam == "schaechte_untersucht":
-            parlis = [
-                "schnam",
-                "durchm",
-                "baujahr",
-                "bezugspunkt",
-                "id",
-                "untersuchtag",
-                "untersucher",
-                "wetter",
-                "auftragsbezeichnung",
-                "strasse",
-                "bewertungsart",
-                "bewertungstag",
-                "datenart",
-                "max_ZD",
-                "max_ZB",
-                "max_ZS",
-                "kommentar",
-                "createdat",
-                "xsch",
-                "ysch",
-                "geop",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_schaechte_untersucht'
-
-        elif tabnam == "untersuchdat_schacht":
-            parlis = [
-                "untersuchsch",
-                "id",
-                "untersuchtag",
-                "bandnr",
-                "videozaehler",
-                "timecode",
-                "kuerzel",
-                "langtext",
-                "charakt1",
-                "charakt2",
-                "quantnr1",
-                "quantnr2",
-                "streckenschaden",
-                "streckenschaden_lfdnr",
-                "pos_von",
-                "pos_bis",
-                "vertikale_lage",
-                "inspektionslaenge",
-                "bereich",
-                "foto_dateiname",
-                "film_dateiname",
-                "ordner_bild",
-                "ordner_video",
-                "ZD",
-                "ZB",
-                "ZS",
-                "createdat",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_untersuchdat_schacht'
-
-        elif tabnam == "videos":
-            parlis = [
-                "name",
-                "untersuchtag",
-                "untersuchrichtung",
-                "objekt",
-                "datei",
-                "createdat",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_videos'
-
-        elif tabnam == "fotos":
-            parlis = [
-                "name",
-                "untersuchtag",
-                "objekt",
-                "datei",
-                "createdat",
-            ]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            sqlnam = 'database_insertdata_fotos'
-
-        elif tabnam == 'tezg':
-            parlis = ['flnam', 'regenschreiber', 'schnam', 'befgrad', 'neigung',
-                       'createdat', 'haltnam', 'neigkl', 'schwerpunktlaufzeit', 'teilgebiet', 'abflussparameter',
-                      'kommentar', 'geom', 'epsg']
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            # wkt_geom = param1.get("geom")
-            sqlnam = 'database_insertdata_tezg'
-
-        elif tabnam == "flaechen":
-            parlis = ['flnam', 'haltnam', 'schnam', 'neigkl', 'neigung',
-                      'teilgebiet', 'regenschreiber', 'abflussparameter',
-                      'aufteilen', 'kommentar', 'createdat',
-                      'geom', 'epsg']
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            # wkt_geom = param1.get("geom")
-            sqlnam = 'database_insertdata_flaechen'
-
-        elif tabnam == "teilgebiete":
-            parlis = ["tgnam", "kommentar", "createdat", "geom", "epsg"]
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            # wkt_geom = param1.get("geom")
-            sqlnam = 'database_insertdata_teilgebiete'
-
-        elif tabnam == 'symbole':
-            parlis = ['bezeichnung', 'art', 'gruppe', 'kommentar', 'geom', 'epsg']
-            for el in parlis:
-                if param1.get(el, None) is None:
-                    if isinstance(parameters, tuple):
-                        for ds in parameters:
-                            ds[el] = None
-                    else:
-                        parameters[el] = None
-
-            # wkt_geom = param1.get("geom")
-            sqlnam = 'database_insertdata_symbole'
-
+            sqlnam = f'database_insertdata_{tabnam}'
         else:
             logger.warning(
                 "dbqkan.DBConnection.insertdata: "
@@ -1356,8 +869,8 @@ class DBConnection:
         # Aktuelle Version abfragen
 
         if not self.sqlyml(
-            'database_getversion',
-            "dbqkan.DBConnection.version (1)",
+            sqlnam='database_getversion',
+            stmt_category="dbqkan.DBConnection.version (1)",
         ):
             return False
 
@@ -1392,6 +905,7 @@ class DBConnection:
         # if self.actDbVersion > self.current_dbversion:
         #     logger.warning("Die QKan-Version ist älter als die QKan-Datenbank. "
         #                    "Bitte führen Sie ein Upgrade des QKan-Plugins aus")
+        return True
 
 
     # Ändern der Attribute einer Tabelle
@@ -1899,8 +1413,9 @@ class DBConnection:
                     logger.debug(f'Match passt nicht: {bezext=}, {patt=}')
         self.commit()
 
-    def getSelection(self, selected: bool = True):
+    def getSelection(self, selected: bool = True) -> tuple[int, int, int]:
         """Übernahme der aktuellen Selektion in temporäre Tabellen.
+           Gibt die Anzahlen selektierter Haltungen, Schächte und Flächen zurück.
            Falls selected == False: Nur Zählen der Gesamtzahlen"""
 
         n_haltungen, n_schaechte, n_flaechen = 0, 0, 0

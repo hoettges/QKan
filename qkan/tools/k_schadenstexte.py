@@ -244,7 +244,8 @@ class Schadenstexte:
         sql = """
             WITH num AS (
                 SELECT
-                    hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.laenge,
+                    hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.untersuchrichtung,
+                    iif(abs(coalesce(hu.laenge, 0)) > 0.01, hu.laenge, GLength(hu.geom)) AS laenge,
                     row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
                 FROM haltungen_untersucht AS hu
                 GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.laenge
@@ -258,8 +259,8 @@ class Schadenstexte:
                 ON	uh.untersuchhal = num.haltnam AND
                     uh.schoben = num.schoben AND
                     uh.schunten = num.schunten AND
-                    uh.untersuchtag = num.untersuchtag AND
-                    uh.inspektionslaenge = num.laenge
+                    uh.untersuchtag = num.untersuchtag AND uh.untersuchtag IS NOT NULL AND
+                    uh.untersuchrichtung = num.untersuchrichtung AND uh.untersuchrichtung IS NOT NULL
             ) AS uid
             WHERE untersuchdat_haltung.pk = uid.pk
         """

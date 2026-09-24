@@ -263,6 +263,24 @@ SELECT pn.gruppe, pn.warnbez, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, pn
 	WHERE lf.pk IS NULL',
  'Einzelflächen', 'pk'),
 
+('HYSTEM-EXTRAN', 'In der Tabelle "Entwässerungsarten" fehlt in Spalte "Bez (HYSTEM-EXTRAN) die Nummer"', 'Fehler', 9,
+    'SELECT ea.pk AS objid,
+    printf(''Für "%s" wurde noch keine Nummer für HYSTEM-EXTRAN in der Tabelle "Entwässerungsarten" eingetragen'', ea.bezeichnung) AS bemerkung 
+    FROM haltungen AS ha
+    JOIN entwaesserungsarten AS ea ON ha.entwart = ea.bezeichnung
+    WHERE ea.he_nr IS NULL
+    GROUP BY ea.bezeichnung',
+ 'Entwässerungsarten', 'pk'),
+
+('HYSTEM-EXTRAN', 'In der Tabelle "Profile" fehlt in Spalte "Bez (HYSTEM-EXTRAN) die Nummer"', 'Fehler', 9,
+    'SELECT pr.pk AS objid,
+    printf(''Für "%s" wurde noch keine Nummer für HYSTEM-EXTRAN in der Tabelle "Profile" eingetragen'', pr.profilnam) AS bemerkung 
+    FROM profile AS pr
+    JOIN haltungen AS ha ON ha.profilnam = pr.profilnam
+    WHERE pr.he_nr IS NULL 
+    GROUP BY pr.profilnam ',
+ 'Profile', 'pk'),
+
 ('Netzstruktur', 'Schachtnamen mehrfach', 'Fehler', 9,
     'SELECT pk AS objid,
     printf(''Schachtnamen "%s" mehrfach vergeben'', schnam) AS bemerkung

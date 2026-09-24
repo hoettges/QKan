@@ -600,14 +600,14 @@ class ImportTask(Schadenstexte):
            Standardwerte gesetzt.
         2. Import der M150-Daten
 
-        Der Status wird in _reftables() festgestellt, Wenn das Ergebnis knotenarten_uncomplete nicht leer ist, wird der Import
+        Der Status wird in _reftables() festgestellt, Wenn das Ergebnis knotenarten_completeness nicht leer ist, wird der Import
         zunächst beendet und der Benutzer aufgefordert, den Knotentyp für jeden Schachttyp im Layer M150:Knotenarten
         festzulegen.
 
-        :returns:   knotenarten_uncomplete
+        :returns:   knotenarten_completeness
         :rtype:     bool, bool
 
-        **knotenarten_uncomplete** gibt an, ob in allen Datensätzen der Referenztabelle refdata die
+        **knotenarten_completeness** gibt an, ob in allen Datensätzen der Referenztabelle refdata die
         QKan-Bezeichnung (Attribut "bezqkan") nicht leer ist.
         **tabM150Exists** gibt an, ob die Tabelle m150_knotenarten (und der dazugehörige Layer) existiert
         """
@@ -624,7 +624,7 @@ class ImportTask(Schadenstexte):
         status_message.layout().addWidget(self.progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.MessageLevel.Info, 10)
 
-        knotenarten_uncomplete = self._reftables()           ;self.progress_bar.setValue(5)
+        knotenarten_completeness = self._reftables()           ;self.progress_bar.setValue(5)
 
         self._init_mappers()
 #        if getattr(QKan.config.xml, "import_stamm", True):
@@ -655,15 +655,15 @@ class ImportTask(Schadenstexte):
 #        self.progress_bar.setValue(100)
         status_message.setText("Fertig! M150-Import abgeschlossen.")
 
-        return knotenarten_uncomplete
+        return knotenarten_completeness
 
     def _reftables(self) -> bool:
         """Referenztabellen mit Datensätzen für DWA-Import füllen
 
-        :returns:   knotenarten_uncomplete
+        :returns:   knotenarten_completeness
         :rtype:     bool
 
-        **knotenarten_uncomplete** gibt an, ob in der Referenztabelle refdata die
+        **knotenarten_completeness** gibt an, ob in der Referenztabelle refdata die
         QKan-Bezeichnung (Attribut "bezqkan") für die Datensätze
         (modul = 'm150porter' AND 'subject = 'import_knotentypen') nicht leer ist.
         Die Zuordnung zu 'Schacht', 'Auslass', etc. ist in der Layertabelle im Attribut
@@ -1240,7 +1240,7 @@ class ImportTask(Schadenstexte):
 
         self.db_qkan.sql(sql, f'{self.__class__.__name__}._reftables()')
         data = self.db_qkan.fetchone()
-        knotenarten_uncomplete = (data is not None)
+        knotenarten_completeness = (data is not None)
 
         # Referenztabelle Haltungsart (HG313)
 
@@ -1307,7 +1307,7 @@ class ImportTask(Schadenstexte):
 
         self.db_qkan.commit()
 
-        return knotenarten_uncomplete
+        return knotenarten_completeness
 
     def _init_mappers(self) -> None:
 

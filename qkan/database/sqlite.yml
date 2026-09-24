@@ -117,7 +117,7 @@ CREATE TABLE untersuchdat_haltung (
     film_dateiname TEXT,
     ordner_bild TEXT,
     ordner_video TEXT,
-    filmtyp INTEGER,
+    filmtyp TEXT,
     video_start INTEGER,
     video_ende INTEGER,
     bw_bs TEXT,
@@ -239,7 +239,7 @@ CREATE TABLE untersuchdat_anschlussleitung (
     film_dateiname TEXT,
     ordner_bild TEXT,
     ordner_video TEXT,
-    filmtyp INTEGER,
+    filmtyp TEXT,
     video_start INTEGER,
     video_ende INTEGER,
     bw_bs TEXT,
@@ -346,7 +346,7 @@ CREATE TABLE untersuchdat_schacht (
     ordner_bild TEXT,
     film_dateiname TEXT,
     ordner_video TEXT,
-    filmtyp INTEGER,
+    filmtyp TEXT,
     video_start INTEGER,
     video_ende INTEGER,
     bw_bs TEXT,
@@ -1109,21 +1109,21 @@ VALUES ('version', ?);"
 database_create_fotos: "
 CREATE TABLE IF NOT EXISTS fotos (
     pk INTEGER PRIMARY KEY, 
-                    name TEXT, 
-                    untersuchtag TEXT,
-                    objekt TEXT,
-                    datei TEXT,
-                    createdat TEXT DEFAULT CURRENT_TIMESTAMP);"
+    name TEXT, 
+    untersuchtag TEXT,
+    objekt TEXT,
+    datei TEXT,
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP);"
 
 database_create_videos: "
 CREATE TABLE IF NOT EXISTS videos (
     pk INTEGER PRIMARY KEY, 
-                    name TEXT, 
-                    untersuchtag TEXT,
-                    untersuchrichtung TEXT,
-                    objekt TEXT,
-                    datei TEXT,
-                    createdat TEXT DEFAULT CURRENT_TIMESTAMP);"
+    name TEXT, 
+    untersuchtag TEXT,
+    untersuchrichtung TEXT,
+    objekt TEXT,
+    datei TEXT,
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP);"
 
 database_create_symbole: "
 CREATE TABLE IF NOT EXISTS symbole (
@@ -1213,7 +1213,7 @@ INSERT INTO schaechte (
     durchm, 
     druckdicht,
     ueberstauflaeche, 
-    entwart, strasse, baujahr, teilgebiet, 
+    entwart, strasse, baujahr, eigentum, teilgebiet, 
     knotentyp, auslasstyp, schachttyp,
     simstatus, material,
     kommentar, createdat, 
@@ -1222,7 +1222,7 @@ VALUES (
     :schnam, :sohlhoehe, :deckelhoehe,
     CASE WHEN :durchm > 200 THEN :durchm/1000. ELSE :durchm END, 
     :druckdicht, coalesce(:ueberstauflaeche, 0), 
-    coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, :teilgebiet, 
+    coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, :eigentum, :teilgebiet, 
     :knotentyp, :auslasstyp, coalesce(:schachttyp, 'Schacht'), 
     coalesce(:simstatus, 'vorhanden'), :material,
     :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
@@ -1237,22 +1237,22 @@ VALUES (
 
 database_insertdata_haltungen: "
 INSERT INTO haltungen
-  (haltnam, baujahr, schoben, schunten,
+  (haltnam, schoben, schunten,
    hoehe, breite, laenge, aussendurchmesser,
-   sohleoben, sohleunten, 
-   teilgebiet, profilnam, 
-   entwart, strasse, material, profilauskleidung, innenmaterial, ks, haltungstyp,
-   simstatus, kommentar, createdat,  
+   sohleoben, sohleunten, baujahr, eigentum,
+   teilgebiet, profilnam,
+   entwart, abflussart, strasse, material, profilauskleidung, innenmaterial, ks, haltungstyp,
+   simstatus, rwanschluss, druckdicht, kommentar, createdat,  
    geom)
 SELECT 
-  :haltnam, :baujahr, :schoben, :schunten,
+  :haltnam, :schoben, :schunten,
   CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END,
   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
   :laenge, :aussendurchmesser,
-  :sohleoben, :sohleunten,
+  :sohleoben, :sohleunten, :baujahr, :eigentum,
   :teilgebiet, coalesce(:profilnam, 'Kreisquerschnitt'),
-  coalesce(:entwart, 'Regenwasser'), :strasse, :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), coalesce(:haltungstyp, 'Haltung'),
-  coalesce(:simstatus, 'vorhanden'), :kommentar,
+  coalesce(:entwart, 'Regenwasser'), :abflussart, :strasse, :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), coalesce(:haltungstyp, 'Haltung'),
+  coalesce(:simstatus, 'vorhanden'), coalesce(:rwanschluss, 1), coalesce(:druckdicht, 0), :kommentar,
   coalesce(:createdat, CURRENT_TIMESTAMP),
   CASE WHEN :geom IS NULL
     THEN
@@ -1273,7 +1273,7 @@ database_insertdata_haltungen_untersucht: "
 INSERT INTO haltungen_untersucht
   (haltnam, bezugspunkt, untersuchrichtung, schoben, schunten,
    hoehe, breite, laenge,
-   kommentar, createdat, baujahr,  
+   kommentar, createdat, baujahr, id,
    geom, untersuchtag, untersucher, wetter, auftragsbezeichnung, strasse, bewertungsart,
    bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
 SELECT 
@@ -1281,7 +1281,7 @@ SELECT
   CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END, 
   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
   :laenge, :kommentar, 
-  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
+  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr, :id,
   CASE WHEN :geom IS NULL
     THEN
       MakeLine(
@@ -1309,16 +1309,18 @@ FROM
 
 database_insertdata_untersuchdat_haltung: "
 INSERT INTO untersuchdat_haltung
-  (untersuchhal, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
-    inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
+  (untersuchhal, schoben, schunten, id, untersuchtag, untersuchrichtung, bandnr, videozaehler, 
+    inspektionslaenge, filmtyp, video_start, video_ende, bw_bs, station, stationtext, timecode,
+    video_offset, kuerzel, langtext, charakt1, charakt2, 
     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
-    film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
+    film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, kommentar, createdat)
 SELECT
-  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
-  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
+  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :untersuchrichtung, :bandnr, :videozaehler, 
+  :inspektionslaenge, :filmtyp, :video_start, :video_ende, :bw_bs, :station, :stationtext, :timecode,
+  :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
-  :ZD, :ZB, :ZS, coalesce(:createdat, CURRENT_TIMESTAMP);"
+  :ZD, :ZB, :ZS, :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP);"
 
 database_insertdata_anschlussleitungen: "
 INSERT INTO anschlussleitungen
@@ -1353,14 +1355,14 @@ database_insertdata_anschlussleitungen_untersucht: "
 INSERT INTO anschlussleitungen_untersucht
   (leitnam, bezugspunkt, untersuchrichtung, schoben, schunten,
    hoehe, breite, laenge,
-   kommentar, createdat, baujahr,  
+   kommentar, createdat, baujahr, id,
    geom, untersuchtag, untersucher, wetter, auftragsbezeichnung, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
 SELECT 
   :leitnam, :bezugspunkt, :untersuchrichtung, :schoben, :schunten, 
   CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END, 
   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
   :laenge, :kommentar, 
-  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
+  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr, :id,
   CASE WHEN :geom IS NULL
     THEN
       MakeLine(
@@ -1389,22 +1391,25 @@ FROM
 database_insertdata_untersuchdat_anschlussleitung: "
 INSERT INTO untersuchdat_anschlussleitung
   (untersuchleit, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
-    inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
+    inspektionslaenge, station, stationtext, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
-    film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
+    film_dateiname, ordner_bild, ordner_video, filmtyp, video_start, video_ende, bw_bs,
+    ZD, ZB, ZS, kommentar, createdat)
 SELECT
   :untersuchleit, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
-  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
+  :inspektionslaenge , :station, :stationtext, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
-  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
-  :ZD, :ZB, :ZS, coalesce(:createdat, CURRENT_TIMESTAMP);"
+  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video, :filmtyp, :video_start, :video_ende, :bw_bs,
+  :ZD, :ZB, :ZS, :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP);"
 
 database_insertdata_anschlussschaechte: "
 INSERT INTO anschlussschaechte (
     schnam, sohlhoehe, deckelhoehe, 
     durchm, 
     druckdicht,
-    entwart, strasse, baujahr, teilgebiet, 
+    entwart, strasse, baujahr, 
+    urstation, ursprung, eigentum, teilgebiet, 
+    anschlusstyp, haltnam,
     simstatus, material,
     kommentar, createdat, 
     geom)
@@ -1412,7 +1417,9 @@ VALUES (
     :schnam, :sohlhoehe, :deckelhoehe,
     CASE WHEN :durchm > 200 THEN :durchm/1000. ELSE :durchm END, 
     :druckdicht, 
-    coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, :teilgebiet, 
+    coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, 
+    :urstation, :ursprung, :eigentum, :teilgebiet, 
+    :anschlusstyp, :haltnam,
     coalesce(:simstatus, 'vorhanden'), :material,
     :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
     CASE WHEN :geom IS NULL
@@ -1450,17 +1457,17 @@ INSERT INTO untersuchdat_schacht
     charakt1, charakt2, quantnr1, quantnr2, 
     streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, 
     vertikale_lage, inspektionslaenge, bereich, 
-    foto_dateiname, ordner_bild, film_dateiname, ordner_video,
+    foto_dateiname, ordner_bild, film_dateiname, ordner_video, filmtyp, video_start, video_ende, bw_bs,
     ZD, ZB, ZS, 
-    createdat)
+    kommentar, createdat)
 SELECT 
   :untersuchsch, :id, :untersuchtag, :bandnr, :videozaehler, :timecode, :kuerzel, :langtext, 
     :charakt1, :charakt2, :quantnr1, :quantnr2, 
     :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
     :vertikale_lage, :inspektionslaenge, :bereich, 
-    :foto_dateiname, :ordner_bild, :film_dateiname, :ordner_video,
+    :foto_dateiname, :ordner_bild, :film_dateiname, :ordner_video, :filmtyp, :video_start, :video_ende, :bw_bs,
     :ZD, :ZB, :ZS, 
-    coalesce(:createdat, CURRENT_TIMESTAMP)
+    :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP)
 FROM
     schaechte AS sch
     WHERE sch.schnam = :untersuchsch;"
@@ -1480,9 +1487,9 @@ GeomFromWKB(:geom, :epsg));"
 
 database_insertdata_symbole: "
 INSERT INTO symbole
-  (bezeichnung, art, gruppe, kommentar, geom)
+  (bezeichnung, art, link, gruppe, kommentar, createdat, geom)
 VALUES (
-:bezeichnung, :art, :gruppe, :kommentar,
+:bezeichnung, :art, :link, :gruppe, :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
 GeomFromWKB(:geom, :epsg));"
 
 database_insertdata_fotos: "
@@ -1516,10 +1523,46 @@ database_insertdata_teilgebiete: "
 INSERT INTO teilgebiete
   (tgnam, kommentar, createdat, geom)
 VALUES (
-    :tgnam, :kommentar, 
-    coalesce(:createdat, CURRENT_TIMESTAMP),
-    GeomFromWKB(:geom, :epsg));"
+  :tgnam, :kommentar, 
+  coalesce(:createdat, CURRENT_TIMESTAMP),
+  GeomFromWKB(:geom, :epsg));"
 
+database_insertdata_einzugsgebiete: "
+INSERT INTO einzugsgebiete
+  (tgnam, ewdichte, wverbrauch, stdmittel, fremdwas, kommentar, createdat, geom)
+VALUES (
+  :tgnam, :ewdichte, :wverbrauch, :stdmittel, :fremdwas, :kommentar, 
+  coalesce(:createdat, CURRENT_TIMESTAMP),
+  GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_einleit: "
+INSERT INTO einleit
+  (elnam, haltnam, schnam, teilgebiet, zufluss, ew, einzugsgebiet, kommentar, createdat, geom)
+VALUES (
+  :elnam, :haltnam, :schnam, :teilgebiet, :zufluss, :ew, :einzugsgebiet, :kommentar, 
+  coalesce(:createdat, CURRENT_TIMESTAMP),
+  GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_notizen: "
+INSERT INTO notizen
+  (notiz, createdat, geom)
+VALUES (
+  :notiz, 
+  coalesce(:createdat, CURRENT_TIMESTAMP),
+  GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_eigentum: "
+INSERT INTO eigentum
+  (name, kommentar, geom)
+VALUES (
+  :name, :kommentar, GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_pruefsql: "
+INSERT INTO pruefsql
+  (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname, createdat)
+VALUES (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname,
+  coalesce(:createdat, CURRENT_TIMESTAMP))
+"
 database_tableinfo_geometry_columns: "
 SELECT f_geometry_column, geometry_type, srid, 
         coord_dimension, spatial_index_enabled

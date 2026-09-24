@@ -743,9 +743,7 @@ class QKan:
 
                 # Aktive DB im QKan-Status setzen
                 QKan.dbsource = source
-                QKan.dbtype = enums.QKanDBChoice.SPATIALITE if hasattr(
-                    enums.QKanDBChoice, "SPATIALITE"
-                ) else "spatialite"
+                QKan.dbtype = enums.QKanDBChoice.SPATIALITE
 
                 print(f"[QKan] Aktive QKan-DB erkannt: {db_path}")
                 print(f"[QKan] dbsource = {QKan.dbsource}")
