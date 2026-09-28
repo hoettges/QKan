@@ -11,8 +11,8 @@ import os
 import json
 from collections import defaultdict
 
-from PyQt5.QtWidgets import QTableWidget, QWidget
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import QTableWidget, QWidget
+from PyQt6.QtCore import Qt
 
 
 # =========================================================

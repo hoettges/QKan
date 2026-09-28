@@ -28,6 +28,7 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # t
     button_box: QDialogButtonBox
 
     cb_applyQKanTemplate: QCheckBox
+    cb_qkanDBUpdate: QCheckBox
 
     groupBox_2: QGroupBox
     groupBox: QGroupBox

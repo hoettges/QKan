@@ -1,7 +1,7 @@
 import os
 from typing import Callable, Optional
 
-from PyQt5.QtWidgets import QRadioButton
+from PyQt6.QtWidgets import QRadioButton
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic

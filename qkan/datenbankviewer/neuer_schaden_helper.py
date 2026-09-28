@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QDialog, QTabWidget, QWidget, QGroupBox, QFormLayout,
     QLineEdit, QDateEdit, QDialogButtonBox, QVBoxLayout,
     QLabel, QTextEdit, QComboBox, QPushButton, QTableWidget,
     QTableWidgetItem, QFileDialog, QMessageBox
 )
-from PyQt5.QtCore import QDate
+from PyQt6.QtCore import QDate
 from .dwa_kurzcode_mapping import DWA_DATA
 from .zustandsklassen_mapping import ZUSTAND
 

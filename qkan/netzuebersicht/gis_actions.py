@@ -1,9 +1,9 @@
 # netzuebersicht/gis_actions.py
 import os
 import math
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QPushButton, QMessageBox, QLabel, QLayout, QHBoxLayout, QFrame, QVBoxLayout, QInputDialog, QApplication
-from PyQt5.QtCore import Qt, pyqtSignal, QLocale, QVariant
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtWidgets import QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QPushButton, QMessageBox, QLabel, QLayout, QHBoxLayout, QFrame, QVBoxLayout, QInputDialog, QApplication
+from PyQt6.QtCore import Qt, pyqtSignal, QLocale, QVariant
 from qgis.core import (
     QgsProject,
     QgsSymbol,
@@ -31,7 +31,7 @@ from qgis.core import (
 )
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify
 from qgis.utils import iface
-from PyQt5.QtGui import QCursor, QDoubleValidator, QColor, QFont
+from PyQt6.QtGui import QCursor, QDoubleValidator, QColor, QFont
 from qgis.PyQt.QtCore import NULL
 
 # =============================================================================
@@ -743,7 +743,7 @@ def erzeuge_schacht(parent, on_success_callback=None):
       ausgeführt (Geometrie nur in 'geop').
     """
     from qgis.core import QgsProject, QgsGeometry, Qgis
-    from PyQt5.QtWidgets import QMessageBox
+    from PyQt6.QtWidgets import QMessageBox
     import sqlite3
 
     if not hasattr(parent, "model_schaechte"):

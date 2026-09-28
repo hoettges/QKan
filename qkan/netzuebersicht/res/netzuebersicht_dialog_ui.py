@@ -1,7 +1,7 @@
 # netzuebersicht/netzuebersicht_dialog_ui.py
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QDialog,  # ← WIEDER QDialog für Window-Flags!
     QVBoxLayout, QHBoxLayout, QTabWidget, QTableView, QPushButton,
     QLineEdit, QLabel, QFrame, QComboBox, QGroupBox, QSplitter,

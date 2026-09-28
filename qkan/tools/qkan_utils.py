@@ -771,7 +771,7 @@ def get_default_dir() -> str:
         # noinspection PyArgumentList
         return str(
             Path(
-                QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
+                QStandardPaths.standardLocations(QStandardPaths.StandardLocation.HomeLocation)[-1]
             ).absolute()
         )
 

@@ -3,12 +3,12 @@
 import json
 import os
 
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QComboBox, QTableWidget, QTableWidgetItem,
     QMessageBox, QHeaderView, QWidget, QSizePolicy, QTabWidget
 )
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 
 class ErneuerungPriceEditor(QDialog):
@@ -119,7 +119,7 @@ class ErneuerungPriceEditor(QDialog):
     # ---------------- UI Aufbau ----------------
 
     def _build_ui(self):
-        from PyQt5.QtWidgets import QTabWidget
+        from PyQt6.QtWidgets import QTabWidget
 
         main_layout = QVBoxLayout(self)
 
@@ -425,7 +425,7 @@ class ErneuerungPriceEditor(QDialog):
             self.table_rohr.removeRow(r)
 
     def _add_material(self):
-        from PyQt5.QtWidgets import QInputDialog
+        from PyQt6.QtWidgets import QInputDialog
         text, ok = QInputDialog.getText(self, "Neues Material", "Materialname:")
         if not ok or not text.strip():
             return

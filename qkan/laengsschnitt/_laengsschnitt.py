@@ -8,14 +8,14 @@ try:
     WINDOWS = True
 except ImportError:
     WINDOWS = False
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.transforms import Affine2D
 from qgis.core import Qgis
 from qgis.utils import iface, spatialite_connect
 import gc
 import numpy as np
-from PyQt5.QtCore import QTimer
+from PyQt6.QtCore import QTimer
 
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import ffloat

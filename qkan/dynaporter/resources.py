@@ -2,11 +2,11 @@
 
 # Resource object code
 #
-# Created by: The Resource Compiler for PyQt5 (Qt v5.11.2)
+# Created by: The Resource Compiler for PyQt5 (Qt v5.15.13)
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 
 qt_resource_data = b"\
 \x00\x00\x0c\x79\
@@ -464,12 +464,12 @@ qt_resource_struct_v2 = b"\
 \x00\x00\x00\x3c\x00\x02\x00\x00\x00\x02\x00\x00\x00\x05\
 \x00\x00\x00\x00\x00\x00\x00\x00\
 \x00\x00\x00\x48\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
-\x00\x00\x01\x62\x61\x79\x72\xd5\
+\x00\x00\x01\x8f\xee\x59\x7d\x0f\
 \x00\x00\x00\x6c\x00\x00\x00\x00\x00\x01\x00\x00\x0c\x7d\
-\x00\x00\x01\x62\x61\x79\x73\x38\
+\x00\x00\x01\x8f\xee\x59\x7d\x0f\
 "
 
-qt_version = [int(v) for v in QtCore.qVersion().split(".")]
+qt_version = [int(v) for v in QtCore.qVersion().split('.')]
 if qt_version < [5, 8, 0]:
     rcc_version = 1
     qt_resource_struct = qt_resource_struct_v1
@@ -477,17 +477,10 @@ else:
     rcc_version = 2
     qt_resource_struct = qt_resource_struct_v2
 
-
 def qInitResources():
-    QtCore.qRegisterResourceData(
-        rcc_version, qt_resource_struct, qt_resource_name, qt_resource_data
-    )
-
+    QtCore.qRegisterResourceData(rcc_version, qt_resource_struct, qt_resource_name, qt_resource_data)
 
 def qCleanupResources():
-    QtCore.qUnregisterResourceData(
-        rcc_version, qt_resource_struct, qt_resource_name, qt_resource_data
-    )
-
+    QtCore.qUnregisterResourceData(rcc_version, qt_resource_struct, qt_resource_name, qt_resource_data)
 
 qInitResources()

@@ -13,8 +13,8 @@ import json
 import re
 from pathlib import Path
 
-from PyQt5.QtCore import QTimer, QTime, Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QTimer, QTime, Qt
+from PyQt6.QtWidgets import (
     QDialog,
     QFileDialog,
     QMessageBox,

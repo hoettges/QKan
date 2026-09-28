@@ -578,7 +578,7 @@ class ImportTask(Schadenstexte):
         #Referenztabelle Profile
         params = []
 
-        data = [
+        data = [  # kurz    he    mu    kp  isy m150  m145
             ('Kreis', 'DN', 1, 1, None, 0, 'DN', None),
             ('Rechteck', 'RE', 2, 3, None, 3, 'RE', None),
             ('Ei (B:H = 2:3)', 'EI', 3, 5, None, 1, 'EI', None),

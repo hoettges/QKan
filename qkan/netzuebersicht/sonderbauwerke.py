@@ -1,5 +1,5 @@
 # netzuebersicht/sonderbauwerke.py
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit,
     QDialogButtonBox, QHBoxLayout, QWidget, QVBoxLayout, QInputDialog, QMessageBox
 )

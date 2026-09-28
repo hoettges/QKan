@@ -10,7 +10,7 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.utils import iface
-from PyQt5.QtWidgets import QAction
+from PyQt6.QtGui import QAction
 
 
 logger = get_logger("QKan.selection")

@@ -24,7 +24,7 @@ import copy
 import os.path
 from typing import Any, List, Optional, Union
 
-from PyQt5.QtGui import QMouseEvent
+from PyQt6.QtGui import QMouseEvent
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon

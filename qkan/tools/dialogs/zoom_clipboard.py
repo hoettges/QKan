@@ -15,7 +15,7 @@ from qgis.PyQt.QtWidgets import (
     QToolButton,
     QApplication,
 )
-from PyQt5.QtGui import QClipboard
+from PyQt6.QtGui import QClipboard
 
 from qkan import QKan
 

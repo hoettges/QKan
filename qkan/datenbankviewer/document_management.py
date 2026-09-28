@@ -6,11 +6,11 @@ Modularisierte Version der DocumentManagementWindow.
 import os
 import shutil
 import json
-from PyQt5.QtWidgets import (QDialog, QPushButton, QFileDialog, QTreeWidgetItem, 
+from PyQt6.QtWidgets import (QDialog, QPushButton, QFileDialog, QTreeWidgetItem,
                             QMessageBox, QLineEdit, QTreeWidget, QCheckBox)
-from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtGui import QDesktopServices
-from PyQt5 import uic
+from PyQt6.QtCore import QUrl, Qt
+from PyQt6.QtGui import QDesktopServices
+from PyQt6 import uic
 import psycopg2
 
 # Lokale Imports

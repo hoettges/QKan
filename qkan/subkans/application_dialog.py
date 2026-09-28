@@ -124,10 +124,10 @@ class SubkansDialog(_Dialog, SUBKANS_CLASS):  # type: ignore
                         uri = QgsDataSourceUri()
                         uri.setDatabase(db_x)
                         schema = ''
-                        table = 'untersuchdat_schacht'
+                        table = 'Untersuchdat_schacht'
                         geom_column = 'geop'
                         uri.setDataSource(schema, table, geom_column)
-                        vlayer = QgsVectorLayer(uri.uri(), 'untersuchdat_schacht', 'spatialite')
+                        vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht', 'spatialite')
                         list = []
                         for feature in vlayer.getFeatures():
                             name = feature["createdat"]
@@ -174,7 +174,7 @@ class SubkansDialog(_Dialog, SUBKANS_CLASS):  # type: ignore
                         uri = QgsDataSourceUri()
                         uri.setDatabase(db_x)
                         schema = ''
-                        table = 'untersuchdat_schacht'
+                        table = 'Untersuchdat_schacht'
                         geom_column = 'geop'
                         uri.setDataSource(schema, table, geom_column)
                         vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht', 'spatialite')

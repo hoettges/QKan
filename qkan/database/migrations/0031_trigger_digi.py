@@ -15,7 +15,7 @@ def run(dbcon: DBConnection) -> bool:
     Bearbeitung von Haltungsgeometrien"""
 
     # Datei mit SQL-Abfragen ausführen
-    sql_file =os.path.join(pluginDirectory("qkan"), 'database/migrations', '0031_haltungen.sql')
+    sql_file =os.path.join(pluginDirectory("qkan"), 'database/triggers', 'haltungen.sql')
 
     if not dbcon.executefile(sql_file):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}, SQL-Nr. {i}")

@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QDialog, QFormLayout, QGridLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QScrollArea, QVBoxLayout, QWidget
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
-from PyQt5.QtCore import Qt, QLocale
+from PyQt6.QtWidgets import QDialog, QFormLayout, QGridLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QScrollArea, QVBoxLayout, QWidget
+from PyQt6.QtGui import QDoubleValidator, QIntValidator
+from PyQt6.QtCore import Qt, QLocale
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify
 from qgis.utils import iface
 from qgis.core import Qgis, QgsFeatureRequest

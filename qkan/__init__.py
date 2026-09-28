@@ -51,6 +51,7 @@ PLUGIN_LIST = [
     "netzuebersicht.application.NetzuebersichtPlugin",
     "datenbankviewer.application.DatenbankviewerPlugin",
     "untersuchungsverwaltung.application.UntersuchungsverwaltungApplication",
+    #"spuelplaene.application.Spuelplan",
 ]
 
 TABLES_GEOM = [

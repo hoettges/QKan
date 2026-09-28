@@ -31,7 +31,7 @@
             <Option name="FilterExpression" type="QString" value=""/>
             <Option name="Key" type="QString" value="schnam"/>
             <Option name="Layer" type="QString" value="schaechte20161016203756252"/>
-            <Option name="LayerName" type="QString" value="Geometrien"/>
+            <Option name="LayerName" type="QString" value="Knotenpunkte"/>
             <Option name="LayerProviderName" type="QString" value="spatialite"/>
             <Option name="LayerSource" type="QString" value="dbname='C:/Users/User/Desktop/Hiwi Hoettges/QKan/Uebung/Modell_02.sqlite' table=&quot;schaechte&quot; (geom)"/>
             <Option name="NofColumns" type="int" value="1"/>
@@ -52,7 +52,7 @@
             <Option name="FilterExpression" type="QString" value=""/>
             <Option name="Key" type="QString" value="schnam"/>
             <Option name="Layer" type="QString" value="schaechte20161016203756252"/>
-            <Option name="LayerName" type="QString" value="Geometrien"/>
+            <Option name="LayerName" type="QString" value="Knotenpunkte"/>
             <Option name="LayerProviderName" type="QString" value="spatialite"/>
             <Option name="LayerSource" type="QString" value="dbname='C:/Users/User/Desktop/Hiwi Hoettges/QKan/Uebung/Modell_02.sqlite' table=&quot;schaechte&quot; (geom)"/>
             <Option name="NofColumns" type="int" value="1"/>

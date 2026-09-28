@@ -6,9 +6,9 @@ Enthält SQL-Abfragen, Edit-Modus, Speichern von Änderungen und Tab-Management.
 import psycopg2
 import sqlite3
 from collections import defaultdict
-from PyQt5.QtWidgets import QMessageBox, QTableWidget, QTabWidget, QWidget, QTableWidgetItem, QVBoxLayout
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
+from PyQt6.QtWidgets import QMessageBox, QTableWidget, QTabWidget, QWidget, QTableWidgetItem, QVBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor
 from qgis.utils import iface
 
 # --- HILFSFUNKTIONEN FÜR DATENBANK-ABSTRAKTION ---

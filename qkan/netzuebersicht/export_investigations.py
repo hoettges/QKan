@@ -1,6 +1,6 @@
 # netzuebersicht/export_investigations.py
 import re
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QInputDialog
+from PyQt6.QtWidgets import QFileDialog, QMessageBox, QInputDialog
 from .datenbankExporter import (
     DatenbankExporter,
     ColumnSelectionOrderDialog,

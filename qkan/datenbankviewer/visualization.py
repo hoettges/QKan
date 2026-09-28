@@ -3,12 +3,12 @@ visualization.py - Kanalvisualisierungs-Klasse für QGIS-Plugin Datenbankviewer
 Enthält CanalVisualizationWindow mit Grafik-Rendering.
 """
 
-from PyQt5.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout, QLabel, QWidget, QPushButton, QApplication, QGraphicsSimpleTextItem, QFileDialog, QMessageBox
-from PyQt5.QtCore import Qt, QRectF, QUrl
-from PyQt5.QtGui import QTransform, QPen, QBrush, QColor, QDesktopServices, QPainter, QTextDocument, QFont, QPixmap, QPdfWriter, QImage
-from PyQt5.QtWidgets import QGraphicsEllipseItem, QGraphicsSimpleTextItem, QGraphicsLineItem, QTableWidgetItem
-from PyQt5 import QtGui
-from PyQt5.QtPrintSupport import QPrinter
+from PyQt6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout, QLabel, QWidget, QPushButton, QApplication, QGraphicsSimpleTextItem, QFileDialog, QMessageBox
+from PyQt6.QtCore import Qt, QRectF, QUrl
+from PyQt6.QtGui import QTransform, QPen, QBrush, QColor, QDesktopServices, QPainter, QTextDocument, QFont, QPixmap, QPdfWriter, QImage
+from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsSimpleTextItem, QGraphicsLineItem, QTableWidgetItem
+from PyQt6 import QtGui
+from PyQt6.QtPrintSupport import QPrinter
 import sys
 import os
 import subprocess
@@ -141,10 +141,10 @@ class CanalVisualizationWindow(QMainWindow):
 
     def export_to_pdf(self):
         """Exportiert mit QPrinter (QGIS-kompatibel)"""
-        from PyQt5.QtPrintSupport import QPrinter
-        from PyQt5.QtGui import QPainter, QImage
-        from PyQt5.QtWidgets import QFileDialog, QMessageBox
-        from PyQt5.QtCore import Qt
+        from PyQt6.QtPrintSupport import QPrinter
+        from PyQt6.QtGui import QPainter, QImage
+        from PyQt6.QtWidgets import QFileDialog, QMessageBox
+        from PyQt6.QtCore import Qt
         import os
         
         include_images = self.ask_include_images()
@@ -259,7 +259,7 @@ class CanalVisualizationWindow(QMainWindow):
 
     def ask_include_images(self):
         """Dialog: Sollen Schadensbilder mit in PDF?"""
-        from PyQt5.QtWidgets import QMessageBox
+        from PyQt6.QtWidgets import QMessageBox
         
         reply = QMessageBox.question(
             self,
@@ -357,8 +357,8 @@ class CanalVisualizationWindow(QMainWindow):
 
     def _draw_header_and_graphic(self, painter, printer):
         """Zeichnet Header und Grafik auf erste Seite"""
-        from PyQt5.QtGui import QTextDocument, QFont
-        from PyQt5.QtCore import Qt
+        from PyQt6.QtGui import QTextDocument, QFont
+        from PyQt6.QtCore import Qt
         
         # === HEADER ===
         header_html = self._format_info_header_pdf()

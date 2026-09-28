@@ -1,7 +1,7 @@
 import os
 from typing import Callable, Optional
 
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,

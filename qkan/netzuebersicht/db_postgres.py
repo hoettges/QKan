@@ -4,7 +4,7 @@ import json
 import psycopg2
 from ..settings.helpers import json_path
 
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 
 
 def load_postgres_connection(parent):

@@ -1,6 +1,6 @@
 # netzuebersicht/panoramo_check.py
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import Qt
 from qgis.core import QgsProject, QgsFeatureRequest
 from qgis.utils import iface
 from .PanoramoPruefer import FehlendeDateienDialog

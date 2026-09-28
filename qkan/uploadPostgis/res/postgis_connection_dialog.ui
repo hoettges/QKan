@@ -258,7 +258,7 @@
      <x>20</x>
      <y>300</y>
      <width>410</width>
-     <height>70</height>
+     <height>120</height>
     </rect>
    </property>
    <property name="title">
@@ -268,9 +268,9 @@
    <widget class="QComboBox" name="cb_ssl_mode">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>23</y>
-      <width>150</width>
+      <x>10</x>
+      <y>25</y>
+      <width>200</width>
       <height>24</height>
      </rect>
     </property>
@@ -310,8 +310,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>25</y>
-      <width>110</width>
+      <y>5</y>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -319,34 +319,34 @@
      <string>SSL-Modus:</string>
     </property>
    </widget>
-  </widget>
-
-  <widget class="QLabel" name="label_connection_status">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>425</y>
-     <width>260</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Status: Nicht getestet</string>
-   </property>
-  </widget>
-
-  <widget class="QPushButton" name="pb_test_connection">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>420</y>
-     <width>130</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Verbindung testen</string>
-   </property>
+   
+   <widget class="QPushButton" name="pb_test_connection">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>60</y>
+      <width>120</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Verbindung testen</string>
+    </property>
+   </widget>
+   
+   <widget class="QLabel" name="label_connection_status">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>65</y>
+      <width>260</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Status: Nicht getestet</string>
+    </property>
+   </widget>
   </widget>
   
   <!-- Dialog Buttons -->

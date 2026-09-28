@@ -7,7 +7,7 @@ import os
 import re
 import sqlite3
 
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 from qgis.utils import plugins
 
 

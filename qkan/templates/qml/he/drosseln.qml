@@ -529,7 +529,7 @@
             <Option value="" name="FilterExpression" type="QString"/>
             <Option value="schnam" name="Key" type="QString"/>
             <Option value="schaechte20161016203756252" name="Layer" type="QString"/>
-            <Option value="Geometrien" name="LayerName" type="QString"/>
+            <Option value="Knotenpunkte" name="LayerName" type="QString"/>
             <Option value="spatialite" name="LayerProviderName" type="QString"/>
             <Option value="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;schaechte&quot; (geom)" name="LayerSource" type="QString"/>
             <Option value="1" name="NofColumns" type="int"/>
@@ -550,7 +550,7 @@
             <Option value="" name="FilterExpression" type="QString"/>
             <Option value="schnam" name="Key" type="QString"/>
             <Option value="schaechte20161016203756252" name="Layer" type="QString"/>
-            <Option value="Geometrien" name="LayerName" type="QString"/>
+            <Option value="Knotenpunkte" name="LayerName" type="QString"/>
             <Option value="spatialite" name="LayerProviderName" type="QString"/>
             <Option value="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;schaechte&quot; (geom)" name="LayerSource" type="QString"/>
             <Option value="1" name="NofColumns" type="int"/>

@@ -1,6 +1,6 @@
 import os
 import json
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QFileDialog,

@@ -11,7 +11,7 @@ from qgis.PyQt.QtWidgets import QApplication
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import iface
-from PyQt5.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap
 
 from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection

@@ -3,7 +3,7 @@ import os
 import json
 import pandas as pd
 import psycopg2
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QMessageBox,
     QFileDialog,
     QDialog,

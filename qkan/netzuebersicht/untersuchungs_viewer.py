@@ -1,7 +1,7 @@
 # netzuebersicht/untersuchungs_viewer.py
 
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import Qt
 from qgis.core import QgsProject
 from qgis.utils import iface
 

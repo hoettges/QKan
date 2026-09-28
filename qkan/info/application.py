@@ -1,6 +1,6 @@
 from qgis.gui import QgisInterface
 from qgis.core import QgsProject
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.plugin import QKanPlugin
@@ -19,7 +19,7 @@ from xml.dom import minidom
 from qkan.utils import get_logger
 logger = get_logger("QKan")
 
-from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt6.QtWidgets import QTableWidgetItem
 
 from ._info import Info
 from .application_dialog import InfoDialog

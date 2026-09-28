@@ -20,7 +20,7 @@ from qgis.core import (
     QgsGeometry,
     QgsWkbTypes,
 )
-from PyQt5.QtCore import QVariant
+from PyQt6.QtCore import QVariant
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import pluginDirectory
 from pathlib import Path

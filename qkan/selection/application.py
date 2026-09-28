@@ -1,7 +1,7 @@
 from qgis.gui import QgisInterface
-from PyQt5.QtWidgets import QToolBar, QToolButton, QMenu, QAction
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt6.QtWidgets import QToolBar, QToolButton, QMenu
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIcon, QAction
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.plugin import QKanPlugin
@@ -58,7 +58,7 @@ class Selection(QKanPlugin):
         dropdown_button.setIcon(icon)
         # dropdown_button.setText("Mein Button")  # Text des Buttons
         dropdown_button.setToolTip("Auswahl erweitern / Netzverfolgung")  # Tooltip
-        dropdown_button.setPopupMode(QToolButton.InstantPopup)
+        dropdown_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         dropdown_button.setMenu(QMenu())
 
         dropdown_menu = dropdown_button.menu()

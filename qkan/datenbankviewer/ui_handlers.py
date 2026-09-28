@@ -10,7 +10,7 @@ import os
 import json
 import subprocess
 
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QMessageBox,
     QTabWidget,
     QListWidget,

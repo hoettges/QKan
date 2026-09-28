@@ -1,7 +1,7 @@
 # qkan/netzuebersicht/table_models.py
-from PyQt5.QtSql import QSqlTableModel, QSqlQueryModel
-from PyQt5.QtCore import QSortFilterProxyModel, Qt
-from PyQt5.QtWidgets import QHeaderView, QAbstractItemView
+from PyQt6.QtSql import QSqlTableModel, QSqlQueryModel
+from PyQt6.QtCore import QSortFilterProxyModel, Qt
+from PyQt6.QtWidgets import QHeaderView, QAbstractItemView
 
 
 def _check_exists(widget, table_name):

@@ -3,7 +3,7 @@ import os
 import json
 import sqlite3
 
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 from qgis.core import QgsVectorLayer, QgsProject, QgsFeatureRequest
 
 from ..settings.helpers import json_path

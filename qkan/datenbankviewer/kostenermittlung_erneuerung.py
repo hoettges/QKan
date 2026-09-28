@@ -10,9 +10,9 @@ Modularisierte Version der Kostenermittlung_Erneuerung.
 import os
 import json
 
-from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QMessageBox
-from PyQt5.QtCore import Qt
+from PyQt6 import uic
+from PyQt6.QtWidgets import QDialog, QMessageBox
+from PyQt6.QtCore import Qt
 
 from qgis.core import QgsProject, QgsFeatureRequest
 

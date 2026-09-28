@@ -42,7 +42,7 @@ class _Dialog(QDialog):
 
 
 class SelectionDialog(_Dialog, SELECT_CLASS):  # type: ignore
-    #button_box: QDialogButtonBox
+    button_box: QDialogButtonBox
     cb_selectFlaechen: QCheckBox
     cb_selectHaltungen: QCheckBox
     cb_selectSchaechte: QCheckBox

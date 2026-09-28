@@ -3,9 +3,9 @@ import os
 import json
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import (
+from PyQt6 import QtCore, QtGui, QtWidgets, uic
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import (
     QDialog,
     QMessageBox,
     QFrame,

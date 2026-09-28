@@ -312,7 +312,7 @@
       <property value="haltungen_untersucht_bewertung" key="cached_name"/>
      </customproperties>
     </layer-tree-layer>
-    <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="untersuchdat_haltung_bewertung" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;untersuchdat_haltung_bewertung&quot; (geom)" id="untersuchdat_haltung_bewertung_99e7e848_e5d2_47da_9e28_ad5dc712725f">
+    <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="Untersuchdat_haltung_bewertung" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;Untersuchdat_haltung_bewertung&quot; (geom)" id="Untersuchdat_haltung_bewertung_99e7e848_e5d2_47da_9e28_ad5dc712725f">
      <customproperties/>
     </layer-tree-layer>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Zustandsdaten">
@@ -320,13 +320,13 @@
      <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="schaechte_untersucht" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;schaechte_untersucht&quot; (geop)" id="schaechte_untersucht_057f1e2b_23bd_4c9b_b3d6_15bb6eedc796">
       <customproperties/>
      </layer-tree-layer>
-     <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="untersuchdat_schacht" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;untersuchdat_schacht&quot; (geop)" id="untersuchdat_schacht_2cb42d68_83d5_4574_932c_36fe3ccc7135">
+     <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="Untersuchdat_schacht" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;untersuchdat_schacht&quot; (geop)" id="Untersuchdat_schacht_2cb42d68_83d5_4574_932c_36fe3ccc7135">
       <customproperties/>
      </layer-tree-layer>
      <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="haltungen_untersucht" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;haltungen_untersucht&quot; (geom)" id="haltungen_untersucht_aa82edb8_17a1_46de_9c85_52ebc93a3d0d">
       <customproperties/>
      </layer-tree-layer>
-     <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="untersuchdat_haltung" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;untersuchdat_haltung&quot; (geom)" id="untersuchdat_haltung_a6c1b54a_8938_44e9_b4a6_9b9f7c4f76b0">
+     <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="Untersuchdat_haltung" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;untersuchdat_haltung&quot; (geom)" id="Untersuchdat_haltung_a6c1b54a_8938_44e9_b4a6_9b9f7c4f76b0">
       <customproperties/>
      </layer-tree-layer>
     </layer-tree-group>

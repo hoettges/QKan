@@ -4,8 +4,8 @@ import re
 import sqlite3
 import uuid
 
-from PyQt5.QtSql import QSqlDatabase
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtSql import QSqlDatabase
+from PyQt6.QtWidgets import QMessageBox
 from qgis.utils import plugins
 
 

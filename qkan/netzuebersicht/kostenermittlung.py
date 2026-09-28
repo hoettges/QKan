@@ -3,12 +3,12 @@ import os
 import sys
 
 from qgis.utils import iface
-from PyQt5 import uic, QtWidgets
-from PyQt5.QtCore import QTimer, QTime, pyqtSignal, QObject, QDate, Qt
-import PyQt5.QtWidgets
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery
-from PyQt5 import QtGui
-from PyQt5.QtGui import QColor
+from PyQt6 import uic, QtWidgets
+from PyQt6.QtCore import QTimer, QTime, pyqtSignal, QObject, QDate, Qt
+import PyQt6.QtWidgets
+from PyQt6.QtSql import QSqlDatabase, QSqlQuery
+from PyQt6 import QtGui
+from PyQt6.QtGui import QColor
 from qgis.core import QgsProject, QgsExpression, QgsExpressionContext, QgsExpressionContextUtils, QgsFeatureRequest, QgsMapLayer, QgsMessageLog
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QFrame, QPushButton, QSlider,QApplication, QTableWidgetItem, QTableWidget, QTabWidget, QVBoxLayout, QMessageBox
 from qgis.PyQt.QtWidgets import (

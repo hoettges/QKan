@@ -14,8 +14,8 @@ import decimal
 
 from .db_connection import load_qkan_connection
 
-from PyQt5 import uic, QtGui, QtCore, QtWidgets
-from PyQt5.QtWidgets import (
+from PyQt6 import uic, QtGui, QtCore, QtWidgets
+from PyQt6.QtWidgets import (
     QDialog,
     QTableWidgetItem,
     QMessageBox,
@@ -30,8 +30,8 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QFileDialog,
 )
-from PyQt5.QtCore import Qt, QMimeData
-from PyQt5.QtGui import QDrag, QBrush, QColor
+from PyQt6.QtCore import Qt, QMimeData
+from PyQt6.QtGui import QDrag, QBrush, QColor
 
 from qgis.utils import iface
 from qgis.core import (

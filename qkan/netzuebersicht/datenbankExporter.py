@@ -1,12 +1,12 @@
 import pandas as pd
 import json
 import re
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QWidget,
     QListWidget, QLabel, QScrollArea, QGridLayout, QFileDialog, QMessageBox,
     QRadioButton, QDialogButtonBox
 )
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 class DatenbankExporter:
     def __init__(self, connection):

@@ -18,7 +18,7 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
 )
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QColor
+from PyQt6.QtGui import QColor
 
 from qgis.utils import iface
 
