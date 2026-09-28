@@ -59,7 +59,7 @@ class IsyPorter(QKanPlugin):
             self.log.error("Bitte zunächst ein Projekt öffnen!")
             raise Exception(f"{self.__class__.__name__}: {self.database_qkan}")
 
-        if self.export_dlg.exec_():
+        if self.export_dlg.exec():
 
             # Save to config
             QKan.config.database.qkan = str(self.database_qkan)
@@ -124,7 +124,7 @@ class IsyPorter(QKanPlugin):
 
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()

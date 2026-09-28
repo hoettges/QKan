@@ -201,9 +201,9 @@ class GanglinienHE8:
         msg.setText(_string)
         msg.setWindowTitle(title)
         if default_button == QMessageBox.Open:
-            return msg.exec_() != QMessageBox.Open
+            return msg.exec() != QMessageBox.Open
         else:
-            msg.exec_()
+            msg.exec()
 
     def __speed_control(self, value: int) -> None:
         """

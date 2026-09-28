@@ -50,7 +50,7 @@ class StrakatPorter(QKanPlugin):
 
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()

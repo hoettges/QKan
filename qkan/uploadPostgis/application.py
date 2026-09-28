@@ -49,7 +49,7 @@ class UploadPostgis(QKanPlugin):
 
         self.uploadPostgis_dlg.show()
 
-        if self.uploadPostgis_dlg.exec_():
+        if self.uploadPostgis_dlg.exec():
             self.uploadPostgis_dlg._save_uploadPostgis_config()
             
             # Upload wird im Dialog gestartet (über DatabaseDialog)

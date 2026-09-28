@@ -40,7 +40,7 @@ class Neigung(QKanPlugin):
         # Prüfen, ob ein Projekt geladen ist
 
         self.neigung_dlg.show()
-        if self.neigung_dlg.exec_():
+        if self.neigung_dlg.exec():
             # Read from form and save to config
 
             get_database_QKan()

@@ -63,7 +63,7 @@ class Synchronisation(QKanPlugin):
             logger.warning("Anwenderfehler: Es dürfen keine Layer bearbeitbar sein\n"
                               f"Betroffene Layer: {_}")
 
-        if self.compare_dlg.exec_():
+        if self.compare_dlg.exec():
             self.compare_dlg._save_compare_config()
 
             if QKan.config.sync.ext == "":
@@ -103,7 +103,7 @@ class Synchronisation(QKanPlugin):
             logger.warning("Anwenderfehler: Es dürfen keine Layer bearbeitbar sein\n"
                               f"Betroffene Layer: {_}")
 
-        if self.adjust_dlg.exec_():
+        if self.adjust_dlg.exec():
             self.adjust_dlg._save_adjust_config()
 
             if QKan.config.sync.ext == "":

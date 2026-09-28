@@ -67,7 +67,7 @@ class FloodTools(QKanPlugin):
 
         self.animation_dlg.show()
 
-        if self.animation_dlg.exec_():
+        if self.animation_dlg.exec():
             # Read from form and save to config
             QKan.config.flood.velo = self.animation_dlg.cb_velo.isChecked()
             QKan.config.flood.wlevel = self.animation_dlg.cb_wlevel.isChecked()

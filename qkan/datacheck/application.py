@@ -55,7 +55,7 @@ class Plausi(QKanPlugin):
 
             self.plausi_dlg.show()
 
-            if self.plausi_dlg.exec_():
+            if self.plausi_dlg.exec():
                 # Read from form and save to config
                 QKan.config.plausi.themen = (
                     self.plausi_dlg.selected_themes()

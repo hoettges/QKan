@@ -344,7 +344,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
             self.show()
             # Run the dialog event loop
-            result = self.exec_()
+            result = self.exec()
             # See if OK was pressed
             if result:
                 # Abrufen der ausgewählten Elemente in beiden Listen

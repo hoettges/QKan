@@ -61,7 +61,7 @@ class Ganglinie8:
             self.__refresh_colors()
         self.__dialog.show()
         self.__log.info("Ganglinie wird angezeigt")
-        self.__dialog.exec_()
+        self.__dialog.exec()
         if self.__laengsschnitt is not None:
             self.__log.info(
                 "Ganglinie wird geschlossen und Farben des Längsschnitts zurückgesetzt"

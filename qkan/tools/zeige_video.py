@@ -76,7 +76,7 @@ class ShowVideo(QDialog):
                 else:
                     window.show()
                     window.open_file()
-                    window.exec_()
+                    window.exec()
 
             except ImportError:
                 raise Exception(

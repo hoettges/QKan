@@ -77,7 +77,7 @@ class SurfaceTools(QKanPlugin):
         # show the dialog
         self.surface_dlg.show()
         # Run the dialog event loop
-        result = self.surface_dlg.exec_()
+        result = self.surface_dlg.exec()
         # See if OK was pressed
         if result:
             schneiden = self.surface_dlg.cb_haupt.currentText()
@@ -110,7 +110,7 @@ class SurfaceTools(QKanPlugin):
         # show the dialog
         self.voronoi_dlg.show()
         # Run the dialog event loop
-        result = self.voronoi_dlg.exec_()
+        result = self.voronoi_dlg.exec()
         # See if OK was pressed
         if result:
             # Start der Verarbeitung

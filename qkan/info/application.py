@@ -656,7 +656,7 @@ class Infos(QKanPlugin):
                 xl = 0
 
                 # Run the dialog event loop
-                result = self.info_dlg.exec_()
+                result = self.info_dlg.exec()
             else:
                 logger.warning("Es tut mir leid: Excel kann nur unter Windows ausgeführt werden.")
 
@@ -930,7 +930,7 @@ class Infos(QKanPlugin):
                 )
 
             # Run the dialog event loop
-            result = self.info_dlg.exec_()
+            result = self.info_dlg.exec()
 
         else:
             logger.warning('Es ist kein Projekt geladen!')

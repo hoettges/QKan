@@ -38,7 +38,7 @@ class Substanzklasse(QKanPlugin):
 
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.db.text()
             QKan.config.zustand.date =  self.import_dlg.date.currentText()

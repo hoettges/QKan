@@ -68,7 +68,7 @@ class M150Porter(QKanPlugin):
         # if self.database_name:
         #     self.export_dlg.tf_database.setText(self.database_name)
         #
-        if self.export_dlg.exec_():
+        if self.export_dlg.exec():
             export_file = self.export_dlg.tf_export.text()
             self.database_name = self.export_dlg.tf_database.text()
 
@@ -139,7 +139,7 @@ class M150Porter(QKanPlugin):
 
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()

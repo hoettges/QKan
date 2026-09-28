@@ -264,7 +264,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             # show the dialog
             self.show()
             # Run the dialog event loop
-            result = self.exec_()
+            result = self.exec()
             logger.debug("result = {}".format(repr(result)))
             # See if OK was pressed
             if result:

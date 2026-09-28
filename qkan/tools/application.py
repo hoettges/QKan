@@ -260,7 +260,7 @@ class QKanTools(QKanPlugin):
         # show the dialog
         self.dlgpr.show()
         # Run the dialog event loop
-        result = self.dlgpr.exec_()
+        result = self.dlgpr.exec()
 
         # See if OK was pressed
         if result:
@@ -423,7 +423,7 @@ class QKanTools(QKanPlugin):
         # show the dialog
         self.dlgop.show()
         # Run the dialog event loop
-        result = self.dlgop.exec_()
+        result = self.dlgop.exec()
 
         # See if OK was pressed
         if result:
@@ -675,7 +675,7 @@ class QKanTools(QKanPlugin):
             # Formular anzeigen
             self.dlgro.show()
             # Run the dialog event loop
-            result = self.dlgro.exec_()
+            result = self.dlgro.exec()
             # See if OK was pressed
 
             if result:
@@ -849,7 +849,7 @@ class QKanTools(QKanPlugin):
         # show the dialog
         self.dlgla.show()
         # Run the dialog event loop
-        result = self.dlgla.exec_()
+        result = self.dlgla.exec()
 
         # See if OK was pressed
         if result:
@@ -1037,7 +1037,7 @@ class QKanTools(QKanPlugin):
         # show the dialog
         self.dlghp.show()
         # Run the dialog event loop
-        result = self.dlghp.exec_()
+        result = self.dlghp.exec()
 
 
     def run_filepath(self) -> None:

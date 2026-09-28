@@ -54,7 +54,7 @@ class SWMMErg(QKanPlugin):
 
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
            # QKan.config.database.qkan = self.import_dlg.tf_database.text()
             #QKan.config.swmm_erg.import_file = self.import_dlg.tf_import.text()

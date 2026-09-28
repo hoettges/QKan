@@ -78,7 +78,7 @@ class MuPorter(QKanPlugin):
         self.export_dlg.show()
 
         # Im Formular wurde [OK] geklickt
-        if self.export_dlg.exec_():
+        if self.export_dlg.exec():
 
             # Read from form and save to config
             QKan.config.mu.database = self.export_dlg.tf_database.text()
@@ -163,7 +163,7 @@ class MuPorter(QKanPlugin):
 
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
             QKan.config.mu.database = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()

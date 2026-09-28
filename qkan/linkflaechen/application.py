@@ -273,7 +273,7 @@ class LinkFl(QKanPlugin):
             # show the dialog
             self.dlg_cl.show()
             # Run the dialog event loop
-            result = self.dlg_cl.exec_()
+            result = self.dlg_cl.exec()
             # See if OK was pressed
             if result:
                 # Start der Verarbeitung

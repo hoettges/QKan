@@ -255,7 +255,7 @@ class Laengsschnitt(QKanPlugin):
         self.massstab = self.laengs_dlg.lineEdit_2.text()
 
 
-        if self.laengs_dlg.exec_():
+        if self.laengs_dlg.exec():
 
             # Save to config
             QKan.config.save()

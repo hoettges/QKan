@@ -72,7 +72,7 @@ class He8Porter(QKanPlugin):
         self.export_dlg.show()
 
         # Im Formular wurde [OK] geklickt
-        if self.export_dlg.exec_():
+        if self.export_dlg.exec():
 
             # Events wieder deaktivieren
             self.export_dlg.finishDialog()
@@ -183,7 +183,7 @@ class He8Porter(QKanPlugin):
         # Formular anzeigen
         self.import_dlg.show()
 
-        if self.import_dlg.exec_():
+        if self.import_dlg.exec():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
@@ -351,7 +351,7 @@ class He8Porter(QKanPlugin):
         # show the dialog
         self.results_dlg.show()
         # Run the dialog event loop
-        result = self.results_dlg.exec_()
+        result = self.results_dlg.exec()
         # See if OK was pressed
         if result:
 
