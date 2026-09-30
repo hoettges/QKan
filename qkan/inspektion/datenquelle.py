@@ -310,10 +310,29 @@ def layer_finden(
     treffer = _passende_layer(projekt, (tabellenname,)).get(
         datenquelle, {}
     ).get(tabellenname, [])
-    if len(treffer) == 1:
-        return treffer[0]
     if not treffer:
         return None
+
+    # Für die grafische Bearbeitung müssen ausdrücklich die eigentlichen
+    # QKan-Bearbeitungslayer verwendet werden. Andere Darstellungen derselben
+    # Tabelle (z. B. "Knotentyp", "Auslässe" oder "Speicher") sind dafür
+    # ungeeignet.
+    bearbeitungslayer_namen = {
+        "haltungen": ("Haltungen",),
+        "schaechte": ("Schächte",),
+        "anschlussleitungen": ("Anschlussleitungen", "HA-Leitungen"),
+    }
+    erlaubte_namen = bearbeitungslayer_namen.get(tabellenname)
+    if erlaubte_namen is not None:
+        benannte_treffer = [
+            layer for layer in treffer if layer.name() in erlaubte_namen
+        ]
+        if len(benannte_treffer) == 1:
+            return benannte_treffer[0]
+        return None
+
+    if len(treffer) == 1:
+        return treffer[0]
 
     ungefilterte_treffer = [
         layer for layer in treffer if not layer.subsetString().strip()

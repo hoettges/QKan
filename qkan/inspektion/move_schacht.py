@@ -8,7 +8,7 @@ from qgis.utils import iface
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
 from qgis.gui import QgsAdvancedDigitizingDockWidget
 
-from .datenquelle import datenquelle_waehlen, layer_finden
+from .datenquelle import datenquelle_waehlen_direkt, layer_finden
 
 
 LOGGER = logging.getLogger(__name__)
@@ -323,7 +323,7 @@ def change_schacht():
 
     project = QgsProject.instance()
 
-    datenquelle = datenquelle_waehlen(
+    datenquelle = datenquelle_waehlen_direkt(
         project,
         ("schaechte", "haltungen", "anschlussleitungen"),
         iface.mainWindow(),
@@ -332,19 +332,23 @@ def change_schacht():
         if getattr(change_schacht, "_active", False)
         else None,
     )
-    layer = (
-        layer_finden(project, "schaechte", datenquelle)
-        if datenquelle is not None
-        else None
-    )
+    if datenquelle is None:
+        QMessageBox.warning(
+            iface.mainWindow(),
+            "QKan",
+            "Es wurde keine eindeutige QKan-Datenquelle mit den Tabellen "
+            "'schaechte', 'haltungen' und 'anschlussleitungen' gefunden. "
+            "Unterstützt werden SpatiaLite und PostgreSQL/PostGIS."
+        )
+        return
 
+    layer = layer_finden(project, "schaechte", datenquelle)
     if layer is None:
         QMessageBox.warning(
             iface.mainWindow(),
             "QKan",
-            "Es wurde keine vollständige, eindeutige QKan-Datenquelle mit "
-            "den Layern 'Schächte', 'Haltungen' und 'HA-Leitungen' "
-            "gefunden. Unterstützt werden SpatiaLite und PostgreSQL/PostGIS."
+            "Der Layer 'Schächte' ist für die grafische Bearbeitung nicht "
+            "geladen."
         )
         return
 
@@ -418,15 +422,24 @@ def change_schacht():
         return
 
     haltung_layer = layer_finden(project, "haltungen", datenquelle)
-    anschluss_layer = layer_finden(
-        project, "anschlussleitungen", datenquelle
-    )
-    if haltung_layer is None or anschluss_layer is None:
+    if haltung_layer is None:
         QMessageBox.warning(
             iface.mainWindow(),
             "QKan",
-            "Zum Verschieben werden die Layer 'Schächte', 'Haltungen' und "
-            "'HA-Leitungen' aus derselben QKan-Datenquelle benötigt."
+            "Der Layer 'Haltungen' ist für die grafische Bearbeitung nicht "
+            "geladen."
+        )
+        return
+
+    anschluss_layer = layer_finden(
+        project, "anschlussleitungen", datenquelle
+    )
+    if anschluss_layer is None:
+        QMessageBox.warning(
+            iface.mainWindow(),
+            "QKan",
+            "Der Layer 'HA-Leitungen' ist für die grafische Bearbeitung nicht "
+            "geladen."
         )
         return
 

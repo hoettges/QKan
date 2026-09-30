@@ -11,7 +11,7 @@ from qgis.core import (
 from qgis.utils import iface, pluginDirectory
 from qgis.PyQt.QtWidgets import QMessageBox, QLineEdit, QDialog, QPushButton
 
-from .datenquelle import datenquelle_waehlen, layer_finden
+from .datenquelle import datenquelle_waehlen_direkt, layer_finden
 
 
 def create_haltung():
@@ -23,7 +23,7 @@ def create_haltung():
     # Haltungs-Layer finden
     # ------------------------------------------
 
-    datenquelle = datenquelle_waehlen(
+    datenquelle = datenquelle_waehlen_direkt(
         project,
         ("haltungen", "schaechte"),
         iface.mainWindow(),
@@ -32,19 +32,23 @@ def create_haltung():
         if getattr(create_haltung, "_active", False)
         else None,
     )
-    layer = (
-        layer_finden(project, "haltungen", datenquelle)
-        if datenquelle is not None
-        else None
-    )
+    if datenquelle is None:
+        QMessageBox.warning(
+            iface.mainWindow(),
+            "QKan",
+            "Es wurde keine eindeutige QKan-Datenquelle mit den Tabellen "
+            "'haltungen' und 'schaechte' gefunden. Unterstützt werden "
+            "SpatiaLite und PostgreSQL/PostGIS."
+        )
+        return
 
+    layer = layer_finden(project, "haltungen", datenquelle)
     if layer is None:
         QMessageBox.warning(
             iface.mainWindow(),
             "QKan",
-            "Es wurde keine vollständige, eindeutige QKan-Datenquelle mit "
-            "den Layern 'Haltungen' und 'Schächte' gefunden. Unterstützt "
-            "werden SpatiaLite und PostgreSQL/PostGIS."
+            "Der Layer 'Haltungen' ist für die grafische Bearbeitung nicht "
+            "geladen."
         )
         return
 
@@ -53,8 +57,8 @@ def create_haltung():
         QMessageBox.warning(
             iface.mainWindow(),
             "QKan",
-            "In derselben QKan-Datenquelle wurde kein eindeutiger Layer "
-            "'Schächte' aus der Tabelle 'schaechte' gefunden."
+            "Der Layer 'Schächte' ist für die grafische Bearbeitung nicht "
+            "geladen."
         )
         return
 
