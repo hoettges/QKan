@@ -55,7 +55,7 @@
         <x>0</x>
         <y>0</y>
         <width>522</width>
-        <height>700</height>
+        <height>709</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -593,7 +593,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hinweis: Kann auch bei geöffneter Maske geändert werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="statusTip">
              <string>Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &quot;Optionen&quot;</string>
@@ -682,7 +682,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &amp;quot;Optionen&amp;quot;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hinweis: Kann auch bei geöffneter Maske geändert werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="statusTip">
              <string>Hauptpfad zu den Verzeichnissen mit allen Fotos. Bearbeitung über QKan-Menü &quot;Optionen&quot;</string>

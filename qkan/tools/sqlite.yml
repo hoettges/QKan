@@ -147,6 +147,10 @@ BEGIN
                 AND search_frame = ST_PointN(new.geom, -1))
     ) AS q
     WHERE pk = new.pk;
+
+    UPDATE haltungen
+    SET laenge = round(glength(geom), 3)
+    WHERE pk = new.pk AND new.laenge IS NULL;
 END;"
 
 # Datenuebernahme aus Schaechten, dabei Schacht nur, wenn leer

@@ -1400,7 +1400,7 @@ FROM
        usd.schoben =                stk.schacht_oben AND
        usd.schunten =               stk.schacht_unten AND
        usd.untersuchtag =           stb.datum AND
-       usd.untersuchrichtung =      stb.untersuchrichtung AND
+       usd.untersuchrichtung =      stb.untersuchungsrichtung AND
        usd.bandnr =                 stb.bandnr AND
        usd.kuerzel =                stb.atv_kuerzel AND
        usd.streckenschaden_lfdnr =   stb.fortsetzung AND

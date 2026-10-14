@@ -782,7 +782,7 @@ der Schachtnamen</string>
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vollständiger Pfad zu den Videos der TV-Befahrungen. In der Datenbank wird nur der Teil relativ zum Hauptpfad gespeichert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vollständiger Pfad zu den Videos der TV-Befahrungen. In der Datenbank wird nur der Teil relativ zum Hauptpfad gespeichert.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hinweis: Kann auch bei geöffneter Maske geändert werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="statusTip">
                <string>Pfad zu den Videos</string>
@@ -918,7 +918,7 @@ background-color: rgb(235, 235, 235);</string>
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vollständiger Pfad zu den Videos der TV-Befahrungen. In der Datenbank wird nur der Teil relativ zum Hauptpfad gespeichert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vollständiger Pfad zu den Videos der TV-Befahrungen. In der Datenbank wird nur der Teil relativ zum Hauptpfad gespeichert.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hinweis: Kann auch bei geöffneter Maske geändert werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="statusTip">
                <string>Pfad zu den Videos</string>
