@@ -979,7 +979,7 @@ SELECT
     ha.schunten,
     ha.hoehe,
     ha.breite,
-    GLength(ha.geom)                    AS laenge,
+    round(GLength(ha.geom), 3)          AS laenge,
     stk.haltungsname                    AS haltnam,
     stn.name                            AS strasse,
     ha.urstation,
@@ -990,9 +990,11 @@ SELECT
 FROM
     ha
     LEFT JOIN anschlussleitungen    USING (leitnam, schoben, schunten)
-    LEFT JOIN t_strakatkanal AS stk ON stk.strakatid = ha.strakatid
+    JOIN t_strakatkanal AS stk ON stk.strakatid = ha.strakatid
     LEFT JOIN strassen AS stn ON ha.strassennummer = stn.id
-WHERE anschlussleitungen.pk IS NULL                         /* nur neue Anschlussleitungen hinzufügen */ ;"
+WHERE anschlussleitungen.pk IS NULL                         /* nur neue Anschlussleitungen hinzufügen */ 
+  AND stk.schachtnummer <> 0 AND stk.strangnr = 0           /* Haltung nicht gelöscht und kein Strang */
+;"
 
 strakat_anschlussschaechte: "
 WITH ha AS (
@@ -1046,7 +1048,9 @@ FROM
     ha
     LEFT JOIN t_strakatkanal AS stk ON stk.strakatid = ha.strakatid
     LEFT JOIN strassen AS stn ON ha.strassennummer = stn.id
-    LEFT JOIN symbole AS sym ON sym.id = ha.symbolnr;"
+    LEFT JOIN symbole AS sym ON sym.id = ha.symbolnr
+WHERE stk.schachtnummer <> 0 AND stk.strangnr = 0           /* Haltung nicht gelöscht und kein Strang */
+;"
 
 strakat_schaechte_untersucht: "
 WITH strassen AS (
@@ -1456,7 +1460,7 @@ SELECT
     Trim(sha.anschlussschun)            AS schunten,
     sha.rohrbreite                      AS hoehe,
     sha.rohrbreite                      AS breite,
-    GLength(sha.geom)                   AS laenge,
+    round(GLength(sha.geom), 3)         AS laenge,
     NULL                                AS id,
     stb.datum                           AS untersuchtag,
     stb.untersucher                     AS untersucher,

@@ -765,7 +765,7 @@ class ImportTask():
 
                 berichtnr = unpack('i', b[299:303])[0]
                 anschlusshalnr = unpack('i', b[303:307])[0]
-                nextnum = unpack('i', b[311:315])[0]
+                nextnum = unpack('I', b[311:315])[0]
 
                 geloescht = unpack('b', b[317:318])[0]
 
@@ -789,10 +789,6 @@ class ImportTask():
                 (h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ha, hb, hc, hd, he, hf
                  ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[540:556])]
                 hausanschlid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
-
-                # gelöschte Datensätze überspringen
-                # if geloescht == 1:
-                #     continue
 
                 params = {
                     'nummer': nummer, 'nextnum': nextnum,
