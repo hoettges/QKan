@@ -6,7 +6,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QHeaderView, QLineEdit
 from qgis.PyQt.QtCore import Qt
 
-from qkan.__init__ import QKan
+from qkan import QKan
 
 from .tab_einstellungen import EinstellungenManager
 from .tab_auftraege import AuftraegeManager

@@ -1,0 +1,31 @@
+[project]
+name = "qkan"
+version = "3.4.23"
+readme = "README.md"
+# https://github.com/qgis/QGIS/blob/e70e79625866b9c2d137b19c2e9a0c97ef30f2ac/CMakeLists.txt#L950
+# >= 3.7  as of QGIS 3.20.0
+# >= 3.9  as of QGIS 3.40.0
+# >= 3.11 as of QGIS 4.0.0
+requires-python = ">=3.9,<3.12"
+
+[dependency-groups]
+dev = [
+    "mypy~=1.19.1",
+    "types-PyYAML"
+]
+
+[tool.mypy]
+python_version = "3.9"
+disallow_untyped_defs = true
+ignore_missing_imports = true
+namespace_packages = true
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = "*.resources"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "*.external.*"
+ignore_errors = true

@@ -383,7 +383,7 @@ class Sanierungstool(QDialog, FORMCLASS_Sanierungstool):
         self.Schadenstabelle_gal.setSelectionMode(QTableWidget.SingleSelection)
 
         # Initialwerte für Dimension/Laenge aus Datenbankviewer übernehmen
-        from .__init__ import databaseviewer
+        from . import databaseviewer
         test_dialog = databaseviewer()
         self.Dimension_Renovierung.setText(test_dialog.Dimension.text())
         self.Laenge_Renovierung.setText(test_dialog.Laenge.text())

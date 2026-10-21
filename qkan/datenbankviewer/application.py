@@ -6,7 +6,7 @@ from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.utils import plugins
 
 from ..netzuebersicht.db_backend import get_backend
-from .__init__ import databaseviewer
+from . import databaseviewer
 
 
 class DatenbankviewerPlugin:

@@ -18,7 +18,7 @@ from qgis.core import Qgis, QgsFeatureRequest, QgsProject, QgsMapLayerType, QgsD
 from qgis.utils import iface
 
 
-from qkan.__init__ import QKan
+from qkan import QKan
 
 
 # Tools aus QKan
