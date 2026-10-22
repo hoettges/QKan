@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS qkan.haltungen (
     strasse TEXT,                                   /* f�r ISYBAU ben�tigt */
     profilnam TEXT DEFAULT 'Kreisquerschnitt',      /* join profile.profilnam */
     entwart TEXT DEFAULT 'Regenwasser',             /* join entwaesserungsarten.bezeichnung */
+    abflussart TEXT DEFAULT 'Freispiegel',              /* join abflussart.bezeichnung */
     material TEXT,                                  /* join material.bezeichnung */
     profilauskleidung TEXT,
     innenmaterial TEXT,
@@ -61,6 +62,7 @@ CREATE TABLE IF NOT EXISTS qkan.haltungen_untersucht(
     untersucher TEXT,
     untersuchrichtung TEXT,
     wetter INTEGER DEFAULT 0,
+    reinigung TEXT,
     bewertungsart TEXT,
     bewertungstag TEXT,
     strasse TEXT,
@@ -88,6 +90,7 @@ CREATE TABLE IF NOT EXISTS qkan.untersuchdat_haltung (
     schunten TEXT,                                  /* join schaechte.schnam */
     id INTEGER,                                     /* absolute Nummer der Inspektion */
     untersuchtag TEXT,
+    untersuchrichtung TEXT,
     bandnr INTEGER,
     videozaehler TEXT,
     inspektionslaenge NUMERIC(7,3),
@@ -105,6 +108,7 @@ CREATE TABLE IF NOT EXISTS qkan.untersuchdat_haltung (
     streckenschaden_lfdnr INTEGER,
     pos_von INTEGER, 
     pos_bis INTEGER,
+    auskleidung TEXT,
     foto_dateiname TEXT,
     film_dateiname TEXT,
     ordner_bild TEXT,
@@ -139,6 +143,7 @@ CREATE TABLE IF NOT EXISTS qkan.anschlussleitungen (
     urstation NUMERIC(7,3),                         /* Anschlussposition gegen Flie�richtung */
     ursprung TEXT,                                  /* Adresse oder Objektbezeichnung */
     anschlusstyp TEXT,
+    lageanschluss INTEGER,                          /* als Uhrzeit 1 - 12 */
     teilgebiet TEXT,                                /* join teilgebiet.tgnam */
     strasse TEXT,                                   /* f�r ISYBAU ben�tigt */
     profilnam TEXT DEFAULT 'Kreisquerschnitt',      /* join profile.profilnam */
@@ -175,6 +180,7 @@ CREATE TABLE IF NOT EXISTS qkan.anschlussleitungen_untersucht(
     untersucher TEXT,
     untersuchrichtung TEXT,
     wetter INTEGER DEFAULT 0,
+    reinigung TEXT,
     bewertungsart TEXT,
     bewertungstag TEXT,
     strasse TEXT,
@@ -219,6 +225,7 @@ CREATE TABLE IF NOT EXISTS qkan.untersuchdat_anschlussleitung (
     streckenschaden_lfdnr INTEGER,
     pos_von INTEGER, 
     pos_bis INTEGER,
+    auskleidung TEXT,
     foto_dateiname TEXT,
     film_dateiname TEXT,
     ordner_bild TEXT,
@@ -279,6 +286,7 @@ CREATE TABLE IF NOT EXISTS qkan.schaechte_untersucht (
     untersuchtag TEXT, 
     untersucher TEXT, 
     wetter INTEGER DEFAULT 0, 
+    reinigung TEXT,
     strasse TEXT,
     bewertungsart TEXT, 
     bewertungstag TEXT,
@@ -313,6 +321,7 @@ CREATE TABLE IF NOT EXISTS qkan.untersuchdat_schacht (
     streckenschaden_lfdnr INTEGER,
     pos_von INTEGER,
     pos_bis INTEGER,
+    verbindung TEXT,
     vertikale_lage NUMERIC(7,2),
     inspektionslaenge NUMERIC(7,3),
     bereich TEXT,
@@ -332,6 +341,35 @@ CREATE TABLE IF NOT EXISTS qkan.untersuchdat_schacht (
 
 database_createspatialindex_untersuchdat_schacht_geom: "
 CREATE INDEX idx_untersuchdat_schacht_geom ON qkan.untersuchdat_schacht USING GIST(geom);"
+
+database_create_anschlussschaechte: "
+CREATE TABLE IF NOT EXISTS qkan.anschlussschaechte (
+    pk bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    schnam TEXT,
+    sohlhoehe NUMERIC(7,3),
+    deckelhoehe NUMERIC(7,3),
+    durchm NUMERIC(4,2),                            /* Schachtdurchmesser (m) */
+    druckdicht INTEGER,
+    entwart TEXT DEFAULT 'Regenwasser',             /* join entwaesserungsarten.bezeichnung */
+    strasse TEXT,
+    baujahr INTEGER,
+    haltnam TEXT,                                   /* Anschluss an Haltung */
+    urstation NUMERIC(7,3),                         /* Anschlussposition gegen Fließrichtung */
+    ursprung TEXT,                                  /* Adresse oder Objektbezeichnung */
+    anschlusstyp TEXT,                              /* STRAKAT-Symbolbezeichnung */
+    knotentyp TEXT,                                 /* join knotentypen.knotentyp */
+    eigentum TEXT,                                  /* join eigentum.name */
+    teilgebiet TEXT,                                /* join teilgebiet.tgnam */
+    simstatus TEXT DEFAULT 'vorhanden',             /* join simulationsstatus.bezeichnung */
+    material TEXT,                                  /* join material.bezeichnung */
+    xsch NUMERIC(11,3),
+    ysch NUMERIC(11,3),
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP,
+    geom geometry(POINT, :epsg) );"
+
+database_createspatialindex_anschlussschaechte_geom: "
+CREATE INDEX idx_anschlussschaechte_geom ON qkan.anschlussschaechte USING GIST(geom);"
 
 # Einzugsgebiete 
 # Entsprechen in HYSTEM-EXTRAN 7.x den Siedlungstypen
@@ -1063,19 +1101,19 @@ SELECT
   :bewertungstag, :datenart, :max_ZD, :max_ZB, :max_ZS
 FROM
   (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
-  LEFT JOIN schaechte_untersucht AS suo ON qkan.suo.schnam = ha.schoben
-  LEFT JOIN schaechte_untersucht AS suu ON qkan.suu.schnam = ha.schunten
-  LEFT JOIN schaechte AS so ON qkan.so.schnam = ha.schoben
-  LEFT JOIN schaechte AS su ON qkan.su.schnam = ha.schunten;"
+  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"
 
 database_insertdata_untersuchdat_haltung: "
 INSERT INTO qkan.untersuchdat_haltung
-  (untersuchhal, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
+  (untersuchhal, schoben, schunten, id, untersuchtag, untersuchrichtung, bandnr, videozaehler,
     inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
     film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
 SELECT
-  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :untersuchrichtung, :bandnr, :videozaehler,
   :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
@@ -1086,23 +1124,25 @@ INSERT INTO qkan.anschlussleitungen
   (leitnam, schoben, schunten,
    hoehe, breite, laenge, aussendurchmesser,
    sohleoben, sohleunten, baujahr, haltnam,
-   teilgebiet, 
-   entwart, material, profilauskleidung, innenmaterial, ks, anschlusstyp, 
-   simstatus, kommentar, createdat,  
+   urstation, ursprung, anschlusstyp, lageanschluss,
+   teilgebiet, strasse, profilnam,
+   entwart, material, profilauskleidung, innenmaterial, ks,
+   simstatus, kommentar, createdat,
    geom)
-VALUES( 
-  :leitnam, :schoben, :schunten, 
-  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END, 
+VALUES(
+  :leitnam, :schoben, :schunten,
+  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END,
   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
   :laenge, :aussendurchmesser,
   :sohleoben, :sohleunten, :baujahr, :haltnam,
-  :teilgebiet, 
-  coalesce(:entwart, 'Regenwasser'), :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), 
-  :anschlusstyp, coalesce(:simstatus, 'vorhanden'), :kommentar, 
-  coalesce(:createdat, CURRENT_TIMESTAMP), 
+  :urstation, :ursprung, :anschlusstyp, :lageanschluss,
+  :teilgebiet, :strasse, :profilnam,
+  coalesce(:entwart, 'Regenwasser'), :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5),
+  coalesce(:simstatus, 'vorhanden'), :kommentar,
+  coalesce(:createdat, CURRENT_TIMESTAMP),
   CASE WHEN :geom IS NULL
       THEN MakeLine(
-          MakePoint(:xschob, :yschob, :epsg), 
+          MakePoint(:xschob, :yschob, :epsg),
           MakePoint(:xschun, :yschun, :epsg))
       ELSE GeomFromWKB(:geom, :epsg)
   END);"
@@ -1139,10 +1179,10 @@ SELECT
   :bewertungstag, :datenart, :max_ZD, :max_ZB, :max_ZS
 FROM
   (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
-  LEFT JOIN schaechte_untersucht AS suo ON qkan.suo.schnam = ha.schoben
-  LEFT JOIN schaechte_untersucht AS suu ON qkan.suu.schnam = ha.schunten
-  LEFT JOIN schaechte AS so ON qkan.so.schnam = ha.schoben
-  LEFT JOIN schaechte AS su ON qkan.su.schnam = ha.schunten;"
+  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"
 
 database_insertdata_untersuchdat_anschlussleitung: "
 INSERT INTO qkan.untersuchdat_anschlussleitung
@@ -1156,6 +1196,27 @@ SELECT
   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
   :ZD, :ZB, :ZS, coalesce(:createdat, CURRENT_TIMESTAMP);"
+
+database_insertdata_anschlussschaechte: "
+INSERT INTO qkan.anschlussschaechte (
+    schnam, sohlhoehe, deckelhoehe,
+    durchm,
+    druckdicht,
+    entwart, strasse, baujahr, teilgebiet,
+    knotentyp, simstatus, material,
+    kommentar, createdat,
+    geom)
+VALUES (
+    :schnam, :sohlhoehe, :deckelhoehe,
+    CASE WHEN :durchm > 200 THEN :durchm/1000. ELSE :durchm END,
+    :druckdicht,
+    coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, :teilgebiet,
+    :knotentyp, coalesce(:simstatus, 'vorhanden'), :material,
+    :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
+    CASE WHEN :geom IS NULL
+        THEN MakePoint(:xsch, :ysch, :epsg)
+        ELSE GeomFromWKB(:geom, :epsg)
+    END);"
 
 database_insertdata_schaechte_untersucht: "
 INSERT INTO qkan.schaechte_untersucht
@@ -1179,7 +1240,7 @@ SELECT
   :max_ZD, :max_ZB, :max_ZS
 FROM
   (SELECT :schnam AS schnam) AS val
-  LEFT JOIN schaechte AS sch ON qkan.val.schnam = sch.schnam;"
+  LEFT JOIN schaechte AS sch ON val.schnam = sch.schnam;"
 
 database_insertdata_untersuchdat_schacht: "
 INSERT INTO qkan.untersuchdat_schacht
@@ -1400,9 +1461,9 @@ WITH flintersect AS (
            END AS flaeche
     FROM linkfl AS lf
     INNER JOIN flaechen AS fl
-    ON qkan.lf.flnam = fl.flnam
+    ON lf.flnam = fl.flnam
     LEFT JOIN tezg AS tg
-    ON qkan.lf.tezgnam = tg.flnam)
+    ON lf.tezgnam = tg.flnam)
 SELECT fa.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
        AREA(fa.geom) AS fl_ori, sum(fi.flaeche) - AREA(fa.geom) AS diff
 FROM flaechen AS fa
@@ -1419,9 +1480,9 @@ WITH flintersect AS (
            END AS flaeche
     FROM linkfl AS lf
     INNER JOIN flaechen AS fl
-    ON qkan.lf.flnam = fl.flnam
+    ON lf.flnam = fl.flnam
     LEFT JOIN tezg AS tg
-    ON qkan.lf.tezgnam = tg.flnam)
+    ON lf.tezgnam = tg.flnam)
 SELECT tg.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
        AREA(tg.geom) AS fl_ori, sum(fi.flaeche) - AREA(tg.geom) AS diff
 FROM tezg AS tg
