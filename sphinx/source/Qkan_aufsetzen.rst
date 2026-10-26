@@ -52,7 +52,7 @@ Seit kurzem werden QGIS-Plugins, die über das Menü :guilabel:`Erweiterungen ve
 werden können, einem Sicherheitscheck unterzogen, die sicherstellen sollen, dass keine 
 Hacker-Angriffe über manipulierte Daten ausgeführt werden können. QKan muss, um diese neuen Anforderungen zu erfüllen, an 
 einigen Stellen angepasst werden, was einige Wochen (Stand Mitte Mai 2026) erfordern wird. Bis dahin stehen die neueste und 
-die letzten Versionen zum Download hier |qkan_download| (Passwort: *qkan*) zur Verfügung.
+die letzten Versionen zum Download hier |qkan_download| zur Verfügung.
 
 .. |qkan_download| raw:: html
 

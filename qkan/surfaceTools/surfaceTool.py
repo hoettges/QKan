@@ -6,7 +6,7 @@ from typing import List
 
 from qgis import processing
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsProject, QgsVectorLayer
 
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import fehlermeldung
@@ -249,7 +249,7 @@ class SurfaceTask:
 
         logger.debug('Haltungsobjekte erzeugen')
 
-        processing.run(
+        p_haltungsen = processing.run(
             "native:geometrybyexpression",
             {
                 'INPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="haltungen" (geom) '
@@ -272,7 +272,7 @@ class SurfaceTask:
                         )
                     )
                 )''',
-                'OUTPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="t_voronoihal" (geom)'
+                'OUTPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="t_neadles" (geom)'
             }
         )
         # layer=p_line2poly['OUTPUT']
@@ -285,21 +285,21 @@ class SurfaceTask:
         # Thiessen-Polygone erzeugen
         try:
             p_voronoi = processing.run(
-                "grass7:v.voronoi.skeleton",
-                {'input': f'spatialite://dbname=\'{self.database_qkan}\' table="t_voronoihal" (geom)',
-                 'smoothness': 0.01,
+                "grass:v.voronoi.skeleton",
+                {'input': f'spatialite://dbname=\'{self.database_qkan}\' table="t_neadles" (geom)',
+                 'smoothness': 0.1,
                  'thin': -1,
                  '-a': True,
-                 '-s': False,
                  '-l': False,
+                 '-s': False,
                  '-t': False,
                  'output':'TEMPORARY_OUTPUT',
                  'GRASS_REGION_PARAMETER': f'{xmin},{xmax},{ymin},{ymax} [EPSG:{self.epsg}]',
                  'GRASS_SNAP_TOLERANCE_PARAMETER': -1,
                  'GRASS_MIN_AREA_PARAMETER': 0.0001,
                  'GRASS_OUTPUT_TYPE_PARAMETER': 0,
-                 'GRASS_VECTOR_DSCO': '',
-                 'GRASS_VECTOR_LCO': '',
+                 'GRASS_VECTOR_DSCO': None,
+                 'GRASS_VECTOR_LCO': None,
                  'GRASS_VECTOR_EXPORT_NOCAT': False
                  }
             )
@@ -310,23 +310,40 @@ class SurfaceTask:
                 # "Möglicherweise ist die GRASS-Toolbox nicht verfügbar.\nIn diesem Fall aktivieren Sie"
                 # " bitte die Erweiterung 'GRASS GIS provider' und starten Sie QGIS neu...")
             return False
-        # layer = QgsVectorLayer(p_voronoi['output'], "skeleton", "ogr")
-        # QgsProject.instance().addMapLayer(layer)
+        layer = QgsVectorLayer(p_voronoi['output'], "skeleton", "ogr")
+        QgsProject.instance().addMapLayer(layer)
 
         progress_bar.setValue(50)
 
         logger.debug('Thiessen-Polygone in Spatialite-DB speichern')
+        logger.debug(f'p_voronoi = {p_voronoi.keys()}')
+
+        p_write = processing.run(
+            'qgis:importintospatialite',
+            {
+                'INPUT': p_voronoi['output'],
+                'DATABASE': f'spatialite://dbname=\'{self.database_qkan}\' table="t_voronoi" (geom)',
+                'TABLENAME': 't_voronoi',
+                'PRIMARY_KEY': 'pk', 'GEOMETRY_COLUMN': 'geom', 'ENCODING': 'UTF-8', 'OVERWRITE': False,
+                'CREATEINDEX': True,
+                'LOWERCASE_NAMES': True,
+                'DROP_STRING_LENGTH': False,
+                'FORCE_SINGLEPART': False
+            }
+        )
+
+        logger.debug('Thiessen-Polygone in Spatialite-DB speichern (1)')
 
         # Speichern der Thiessen-Polygone in der Spatialite-DB
         # Interessant: processing.run("qgis:importintospatialite"...) verursacht einen Datenbankzugriffsfehler.
         # Deshalb nachfolgender Workaraound
-        processing.run("native:extractbyattribute",
+
+        p_table = processing.run("native:saveselectedfeatures",
                        {
                            'INPUT': p_voronoi['output'],
-                           'FIELD': 'pk',
-                           'OPERATOR': 9,
-                           'VALUE': '',
                            'OUTPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="t_voronoi" (geom)'})
+
+        logger.debug('Thiessen-Polygone in Spatialite-DB speichern (2)')
 
         progress_bar.setValue(70)
 
