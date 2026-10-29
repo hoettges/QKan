@@ -4,6 +4,46 @@ from PyQt5.QtCore import QSortFilterProxyModel, Qt
 from PyQt5.QtWidgets import QHeaderView, QAbstractItemView
 
 
+# Modelle der Netzübersicht (Attributname am Dialog)
+MODELL_ATTRIBUTE = (
+    "model_haltungen",
+    "model_schaechte",
+    "model_anschlussleitungen",
+    "model_sinkkaesten",
+    "model_rinnen",
+    "model_sonderbauwerke",
+)
+
+
+def modell_vollstaendig_laden(model, neu_laden=True):
+    """
+    Lädt ein Qt-SQL-Modell neu und holt ALLE Zeilen ab.
+
+    Wichtig für SpatiaLite: Qt liest Abfragen in Blöcken (256 Zeilen). Solange
+    nicht alle Zeilen geholt sind, bleibt die Abfrage offen und hält eine
+    Lesesperre (SHARED-Lock) auf der Datenbankdatei. Jeder Schreibzugriff einer
+    anderen Verbindung scheitert dann beim COMMIT mit "database is locked".
+    """
+    if model is None:
+        return
+    try:
+        if neu_laden and hasattr(model, "select"):
+            model.select()
+        while model.canFetchMore():
+            model.fetchMore()
+    except Exception as e:
+        print(f"[table_models] modell_vollstaendig_laden ERROR -> {e}")
+
+
+def lesezugriffe_beenden(widget):
+    """
+    Beendet offene Leseabfragen aller Tabellenmodelle des Dialogs
+    (holt die restlichen Zeilen ab), damit Schreibzugriffe nicht gesperrt werden.
+    """
+    for attr in MODELL_ATTRIBUTE:
+        modell_vollstaendig_laden(getattr(widget, attr, None), neu_laden=False)
+
+
 def _check_exists(widget, table_name):
     """
     Prüft Tabellen-/View-Existenz über widget.backend + widget.cursor.
@@ -23,13 +63,8 @@ def _debug_native_count(widget, table_name):
     """
     Prüft mit dem nativen Cursor, ob Daten in der Tabelle vorhanden sind.
     """
-    try:
-        widget.cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
-        row = widget.cursor.fetchone()
-        count = row[0] if row else None
-        print(f"[table_models] native COUNT({table_name}) -> {count}")
-    except Exception as e:
-        print(f"[table_models] native COUNT({table_name}) ERROR -> {e}")
+    count = widget.backend.count_rows(widget.cursor, table_name)
+    print(f"[table_models] native COUNT({table_name}) -> {count}")
 
 
 def _debug_model_state(model, table_name):
@@ -251,16 +286,7 @@ def load_data_into_tables(widget):
             try:
                 print("=== [table_models] SONDERBAUWERKE DEBUG ===")
 
-                tables = [
-                    "bauwerke_pw",
-                    "bauwerke_rbf",
-                    "bauwerke_rkb",
-                    "bauwerke_rrb",
-                    "bauwerke_rue",
-                    "bauwerke_rueb",
-                    "bauwerke_vs",
-                    "bauwerke_rv",
-                ]
+                tables = list(widget.backend.SONDERBAUWERKE_TABELLEN)
 
                 existing_tables = [t for t in tables if _check_exists(widget, t)]
                 print(f"[table_models] vorhandene Sonderbauwerke-Tabellen: {existing_tables}")
@@ -268,25 +294,15 @@ def load_data_into_tables(widget):
                 for t in existing_tables:
                     _debug_native_count(widget, t)
 
-                if existing_tables:
-                    union_parts = [
-                        widget.backend.get_sonderbauwerke_union_part(t)
-                        for t in existing_tables
-                    ]
-                    union_sql = " UNION ALL ".join(union_parts)
-                else:
-                    union_sql = (
-                        "SELECT 'Keine Daten' AS name, "
-                        "'N/A' AS typ, "
-                        "'N/A' AS system, "
-                        "'N/A' AS strasse, "
-                        "'N/A' AS quelle"
-                    )
+                # SQL aus sqlite.yml / postgres.yml (nz_sbw_union_teil / nz_sbw_union_leer)
+                union_sql = widget.backend.get_sonderbauwerke_union_sql(existing_tables)
 
                 print(f"[table_models] Sonderbauwerke SQL = {union_sql}")
 
                 widget.model_sonderbauwerke = QSqlQueryModel(widget)
                 widget.model_sonderbauwerke.setQuery(union_sql, widget.db)
+                # alle Zeilen holen -> Abfrage wird abgeschlossen (keine Lesesperre)
+                modell_vollstaendig_laden(widget.model_sonderbauwerke, neu_laden=False)
 
                 print(
                     f"[table_models] Sonderbauwerke lastError = "

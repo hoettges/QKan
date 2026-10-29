@@ -1,33 +1,44 @@
-import pandas as pd
+# qkan/netzuebersicht/datenbankExporter.py
+"""
+Hilfsklassen für den Export von Untersuchungsdaten (export_investigations.py):
+
+- DatenbankExporter           Excel-Export (bereinigt Steuerzeichen)
+- ColumnSelectionOrderDialog  Spaltenauswahl und -reihenfolge, als JSON speicher-/ladbar
+- DataTypeSelectionDialog     Auswahl Haltungen / Schächte / GAL
+
+Das SQL für get_latest_investigations kommt wie im übrigen Modul aus
+sqlite.yml bzw. postgres.yml (Schlüssel nz_export_aktuell).
+"""
 import json
 import re
+
+import pandas as pd
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QWidget,
     QListWidget, QLabel, QScrollArea, QGridLayout, QFileDialog, QMessageBox,
     QRadioButton, QDialogButtonBox
 )
-from PyQt5.QtCore import Qt
+
+from . import db_sql
+
 
 class DatenbankExporter:
     def __init__(self, connection):
         """
         Initialisiert den Exporter mit einer bestehenden Datenbankverbindung.
-        
+
         Args:
-            connection: Ein offenes Verbindungsobjekt (psycopg2 oder sqlite3/spatialite)
+            connection: Ein offenes Verbindungsobjekt (sqlite3/SpatiaLite oder psycopg2)
         """
         self.conn = connection
-        
-        # Bestimmen, ob es sich um SQLite/Spatialite handelt
-        # Dies ist wichtig für die unterschiedliche SQL-Syntax (? vs %s)
-        conn_type = str(type(self.conn)).lower()
-        self.is_sqlite = 'sqlite' in conn_type or 'spatialite' in conn_type
+        self.db_type = db_sql.normalize_dbtype(conn=connection)
+        self.is_sqlite = self.db_type == db_sql.DBTYPE_SPATIALITE
 
     def get_latest_investigations(self, table, name_column, names):
         """
-        Holt alle Datensätze mit dem jeweils aktuellsten untersuchtag pro Name.
-        Kompatibel mit PostgreSQL und SQLite.
-        
+        Holt alle Datensätze mit dem jeweils aktuellsten untersuchtag pro Name
+        (SQL: nz_export_aktuell aus sqlite.yml / postgres.yml).
+
         Args:
             table (str): Name der Tabelle
             name_column (str): Spaltenname für die ID/den Namen
@@ -35,67 +46,34 @@ class DatenbankExporter:
         """
         if not names:
             return []
-        
-        # WICHTIG: Alle Namen explizit in Strings umwandeln.
-        # Das verhindert den Fehler "Operator existiert nicht: character varying = integer"
+
+        # Alle Namen als Text übergeben (verhindert in PostgreSQL
+        # "Operator existiert nicht: character varying = integer")
         names = [str(n) for n in names]
 
-        cursor = self.conn.cursor()
-        records = []
-        
-        try:
-            if self.is_sqlite:
-                # --- SQLite / Spatialite Logik ---
-                # SQLite nutzt '?' als Platzhalter und unterstützt keine Listen direkt im SQL.
-                # Wir müssen den String "IN (?,?,?)" dynamisch bauen.
-                
-                placeholders = ",".join(["?"] * len(names))
-                
-                # Query: Wähle die Zeile mit dem neuesten Datum pro ID
-                # (ROW_NUMBER() wird von modernen SQLite-Versionen unterstützt)
-                sql = f"""
-                    SELECT * FROM (
-                        SELECT *, ROW_NUMBER() OVER (PARTITION BY {name_column} ORDER BY untersuchtag DESC) as rn
-                        FROM {table}
-                        WHERE {name_column} IN ({placeholders})
-                    ) t WHERE rn = 1
-                """
-                # Bei SQLite übergeben wir die Liste der Parameter direkt für die Platzhalter
-                cursor.execute(sql, names)
-                
-            else:
-                # --- PostgreSQL Logik ---
-                # Postgres nutzt '%s' und kann Listen (Tuples) verarbeiten via ANY(%s)
-                
-                sql = f"""
-                    SELECT t.*
-                    FROM {table} t
-                    JOIN (
-                        SELECT {name_column}, MAX(untersuchtag) AS max_tag
-                        FROM {table}
-                        WHERE {name_column} = ANY(%s)
-                        GROUP BY {name_column}
-                    ) max_dates
-                    ON t.{name_column} = max_dates.{name_column} AND t.untersuchtag = max_dates.max_tag
-                    WHERE t.{name_column} = ANY(%s)
-                    ORDER BY t.{name_column}, t.untersuchtag DESC
-                """
-                # Postgres braucht die Parameter als Liste/Tuple für das %s
-                # Wir übergeben 'names' zweimal, da es zwei Platzhalter im SQL gibt
-                cursor.execute(sql, (names, names))
+        sql = db_sql.get_sql(
+            self.db_type,
+            "nz_export_aktuell",
+            lambda s: s.format(
+                tabelle=db_sql.ident(table),
+                spalte=db_sql.ident(name_column),
+                platzhalter=db_sql.platzhalter(self.db_type, len(names)),
+            ),
+        )
 
-            # Ergebnisse holen und in Dictionaries umwandeln
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute(sql, names)
             rows = cursor.fetchall()
-            if cursor.description:
-                colnames = [desc[0] for desc in cursor.description]
-                records = [dict(zip(colnames, row)) for row in rows]
-            
-            return records
-            
+            if not cursor.description:
+                return []
+            colnames = [desc[0] for desc in cursor.description]
+            return [dict(zip(colnames, row)) for row in rows]
         except Exception as e:
-            # Fehler protokollieren und weiterwerfen, damit das UI reagieren kann
             print(f"Fehler im DatenbankExporter SQL: {e}")
-            raise e
+            raise
+        finally:
+            cursor.close()
 
     def export_to_excel(self, records, output_path):
         """
@@ -103,16 +81,11 @@ class DatenbankExporter:
         Bereinigt dabei automatisch ungültige Steuerzeichen.
         """
         if not records:
-            # Leere Liste ist kein Fehler, wir erstellen einfach keine Datei oder warnen
             raise ValueError("Keine Daten zum Exportieren.")
-        
-        # 1. Daten bereinigen (Steuerzeichen entfernen)
+
         cleaned_records = self._clean_data_for_excel(records)
-        
-        # 2. DataFrame erstellen
         df = pd.DataFrame(cleaned_records)
-        
-        # 3. Excel schreiben
+
         try:
             df.to_excel(output_path, index=False)
         except Exception as e:
@@ -120,10 +93,9 @@ class DatenbankExporter:
 
     def _clean_data_for_excel(self, records):
         """
-        Interne Hilfsmethode: Entfernt Steuerzeichen, die Excel crashen lassen (z.B. ASCII 1).
+        Entfernt Steuerzeichen, die Excel/openpyxl nicht verarbeiten kann
+        (ASCII 0-8, 11-12, 14-31; Tab, LF und CR bleiben erhalten).
         """
-        # Regex für ungültige XML-Zeichen in Excel (OpenPyXL kompatibel)
-        # Entfernt ASCII 0-8, 11-12, 14-31 (Alles außer Tab, LF, CR)
         illegal_chars_re = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
 
         def clean_value(v):
@@ -131,20 +103,14 @@ class DatenbankExporter:
                 return illegal_chars_re.sub('', v)
             return v
 
-        new_records = []
-        for rec in records:
-            # Neues Dict erstellen mit bereinigten Werten
-            new_rec = {k: clean_value(v) for k, v in rec.items()}
-            new_records.append(new_rec)
-        
-        return new_records
+        return [{k: clean_value(v) for k, v in rec.items()} for rec in records]
 
 
 class ColumnSelectionOrderDialog(QDialog):
     def __init__(self, columns, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Spalten auswählen und Reihenfolge festlegen")
-        self.resize(500, 600) # Etwas mehr Platz
+        self.resize(500, 600)
 
         main_layout = QVBoxLayout(self)
 
@@ -158,7 +124,7 @@ class ColumnSelectionOrderDialog(QDialog):
         self.checkbox_layout = QGridLayout(checkbox_container)
 
         self.checkboxes = {}
-        columns_per_row = 3  # Anzahl der Checkbox-Spalten
+        columns_per_row = 3
 
         for idx, col in enumerate(columns):
             row = idx // columns_per_row
@@ -172,11 +138,11 @@ class ColumnSelectionOrderDialog(QDialog):
         main_layout.addWidget(QLabel("Spalten auswählen:"))
         main_layout.addWidget(scroll)
 
-        # Die untere Reihenfolge-Liste horizontal, drag&drop-fähig
+        # Reihenfolge-Liste (Drag & Drop)
         main_layout.addWidget(QLabel("Reihenfolge anpassen (Drag & Drop):"))
         self.order_list = QListWidget(self)
         self.order_list.setFlow(QListWidget.LeftToRight)
-        self.order_list.setWrapping(True) # Wrapping erlaubt mehrzeilige Anzeige bei vielen Spalten
+        self.order_list.setWrapping(True)
         self.order_list.setDragDropMode(QListWidget.InternalMove)
         self.order_list.setMinimumHeight(100)
         main_layout.addWidget(self.order_list)
@@ -194,10 +160,8 @@ class ColumnSelectionOrderDialog(QDialog):
         config_layout = QHBoxLayout()
         save_btn = QPushButton("Konfiguration Speichern")
         load_btn = QPushButton("Konfiguration Laden")
-
         save_btn.clicked.connect(self.save_configuration)
         load_btn.clicked.connect(self.load_configuration)
-
         config_layout.addWidget(save_btn)
         config_layout.addWidget(load_btn)
 
@@ -210,13 +174,12 @@ class ColumnSelectionOrderDialog(QDialog):
         selected = [col for col, cb in self.checkboxes.items() if cb.isChecked()]
         current_items = [self.order_list.item(i).text() for i in range(self.order_list.count())]
 
-        # Entferne Items, die nicht mehr ausgewählt sind
+        # Nicht mehr ausgewählte Einträge entfernen
         for i in reversed(range(self.order_list.count())):
-            item = self.order_list.item(i)
-            if item.text() not in selected:
+            if self.order_list.item(i).text() not in selected:
                 self.order_list.takeItem(i)
 
-        # Füge neue hinzu, die ausgewählt sind, aber noch nicht in der Reihenfolge-Liste
+        # Neu ausgewählte Einträge anhängen
         for col in selected:
             if col not in current_items:
                 self.order_list.addItem(col)
@@ -225,7 +188,7 @@ class ColumnSelectionOrderDialog(QDialog):
         return [self.order_list.item(i).text() for i in range(self.order_list.count())]
 
     def save_configuration(self):
-        config = self.get_selected_columns()  # Die tatsächlich ausgewählten Spalten in Reihenfolge
+        config = self.get_selected_columns()
         fname, _ = QFileDialog.getSaveFileName(self, "Konfiguration speichern", "", "JSON-Datei (*.json)")
         if not fname:
             return
@@ -249,23 +212,20 @@ class ColumnSelectionOrderDialog(QDialog):
             QMessageBox.critical(self, "Fehler", f"Fehler beim Laden: {e}")
 
     def _apply_configuration(self, selected_columns):
-        # Alle Checkboxen erst mal deaktivieren (oder prüfen ob sie existieren)
         existing_cols = self.checkboxes.keys()
-        
-        # Checkboxen setzen
+
+        # Checkboxen setzen, ohne update_order_list je Box auszulösen
         for col, cb in self.checkboxes.items():
-            cb.blockSignals(True)  # Signale blockieren
+            cb.blockSignals(True)
             cb.setChecked(col in selected_columns)
             cb.blockSignals(False)
 
-        # Reihenfolgen-Liste aktualisieren
+        # Reihenfolge aus der Konfiguration übernehmen
         self.order_list.clear()
         for col in selected_columns:
             if col in existing_cols:
                 self.order_list.addItem(col)
-        
-        # Falls in der Config Spalten fehlen, die aber aktuell in den Daten sind,
-        # fügen wir sie am Ende hinzu (oder lassen sie weg, je nach Wunsch. Hier: weg lassen = unchecked)
+
         self.update_order_list()
 
 

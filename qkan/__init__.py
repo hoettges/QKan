@@ -51,7 +51,6 @@ PLUGIN_LIST = [
     "inspektion.application.Inspektion",
     # "createelements.application.CreateElements",
     "netzuebersicht.application.NetzuebersichtPlugin",
-    "datenbankviewer.application.DatenbankviewerPlugin",
     "untersuchungsverwaltung.application.UntersuchungsverwaltungApplication",
 ]
 
@@ -168,7 +167,7 @@ class QKan:
     template_dir: str
     forms: list[str]
 
-    dbVersion = "3.4.20"  # Version der QKan-Datenbank
+    dbVersion = "3.4.22"  # Version der QKan-Datenbank
     qgsVersion = "3.4.23"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
     build = "0000"
 
@@ -425,7 +424,6 @@ class QKan:
             safe_add_action(daten, "Längsschnitt")
             safe_add_action(daten, "Auswahl erweitern / Netzverfolgung")
             safe_add_action(daten, "Netzübersicht")  # neuer Eintrag
-            safe_add_action(daten, "Datenbankviewer")
             safe_add_action(daten, "Untersuchungsverwaltung")
             safe_add_action(daten, "Alle Layer transformieren")
 
