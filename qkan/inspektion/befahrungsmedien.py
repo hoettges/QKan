@@ -24,8 +24,6 @@ from typing import Any, Iterable, Optional
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import (
     QObject,
-    QRectF,
-    QSizeF,
     QStandardPaths,
     Qt,
     QThread,
@@ -35,13 +33,7 @@ from qgis.PyQt.QtCore import (
     pyqtSlot,
 )
 from qgis.PyQt.QtGui import (
-    QColor,
     QDesktopServices,
-    QFont,
-    QPageSize,
-    QPainter,
-    QPdfWriter,
-    QPen,
     QPixmap,
 )
 from qgis.PyQt.QtWidgets import (
@@ -78,7 +70,7 @@ from .datenquelle import (
     layerdaten,
     tabellenlayer_oeffnen,
 )
-from .inspektionsgrafik import Inspektionsgrafik
+from .inspektionsgrafik import Inspektionsgrafik, inspektionsgrafik_pdf_schreiben
 
 
 PLUGIN_GROUP = "QKanMediaInspector"
@@ -1204,10 +1196,13 @@ class BefahrungsmedienDialog(QDialog):
         self._ansicht_laden()
 
     def _objekte_laden(self, _value: str = "", ansicht_laden: bool = True) -> None:
-        """Lädt die Objektnamen für die ausgewählte Inspektionsart."""
-        self.cb_objekt.blockSignals(True)
-        self.cb_objekt.clear()
-        self.cb_objekt.blockSignals(False)
+        """Lädt die Objektart neu; identische Objektnamen bleiben ausgewählt."""
+        vorheriger_name = self.cb_objekt.currentText().strip()
+        vorherige_signalsperre = self.cb_objekt.blockSignals(True)
+        try:
+            self.cb_objekt.clear()
+        finally:
+            self.cb_objekt.blockSignals(vorherige_signalsperre)
         self.cb_befahrung.clear()
         self._ansicht_leeren()
         if self.datenquelle is None:
@@ -1216,11 +1211,21 @@ class BefahrungsmedienDialog(QDialog):
         rows = self._datenbankabfrage(
             f"inspektion_medien_objekte_{config['sql_key']}"
         )
-        self.cb_objekt.blockSignals(True)
-        self.cb_objekt.addItems(
-            [_text_sicher_lesen(row.get("object_name")) for row in rows]
-        )
-        self.cb_objekt.blockSignals(False)
+        vorherige_signalsperre = self.cb_objekt.blockSignals(True)
+        try:
+            self.cb_objekt.addItems(
+                [_text_sicher_lesen(row.get("object_name")) for row in rows]
+            )
+            if vorheriger_name:
+                index = self.cb_objekt.findText(
+                    vorheriger_name, Qt.MatchFixedString | Qt.MatchCaseSensitive
+                )
+                if index >= 0:
+                    self.cb_objekt.setCurrentIndex(index)
+            # Ohne identischen Treffer bleibt das bisherige Standardverhalten
+            # (erster Name bzw. bei leerer Liste keine Auswahl) bestehen.
+        finally:
+            self.cb_objekt.blockSignals(vorherige_signalsperre)
         self.lbl_status.setText(f"{len(rows):,} Objekte geladen.")
         if ansicht_laden:
             self._befahrungen_laden()
@@ -2331,7 +2336,22 @@ class BefahrungsmedienDialog(QDialog):
             counter += 1
 
         try:
-            self._grafik_pdf_schreiben(target, object_type, object_name, date_value)
+            inspektionsgrafik_pdf_schreiben(
+                ziel=target,
+                objektart=object_type,
+                objektname=object_name,
+                datum=date_value,
+                schaeden=self.damage_rows,
+                anschluesse=self.current_connections,
+                objektlaenge=self.current_object_length,
+                gesamtdaten=self.current_overall or {},
+                gesamtbewertungen={
+                    "ZD": self.rating_zd_label.text().removeprefix("ZD: "),
+                    "ZB": self.rating_zb_label.text().removeprefix("ZB: "),
+                    "ZS": self.rating_zs_label.text().removeprefix("ZS: "),
+                },
+                stationsfeld=self._stationsspalte_bestimmen(),
+            )
         except Exception as error:
             _loggen(f"PDF-Export fehlgeschlagen: {error}", Qgis.Critical)
             QMessageBox.critical(self, "Grafik exportieren", f"Das PDF konnte nicht erzeugt werden.\n\n{error}")
@@ -2346,212 +2366,6 @@ class BefahrungsmedienDialog(QDialog):
         )
         if answer == QMessageBox.Yes:
             QDesktopServices.openUrl(QUrl.fromLocalFile(str(target)))
-
-    def _grafik_pdf_schreiben(self, target: Path, object_type: str, object_name: str, date_value: str) -> None:
-        """Zeichnet eine lesbare Stationsgrafik mit lokal entzerrten dichten Bereichen."""
-        position_column = self._stationsspalte_bestimmen()
-        length = max(self.current_object_length, 1.0)
-
-        # Die ursprüngliche Stationsreihenfolge beibehalten. Positionen bleiben proportional,
-        # solange genügend Platz vorhanden ist; dichte Gruppen werden nur um den minimalen
-        # Beschriftungsabstand auseinandergezogen. Das behandelt auch mehrere Schäden an derselben Station.
-        ordered_rows = sorted(
-            enumerate(self.damage_rows),
-            key=lambda item: (
-                max(0.0, min(length, _gleitkommazahl_sicher_lesen(item[1].get(position_column), 0.0))),
-                item[0],
-            ),
-        )
-        min_gap_px = 118
-        base_line_height_px = 2450
-        display_positions: list[tuple[dict[str, Any], float, int]] = []
-        previous_y: Optional[int] = None
-        for _original_index, row in ordered_rows:
-            station = max(0.0, min(length, _gleitkommazahl_sicher_lesen(row.get(position_column), 0.0)))
-            proportional_y = int(round(base_line_height_px * station / length))
-            display_y = proportional_y if previous_y is None else max(proportional_y, previous_y + min_gap_px)
-            display_positions.append((row, station, display_y))
-            previous_y = display_y
-
-        required_line_height_px = max(
-            base_line_height_px,
-            (display_positions[-1][2] if display_positions else base_line_height_px),
-        )
-
-        # Beliebige Stationen, beispielsweise angeschlossene Leitungen, auf dieselbe
-        # lokal entzerrte Skala wie die Schadensmarkierungen abbilden. Doppelte Stationen verwenden
-        # die Mitte ihrer dargestellten Gruppe.
-        station_groups: dict[float, list[int]] = {}
-        for _row, station, display_y in display_positions:
-            station_groups.setdefault(round(station, 6), []).append(display_y)
-        station_anchors: list[tuple[float, float]] = [(0.0, 0.0)]
-        station_anchors.extend(
-            (station, sum(values) / len(values))
-            for station, values in sorted(station_groups.items())
-        )
-        station_anchors.append((length, float(required_line_height_px)))
-        normalized_anchors: list[tuple[float, float]] = []
-        for station, display_y in station_anchors:
-            if normalized_anchors and abs(station - normalized_anchors[-1][0]) <= 0.000001:
-                normalized_anchors[-1] = (
-                    station,
-                    max(normalized_anchors[-1][1], display_y),
-                )
-            else:
-                normalized_anchors.append((station, display_y))
-
-        def anzeige_y_fuer_station(station: float) -> float:
-            station = max(0.0, min(length, station))
-            for anchor_index in range(1, len(normalized_anchors)):
-                station_a, y_a = normalized_anchors[anchor_index - 1]
-                station_b, y_b = normalized_anchors[anchor_index]
-                if station <= station_b or anchor_index == len(normalized_anchors) - 1:
-                    if abs(station_b - station_a) <= 0.000001:
-                        return y_b
-                    ratio = (station - station_a) / (station_b - station_a)
-                    return y_a + ratio * (y_b - y_a)
-            return float(required_line_height_px)
-
-        # Bei Bedarf eine höhere PDF-Seite verwenden, statt Beschriftungen zusammenzudrücken.
-        # 300 dpi entsprechen etwa 11,81 Pixeln pro Millimeter.
-        px_per_mm = 300.0 / 25.4
-        header_px = 600
-        top_bottom_margin_px = 260
-        required_height_px = header_px + required_line_height_px + 2 * top_bottom_margin_px
-        page_height_mm = max(297.0, required_height_px / px_per_mm)
-
-        writer = QPdfWriter(str(target))
-        writer.setPageSize(QPageSize(QSizeF(210.0, page_height_mm), QPageSize.Millimeter, "Befahrungsgrafik"))
-        writer.setResolution(300)
-        writer.setTitle(f"Befahrungsgrafik {object_type} {object_name}")
-        painter = QPainter(writer)
-        if not painter.isActive():
-            raise RuntimeError("PDF-Zeichner konnte nicht gestartet werden.")
-
-        page_width = writer.width()
-        margin = int(page_width * 0.045)
-        header_height = header_px
-        top = margin + header_height
-        bottom = top + required_line_height_px
-        center_x = page_width // 2
-
-        title_font = QFont("Arial", 14, QFont.Bold)
-        heading_font = QFont("Arial", 9, QFont.Bold)
-        body_font = QFont("Arial", 7)
-
-        def zahl_formatieren(value: Any, decimals: int = 2) -> str:
-            return f"{_gleitkommazahl_sicher_lesen(value, 0.0):.{decimals}f}".replace(".", ",")
-
-        def datum_formatieren(value: str) -> str:
-            text = _text_sicher_lesen(value).strip()
-            for date_format in ("%Y-%m-%d", "%Y-%m-%d %H:%M:%S"):
-                try:
-                    return datetime.strptime(text, date_format).strftime("%d.%m.%Y")
-                except ValueError:
-                    continue
-            return text or "–"
-
-        overall = self.current_overall or {}
-        title = f"Befahrungsgrafik {object_type}: {object_name} – {datum_formatieren(date_value)}"
-
-        info_lines: list[str] = []
-        primary_info: list[str] = []
-        if object_type == "Schacht":
-            diameter = _gleitkommazahl_sicher_lesen(overall.get("durchm"), 0.0)
-            if diameter > 0:
-                primary_info.append(f"Durchmesser: {zahl_formatieren(diameter)} m")
-        else:
-            primary_info.append(f"Länge: {zahl_formatieren(length)} m")
-            height = _gleitkommazahl_sicher_lesen(overall.get("hoehe"), 0.0)
-            width = _gleitkommazahl_sicher_lesen(overall.get("breite"), 0.0)
-            if height > 0 and width > 0:
-                primary_info.append(
-                    f"Abmessung: {zahl_formatieren(height, 0)} × {zahl_formatieren(width, 0)} mm"
-                )
-
-        construction_year = int(_gleitkommazahl_sicher_lesen(overall.get("baujahr"), 0.0))
-        if construction_year > 0:
-            primary_info.append(f"Baujahr: {construction_year}")
-        if primary_info:
-            info_lines.append("    ".join(primary_info))
-
-        additional_info: list[str] = []
-        order_name = _text_sicher_lesen(overall.get("auftragsbezeichnung")).strip()
-        if order_name:
-            additional_info.append(f"Auftrag: {order_name}")
-        street = _text_sicher_lesen(overall.get("strasse")).strip()
-        if street:
-            additional_info.append(f"Straße: {street}")
-        if additional_info:
-            info_lines.append("    ".join(additional_info))
-
-        info_lines.append(
-            f"Inspektionseinträge: {len(self.damage_rows)}    "
-            f"ZD: {self.rating_zd_label.text().replace('ZD: ', '')}    "
-            f"ZB: {self.rating_zb_label.text().replace('ZB: ', '')}    "
-            f"ZS: {self.rating_zs_label.text().replace('ZS: ', '')}"
-        )
-
-        painter.setRenderHint(QPainter.Antialiasing)
-        painter.setPen(Qt.black)
-        painter.setFont(title_font)
-        painter.drawText(
-            QRectF(margin, margin, page_width - 2 * margin, 120),
-            Qt.AlignLeft | Qt.AlignVCenter,
-            title,
-        )
-        painter.setFont(heading_font)
-        painter.drawText(
-            QRectF(margin, margin + 120, page_width - 2 * margin, header_height - 170),
-            Qt.TextWordWrap,
-            "\n".join(info_lines),
-        )
-        painter.drawLine(margin, margin + header_height - 35, page_width - margin, margin + header_height - 35)
-
-        # Dieselben Farben wie in der Grafik der Oberfläche verwenden.
-        painter.setPen(QPen(QColor("#475569"), 16, Qt.SolidLine, Qt.RoundCap))
-        painter.drawLine(center_x, top, center_x, bottom)
-        painter.setPen(QPen(QColor("#334155"), 3))
-        painter.drawLine(center_x, top, center_x, bottom)
-        painter.drawLine(center_x, bottom, center_x - 30, bottom - 58)
-        painter.drawLine(center_x, bottom, center_x + 30, bottom - 58)
-
-        if object_type == "Haltung":
-            painter.setPen(QPen(QColor("#2563eb"), 7, Qt.SolidLine, Qt.RoundCap))
-            for connection in self.current_connections:
-                station = _gleitkommazahl_sicher_lesen(connection.get("station"), 0.0)
-                y = top + int(round(anzeige_y_fuer_station(station)))
-                side = -1 if int(connection.get("seite", 1)) < 0 else 1
-                painter.drawLine(center_x, y, center_x + side * 72, y)
-
-        left_width = center_x - margin - 105
-        right_width = page_width - margin - (center_x + 105)
-        label_height = min_gap_px - 10
-
-        for index, (row, station, relative_y) in enumerate(display_positions):
-            y = top + relative_y
-            side_left = index % 2 == 0
-
-            painter.setPen(QPen(QColor("#0f172a"), 4))
-            painter.setBrush(Inspektionsgrafik.schadensfarbe_bestimmen(row))
-            painter.drawEllipse(center_x - 16, y - 16, 32, 32)
-
-            if side_left:
-                line_end_x = center_x - 95
-                painter.drawLine(center_x - 16, y, line_end_x, y)
-                text_rect = QRectF(margin, y - label_height / 2, left_width, label_height)
-                alignment = Qt.AlignRight | Qt.AlignVCenter | Qt.TextWordWrap
-            else:
-                line_end_x = center_x + 95
-                painter.drawLine(center_x + 16, y, line_end_x, y)
-                text_rect = QRectF(center_x + 105, y - label_height / 2, right_width, label_height)
-                alignment = Qt.AlignLeft | Qt.AlignVCenter | Qt.TextWordWrap
-
-            painter.setFont(body_font)
-            label = f"{station:.2f} m  {_text_sicher_lesen(row.get('kuerzel'))}  {_text_sicher_lesen(row.get('langtext'))}".strip()
-            painter.drawText(text_rect, alignment, label)
-
-        painter.end()
 
     def _medienlisten_erstellen(self) -> None:
         """Löst Medien in einem Arbeitsthread auf, damit die Oberfläche nicht
