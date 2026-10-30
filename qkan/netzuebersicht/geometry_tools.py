@@ -1,28 +1,45 @@
-# netzuebersicht/geometry_tools.py
+# qkan/netzuebersicht/geometry_tools.py
+"""
+Geometrie für neu angelegte Sonderbauwerke zeichnen und speichern.
+
+Verwendet die Verbindung der Netzübersicht (parent.conn / parent.backend);
+das SQL kommt aus sqlite.yml / postgres.yml (nz_sbw_geometrie_setzen).
+"""
 from qgis.core import QgsVectorLayer, QgsProject, QgsGeometry
 from qgis.PyQt import QtWidgets
-from . import db_postgres
-from .table_models import (
-    setup_qt_sql_connection,
-    load_data_into_tables,
-    load_data_for_tab,
-    filter_data,
-    fill_column_combobox,
-)
 
-def get_id_column(table_name):
-    """Hartcodierte ID-Spalten für alle bauwerke_* Tabellen."""
-    id_map = {
-        "bauwerke_pw": "pw_id",
-        "bauwerke_rbf": "rbf_id", 
-        "bauwerke_rkb": "rkb_id",
-        "bauwerke_rrb": "rrb_id",
-        "bauwerke_rue": "rue_id",
-        "bauwerke_rueb": "rueb_id",
-        "bauwerke_vs": "vs_id",
-        "bauwerke_rv": "rv_id",
-    }
-    return id_map.get(table_name)
+
+def _speichere_geometrie(parent, table_name, geomspalte, wkt):
+    """
+    Setzt die Geometrie des zuletzt angelegten Datensatzes der Tabelle.
+    Rückgabe: True bei Erfolg.
+    """
+    conn = getattr(parent, "conn", None)
+    backend = getattr(parent, "backend", None)
+    if conn is None or backend is None:
+        QtWidgets.QMessageBox.critical(parent, "Fehler", "Datenbankverbindung fehlt.")
+        return False
+    if table_name not in backend.SONDERBAUWERKE_TABELLEN:
+        QtWidgets.QMessageBox.warning(parent, "Fehler", f"Unbekannte Tabelle {table_name}.")
+        return False
+
+    cur = conn.cursor()
+    try:
+        backend.execute(
+            cur,
+            "nz_sbw_geometrie_setzen",
+            (wkt,),
+            tabelle=backend.ident(table_name),
+            geomspalte=backend.ident(geomspalte),
+            id_spalte=backend.sbw_id_spalte(table_name),
+        )
+        conn.commit()
+        return True
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cur.close()
 
 def frage_nach_geometrie(parent, entry_id, table_name):
     """Fragt nach Polygon- und optional Punkt-Geometrie nach Anlegen eines Sonderbauwerks."""
@@ -66,30 +83,13 @@ def add_polygon_to_sonderbauwerk(parent, entry_id, table_name):
 
         wkt = geom.asWkt()
         
-        conn = db_postgres.load_postgres_connection(parent)
-        if conn:
-            try:
-                id_col = get_id_column(table_name)
-                if id_col:
-                    cur = conn.cursor()
-                    cur.execute(
-                        f"UPDATE {table_name} SET geom = ST_GeomFromText(%s, 25832) WHERE {id_col} = (SELECT MAX({id_col}) FROM {table_name})",
-                        (wkt,)
-                    )
-                    conn.commit()
-                    QtWidgets.QMessageBox.information(parent, "Erfolg", "Polygon-Geometrie gespeichert.")
-                    
-                    # Nach Polygon → Punkt fragen
-                    frage_nach_punkt(parent, entry_id, table_name)
-                else:
-                    QtWidgets.QMessageBox.warning(parent, "Fehler", f"ID-Spalte für {table_name} nicht gefunden.")
-                    
-            except Exception as e:
-                QtWidgets.QMessageBox.critical(parent, "Fehler", f"Geometrie speichern fehlgeschlagen:\n{str(e)}")
-            finally:
-                conn.close()
-        else:
-            QtWidgets.QMessageBox.critical(parent, "Fehler", "Datenbankverbindung fehlgeschlagen.")
+        try:
+            if _speichere_geometrie(parent, table_name, "geom", wkt):
+                QtWidgets.QMessageBox.information(parent, "Erfolg", "Polygon-Geometrie gespeichert.")
+                # Nach Polygon → Punkt fragen
+                frage_nach_punkt(parent, entry_id, table_name)
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(parent, "Fehler", f"Geometrie speichern fehlgeschlagen:\n{str(e)}")
         
         # Cleanup
         QgsProject.instance().removeMapLayer(temp_layer.id())
@@ -137,26 +137,11 @@ def add_point_to_sonderbauwerk(parent, entry_id, table_name):
 
         wkt = geom.asWkt()
         
-        conn = db_postgres.load_postgres_connection(parent)
-        if conn:
-            try:
-                id_col = get_id_column(table_name)
-                if id_col:
-                    cur = conn.cursor()
-                    cur.execute(
-                        f"UPDATE {table_name} SET geop = ST_GeomFromText(%s, 25832) WHERE {id_col} = (SELECT MAX({id_col}) FROM {table_name})",
-                        (wkt,)
-                    )
-                    conn.commit()
-                    QtWidgets.QMessageBox.information(parent, "Erfolg", "Punkt-Position gespeichert.")
-                else:
-                    QtWidgets.QMessageBox.warning(parent, "Fehler", f"ID-Spalte für {table_name} nicht gefunden.")
-            except Exception as e:
-                QtWidgets.QMessageBox.critical(parent, "Fehler", f"Punkt speichern fehlgeschlagen:\n{str(e)}")
-            finally:
-                conn.close()
-        else:
-            QtWidgets.QMessageBox.critical(parent, "Fehler", "Datenbankverbindung fehlgeschlagen.")
+        try:
+            if _speichere_geometrie(parent, table_name, "geop", wkt):
+                QtWidgets.QMessageBox.information(parent, "Erfolg", "Punkt-Position gespeichert.")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(parent, "Fehler", f"Punkt speichern fehlgeschlagen:\n{str(e)}")
         
         # Cleanup
         QgsProject.instance().removeMapLayer(temp_layer.id())

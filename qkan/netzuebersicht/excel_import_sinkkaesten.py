@@ -15,6 +15,16 @@ from PyQt5.QtWidgets import (
 )
 
 
+def _py(value):
+    """numpy-/pandas-Werte in einfache Python-Werte umwandeln (für die DB-Treiber)."""
+    if hasattr(value, "item"):
+        try:
+            return value.item()
+        except Exception:
+            return value
+    return value
+
+
 def excel_import_sinkkaesten(self):
     """Excel-Import für Sinkkästen (Postgres & Spatialite kompatibel)."""
     import pandas as pd # Sicherstellen, dass pandas importiert ist
@@ -25,8 +35,8 @@ def excel_import_sinkkaesten(self):
             QMessageBox.critical(self, "Fehler", "Keine aktive Datenbankverbindung im Plugin.")
             return
             
-    # DB-Typ ermitteln
-    is_spatialite = getattr(self, 'db_type', '') == 'spatialite'
+    # SQL kommt aus sqlite.yml / postgres.yml (über das Backend)
+    backend = self.backend
 
     # 2. Excel-Datei auswählen
     try:
@@ -99,21 +109,19 @@ def excel_import_sinkkaesten(self):
         updated_rows = 0
         skipped_rows = []
         
-        # Syntax-Helfer
-        ph = '?' if is_spatialite else '%s' # Platzhalter
-        q = '' if is_spatialite else '"'    # Quotes
-        table_name = f'{q}Sinkkästen{q}'    # Tabellenname
-        col_name = f'{q}Name{q}'            # PK Spalte
+        # Tabellen-/Spaltennamen in "..." (SQLite und PostgreSQL)
+        table_name = backend.ident(backend.get_sinkkaesten_table_name())
+        col_name = backend.ident("Name")            # Schlüsselspalte
 
         for index, row in df.iterrows():
-            name_value = row[name_col]
+            name_value = _py(row[name_col])
             if pd.isna(name_value):
                 skipped_rows.append(index + 2)
                 continue
 
             # Existenz-Check
-            check_sql = f"SELECT 1 FROM {table_name} WHERE {col_name} = {ph}"
-            cursor.execute(check_sql, (name_value,))
+            backend.execute(cursor, "nz_sk_existiert", (name_value,),
+                            tabelle=table_name, schluessel=col_name)
             exists = cursor.fetchone()
             
             if not exists:
@@ -144,21 +152,23 @@ def excel_import_sinkkaesten(self):
 
             if neue_akt_rein:
                 # Datum verschieben
-                col_akt = f'{q}aktuellste_Reinigung{q}'
-                col_vor = f'{q}vorherige_Reinigung{q}'
-                
-                sel_sql = f"SELECT {col_akt} FROM {table_name} WHERE {col_name} = {ph}"
-                cursor.execute(sel_sql, (name_value,))
+                col_akt = backend.ident("aktuellste_Reinigung")
+                col_vor = backend.ident("vorherige_Reinigung")
+
+                backend.execute(cursor, "nz_sk_wert_lesen", (name_value,),
+                                tabelle=table_name, spalte=col_akt, schluessel=col_name)
                 res = cursor.fetchone()
                 bisherige_rein = res[0] if res else None
 
                 if bisherige_rein and str(bisherige_rein) != neue_akt_rein:
-                    upd_sql = f"UPDATE {table_name} SET {col_vor} = {ph}, {col_akt} = {ph} WHERE {col_name} = {ph}"
-                    cursor.execute(upd_sql, (bisherige_rein, neue_akt_rein, name_value))
+                    backend.execute(cursor, "nz_sk_reinigung_verschieben",
+                                    (bisherige_rein, neue_akt_rein, name_value),
+                                    tabelle=table_name, spalte_vor=col_vor,
+                                    spalte_akt=col_akt, schluessel=col_name)
                     if cursor.rowcount > 0: updated_rows += 1
 
             # Haupt-Update
-            set_clauses = []
+            set_spalten = []
             values = []
             
             for db_col, excel_col in temp_mapping.items():
@@ -183,13 +193,16 @@ def excel_import_sinkkaesten(self):
 
                 # Clause bauen
                 if excel_col is not None or db_col == "Typ":
-                        set_clauses.append(f'{q}{db_col}{q} = {ph}')
+                        set_spalten.append(db_col)
                         values.append(val)
 
-            if set_clauses:
-                full_sql = f"UPDATE {table_name} SET {', '.join(set_clauses)} WHERE {col_name} = {ph}"
+            if set_spalten:
+                values = [_py(v) for v in values]
                 values.append(name_value)
-                cursor.execute(full_sql, values)
+                backend.execute(cursor, "nz_update_objekt", values,
+                                tabelle=table_name,
+                                zuweisungen=backend.zuweisungen(set_spalten),
+                                schluessel=col_name)
                 if cursor.rowcount > 0: updated_rows += 1
 
         self.conn.commit()
@@ -198,7 +211,8 @@ def excel_import_sinkkaesten(self):
         QMessageBox.information(self, "Erfolg", msg)
 
         if hasattr(self, "model_sinkkaesten"):
-            self.model_sinkkaesten.select()
+            from .table_models import modell_vollstaendig_laden
+            modell_vollstaendig_laden(self.model_sinkkaesten)
 
     except Exception as e:
         if hasattr(self, 'conn'): self.conn.rollback()
