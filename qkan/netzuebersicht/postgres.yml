@@ -1,0 +1,564 @@
+# SQL-Statements der Netzuebersicht fuer PostgreSQL/PostGIS
+# Pendant: sqlite.yml (gleiche Schluessel, SQLite-Syntax)
+# Stand: vorbereitet fuer die spaetere PostgreSQL-Unterstuetzung von QKan.
+# Hinweise:
+#   - Parameter '%s', variable Teile als {name} (Ersetzung per str.format)
+#   - Tabellen-/Spaltennamen werden vom Code bereits in "..." gesetzt
+#   - Tabellen werden ohne Schema angesprochen; massgeblich ist der Suchpfad
+#     (nz_suchpfad, Schema aus der QKan-Datenquelle, danach public)
+#   - null (~) = fuer diesen Datenbanktyp nicht benoetigt, wird uebersprungen
+#   - Tabellendefinitionen uebernommen aus der bisherigen PostgreSQL-Anbindung
+#     (db_postgres.py, RMKanDB)
+
+# ======================================================================
+# Verbindung / Metadaten
+# ======================================================================
+
+nz_verbindungstest: "
+SELECT PostGIS_Version()"
+
+# {schema}: Schema der QKan-Datenquelle (bereits in "...")
+nz_suchpfad: "
+SET search_path TO {schema}, public"
+
+# Tabelle oder View vorhanden? (Parameter: Name)
+nz_objekt_existiert: "
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = ANY(current_schemas(false)) AND table_name = %s"
+
+# Spalten einer Tabelle (Parameter: Name) -> (position, name, datentyp)
+nz_spalten: "
+SELECT ordinal_position, column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = ANY(current_schemas(false)) AND table_name = %s
+ORDER BY ordinal_position"
+
+nz_anzahl: "
+SELECT COUNT(*) FROM {tabelle}"
+
+# ======================================================================
+# Schema der Netzuebersicht (wird beim Start sichergestellt)
+# ======================================================================
+
+# Benoetigt Admin-Rechte; Fehler werden nur als Hinweis gemeldet
+nz_postgis_extension: "
+CREATE EXTENSION IF NOT EXISTS postgis"
+
+nz_sinkkaesten_create: "
+CREATE TABLE \"Sinkkästen\" (
+    \"Name\" TEXT PRIMARY KEY,
+    \"Schacht_oben\" TEXT,
+    \"Schacht_unten\" TEXT,
+    \"Entwässerungssystem\" TEXT,
+    \"Baujahr\" INTEGER,
+    \"Straßenname\" TEXT,
+    \"Typ\" TEXT,
+    \"Tiefe\" REAL,
+    \"Schmutzfänger\" TEXT,
+    \"Material\" TEXT,
+    \"Bemerkung\" TEXT,
+    \"aktuellste_Reinigung\" TEXT,
+    \"vorherige_Reinigung\" TEXT,
+    geom geometry(Point, 25832)
+)"
+
+# Uebernahme der Strasseneinlaeufe aus der Tabelle symbole
+nz_sinkkaesten_import_symbole: "
+INSERT INTO \"Sinkkästen\" (\"Name\", geom)
+SELECT
+    bezeichnung,
+    geom
+FROM symbole
+WHERE art IN ('21 Straßeneinlauf', '22 Straßeneinlauf-SF', '23 Straßeneinlauf-SV')
+AND bezeichnung NOT IN (SELECT \"Name\" FROM \"Sinkkästen\")"
+
+nz_rinnen_create: "
+CREATE TABLE \"entwaesserungsrinnen\" (
+    \"Name\" TEXT PRIMARY KEY,
+    \"Schacht_oben\" TEXT,
+    \"Schacht_unten\" TEXT,
+    \"Entwässerungssystem\" TEXT,
+    \"Baujahr\" INTEGER,
+    \"Straßenname\" TEXT,
+    \"Typ\" TEXT,
+    \"Material\" TEXT,
+    \"Länge\" REAL,
+    \"Bemerkung\" TEXT,
+    geom_point geometry(Point, 25832),
+    geom_line geometry(LineString, 25832)
+)"
+
+nz_rinnen_import_symbole: "
+INSERT INTO \"entwaesserungsrinnen\" (\"Name\", geom_point)
+SELECT
+    bezeichnung,
+    geom
+FROM symbole
+WHERE art = '26 Entwässerungsrinne'
+AND bezeichnung NOT IN (
+SELECT \"Name\" FROM \"entwaesserungsrinnen\"
+)"
+
+# Sonderbauwerke: je Tabelle ein Eintrag
+
+nz_sbw_create_bauwerke_pw: "
+CREATE TABLE bauwerke_pw (
+    pw_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    in_betrieb_seit date,
+    anzahl_pumpen integer,
+    fabrikat varchar(100),
+    pumpe_aufstellung varchar(50),
+    foerderhoehe numeric(10,2),
+    foerdermenge_pro_pumpe numeric(10,2),
+    max_menge numeric(10,2),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_rbf: "
+CREATE TABLE bauwerke_rbf (
+    rbf_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    bauform varchar(50),
+    bauart varchar(50),
+    volumen numeric(10,2),
+    filterflaeche numeric(10,2),
+    volumen_lamelle numeric(10,2),
+    drosselabfluss numeric(10,2),
+    maximaler_drosselabfluss numeric(10,2),
+    abfluss_lamelle numeric(10,2),
+    volumen_behandlungsmenge numeric(10,2),
+    afs_belastung numeric(10,2),
+    hauptabflussziel varchar(100),
+    ueberlaufabflussziel varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    jaehrliche_einstaudauer_ist numeric(10,0),
+    jaehrliche_einstaudauer_prog numeric(10,0),
+    absetzwirkungsgrad_ist numeric(10,0),
+    absetzwirkungsgrad_prog numeric(10,0),
+    afs_belastung_ablauf_prog numeric(10,0),
+    anrechenbares_volumen numeric(10,0),
+    abk_massnahme varchar(10),
+    abk_nummer varchar(50),
+    afs_belastung_zulauf_ist numeric(10,0),
+    afs_belastung_zulauf_prog numeric(10,0),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_rkb: "
+CREATE TABLE bauwerke_rkb (
+    rkb_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    volumen numeric(10,2),
+    maximaler_drosselabfluss numeric(10,2),
+    hauptabflussziel varchar(100),
+    ueberlaufabflussziel varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    absetzwirkungsgrad_ist numeric(10,0),
+    absetzwirkungsgrad_prog numeric(10,0),
+    bautyp varchar(10),
+    anrechenbares_volumen numeric(10,0),
+    drosselabfluss numeric(10,0),
+    abk_massnahme varchar(10),
+    abk_nummer varchar(50),
+    notentlastung varchar(10),
+    schwellenhoehe numeric(10,0),
+    schwellenlaenge numeric(10,0),
+    hoehensystem varchar(10),
+    angeschlossene_versiegelte_flaeche_ist numeric(10,0),
+    angeschlossene_versiegelte_flaeche_prog numeric(10,0),
+    jaehrliche_einstaudauer_ist numeric(10,0),
+    jaehrliche_einstaudauer_prog numeric(10,0),
+    afs_belastung_ablauf_ist numeric(10,0),
+    afs_belastung_ablauf_prog numeric(10,0),
+    ueberlaufmenge_ist numeric(10,0),
+    ueberlaufmenge_prog numeric(10,0),
+    max_ueberlaufmenge_ist numeric(10,0),
+    max_ueberlaufmenge_prog numeric(10,0),
+    entlastungshaeufigkeit_ist numeric(10,0),
+    entlastungshaeufigkeit_prog numeric(10,0),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_rrb: "
+CREATE TABLE bauwerke_rrb (
+    rrb_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    beckentyp varchar(50),
+    bauart varchar(50),
+    volumen numeric(10,2),
+    maximaler_drosselabfluss numeric(10,2),
+    abwasserart varchar(50),
+    schwellenhoehe numeric(10,2),
+    schwellenlaenge numeric(10,2),
+    hauptabflussziel varchar(100),
+    ueberlaufabflussziel varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    absetzwirkungsgrad_ist numeric(10,0),
+    absetzwirkungsgrad_prog numeric(10,0),
+    anrechenbares_volumen numeric(10,0),
+    drosselabfluss numeric(10,0),
+    schwellenhoehe_klue numeric(10,0),
+    schwellenlaenge_klue numeric(10,0),
+    hoehensystem varchar(100),
+    angeschlossene_versiegelte_flaeche_ist numeric(10,0),
+    angeschlossene_versiegelte_flaeche_prog numeric(10,0),
+    jaehrliche_einstaudauer_ist numeric(10,0),
+    jaehrliche_einstaudauer_prog numeric(10,0),
+    afs_belastung_ablauf_ist numeric(10,0),
+    afs_belastung_ablauf_prog numeric(10,0),
+    ueberlaufmenge_ist numeric(10,0),
+    ueberlaufmenge_prog numeric(10,0),
+    max_ueberlaufmenge_ist numeric(10,0),
+    max_ueberlaufmenge_prog numeric(10,0),
+    entlastungshaeufigkeit_ist numeric(10,0),
+    entlastungshaeufigkeit_prog numeric(10,0),
+    abk_massnahme varchar(50),
+    abk_nummer varchar(50),
+    notentlastung varchar(50),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_rue: "
+CREATE TABLE bauwerke_rue (
+    rue_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    drosselmenge numeric(10,2),
+    entlastungsrate numeric(10,2),
+    maximaler_stauraum_frage numeric(10,2),
+    hauptabflussziel varchar(100),
+    nebenabflussziel varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    bauart varchar(10),
+    anrechenbares_volumen numeric(10,0),
+    maximaler_drosselabfluss numeric(10,0),
+    abk_massnahme varchar(10),
+    abk_nummer varchar(50),
+    schwellenhoehe numeric(10,0),
+    schwellenlaenge numeric(10,0),
+    hoehensystem varchar(10),
+    angeschlossene_versiegelte_flaeche_ist numeric(10,0),
+    angeschlossene_versiegelte_flaeche_prog numeric(10,0),
+    entlastungsrate_prog numeric(10,0),
+    trockenwetterzufluss_ist numeric(10,0),
+    trockenwetterzufluss_prog numeric(10,0),
+    afs_belastung_ablauf_ist numeric(10,0),
+    afs_belastung_ablauf_prog numeric(10,0),
+    ueberlaufmenge_ist numeric(10,0),
+    ueberlaufmenge_prog numeric(10,0),
+    max_ueberlaufmenge_ist numeric(10,0),
+    max_ueberlaufmenge_prog numeric(10,0),
+    entlastungshaeufigkeit_ist numeric(10,0),
+    entlastungshaeufigkeit_prog numeric(10,0),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_rueb: "
+CREATE TABLE bauwerke_rueb (
+    rueb_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    bauform varchar(50),
+    bauart varchar(50),
+    beckenvolumen numeric(10,2),
+    anrechenbares_volumen numeric(10,2),
+    angeschlossene_versiegelte_flaeche numeric(10,2),
+    schwellenhoehe numeric(10,2),
+    maximaler_drosselabfluss numeric(10,2),
+    entlastungsrate numeric(10,2),
+    drosselwassermenge numeric(10,2),
+    mischungsverhaeltnis_prognose numeric(10,2),
+    trockenwetterzufluss numeric(10,2),
+    hauptabflussziel varchar(100),
+    ueberlaufabflussziel varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    absetzwirkungsgrad_ist numeric(10,0),
+    absetzwirkungsgrad_prog numeric(10,0),
+    afs_belastung_ablauf_ist numeric(10,0),
+    afs_belastung_ablauf_prog numeric(10,0),
+    abk_massnahme varchar(10),
+    abk_nummer varchar(50),
+    notentlastung varchar(10),
+    schwellenhoehe_klue numeric(10,0),
+    schwellenlaenge_bue numeric(10,0),
+    schwellenlaenge_klue numeric(10,0),
+    hoehensystem varchar(100),
+    entlastungsrate_prog numeric(10,0),
+    trockenwetterzufluss_prog numeric(10,0),
+    ang_versiegelte_flaeche_prog numeric(10,0),
+    mischungsverhaeltnis_ist numeric(10,0),
+    ueberlaufmenge_ist numeric(10,0),
+    ueberlaufmenge_prog numeric(10,0),
+    max_ueberlaufmenge_ist numeric(10,0),
+    max_ueberlaufmenge_prog numeric(10,0),
+    entlastungshaeufigkeit_ist numeric(10,0),
+    entlastungshaeufigkeit_prog numeric(10,0),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_vs: "
+CREATE TABLE bauwerke_vs (
+    vs_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    durchfluss numeric(10,2),
+    maximaler_durchfluss numeric(10,2),
+    durchmesser_min numeric(10,2),
+    durchmesser_max numeric(10,2),
+    profilform varchar(50),
+    laenge numeric(10,2),
+    mittleres_gefaelle numeric(10,2),
+    hauptabflussziel varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+nz_sbw_create_bauwerke_rv: "
+CREATE TABLE bauwerke_rv (
+    rv_id bigserial PRIMARY KEY,
+    name TEXT,
+    strasse TEXT,
+    typ TEXT,
+    system TEXT,
+    baujahr integer,
+    uebernahme_ev_jahr date,
+    betriebszustand varchar(50),
+    bauform varchar(50),
+    volumen numeric(10,2),
+    flaeche numeric(10,2),
+    vorbehandlung varchar(100),
+    bemerkung varchar(1000),
+    betriebsstelle_id integer,
+    kennung integer,
+    ortsname varchar(100),
+    anrechenbares_volumen numeric(10,0),
+    drosselabfluss_gw numeric(10,0),
+    drosselabfluss_kanalnetz numeric(10,0),
+    max_drosselabfluss_gw numeric(10,0),
+    hauptabflussziel varchar(10),
+    ueberlaufabflussziel varchar(10),
+    abk_massnahme varchar(10),
+    abk_nummer varchar(50),
+    notentlastung_gewaesser varchar(10),
+    angeschlossene_versiegelte_flaeche_ist varchar(10),
+    angeschlossene_versiegelte_flaeche_prog varchar(10),
+    jaehrliche_einstaudauer_ist numeric(10,0),
+    jaehrliche_einstaudauer_prog numeric(10,0),
+    afs_belastung_ablauf_ist numeric(10,0),
+    afs_belastung_ablauf_prog numeric(10,0),
+    geol geometry(LineString, 25832),
+    geom geometry(MultiPolygon, 25832),
+    geop geometry(Point, 25832)
+)"
+
+# View sonderbauwerke_view: In PostgreSQL nur anlegen, wenn er fehlt
+# (kein DROP, da der View ggf. von einem Admin angelegt wurde)
+nz_sbw_view_loeschen: ~
+
+# Ein Teil der UNION je Tabelle; {kuerzel} = z.B. pw, {tabelle_name} ohne "..."
+nz_sbw_view_teil: "
+SELECT
+    '{tabelle_name}'::text AS quelle,
+    ('{kuerzel}_' || {kuerzel}_id::text) AS id,
+    name,
+    typ,
+    system,
+    strasse,
+    ST_SetSRID(geop::geometry(Point), 25832) AS geop
+FROM {tabelle}"
+
+nz_sbw_view_erstellen: "
+CREATE VIEW \"sonderbauwerke_view\" AS {union}"
+
+# Registrierung als Geometrie-View: in PostGIS nicht erforderlich
+nz_sbw_view_registrierung_loeschen: ~
+nz_sbw_view_registrieren: ~
+
+# ======================================================================
+# Tabellenanzeige Sonderbauwerke (QSqlQueryModel)
+# ======================================================================
+
+nz_sbw_union_teil: "
+SELECT name, '{tabelle_name}' AS typ, system, strasse, '{tabelle_name}' AS quelle
+FROM {tabelle}"
+
+nz_sbw_union_leer: "
+SELECT 'Keine Daten' AS name, 'N/A' AS typ, 'N/A' AS system, 'N/A' AS strasse, 'N/A' AS quelle"
+
+# ======================================================================
+# Allgemeine Schreibzugriffe
+# {zuweisungen}: "spalte" = %s, ...   {spalten}/{werte}: Spalten- bzw. Werteliste
+# ======================================================================
+
+nz_insert: "
+INSERT INTO {tabelle} ({spalten}) VALUES ({werte})"
+
+nz_update_objekt: "
+UPDATE {tabelle} SET {zuweisungen} WHERE {schluessel} = %s"
+
+# Geometrie aus WKB als Werte-Fragment fuer INSERT ({srid} = SRID der Zielspalte)
+nz_geom_aus_wkb: "ST_GeomFromWKB(%s, {srid})"
+
+# SRID einer Geometriespalte (Parameter: Tabelle, Spalte)
+nz_geometrie_srid: "
+SELECT srid FROM geometry_columns
+WHERE lower(f_table_name) = lower(%s) AND lower(f_geometry_column) = lower(%s)
+  AND f_table_schema = ANY(current_schemas(false))"
+
+# Schachtumriss (geom, Kreis aus xsch/ysch/durchm) wie im QKan-Import
+# Parameter: schnam
+nz_schacht_umriss: "
+UPDATE schaechte
+SET geom = ST_Multi(ST_Boundary(ST_Buffer(
+    ST_SetSRID(ST_MakePoint(xsch, ysch), {srid}), coalesce(durchm / 2, 0.5), 32)))
+WHERE schnam = %s AND geom IS NULL AND xsch IS NOT NULL AND ysch IS NOT NULL"
+
+# Geometrie aus WKT als Werte-Fragment fuer INSERT/UPDATE
+nz_geom_aus_wkt: "ST_GeomFromText(%s, 25832)"
+
+# Sperrpruefung: in PostgreSQL nicht erforderlich
+nz_sperre_wartezeit_aus: ~
+nz_sperre_beginn: ~
+nz_sperre_ende: ~
+nz_sperre_wartezeit_an: ~
+
+# ======================================================================
+# Sonderbauwerke bearbeiten
+# Datensatz ueber die ID-Spalte der Tabelle ({id_spalte}, z.B. "pw_id")
+# ======================================================================
+
+nz_sbw_loeschen: "
+DELETE FROM {tabelle} WHERE name = %s"
+
+nz_sbw_id: "
+SELECT {id_spalte} FROM {tabelle} WHERE name = %s LIMIT 1"
+
+nz_sbw_datensatz: "
+SELECT * FROM {tabelle} WHERE {id_spalte} = %s"
+
+nz_sbw_update: "
+UPDATE {tabelle} SET {zuweisungen} WHERE {id_spalte} = %s"
+
+# Geometrie des zuletzt angelegten Sonderbauwerks setzen (Parameter: WKT)
+nz_sbw_geometrie_setzen: "
+UPDATE {tabelle} SET {geomspalte} = ST_GeomFromText(%s, 25832)
+WHERE {id_spalte} = (SELECT MAX({id_spalte}) FROM {tabelle})"
+
+# ======================================================================
+# Export Untersuchungsdaten
+# {tabelle}: untersuchdat_*   {spalte}: Objektspalte   {platzhalter}: IN-Liste
+# ======================================================================
+
+nz_export_historie: "
+SELECT * FROM {tabelle} WHERE {spalte} IN ({platzhalter})"
+
+nz_export_aktuell: "
+SELECT t1.*
+FROM {tabelle} t1
+JOIN (
+    SELECT {spalte}, MAX(untersuchtag) AS maxtag
+    FROM {tabelle}
+    WHERE {spalte} IN ({platzhalter})
+    GROUP BY {spalte}
+) t2 ON t1.{spalte} = t2.{spalte} AND t1.untersuchtag = t2.maxtag"
+
+nz_export_einzeln: "
+SELECT * FROM (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY {spalte} ORDER BY untersuchtag DESC) AS rn
+    FROM {tabelle}
+    WHERE {spalte} IN ({platzhalter})
+) t WHERE rn = 1"
+
+# Rueckfall nur fuer alte SQLite-Versionen
+nz_export_einzeln_alt: ~
+
+nz_export_objektdaten: "
+SELECT {schluessel}, {spalten} FROM {tabelle} WHERE {schluessel} IN ({platzhalter})"
+
+# ======================================================================
+# Excel-Import Sinkkaesten
+# ======================================================================
+
+nz_sk_existiert: "
+SELECT 1 FROM {tabelle} WHERE {schluessel} = %s"
+
+nz_sk_wert_lesen: "
+SELECT {spalte} FROM {tabelle} WHERE {schluessel} = %s"
+
+nz_sk_reinigung_verschieben: "
+UPDATE {tabelle} SET {spalte_vor} = %s, {spalte_akt} = %s WHERE {schluessel} = %s"

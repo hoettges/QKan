@@ -1,0 +1,215 @@
+# SQL-Statements der Netzuebersicht fuer SpatiaLite/SQLite
+# Pendant: postgres.yml (gleiche Schluessel, PostgreSQL-Syntax)
+# Hinweise:
+#   - Parameter '?', variable Teile als {name} (Ersetzung per str.format)
+#   - Tabellen-/Spaltennamen werden vom Code bereits in "..." gesetzt
+#   - null (~) = fuer diesen Datenbanktyp nicht benoetigt, wird uebersprungen
+#   - Kommentare im SQL nur als /* ... */
+
+# ======================================================================
+# Verbindung / Metadaten
+# ======================================================================
+
+nz_verbindungstest: "
+SELECT GeomFromText('POINT(0 0)', 25832)"
+
+# Nur PostgreSQL: Suchpfad setzen
+nz_suchpfad: ~
+
+# Tabelle oder View vorhanden? (Parameter: Name)
+nz_objekt_existiert: "
+SELECT name FROM sqlite_master
+WHERE type IN ('table', 'view') AND name = ?"
+
+# Spalten einer Tabelle (Parameter: Name) -> (position, name, datentyp)
+nz_spalten: "
+SELECT cid, name, type FROM pragma_table_info(?)"
+
+nz_anzahl: "
+SELECT COUNT(*) FROM {tabelle}"
+
+# ======================================================================
+# Schema der Netzuebersicht (wird beim Start sichergestellt)
+# ======================================================================
+
+nz_postgis_extension: ~
+
+nz_sinkkaesten_create: "
+CREATE TABLE \"Sinkkästen\" (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT,
+    Strasse TEXT,
+    Bemerkung TEXT,
+    geop TEXT)"
+
+# Nur PostgreSQL: Uebernahme aus der Tabelle symbole
+nz_sinkkaesten_import_symbole: ~
+
+nz_rinnen_create: "
+CREATE TABLE entwaesserungsrinnen (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT,
+    geom_point TEXT,
+    geom_line TEXT)"
+
+nz_rinnen_import_symbole: ~
+
+# Sonderbauwerke: je Tabelle ein Eintrag ({tabelle} = Tabellenname in "...")
+nz_sbw_create_bauwerke_pw: &sbw_create "
+CREATE TABLE {tabelle} (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    system TEXT,
+    strasse TEXT)"
+nz_sbw_create_bauwerke_rbf: *sbw_create
+nz_sbw_create_bauwerke_rkb: *sbw_create
+nz_sbw_create_bauwerke_rrb: *sbw_create
+nz_sbw_create_bauwerke_rue: *sbw_create
+nz_sbw_create_bauwerke_rueb: *sbw_create
+nz_sbw_create_bauwerke_vs: *sbw_create
+nz_sbw_create_bauwerke_rv: *sbw_create
+
+# View sonderbauwerke_view (wird in SQLite bei jedem Start neu erzeugt)
+nz_sbw_view_loeschen: "
+DROP VIEW IF EXISTS \"sonderbauwerke_view\""
+
+# Ein Teil der UNION je Tabelle; {tabelle_name} = Name ohne Anfuehrungszeichen
+nz_sbw_view_teil: "
+SELECT
+    '{tabelle_name}' AS source_table,
+    '{tabelle_name}' || '_' || rowid AS original_id,
+    name,
+    '{tabelle_name}' AS typ,
+    system,
+    strasse,
+    geop
+FROM {tabelle}"
+
+nz_sbw_view_erstellen: "
+CREATE VIEW \"sonderbauwerke_view\" AS {union}"
+
+# Registrierung als SpatiaLite-View (Parameter: view_name)
+nz_sbw_view_registrierung_loeschen: "
+DELETE FROM views_geometry_columns WHERE view_name = ?"
+
+nz_sbw_view_registrieren: "
+INSERT INTO views_geometry_columns
+    (view_name, view_geometry, view_rowid, f_table_name, f_geometry_column, read_only)
+VALUES (?, ?, ?, ?, ?, ?)"
+
+# ======================================================================
+# Tabellenanzeige Sonderbauwerke (QSqlQueryModel)
+# ======================================================================
+
+nz_sbw_union_teil: "
+SELECT name, '{tabelle_name}' AS typ, system, strasse, '{tabelle_name}' AS quelle
+FROM {tabelle}"
+
+nz_sbw_union_leer: "
+SELECT 'Keine Daten' AS name, 'N/A' AS typ, 'N/A' AS system, 'N/A' AS strasse, 'N/A' AS quelle"
+
+# ======================================================================
+# Allgemeine Schreibzugriffe
+# {zuweisungen}: "spalte" = ?, ...   {spalten}/{werte}: Spalten- bzw. Werteliste
+# ======================================================================
+
+nz_insert: "
+INSERT INTO {tabelle} ({spalten}) VALUES ({werte})"
+
+nz_update_objekt: "
+UPDATE {tabelle} SET {zuweisungen} WHERE {schluessel} = ?"
+
+# Geometrie aus WKB als Werte-Fragment fuer INSERT ({srid} = SRID der Zielspalte)
+nz_geom_aus_wkb: "GeomFromWKB(?, {srid})"
+
+# SRID einer Geometriespalte (Parameter: Tabelle, Spalte)
+nz_geometrie_srid: "
+SELECT srid FROM geometry_columns
+WHERE lower(f_table_name) = lower(?) AND lower(f_geometry_column) = lower(?)"
+
+# Schachtumriss (geom, Kreis aus xsch/ysch/durchm) wie im QKan-Import
+# Parameter: schnam
+nz_schacht_umriss: "
+UPDATE schaechte
+SET geom = CastToMultiLineString(MakeCircle(xsch, ysch, coalesce(durchm / 2, 0.5), {srid}))
+WHERE schnam = ? AND geom IS NULL AND xsch IS NOT NULL AND ysch IS NOT NULL"
+
+# Geometrie aus WKT als Werte-Fragment fuer INSERT/UPDATE
+nz_geom_aus_wkt: "GeomFromText(?, 25832)"
+
+# Sperrpruefung vor Schreibzugriffen (nur SQLite)
+nz_sperre_wartezeit_aus: "PRAGMA busy_timeout = 0"
+nz_sperre_beginn: "BEGIN IMMEDIATE"
+nz_sperre_ende: "ROLLBACK"
+nz_sperre_wartezeit_an: "PRAGMA busy_timeout = 5000"
+
+# ======================================================================
+# Sonderbauwerke bearbeiten
+# In SQLite wird der Datensatz ueber rowid angesprochen; {id_spalte} wird
+# hier nicht benoetigt (nur PostgreSQL).
+# ======================================================================
+
+nz_sbw_loeschen: "
+DELETE FROM {tabelle} WHERE name = ?"
+
+nz_sbw_id: "
+SELECT rowid FROM {tabelle} WHERE name = ? LIMIT 1"
+
+nz_sbw_datensatz: "
+SELECT * FROM {tabelle} WHERE rowid = ?"
+
+nz_sbw_update: "
+UPDATE {tabelle} SET {zuweisungen} WHERE rowid = ?"
+
+# Geometrie des zuletzt angelegten Sonderbauwerks setzen (Parameter: WKT)
+nz_sbw_geometrie_setzen: "
+UPDATE {tabelle} SET {geomspalte} = GeomFromText(?, 25832)
+WHERE rowid = (SELECT MAX(rowid) FROM {tabelle})"
+
+# ======================================================================
+# Export Untersuchungsdaten
+# {tabelle}: untersuchdat_*   {spalte}: Objektspalte   {platzhalter}: IN-Liste
+# ======================================================================
+
+nz_export_historie: "
+SELECT * FROM {tabelle} WHERE {spalte} IN ({platzhalter})"
+
+nz_export_aktuell: "
+SELECT t1.*
+FROM {tabelle} t1
+JOIN (
+    SELECT {spalte}, MAX(untersuchtag) AS maxtag
+    FROM {tabelle}
+    WHERE {spalte} IN ({platzhalter})
+    GROUP BY {spalte}
+) t2 ON t1.{spalte} = t2.{spalte} AND t1.untersuchtag = t2.maxtag"
+
+nz_export_einzeln: "
+SELECT * FROM (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY {spalte} ORDER BY untersuchtag DESC) AS rn
+    FROM {tabelle}
+    WHERE {spalte} IN ({platzhalter})
+) t WHERE rn = 1"
+
+# Rueckfall fuer sehr alte SQLite-Versionen ohne Window Functions
+nz_export_einzeln_alt: "
+SELECT * FROM {tabelle}
+WHERE {spalte} IN ({platzhalter})
+GROUP BY {spalte}
+HAVING untersuchtag = MAX(untersuchtag)"
+
+nz_export_objektdaten: "
+SELECT {schluessel}, {spalten} FROM {tabelle} WHERE {schluessel} IN ({platzhalter})"
+
+# ======================================================================
+# Excel-Import Sinkkaesten
+# ======================================================================
+
+nz_sk_existiert: "
+SELECT 1 FROM {tabelle} WHERE {schluessel} = ?"
+
+nz_sk_wert_lesen: "
+SELECT {spalte} FROM {tabelle} WHERE {schluessel} = ?"
+
+nz_sk_reinigung_verschieben: "
+UPDATE {tabelle} SET {spalte_vor} = ?, {spalte_akt} = ? WHERE {schluessel} = ?"

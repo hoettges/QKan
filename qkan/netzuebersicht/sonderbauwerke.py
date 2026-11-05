@@ -1,64 +1,43 @@
-# netzuebersicht/sonderbauwerke.py
+# qkan/netzuebersicht/sonderbauwerke.py
 from PyQt5.QtWidgets import (
     QDialog, QFormLayout, QLineEdit,
     QDialogButtonBox, QHBoxLayout, QWidget, QVBoxLayout, QInputDialog, QMessageBox
 )
-# db_postgres nur noch als Fallback importieren, falls nötig
-try:
-    from . import db_postgres
-except ImportError:
-    db_postgres = None
-
 from .table_models import (
     load_data_into_tables,
 )
 
-def _get_db_utils(conn):
-    """
-    Hilfsfunktion: Ermittelt Datenbank-Typ und Platzhalter.
-    Rückgabe: (is_sqlite, placeholder_string)
-    """
-    conn_type = str(type(conn)).lower()
-    is_sqlite = 'sqlite' in conn_type or 'spatialite' in conn_type
-    ph = "?" if is_sqlite else "%s"
-    return is_sqlite, ph
+# Spalten, die in den Eingabedialogen nicht angeboten werden
+SKIP_SPALTEN = {"geol", "geom", "geop", "ogc_fid", "fid", "pk_uid", "pk"}
 
-def _get_columns_for_table(conn, table_name):
+
+def _get_db(parent):
     """
-    Liefert (column_name, data_type) kompatibel für PG und SQLite.
+    Liefert (conn, backend) der Netzübersicht.
+    Die SQL-Statements kommen aus sqlite.yml / postgres.yml (über das Backend).
     """
-    is_sqlite, _ = _get_db_utils(conn)
+    conn = getattr(parent, "conn", None)
+    backend = getattr(parent, "backend", None)
+    if backend is None:
+        from .db_backend import get_backend
+        backend = get_backend(getattr(parent, "db_type", None))
+    return conn, backend
+
+
+def _get_columns_for_table(conn, backend, table_name):
+    """Liefert [(column_name, data_type), ...] – für SQLite und PostgreSQL."""
     cur = conn.cursor()
-    cols = []
+    try:
+        return backend.get_columns(cur, table_name)
+    finally:
+        cur.close()
 
-    if is_sqlite:
-        # SQLite / Spatialite Weg
-        try:
-            cur.execute(f"PRAGMA table_info({table_name})")
-            rows = cur.fetchall()
-            # PRAGMA liefert: (cid, name, type, notnull, dflt_value, pk)
-            # Wir brauchen nur (name, type)
-            cols = [(r[1], r[2].lower()) for r in rows]
-        except Exception as e:
-            print(f"Fehler beim Lesen der Spalten (SQLite): {e}")
-    else:
-        # PostgreSQL Weg
-        try:
-            # Schema 'public' ist Standard, aber wir filtern sicherheitshalber
-            query = """
-                SELECT column_name, data_type
-                FROM information_schema.columns
-                WHERE table_name = %s
-                AND table_schema = 'public'
-                ORDER BY ordinal_position;
-            """
-            cur.execute(query, (table_name,))
-            cols = cur.fetchall()
-        except Exception as e:
-            print(f"Fehler beim Lesen der Spalten (PG): {e}")
 
-    cur.close()
-    return cols
+def _eingabespalten(alle_spalten):
+    return [
+        (c, t) for c, t in alle_spalten
+        if c.lower() not in SKIP_SPALTEN and not c.lower().endswith("_id")
+    ]
 
 
 def _build_dynamic_dialog(parent, table_name, columns, max_columns=3):
@@ -133,26 +112,16 @@ def sonderbauwerk_anlegen(parent):
 
     table_name = typ_map[item]
 
-    # 1. Verbindung holen (flexibel)
-    conn = getattr(parent, 'conn', None)
-    if conn is None and db_postgres:
-        conn = db_postgres.load_postgres_connection(parent)
-    
+    # 1. Verbindung der Netzübersicht verwenden
+    conn, backend = _get_db(parent)
     if conn is None:
         QMessageBox.critical(parent, "Fehler", "Keine Datenbankverbindung gefunden.")
         return
 
-    is_sqlite, ph = _get_db_utils(conn)
-
     try:
         # 2. Spalten ermitteln
-        all_cols = _get_columns_for_table(conn, table_name)
-        
-        skip_cols = {"geol", "geom", "geop", "ogc_fid", "fid", "pk_uid"} # Erweitert für SQLite PKs
-        input_cols = [
-            (c, t) for c, t in all_cols
-            if c.lower() not in skip_cols and not c.lower().endswith("_id")
-        ]
+        all_cols = _get_columns_for_table(conn, backend, table_name)
+        input_cols = _eingabespalten(all_cols)
 
         if not input_cols:
             QMessageBox.warning(parent, "Fehler", f"Keine editierbaren Spalten in {table_name}.")
@@ -183,14 +152,9 @@ def sonderbauwerk_anlegen(parent):
                      QMessageBox.warning(parent, "Fehler", f"Ungültiger Wert für {col_name}")
                      return
 
-        # 5. INSERT
+        # 5. INSERT (nz_insert)
         cur = conn.cursor()
-        spalten = ", ".join(daten.keys())
-        platzhalter = ", ".join([ph] * len(daten)) # Dynamischer Platzhalter (? oder %s)
-        
-        sql = f"INSERT INTO {table_name} ({spalten}) VALUES ({platzhalter})"
-        
-        cur.execute(sql, list(daten.values()))
+        backend.insert_row(cur, table_name, daten)
         conn.commit()
 
         # Refresh
@@ -232,17 +196,13 @@ def sonderbauwerk_loeschen(self):
     reply = QMessageBox.question(self, "Löschen", f"'{name}' aus '{quelle}' löschen?", QMessageBox.Yes | QMessageBox.No)
     if reply != QMessageBox.Yes: return
 
-    conn = getattr(self, 'conn', None)
-    if conn is None and db_postgres: conn = db_postgres.load_postgres_connection(self)
+    conn, backend = _get_db(self)
     if not conn: return
-
-    is_sqlite, ph = _get_db_utils(conn)
 
     try:
         cur = conn.cursor()
-        # Bei SQL DELETE ist Name oft unique genug für Sonderbauwerke
-        sql = f"DELETE FROM {quelle} WHERE name = {ph}"
-        cur.execute(sql, (name,))
+        # Bei SQL DELETE ist Name oft unique genug für Sonderbauwerke (nz_sbw_loeschen)
+        backend.execute(cur, "nz_sbw_loeschen", (name,), tabelle=backend.ident(quelle))
         
         if cur.rowcount > 0:
             conn.commit()
@@ -273,29 +233,21 @@ def sonderbauwerk_bearbeiten(self):
     name = self.model_sonderbauwerke.data(source_index.sibling(source_index.row(), 0))
     quelle = self.model_sonderbauwerke.data(source_index.sibling(source_index.row(), 4))
     
-    conn = getattr(self, 'conn', None)
-    if conn is None and db_postgres: conn = db_postgres.load_postgres_connection(self)
+    conn, backend = _get_db(self)
     if not conn: return
 
-    is_sqlite, ph = _get_db_utils(conn)
+    if quelle not in backend.SONDERBAUWERKE_TABELLEN:
+        QMessageBox.warning(self, "Fehler", f"Unbekannte Sonderbauwerkstabelle: {quelle}")
+        return
+
+    # Tabellen-/ID-Angaben für die yml-Statements (SQLite: rowid, PostgreSQL: z.B. pw_id)
+    sql_args = dict(tabelle=backend.ident(quelle), id_spalte=backend.sbw_id_spalte(quelle))
 
     try:
         cur = conn.cursor()
-        
-        # ID Spalte identifizieren
-        id_map = {
-            'bauwerke_pw': 'pw_id', 'bauwerke_rbf': 'rbf_id', 'bauwerke_rkb': 'rkb_id',
-            'bauwerke_rrb': 'rrb_id', 'bauwerke_rue': 'rue_id', 'bauwerke_rueb': 'rueb_id',
-            'bauwerke_vs': 'vs_id', 'bauwerke_rv': 'rv_id'
-        }
-        id_col = id_map.get(quelle)
-        
-        if not id_col:
-            QMessageBox.warning(self, "Fehler", f"Keine ID-Spalte für {quelle} definiert.")
-            return
 
-        # ID holen
-        cur.execute(f"SELECT {id_col} FROM {quelle} WHERE name = {ph} LIMIT 1", (name,))
+        # ID holen (nz_sbw_id)
+        backend.execute(cur, "nz_sbw_id", (name,), **sql_args)
         res = cur.fetchone()
         if not res:
             QMessageBox.warning(self, "Fehler", "Objekt in DB nicht gefunden.")
@@ -303,12 +255,11 @@ def sonderbauwerk_bearbeiten(self):
         obj_id = res[0]
 
         # Spalten laden
-        all_cols = _get_columns_for_table(conn, quelle)
-        skip = {"geol", "geom", "geop", "ogc_fid", "fid", "pk_uid"}
-        input_cols = [(c, t) for c, t in all_cols if c.lower() not in skip and not c.lower().endswith("_id")]
+        all_cols = _get_columns_for_table(conn, backend, quelle)
+        input_cols = _eingabespalten(all_cols)
 
-        # Daten laden
-        cur.execute(f"SELECT * FROM {quelle} WHERE {id_col} = {ph}", (obj_id,))
+        # Daten laden (nz_sbw_datensatz)
+        backend.execute(cur, "nz_sbw_datensatz", (obj_id,), **sql_args)
         row = cur.fetchone()
         # Beschreibung der Spalten holen (bei SQLite anders als bei PG)
         if cur.description:
@@ -350,11 +301,12 @@ def sonderbauwerk_bearbeiten(self):
                     return
 
         if updated:
-            set_clauses = ", ".join([f"{k} = {ph}" for k in updated.keys()])
             values = list(updated.values()) + [obj_id]
-            sql = f"UPDATE {quelle} SET {set_clauses} WHERE {id_col} = {ph}"
-            
-            cur.execute(sql, values)
+            # nz_sbw_update
+            backend.execute(
+                cur, "nz_sbw_update", values,
+                zuweisungen=backend.zuweisungen(updated.keys()), **sql_args
+            )
             conn.commit()
             load_data_into_tables(self)
             QMessageBox.information(self, "OK", "Gespeichert.")

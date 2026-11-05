@@ -1,4 +1,4 @@
-# netzuebersicht/export_investigations.py
+# qkan/netzuebersicht/export_investigations.py
 import re
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QInputDialog
 from .datenbankExporter import (
@@ -15,10 +15,12 @@ def export_latest_investigations(self):
                 QMessageBox.critical(self, "Fehler", "Keine Datenbankverbindung gefunden.")
                 return
         
-        # --- FIX: Automatische Erkennung des Datenbank-Typs ---
-        conn_type_str = str(type(self.conn)).lower()
-        is_spatialite = 'sqlite' in conn_type_str or 'spatialite' in conn_type_str
-        # ------------------------------------------------------
+        # SQL kommt aus sqlite.yml / postgres.yml (über das Backend)
+        backend = getattr(self, "backend", None)
+        if backend is None:
+            from .db_backend import get_backend
+            from .db_sql import normalize_dbtype
+            backend = get_backend(normalize_dbtype(conn=self.conn))
 
         # 2. ABFRAGE: QUELLE DER AUSWAHL
         quellen = ["Selektierte Objekte im Layer (Karte)", "Markierte Zeilen in Tabelle (Liste)"]
@@ -58,9 +60,11 @@ def export_latest_investigations(self):
         
         raw_table, column, layer_attr, raw_obj_table, obj_key, table_widget = tabellen_mapping[selection]
         
-        # Tabellennamen vorbereiten
-        table = raw_table if is_spatialite else f'"{raw_table}"'
-        obj_table = raw_obj_table if is_spatialite else f'"{raw_obj_table}"'
+        # Tabellen-/Spaltennamen vorbereiten (in "..." für SQLite und PostgreSQL)
+        table = backend.ident(raw_table)
+        obj_table = backend.ident(raw_obj_table)
+        column_sql = backend.ident(column)
+        obj_key_sql = backend.ident(obj_key)
 
         # 4. NAMEN EINSAMMELN
         names_for_untersuchung = []
@@ -167,84 +171,30 @@ def export_latest_investigations(self):
         cursor = self.conn.cursor()
         records = []
         
-        # --- SQL Logik ---
-        
+        # --- SQL Logik (nz_export_* in sqlite.yml / postgres.yml) ---
+        sql_args = dict(
+            tabelle=table,
+            spalte=column_sql,
+            platzhalter=backend.platzhalter(len(names_for_untersuchung)),
+        )
+
         # 1. MODUS: Vollständige Historie
         if modus_text == modi[0]:
-            if is_spatialite:
-                    placeholders = ','.join(['?'] * len(names_for_untersuchung))
-                    sql = f"SELECT * FROM {table} WHERE {column} IN ({placeholders})"
-                    cursor.execute(sql, names_for_untersuchung)
-            else:
-                    sql = f"SELECT * FROM {table} WHERE {column} = ANY(%s)"
-                    cursor.execute(sql, (names_for_untersuchung,))
+            backend.execute(cursor, "nz_export_historie", names_for_untersuchung, **sql_args)
 
-        # 2. MODUS: Aktuellster Bericht (Alle Zeilen)
+        # 2. MODUS: Aktuellster Bericht (alle Zeilen des neuesten Datums)
         elif modus_text == modi[1]:
-            if is_spatialite:
-                placeholders = ','.join(['?'] * len(names_for_untersuchung))
-                sql = f"""
-                    SELECT t1.* 
-                    FROM {table} t1
-                    JOIN (
-                        SELECT {column}, MAX(untersuchtag) as maxtag
-                        FROM {table}
-                        WHERE {column} IN ({placeholders})
-                        GROUP BY {column}
-                    ) t2 ON t1.{column} = t2.{column} AND t1.untersuchtag = t2.maxtag
-                """
-                cursor.execute(sql, names_for_untersuchung * 2) # Parameter verdoppeln für Subquery und Join? Nein, hier nur für Subquery nötig, aber Join ist on values.
-                # KORREKTUR für SQLite Parameter:
-                # Im obigen SQL wird {placeholders} nur EINMAL verwendet (im Subquery).
-                # Also reicht `names_for_untersuchung` einmal.
-                cursor.execute(sql, names_for_untersuchung)
-            else:
-                # Postgres
-                sql = f"""
-                    SELECT t1.* 
-                    FROM {table} t1
-                    JOIN (
-                        SELECT {column}, MAX(untersuchtag) as maxtag
-                        FROM {table}
-                        WHERE {column} = ANY(%s)
-                        GROUP BY {column}
-                    ) t2 ON t1.{column} = t2.{column} AND t1.untersuchtag = t2.maxtag
-                """
-                cursor.execute(sql, (names_for_untersuchung,))
+            backend.execute(cursor, "nz_export_aktuell", names_for_untersuchung, **sql_args)
 
-        # 3. MODUS: Einzelner Eintrag (Nur 1 Zeile, Row Number = 1)
+        # 3. MODUS: Einzelner Eintrag (nur 1 Zeile, ROW_NUMBER = 1)
         else:
-            if is_spatialite:
-                placeholders = ','.join(['?'] * len(names_for_untersuchung))
-                try:
-                    sql = f"""
-                        SELECT * FROM (
-                            SELECT *, ROW_NUMBER() OVER (PARTITION BY {column} ORDER BY untersuchtag DESC) AS rn
-                            FROM {table}
-                            WHERE {column} IN ({placeholders})
-                        ) t WHERE rn = 1
-                    """
-                    cursor.execute(sql, names_for_untersuchung)
-                except:
-                        # Fallback für sehr alte SQLite ohne Window Functions
-                        # Trick: Group By wählt in SQLite einen beliebigen (oft den ersten) Datensatz
-                        sql = f"""
-                        SELECT * FROM {table}
-                        WHERE {column} IN ({placeholders})
-                        GROUP BY {column}
-                        HAVING untersuchtag = MAX(untersuchtag)
-                        """
-                        cursor.execute(sql, names_for_untersuchung)
-            else:
-                # Postgres
-                sql = f"""
-                    SELECT * FROM (
-                        SELECT *, ROW_NUMBER() OVER (PARTITION BY {column} ORDER BY untersuchtag DESC) AS rn
-                        FROM {table}
-                        WHERE {column} = ANY(%s)
-                    ) t WHERE rn = 1
-                """
-                cursor.execute(sql, (names_for_untersuchung,))
+            try:
+                backend.execute(cursor, "nz_export_einzeln", names_for_untersuchung, **sql_args)
+            except Exception:
+                # Rückfall für sehr alte SQLite-Versionen ohne Window Functions
+                if not backend.hat_sql("nz_export_einzeln_alt"):
+                    raise
+                backend.execute(cursor, "nz_export_einzeln_alt", names_for_untersuchung, **sql_args)
 
         # --- Fetching ---
         rows = cursor.fetchall()
@@ -262,29 +212,24 @@ def export_latest_investigations(self):
         zusatz_spalten = ["eigentum", "strasse", "material"]
 
         if names_for_untersuchung:
-            # Spaltenprüfung
-            if is_spatialite:
-                    cursor.execute(f"PRAGMA table_info({raw_obj_table})")
-                    cols_info = cursor.fetchall()
-                    vorhandene_spalten = [c[1].lower() for c in cols_info]
-            else:
-                    cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s", (raw_obj_table,))
-                    vorhandene_spalten = [row[0].lower() for row in cursor.fetchall()]
+            # Spaltenprüfung (nz_spalten)
+            vorhandene_spalten = [c.lower() for c in backend.get_column_names(cursor, raw_obj_table)]
 
             spalten_abruf = [sp for sp in zusatz_spalten if sp in vorhandene_spalten]
 
             if spalten_abruf:
-                spalten_str = ", ".join(spalten_abruf)
-                if is_spatialite:
-                        placeholders = ','.join(['?'] * len(names_for_untersuchung))
-                        sql_obj = f"SELECT {obj_key}, {spalten_str} FROM {obj_table} WHERE {obj_key} IN ({placeholders})"
-                        params_obj = names_for_untersuchung
-                else:
-                        sql_obj = f"SELECT {obj_key}, {spalten_str} FROM {obj_table} WHERE {obj_key} = ANY(%s)"
-                        params_obj = (names_for_untersuchung,)
+                spalten_str = ", ".join(backend.ident(sp) for sp in spalten_abruf)
 
-                cursor.execute(sql_obj, params_obj)
-                obj_daten = cursor.fetchall()
+                def objektdaten(schluesselwerte):
+                    """Zusatzdaten der Objekte (nz_export_objektdaten)."""
+                    backend.execute(
+                        cursor, "nz_export_objektdaten", schluesselwerte,
+                        tabelle=obj_table, schluessel=obj_key_sql, spalten=spalten_str,
+                        platzhalter=backend.platzhalter(len(schluesselwerte)),
+                    )
+                    return cursor.fetchall()
+
+                obj_daten = objektdaten(names_for_untersuchung)
                 col_names = [obj_key] + spalten_abruf
                 obj_map = {row[0]: dict(zip(col_names[1:], row[1:])) for row in obj_daten}
 
@@ -296,16 +241,7 @@ def export_latest_investigations(self):
 
                 # Fehlende Keys auffüllen
                 if fehlende_keys:
-                    if is_spatialite:
-                            ph_fehl = ','.join(['?'] * len(fehlende_keys))
-                            sql_fehl = f"SELECT {obj_key}, {spalten_str} FROM {obj_table} WHERE {obj_key} IN ({ph_fehl})"
-                            params_fehl = fehlende_keys
-                    else:
-                            sql_fehl = f"SELECT {obj_key}, {spalten_str} FROM {obj_table} WHERE {obj_key} = ANY(%s)"
-                            params_fehl = (fehlende_keys,)
-                    
-                    cursor.execute(sql_fehl, params_fehl)
-                    fehl_obj_daten = cursor.fetchall()
+                    fehl_obj_daten = objektdaten(fehlende_keys)
                     fehl_col_names = [obj_key] + spalten_abruf
                     fehl_obj_map = {row[0]: dict(zip(fehl_col_names[1:], row[1:])) for row in fehl_obj_daten}
                     
@@ -341,7 +277,5 @@ def export_latest_investigations(self):
         import traceback
         traceback.print_exc()
         QMessageBox.critical(self, "Fehler", str(e))
-
-
 
 

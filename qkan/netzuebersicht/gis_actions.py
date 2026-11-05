@@ -208,6 +208,62 @@ from qgis.PyQt.QtCore import NULL
 #             pass
 
 # Mapping-Helper (Zentral definiert für alle Methoden)
+# =============================================================================
+# SCHREIBZUGRIFFE OHNE SPERRKONFLIKT (SpatiaLite)
+# =============================================================================
+
+from .table_models import modell_vollstaendig_laden, lesezugriffe_beenden
+
+SPERR_HINWEIS = (
+    "Die SpatiaLite-Datenbank ist für Schreibzugriffe gesperrt.\n\n"
+    "Die Netzübersicht hat ihre eigenen Leseabfragen bereits beendet und den\n"
+    "Schreibvorgang wiederholt. Die Sperre hält ein anderes Programm/Werkzeug:\n"
+    "- ein Layer derselben Datenbank im Bearbeitungsmodus (Bearbeitung speichern/beenden)\n"
+    "- Datenbankviewer, Untersuchungsverwaltung oder ein anderes Fenster mit offener Verbindung\n"
+    "- externe Programme (DB Browser, Spatialite-GUI)\n\n"
+    "Bitte diese Zugriffe beenden und erneut versuchen."
+)
+
+
+def _ist_sperrfehler(err):
+    msg = str(err).lower()
+    return "database is locked" in msg or "database is busy" in msg
+
+
+def _schreiben_mit_wiederholung(parent, schreibfunktion, versuche=2):
+    """
+    Führt schreibfunktion() + COMMIT aus. Scheitert es an einer Sperre, werden
+    alle offenen Leseabfragen der Tabellenmodelle beendet und der Vorgang
+    einmal wiederholt.
+    """
+    for versuch in range(versuche):
+        try:
+            schreibfunktion()
+            parent.conn.commit()
+            return
+        except Exception as e:
+            try:
+                parent.conn.rollback()
+            except Exception:
+                pass
+            if not _ist_sperrfehler(e) or versuch == versuche - 1:
+                raise
+            print(f"[gis_actions] Sperre beim Schreiben ({e}) -> Lesezugriffe beenden, neuer Versuch")
+            lesezugriffe_beenden(parent)
+
+
+def _schacht_einfuegen(backend, cursor, daten, geom):
+    """
+    Schacht einfügen: Punkt in 'geop' und – wie beim QKan-Import – den
+    Schachtumriss (Kreis) in 'geom'.
+    """
+    backend.insert_row(cursor, "schaechte", daten, geometrie=("geop", geom))
+    schnam = daten.get("schnam")
+    if schnam and backend.hat_sql("nz_schacht_umriss"):
+        srid = backend.geometrie_srid(cursor, "schaechte", "geom") or backend.QUELL_EPSG
+        backend.execute(cursor, "nz_schacht_umriss", (schnam,), srid=int(srid))
+
+
 def get_layer_mapping(tab_index):
     mapping = {
         0: {
@@ -262,22 +318,20 @@ def get_layer_mapping(tab_index):
     return mapping.get(tab_index)
 
 def get_layer_source(self, table, geomcol, pkcol="pk"):
-    from qgis.core import QgsDataSourceUri
-    uri = QgsDataSourceUri()
-
-    # DB-Pfad direkt aus bestehender Verbindung holen
-    db_path = None
-    if hasattr(self, "backend") and hasattr(self.backend, "config"):
-        db_path = self.backend.config.get("path")
-    if not db_path and hasattr(self, "db"):
-        db_path = self.db.databaseName()
-    if not db_path:
+    """
+    Datenquelle (uri, provider) für einen QGIS-Layer aus der Verbindung der
+    Netzübersicht – SpatiaLite oder PostgreSQL je nach Backend.
+    """
+    backend = getattr(self, "backend", None)
+    if backend is None:
         return None
-
-    uri.setDatabase(db_path)
-    # kein Schema, kein SQL-Filter
-    uri.setDataSource("", table, geomcol, "", pkcol)
-    return uri.uri(False), "spatialite"
+    fallback_path = None
+    if hasattr(self, "db") and self.db is not None:
+        fallback_path = self.db.databaseName()
+    return backend.layer_source(
+        getattr(self, "config", None) or getattr(backend, "config", None),
+        table, geomcol, pkcol, fallback_path=fallback_path,
+    )
 
 # =============================================================================
 # NAVIGATION FUNCTIONS (Zoom, Select, Import)
@@ -735,12 +789,12 @@ class SchachtDialog(QDialog):
 
 def erzeuge_schacht(parent, on_success_callback=None):
     """
-    Schacht erstellen - Hybrid-Lösung.
-    - PostgreSQL: Nutzt den bewährten QSqlTableModel Ansatz.
+    Schacht erstellen.
     - SpatiaLite: Prüft vor dem INSERT aktiv, ob ein Schreiblock erreichbar ist
       (BEGIN IMMEDIATE mit busy_timeout=0). Wenn die DB bereits gelockt ist,
-      wird mit klarer Meldung abgebrochen. Nur bei freier DB wird der INSERT
-      ausgeführt (Geometrie nur in 'geop').
+      wird mit klarer Meldung abgebrochen.
+    - PostgreSQL: keine Sperrprüfung nötig.
+    Der INSERT (Geometrie nur in 'geop') kommt aus sqlite.yml / postgres.yml.
     """
     from qgis.core import QgsProject, QgsGeometry, Qgis
     from PyQt5.QtWidgets import QMessageBox
@@ -829,216 +883,108 @@ def erzeuge_schacht(parent, on_success_callback=None):
         xsch_value = f"{point.x():.3f}"
         ysch_value = f"{point.y():.3f}"
 
-        # Prüfen, welche Datenbank läuft
-        is_spatialite = getattr(parent, "db_type", "") == "spatialite"
+        if not (getattr(parent, "conn", None) and getattr(parent, "cursor", None)):
+            QMessageBox.critical(
+                parent,
+                "Fehler",
+                "Keine Datenbankverbindung (conn/cursor) vorhanden.",
+            )
+            return
 
-        # ============================================================
-        # PFAD A: POSTGRESQL (QSqlTableModel)
-        # ============================================================
-        if not is_spatialite:
-            row = model.rowCount()
-            if not model.insertRow(row):
-                iface.messageBar().pushMessage("Fehler", "insertRow fehlgeschlagen!", Qgis.Critical)
-                return
+        backend = parent.backend
 
-            record = model.record()
+        # 0) Offene Leseabfragen der Tabellenmodelle beenden (sonst SHARED-Lock)
+        lesezugriffe_beenden(parent)
 
+        # 1) Sperrprüfung (nur SQLite: busy_timeout = 0 + BEGIN IMMEDIATE)
+        try:
+            locked = backend.ist_schreibgesperrt(parent.cursor)
+        except Exception as e:
+            QMessageBox.critical(parent, "Fehler", f"Lock-Probe fehlgeschlagen:\n{e}")
+            return
+
+        if locked:
+            QMessageBox.warning(
+                parent,
+                "Datenbank gesperrt",
+                "Die SpatiaLite-Datenbank ist momentan für Schreibzugriffe gesperrt.\n\n"
+                "Mögliche Ursachen:\n"
+                "- andere QGIS-Layer oder Werkzeuge greifen gerade auf die DB zu\n"
+                "- ein paralleles Tool (DB-Viewer, externes Skript) hält einen Lock\n\n"
+                "Bitte schließen Sie andere Zugriffe oder versuchen Sie es später erneut.",
+            )
+            return
+
+        # 2) INSERT in 'schaechte' (nz_insert, Geometrie über nz_geom_aus_wkt in 'geop')
+        try:
+            backend.schreib_wartezeit_setzen(parent.cursor)
+
+            daten = {}
             for name, edit in dlg.edits.items():
-                idx = record.indexOf(name)
-                value = edit.text().strip()
-                if "," in value and "." not in value:
-                    value = value.replace(",", ".")
-                model.setData(model.index(row, idx), None if value == "" else value)
+                if name.lower() in ["pk", "geom", "ogc_fid", "rowid", "geop"]:
+                    continue
+                val = edit.text().strip().replace(",", ".")
+                daten[name] = val if val != "" else None
 
-            idx_xsch = record.indexOf("xsch")
-            idx_ysch = record.indexOf("ysch")
-            if idx_xsch >= 0:
-                model.setData(model.index(row, idx_xsch), xsch_value)
-            if idx_ysch >= 0:
-                model.setData(model.index(row, idx_ysch), ysch_value)
+            # Koordinaten aus der Geometrie, wenn im Dialog nichts eingetragen ist
+            if not daten.get("xsch"):
+                daten["xsch"] = xsch_value
+            if not daten.get("ysch"):
+                daten["ysch"] = ysch_value
 
-            idx_geom = record.indexOf("geop")
             geom = QgsGeometry.fromPointXY(point)
-            wkt = geom.asWkt()
-            if idx_geom >= 0:
-                model.setData(model.index(row, idx_geom), wkt)
 
-            if model.submitAll():
-                try:
-                    schaechte_layer = QgsProject.instance().mapLayersByName("Schächte")[0]
-                    schaechte_layer.dataProvider().reloadData()
-                    schaechte_layer.triggerRepaint()
-                except Exception:
-                    pass
-
-                model.select()
-                iface.messageBar().pushMessage("✅ Erfolg", "Schacht gespeichert!", Qgis.Success)
-
-                if on_success_callback:
-                    schacht_attrs = {
-                        "schnam": dlg.edits.get("schnam", None).text().strip()
-                        if "schnam" in dlg.edits
-                        else "",
-                        "sohlhoehe": dlg.edits.get("sohlhoehe", None).text().strip()
-                        if "sohlhoehe" in dlg.edits
-                        else None,
-                        "xsch": xsch_value,
-                        "ysch": ysch_value,
-                    }
-                    on_success_callback(schacht_attrs, point)
-
-                break  # Erfolgreich gespeichert
-
-            else:
-                err = model.lastError().text()
-                iface.messageBar().pushMessage("❌ Fehler", err, Qgis.Critical)
-                model.revertAll()
-                return
-
-        # ============================================================
-        # PFAD B: SPATIALITE – Lock-Probe + SQL-INSERT in 'schaechte'
-        # ============================================================
-        else:
-            import sqlite3
-
-            if not (hasattr(parent, "conn") and hasattr(parent, "cursor")):
-                QMessageBox.critical(
-                    parent,
-                    "Fehler (SpatiaLite)",
-                    "Keine native SpatiaLite-Verbindung (conn/cursor) vorhanden.",
-                )
-                return
-
-            # 1) Lock-Probe: busy_timeout = 0 + BEGIN IMMEDIATE
-            locked = False
             try:
-                parent.cursor.execute("PRAGMA busy_timeout = 0")
-                try:
-                    parent.cursor.execute("BEGIN IMMEDIATE")
-                    parent.cursor.execute("ROLLBACK")
-                except sqlite3.OperationalError as e:
-                    msg = str(e).lower()
-                    if "database is locked" in msg or "database is busy" in msg:
-                        locked = True
-                        try:
-                            parent.cursor.execute("ROLLBACK")
-                        except Exception:
-                            pass
-                    else:
-                        # anderer Fehler in der Probe
-                        raise
-            except Exception as e:
-                # Unerwarteter Fehler in der Probe → lieber melden und abbrechen
-                QMessageBox.critical(
+                _schreiben_mit_wiederholung(
                     parent,
-                    "Fehler (SpatiaLite)",
-                    f"Lock-Probe fehlgeschlagen:\n{e}",
+                    lambda: _schacht_einfuegen(backend, parent.cursor, daten, geom),
                 )
-                return
+            except sqlite3.OperationalError as e:
+                msg = str(e).lower()
+                if "database is locked" in msg or "database is busy" in msg:
+                    QMessageBox.warning(
+                        parent,
+                        "Datenbank gesperrt (INSERT)",
+                        SPERR_HINWEIS,
+                    )
+                    try:
+                        parent.conn.rollback()
+                    except Exception:
+                        pass
+                    return
+                raise
 
-            if locked:
-                QMessageBox.warning(
-                    parent,
-                    "Datenbank gesperrt",
-                    "Die SpatiaLite-Datenbank ist momentan für Schreibzugriffe gesperrt.\n\n"
-                    "Mögliche Ursachen:\n"
-                    "- andere QGIS-Layer oder Werkzeuge greifen gerade auf die DB zu\n"
-                    "- ein paralleles Tool (DB-Viewer, externes Skript) hält einen Lock\n\n"
-                    "Bitte schließen Sie andere Zugriffe oder versuchen Sie es später erneut.",
-                )
-                return
+            # Refresh Model + Layer (alle Zeilen holen -> keine offene Lesesperre)
+            modell_vollstaendig_laden(model)
+            layers = QgsProject.instance().mapLayersByName("Schächte")
+            if layers:
+                l = layers[0]
+                l.dataProvider().forceReload()
+                l.triggerRepaint()
+                l.updateExtents()
 
-            # 2) Eigentlichen INSERT ausführen, database-is-locked hier noch einmal abfangen
+            iface.messageBar().pushMessage("✅ Erfolg", "Schacht gespeichert!", Qgis.Success)
+
+            if on_success_callback:
+                schacht_attrs = {
+                    "schnam": schnam,
+                    "xsch": xsch_value,
+                    "ysch": ysch_value,
+                    "sohlhoehe": dlg.edits.get("sohlhoehe").text()
+                    if "sohlhoehe" in dlg.edits
+                    else None,
+                }
+                on_success_callback(schacht_attrs, point)
+
+            break  # Success
+
+        except Exception as e:
             try:
-                parent.cursor.execute("PRAGMA busy_timeout = 5000")
-
-                cols = []
-                vals = []
-                params = []
-
-                for name, edit in dlg.edits.items():
-                    val = edit.text().strip().replace(",", ".")
-                    if val == "":
-                        val = None
-                    if name.lower() in ["pk", "geom", "ogc_fid", "rowid", "geop"]:
-                        continue
-
-                    cols.append(name)
-                    vals.append("?")
-                    params.append(val)
-
-                if "xsch" not in cols:
-                    cols.append("xsch")
-                    vals.append("?")
-                    params.append(xsch_value)
-                if "ysch" not in cols:
-                    cols.append("ysch")
-                    vals.append("?")
-                    params.append(ysch_value)
-
-                geom = QgsGeometry.fromPointXY(point)
-                cols.append("geop")
-                vals.append("GeomFromText(?, 25832)")
-                params.append(geom.asWkt())
-
-                query = f"INSERT INTO schaechte ({', '.join(cols)}) VALUES ({', '.join(vals)})"
-
-                try:
-                    parent.cursor.execute(query, params)
-                    parent.conn.commit()
-                except sqlite3.OperationalError as e:
-                    msg = str(e).lower()
-                    if "database is locked" in msg or "database is busy" in msg:
-                        # Hier ganz gezielt Meldung für den Insert
-                        QMessageBox.warning(
-                            parent,
-                            "Datenbank gesperrt (INSERT)",
-                            "Beim Einfügen des Schachtes ist die SpatiaLite-Datenbank gesperrt.\n\n"
-                            "Typischerweise halten andere QGIS-Werkzeuge oder Layer noch einen Lock.\n"
-                            "Bitte schließen Sie andere Zugriffe (z.B. DB-Viewer, andere Dialoge) und\n"
-                            "versuchen Sie es erneut.",
-                        )
-                        try:
-                            parent.conn.rollback()
-                        except Exception:
-                            pass
-                        return
-                    else:
-                        raise
-
-                # Refresh Model + Layer
-                model.select()
-                layers = QgsProject.instance().mapLayersByName("Schächte")
-                if layers:
-                    l = layers[0]
-                    l.dataProvider().forceReload()
-                    l.triggerRepaint()
-                    l.updateExtents()
-
-                iface.messageBar().pushMessage(
-                    "✅ Erfolg", "Schacht gespeichert (SpatiaLite)!", Qgis.Success
-                )
-
-                if on_success_callback:
-                    schacht_attrs = {
-                        "schnam": schnam,
-                        "xsch": xsch_value,
-                        "ysch": ysch_value,
-                        "sohlhoehe": dlg.edits.get("sohlhoehe").text()
-                        if "sohlhoehe" in dlg.edits
-                        else None,
-                    }
-                    on_success_callback(schacht_attrs, point)
-
-                break  # Success
-
-            except Exception as e:
-                try:
-                    parent.conn.rollback()
-                except Exception:
-                    pass
-                QMessageBox.critical(parent, "Fehler (SpatiaLite)", str(e))
-                return
+                parent.conn.rollback()
+            except Exception:
+                pass
+            QMessageBox.critical(parent, "Fehler", str(e))
+            return
 
 # --- Hilfsmethoden für Geometrie
 
@@ -1706,39 +1652,19 @@ def erzeuge_haltung(parent):
             if laenge_uebernehmen:
                 data_map["laenge"] = laenge_str
 
-            # Speichern über Backend (INSERT statt QSqlTableModel)
+            # Speichern über Backend (nz_insert aus sqlite.yml / postgres.yml)
             try:
                 backend = parent.backend
-                is_spatialite = (parent.db_type == "spatialite")
-                
-                # SQL Query bauen
-                cols_sql = []
-                vals_sql = []
-                params = []
-                
-                for col, val in data_map.items():
-                    cols_sql.append(f'"{col}"' if not is_spatialite else col)
-                    vals_sql.append('%s' if not is_spatialite else '?')
-                    params.append(val)
-                
-                # Geometrie
-                geom_col = "geom"
-                cols_sql.append(f'"{geom_col}"' if not is_spatialite else geom_col)
-                wkt = geom.asWkt()
-                if is_spatialite:
-                    vals_sql.append("GeomFromText(?, 25832)")
-                else:
-                    vals_sql.append("ST_GeomFromText(%s, 25832)")
-                params.append(wkt)
-                
-                table_name = '"haltungen"' if not is_spatialite else 'haltungen'
-                query = f"INSERT INTO {table_name} ({', '.join(cols_sql)}) VALUES ({', '.join(vals_sql)})"
-                
-                parent.cursor.execute(query, params)
-                parent.conn.commit()
-                
-                # Refresh
-                model.select()
+                lesezugriffe_beenden(parent)
+                backend.schreib_wartezeit_setzen(parent.cursor)
+                _schreiben_mit_wiederholung(
+                    parent,
+                    lambda: backend.insert_row(parent.cursor, "haltungen", data_map,
+                                               geometrie=("geom", geom)),
+                )
+
+                # Refresh (alle Zeilen holen -> keine offene Lesesperre)
+                modell_vollstaendig_laden(model)
                 try:
                     l = QgsProject.instance().mapLayersByName("Haltungen")[0]
                     l.triggerRepaint()
@@ -1752,8 +1678,14 @@ def erzeuge_haltung(parent):
                 dlg.close()
 
             except Exception as e:
-                parent.conn.rollback()
-                iface.messageBar().pushMessage("❌ Fehler", str(e), Qgis.Critical)
+                try:
+                    parent.conn.rollback()
+                except Exception:
+                    pass
+                if _ist_sperrfehler(e):
+                    QMessageBox.warning(parent, "Datenbank gesperrt", SPERR_HINWEIS)
+                else:
+                    iface.messageBar().pushMessage("❌ Fehler", str(e), Qgis.Critical)
 
         def schliessen():
             QgsProject.instance().removeMapLayer(temp_layer)
@@ -1942,6 +1874,7 @@ def perform_haltung_split(parent, halt_layer, h_feature, geom, schacht_attrs, sc
         if not halt_layer.addFeature(f_CB): raise Exception("Fehler addFeature C-B")
 
         # Speichern
+        lesezugriffe_beenden(parent)  # offene Leseabfragen der Netzübersicht schließen
         if halt_layer.commitChanges():
             iface.messageBar().pushMessage("✅ Erfolg", f"Haltung an {c_name} geteilt!", Qgis.Success)
         else:
@@ -1949,7 +1882,8 @@ def perform_haltung_split(parent, halt_layer, h_feature, geom, schacht_attrs, sc
             halt_layer.rollBack()
             iface.messageBar().pushMessage("Fehler", f"Datenbank-Fehler: {err}", Qgis.Critical)
 
-        if hasattr(parent, "model_haltungen"): parent.model_haltungen.select()
+        if hasattr(parent, "model_haltungen"):
+            modell_vollstaendig_laden(parent.model_haltungen)
         halt_layer.triggerRepaint()
         
         # Tool aufräumen
@@ -2211,109 +2145,49 @@ def erzeuge_sinkkasten(parent):
     x_value = f"{point.x():.3f}"
     y_value = f"{point.y():.3f}"
 
-    is_spatialite = getattr(parent, 'db_type', '') == 'spatialite'
+    # =====================================
+    # INSERT per SQL (nz_insert aus sqlite.yml / postgres.yml)
+    # =====================================
+    backend = parent.backend
+    table_name = str(model.tableName() or backend.get_sinkkaesten_table_name()).replace('"', "")
+    try:
+        spalten = backend.get_column_names(parent.cursor, table_name)
+        geom_spalte = next((g for g in ("geop", "geom") if g in spalten), "geop")
 
-    if not is_spatialite:
-        # =====================================
-        # PostgreSQL über QSqlTableModel
-        # =====================================
-        row = model.rowCount()
-        if not model.insertRow(row):
-            iface.messageBar().pushMessage("Fehler", "insertRow fehlgeschlagen!", Qgis.Critical)
-            return
-
-        record = model.record()
-
-        # Attribute aus Dialog übernehmen
+        daten = {}
         for name, edit in dlg.edits.items():
-            idx = record.indexOf(name)
-            if idx < 0:
+            if name.lower() in ['pk', 'geom', 'geop', 'ogc_fid', 'rowid']:
                 continue
-            value = edit.text().strip()
-            if ',' in value and '.' not in value:
-                value = value.replace(',', '.')
-            model.setData(model.index(row, idx), None if value == "" else value)
+            val = edit.text().strip().replace(',', '.')
+            daten[name] = val if val != "" else None
 
-        # Koordinatenfelder (anpassen)
-        idx_x = record.indexOf("xsk")
-        idx_y = record.indexOf("ysk")
-        if idx_x >= 0:
-            model.setData(model.index(row, idx_x), x_value)
-        if idx_y >= 0:
-            model.setData(model.index(row, idx_y), y_value)
+        if ('xsk' in spalten or not spalten) and not daten.get('xsk'):
+            daten['xsk'] = x_value
+        if ('ysk' in spalten or not spalten) and not daten.get('ysk'):
+            daten['ysk'] = y_value
 
-        # Geometrie
-        idx_geom = record.indexOf("geom")
-        if idx_geom >= 0:
-            geom = QgsGeometry.fromPointXY(point)
-            model.setData(model.index(row, idx_geom), geom.asWkt())
+        lesezugriffe_beenden(parent)
+        backend.schreib_wartezeit_setzen(parent.cursor)
+        _schreiben_mit_wiederholung(
+            parent,
+            lambda: backend.insert_row(parent.cursor, table_name, daten,
+                                       geometrie=(geom_spalte, QgsGeometry.fromPointXY(point))),
+        )
 
-        if model.submitAll():
-            try:
-                layer = QgsProject.instance().mapLayersByName("Sinkkästen")[0]
-                layer.dataProvider().reloadData()
-                layer.triggerRepaint()
-            except Exception:
-                pass
+        modell_vollstaendig_laden(model)
+        layers = QgsProject.instance().mapLayersByName("Sinkkästen")
+        if layers:
+            l = layers[0]
+            l.dataProvider().forceReload()
+            l.triggerRepaint()
+            l.updateExtents()
+            iface.mapCanvas().refresh()
 
-            model.select()
-            iface.messageBar().pushMessage("✅ Erfolg", "Sinkkasten gespeichert!", Qgis.Success)
-        else:
-            err = model.lastError().text()
-            iface.messageBar().pushMessage("❌ Fehler", err, Qgis.Critical)
-            model.revertAll()
-            return
-
-    else:
-        # =====================================
-        # SpatiaLite per SQL INSERT
-        # =====================================
-        try:
-            cols = []
-            vals = []
-            params = []
-
-            for name, edit in dlg.edits.items():
-                val = edit.text().strip().replace(',', '.')
-                if val == "":
-                    val = None
-                if name.lower() in ['pk', 'geom', 'ogc_fid', 'rowid']:
-                    continue
-                cols.append(name)
-                vals.append('?')
-                params.append(val)
-
-            if 'xsk' not in cols:
-                cols.append('xsk')
-                vals.append('?')
-                params.append(x_value)
-            if 'ysk' not in cols:
-                cols.append('ysk')
-                vals.append('?')
-                params.append(y_value)
-
-            cols.append("geop")
-            vals.append("GeomFromText(?, 25832)")
-            params.append(QgsGeometry.fromPointXY(point).asWkt())
-
-            query = f"INSERT INTO sinkkaesten ({', '.join(cols)}) VALUES ({', '.join(vals)})"
-            parent.cursor.execute(query, params)
-            parent.conn.commit()
-
-            model.select()
-            layers = QgsProject.instance().mapLayersByName("Sinkkästen")
-            if layers:
-                l = layers[0]
-                l.dataProvider().forceReload()
-                l.triggerRepaint()
-                l.updateExtents()
-                iface.mapCanvas().refresh()
-
-            iface.messageBar().pushMessage("✅ Erfolg", "Sinkkasten gespeichert (SpatiaLite)!", Qgis.Success)
-        except Exception as e:
-            parent.conn.rollback()
-            QMessageBox.critical(parent, "Fehler (SpatiaLite)", str(e))
-            return
+        iface.messageBar().pushMessage("✅ Erfolg", "Sinkkasten gespeichert!", Qgis.Success)
+    except Exception as e:
+        parent.conn.rollback()
+        QMessageBox.critical(parent, "Fehler", str(e))
+        return
 
 class SchachtDialogDirect(QDialog):
     """

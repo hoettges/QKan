@@ -9,18 +9,101 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>585</height>
+    <width>881</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Netzübersicht</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_8">
+  <layout class="QVBoxLayout" name="verticalLayout_7">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_9">
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Suche:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="Search_LineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>Filtertext...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_Spalten">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>Spalte wählen</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="QTabWidget" name="tab_Overview">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -28,13 +111,137 @@
         <attribute name="title">
          <string>Haltungen</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
-          <widget class="QTableView" name="tableView_Haltungen">
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QTableView" name="tableView_Haltungen">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QPushButton" name="Show_Object_Untersuchung">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Untersuchungen anzeigen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="open_Kostenermittlung">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Kostenermittlung TV</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="PanoramoPruefer">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Kontrolle Panoramodaten</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Reinigungsliste_ausgeben">
+               <property name="text">
+                <string>Reinigungsliste ausgeben</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Haltung_erstellen">
+               <property name="text">
+                <string>Haltung erstellen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Haltung_loeschen">
+               <property name="text">
+                <string>Haltung löschen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Haltung_teilen">
+               <property name="text">
+                <string>Haltung teilen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -42,13 +249,73 @@
         <attribute name="title">
          <string>Schächte</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
-          <widget class="QTableView" name="tableView_Schaechte">
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QTableView" name="tableView_Schaechte">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QPushButton" name="Show_Object_Untersuchung_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Untersuchungen anzeigen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Schacht_erstellen">
+               <property name="text">
+                <string>Schacht erstellen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Schacht_loeschen">
+               <property name="text">
+                <string>Schacht löschen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -56,13 +323,59 @@
         <attribute name="title">
          <string>GAL</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
-          <widget class="QTableView" name="tableView_GAL">
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QTableView" name="tableView_GAL">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QPushButton" name="Show_Object_Untersuchung_3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Untersuchungen anzeigen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -70,13 +383,73 @@
         <attribute name="title">
          <string>Sinkkästen</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
          <item>
-          <widget class="QTableView" name="tableView_Sinkkaesten">
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QTableView" name="tableView_Sinkkaesten">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QPushButton" name="excel_import">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Excel-Import</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Sinkkasten_erstellen">
+               <property name="text">
+                <string>Sinkkasten erstellen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Sinkkasten_loeschen">
+               <property name="text">
+                <string>Sinkkasten löschen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -84,31 +457,157 @@
         <attribute name="title">
          <string>Rinnen</string>
         </attribute>
-        <widget class="QTableView" name="tableView_Sinkkaesten_2">
-         <property name="geometry">
-          <rect>
-           <x>9</x>
-           <y>9</y>
-           <width>633</width>
-           <height>521</height>
-          </rect>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QTableView" name="tableView_Rinnen">
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <widget class="QPushButton" name="excel_import_rinnen">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>150</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Excel-Import</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rinne_erstellen">
+             <property name="text">
+              <string>Rinne erstellen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rinne_loeschen">
+             <property name="text">
+              <string>Rinne löschen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="add_rinne_line_geometry">
+             <property name="text">
+              <string>Liniengeometrie hinzufügen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_Sonderbauwerke">
         <attribute name="title">
          <string>Sonderbauwerke</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
          <item>
-          <widget class="QTableView" name="tableView_Sonderbauwerke">
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QTableView" name="tableView_Sonderbauwerke">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QPushButton" name="Sonderbauwerke">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Sonderbauwerke</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="sonderbauwerk_anlegen_btn">
+               <property name="text">
+                <string>Sonderbauwerk anlegen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="sonderbauwerk_loeschen_btn">
+               <property name="text">
+                <string>Sonderbauwerk löschen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="sonderbauwerk_bearbeiten_btn">
+               <property name="text">
+                <string>Sonderbauwerk bearbeiten</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -143,40 +642,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLineEdit" name="Search_LineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBox_Spalten"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Search">
-         <property name="text">
-          <string>Suchen</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
        <item>
         <widget class="QPushButton" name="Object_Info">
          <property name="text">
@@ -188,60 +654,6 @@
         <widget class="QPushButton" name="Show_Object">
          <property name="text">
           <string>Objekt anzeigen</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>130</width>
-           <height>108</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Show_Object_Untersuchung">
-         <property name="text">
-          <string>Untersuchungen anzeigen</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="open_Kostenermittlung">
-         <property name="text">
-          <string>Kostenermittlung TV</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Sonderbauwerke">
-         <property name="text">
-          <string>Sonderbauwerke</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="PanoramoPruefer">
-         <property name="text">
-          <string>Kontrolle Panoramodaten</string>
          </property>
         </widget>
        </item>
@@ -267,11 +679,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="excel_import">
-         <property name="text">
-          <string>Excel-Import</string>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>

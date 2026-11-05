@@ -38,6 +38,8 @@ from .db_backend import get_db_type, get_backend
 from .table_models import (
     fill_column_combobox,
     update_filter_current_tab,
+    modell_vollstaendig_laden,
+    lesezugriffe_beenden,
 )
 from .gis_actions import (
     zoom_to_selected_features,
@@ -59,7 +61,7 @@ from .object_info_dialog import ObjectInfoDialog
 
 
 FORM_CLASS_netzuebersicht, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "res", "Netzübersicht - Kopie.ui")
+    os.path.join(os.path.dirname(__file__), "res", "Netzübersicht.ui")
 )
 
 
@@ -95,8 +97,9 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
                         print("[Netzuebersicht_DB]  -> übersprungen: kein Vektorlayer")
                         continue
 
-                    if layer.providerType() != "spatialite":
-                        print("[Netzuebersicht_DB]  -> übersprungen: provider != spatialite")
+                    provider = layer.providerType()
+                    if provider not in ("spatialite", "postgres"):
+                        print("[Netzuebersicht_DB]  -> übersprungen: provider nicht spatialite/postgres")
                         continue
 
                     uri = QgsDataSourceUri(layer.source())
@@ -124,6 +127,9 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
                         continue
 
                     QKan.dbsource = layer.source()
+                    if provider == "postgres":
+                        from qkan import enums
+                        QKan.dbtype = enums.QKanDBChoice.POSTGIS
                     print(
                         f"[Netzuebersicht_DB] Fallback erfolgreich -> "
                         f"QKan.dbsource aus Layer '{layer.name()}' übernommen"
@@ -166,8 +172,8 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
         self.filter_timer.timeout.connect(self.apply_filter_debounced)
 
 
-        # 0. DB-Typ und Backend
-        self.db_type = "spatialite"
+        # 0. DB-Typ und Backend (SQL aus sqlite.yml bzw. postgres.yml)
+        self.db_type = get_db_type()
         self.backend = get_backend(self.db_type)
 
         # 1. Native Verbindung bevorzugt aus QKan.dbsource
@@ -203,15 +209,14 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
 
 
         # Validierung (insbesondere für Postgres)
-        if self.db_type == "postgresql":
-            if not all([self.db_host, self.db_database, self.db_user, self.db_password]):
-                QMessageBox.critical(
-                    self,
-                    "Fehlerhafte Zugangsdaten",
-                    "PostgreSQL-Konfiguration unvollständig.\n"
-                    "Bitte prüfen Sie die settings/database.json bzw. die QKan-DB-Einstellungen.",
-                )
-                return
+        if self.db_type == "postgis" and not (self.db_database or self.config.get("service")):
+            QMessageBox.critical(
+                self,
+                "Fehlerhafte Zugangsdaten",
+                "PostgreSQL-Konfiguration unvollständig.\n"
+                "Bitte prüfen Sie die Datenquelle der QKan-Layer.",
+            )
+            return
 
 
         # 3. Schema/Tabellen über Backend sicherstellen
@@ -237,8 +242,7 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
 
         # 6. Spaltenfilter-Combo initialisieren
         fill_column_combobox(self)
-        from .PanoramoPruefer import PanoramoPruefer
-        self.panoramo_pruefer = PanoramoPruefer(parent=self)
+        self.panoramo_pruefer = PanoramoPruefer()
 
 
         # 7. Signal-Slot-Verbindungen (Filter/Tabs)
@@ -270,6 +274,13 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
 
 
         self.Object_Info.clicked.connect(self.show_object_info)
+
+
+        # Sinkkästen-Buttons (Methoden waren vorhanden, aber nicht verbunden)
+        if hasattr(self, "Sinkkasten_erstellen"):
+            self.Sinkkasten_erstellen.clicked.connect(self.on_sinkkasten_erstellen)
+        if hasattr(self, "Sinkkasten_loeschen"):
+            self.Sinkkasten_loeschen.clicked.connect(self.on_sinkkasten_loeschen)
 
 
         # Sonderbauwerke-Buttons
@@ -314,7 +325,6 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
     # ------------------------------------------------------------------
     def show_object_info(self):
         current_index = self.tab_Overview.currentIndex()
-        is_spatialite = getattr(self, "db_type", "") == "spatialite"
 
 
         # Sonderbauwerke-Tab
@@ -343,11 +353,8 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
         raw_table_name, proxy, model, table_view = table_map[current_index]
 
 
-        # Tabellenname formatieren
-        if is_spatialite:
-            table_name = raw_table_name
-        else:
-            table_name = f'"{raw_table_name}"' if not raw_table_name.startswith('"') else raw_table_name
+        # Tabellenname (Quoting übernimmt das Backend)
+        table_name = raw_table_name
 
 
         # Auswahl prüfen
@@ -481,24 +488,23 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
                     model=model,
                 )
                 QMessageBox.information(self.object_info_dlg, "✅ Erfolg", "Felder gespeichert!")
-                model.select()
+                modell_vollstaendig_laden(model)
 
 
-                # SpatiaLite-Layer refresh
-                if is_spatialite:
-                    try:
-                        l_map = {
-                            "haltungen": "Haltungen",
-                            "schaechte": "Schächte",
-                            "anschlussleitungen": "Anschlussleitungen",
-                            "entwaesserungsrinnen": "Rinnen",
-                        }
-                        real_name = l_map.get(raw_table_name, raw_table_name)
-                        ls = QgsProject.instance().mapLayersByName(real_name)
-                        if ls:
-                            ls[0].triggerRepaint()
-                    except Exception:
-                        pass
+                # Layer refresh
+                try:
+                    l_map = {
+                        "haltungen": "Haltungen",
+                        "schaechte": "Schächte",
+                        "anschlussleitungen": "Anschlussleitungen",
+                        "entwaesserungsrinnen": "Rinnen",
+                    }
+                    real_name = l_map.get(raw_table_name, raw_table_name)
+                    ls = QgsProject.instance().mapLayersByName(real_name)
+                    if ls:
+                        ls[0].triggerRepaint()
+                except Exception:
+                    pass
 
 
                 self.object_info_dlg.accept()
@@ -583,8 +589,9 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
 
 
         try:
+            lesezugriffe_beenden(self)
             self.backend.delete_rows(sql_model, source_rows)
-            sql_model.select()
+            modell_vollstaendig_laden(sql_model)
         except Exception as e:
             QMessageBox.critical(self, title, f"Löschen fehlgeschlagen: {e}")
 
@@ -650,22 +657,10 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
                 print(f"qt db debug error: {e}")
 
 
-        for tbl in ["haltungen", "schaechte", "anschlussleitungen", "entwaesserungsrinnen"]:
-            try:
-                self.cursor.execute(f"SELECT COUNT(*) FROM {tbl}")
-                count = self.cursor.fetchone()[0]
-                print(f"[native] {tbl}: {count} Zeilen")
-            except Exception as e:
-                print(f"[native] {tbl}: FEHLER -> {e}")
-
-
-        for tbl in ['"Sinkkästen"', 'Sinkkästen', 'Sinkkaesten', '"Sinkkaesten"']:
-            try:
-                self.cursor.execute(f"SELECT COUNT(*) FROM {tbl}")
-                count = self.cursor.fetchone()[0]
-                print(f"[native] {tbl}: {count} Zeilen")
-            except Exception as e:
-                print(f"[native] {tbl}: FEHLER -> {e}")
+        for tbl in ["haltungen", "schaechte", "anschlussleitungen", "entwaesserungsrinnen",
+                    "Sinkkästen", "Sinkkaesten"]:
+            count = self.backend.count_rows(self.cursor, tbl)
+            print(f"[native] {tbl}: {count} Zeilen")
 
 
         print("=============================================")

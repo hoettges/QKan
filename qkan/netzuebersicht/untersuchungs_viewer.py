@@ -1,161 +1,144 @@
-# netzuebersicht/untersuchungs_viewer.py
+"""Öffnet den QKan-Medieninspektor für ein Objekt aus der Netzübersicht."""
 
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QTimer
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import QgsProject
 from qgis.utils import iface
 
-from qkan.datenbankviewer import databaseviewer
+from qkan.inspektion.befahrungsmedien import BefahrungsmedienDialog
+from qkan.inspektion.datenquelle import datenquelle_waehlen, layerdaten
+from .gis_actions import layer_import_aktuell
+
+
+# Netzuebersicht-Tab -> Objektart des QKan-Medieninspektors, DB-Tabelle,
+# Schluesselspalte und moegliche Namen des zugehoerigen QGIS-Layers.
+OBJEKTARTEN = {
+    0: ("Haltung", "haltungen", "haltnam", ("Haltungen",)),
+    1: ("Schacht", "schaechte", "schnam", ("Schächte",)),
+    2: ("Anschlussleitung", "anschlussleitungen", "leitnam", (
+        "Anschlussleitungen", "HA-Leitungen", "GAL"
+    )),
+}
+NOTWENDIGE_TABELLEN = ("haltungen", "schaechte", "anschlussleitungen")
 
 
 def show_object_untersuchung(self):
-    """Öffnet den Datenbankviewer aus der Netzübersicht für die aktuelle Auswahl."""
+    """Übernimmt genau eine Tabellenzeile in die kompakte Inspektionsansicht.
 
-    current_index = self.tab_Overview.currentIndex()
-
-    if current_index == 0:
-        layer_name = "Haltungen"
-        column_name = "haltnam"
-        table_view = self.tableView_Haltungen
-        model = self.model_haltungen
-        proxy_model = self.proxy_model_haltungen
-    elif current_index == 1:
-        layer_name = "Schächte"
-        column_name = "schnam"
-        table_view = self.tableView_Schaechte
-        model = self.model_schaechte
-        proxy_model = self.proxy_model_schaechte
-    elif current_index == 2:
-        layer_name = "Anschlussleitungen"
-        column_name = "leitnam"
-        table_view = self.tableView_GAL
-        model = self.model_anschlussleitungen
-        proxy_model = self.proxy_model_anschlussleitungen
-    else:
-        QMessageBox.warning(self, "Ungültiger Tab", "Dieser Tab wird nicht unterstützt.")
+    Der Medieninspektor erhält eine QKan-Datenquelle und den Objektnamen.
+    Er liest Befahrungen, Schäden und Medien selbst; eine gemeinsame
+    native DB-Verbindung mit der Netzübersicht ist nicht erforderlich.
+    """
+    config = OBJEKTARTEN.get(self.tab_Overview.currentIndex())
+    if config is None:
+        QMessageBox.warning(self, "Netzübersicht", "Dieser Tab wird nicht unterstützt.")
         return
-
-    # 1) Auswahl im TableView prüfen
-    selection_model = table_view.selectionModel()
-    if not selection_model or not selection_model.hasSelection():
-        QMessageBox.warning(
-            self,
-            "Keine Auswahl",
-            "Bitte wählen Sie einen oder mehrere Einträge aus."
+    objektart, tabellenname, schluesselspalte, layernamen = config
+    tabellenmodell = (
+        self.model_haltungen if tabellenname == "haltungen" else
+        self.model_schaechte if tabellenname == "schaechte" else
+        self.model_anschlussleitungen
+    )
+    proxy = (
+        self.proxy_model_haltungen if tabellenname == "haltungen" else
+        self.proxy_model_schaechte if tabellenname == "schaechte" else
+        self.proxy_model_anschlussleitungen
+    )
+    tabelle = (
+        self.tableView_Haltungen if tabellenname == "haltungen" else
+        self.tableView_Schaechte if tabellenname == "schaechte" else
+        self.tableView_GAL
+    )
+    selection = tabelle.selectionModel()
+    rows = selection.selectedRows() if selection else []
+    if len(rows) != 1:
+        QMessageBox.information(
+            self, "Untersuchungen anzeigen",
+            "Bitte genau ein Objekt in der Tabelle auswählen.",
         )
         return
-
-    # 2) Spaltenindex bestimmen
-    column_index = model.record().indexOf(column_name)
+    column_index = tabellenmodell.record().indexOf(schluesselspalte)
     if column_index < 0:
         QMessageBox.warning(
-            self,
-            "Fehler",
-            f"Die Schlüsselspalte '{column_name}' wurde im Modell nicht gefunden."
+            self, "Untersuchungen anzeigen",
+            f"Schlüsselspalte '{schluesselspalte}' wurde nicht gefunden.",
         )
         return
-
-    # 3) Stammdaten aus erster Zeile holen
-    selected_rows = selection_model.selectedRows()
-    first_row_proxy = selected_rows[0]
-    first_row_source = proxy_model.mapToSource(first_row_proxy)
-    record = model.record(first_row_source.row())
-
-    stammdaten_dict = {}
-    for i in range(record.count()):
-        field_name = record.fieldName(i)
-        val = record.value(i)
-        stammdaten_dict[field_name] = str(val) if val is not None else ""
-
-    # 4) Key-Werte aus allen ausgewählten Zeilen
-    values = []
-    for row in selected_rows:
-        source_index = proxy_model.mapToSource(row)
-        value = model.data(
-            source_index.sibling(source_index.row(), column_index),
-            Qt.DisplayRole
-        )
-        if value not in (None, ""):
-            values.append(value)
-
-    values = list(dict.fromkeys(values))
-
-    if not values:
-        QMessageBox.warning(
-            self,
-            "Keine Werte",
-            "Keine Schlüsselwerte ermittelt."
-        )
+    source_index = proxy.mapToSource(rows[0])
+    object_name = tabellenmodell.data(
+        source_index.sibling(source_index.row(), column_index), Qt.DisplayRole
+    )
+    object_name = str(object_name).strip() if object_name is not None else ""
+    if not object_name:
+        QMessageBox.warning(self, "Untersuchungen anzeigen", "Der Objektname ist leer.")
         return
 
-    # 5) SICHERSTELLEN: passender Layer geladen + selektiert + aktiv
-
-    # Für Anschlussleitungen zusätzliche Layernamen zulassen
-    if layer_name == "Anschlussleitungen":
-        possible_layer_names = ["Anschlussleitungen", "HA-Leitungen", "GAL"]
-    else:
-        possible_layer_names = [layer_name]
-
-    # a) Layer suchen
+    # Den passenden Layer für die Kartenauswahl aktivieren; die Auswahl
+    # selbst wird bei einem Objekt bewusst nicht auf mehrere ausgedehnt.
+    projekt = QgsProject.instance()
     layers = []
-    for name in possible_layer_names:
-        found_layers = QgsProject.instance().mapLayersByName(name)
-        if found_layers:
-            layers = found_layers
+    for name in layernamen:
+        layers = projekt.mapLayersByName(name)
+        if layers:
             break
-
-    # b) Layer laden, falls noch nicht vorhanden
     if not layers:
-        self.layer_import_aktuell()
-
-        for name in possible_layer_names:
-            found_layers = QgsProject.instance().mapLayersByName(name)
-            if found_layers:
-                layers = found_layers
+        layer_import_aktuell(self)
+        for name in layernamen:
+            layers = projekt.mapLayersByName(name)
+            if layers:
                 break
-
     if not layers:
-        QMessageBox.critical(
-            self,
-            "Fehler",
-            f"Layer konnte nicht geladen werden.\nGesucht wurde nach: {', '.join(possible_layer_names)}"
+        QMessageBox.warning(
+            self, "Untersuchungen anzeigen",
+            f"Kein passender QKan-Layer gefunden ({', '.join(layernamen)}).",
         )
         return
-
     layer = layers[0]
     iface.setActiveLayer(layer)
+    escaped_name = object_name.replace("'", "''")
+    expression = '"' + schluesselspalte + '" = ' + chr(39) + escaped_name + chr(39)
+    layer.selectByExpression(expression)
 
-    # c) Auswahl im Layer setzen (ohne Zoom)
-    escaped_values = [str(v).replace("'", "''") for v in values]
-    expr_values = ["'{}'".format(v) for v in escaped_values]
-    expr = f'"{column_name}" IN ({",".join(expr_values)})'
-
-    layer.removeSelection()
-    layer.selectByExpression(expr)
-
-    # 6) Layername für Viewer anpassen
-    viewer_layer_name = "GAL" if layer_name == "Anschlussleitungen" else layer_name
-
-    # 7) Viewer öffnen
-    try:
-        self.viewer_dialog = databaseviewer(
-            parent=self,
-            layer_name=viewer_layer_name,
-            key_values=values,
-            table_type=layer_name,
-            date_tabs=None,
-            stammdaten=stammdaten_dict,
-            db_type="spatialite",
-            spatialite_conn=self.conn,
+    # Datenquelle des konkreten Layers benutzen, um bei mehreren offenen
+    # QKan-Datenbanken nicht versehentlich Daten aus einer anderen zu öffnen.
+    layer_info = layerdaten(layer)
+    if layer_info is not None and layer_info[0] == tabellenname:
+        datenquelle = layer_info[1]
+    else:
+        datenquelle = datenquelle_waehlen(
+            projekt, NOTWENDIGE_TABELLEN, self, "QKan – Befahrungsmedien"
         )
+    if datenquelle is None:
+        QMessageBox.warning(
+            self, "Untersuchungen anzeigen",
+            "Keine geeignete QKan-Datenquelle gefunden.",
+        )
+        return
 
-        self.viewer_dialog.show()
-        self.viewer_dialog.raise_()
-        self.viewer_dialog.activateWindow()
+    try:
+        dialog = getattr(self, "viewer_dialog", None)
+        if dialog is None:
+            dialog = BefahrungsmedienDialog(iface, parent=self, viewer_only=True)
+            self.viewer_dialog = dialog
+        dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
 
-    except Exception as e:
+        # _objekt_auswaehlen lädt genau dieses Objekt, die neueste
+        # Befahrung, alle Schäden und deren Fotos/Videos/Panoramo-Medien.
+        # Der Aufruf erfolgt erst nach Anzeige des Dialogs (wie beim
+        # bereits vorhandenen TV-Werkzeug in qkan.inspektion).
+        def objekt_laden():
+            try:
+                dialog._objekt_auswaehlen(objektart, object_name, datenquelle)
+            except Exception as error:
+                QMessageBox.critical(
+                    dialog, "Untersuchungen anzeigen",
+                    f"Das Objekt konnte nicht geladen werden:\n{error}",
+                )
+        QTimer.singleShot(0, objekt_laden)
+    except Exception as error:
         QMessageBox.critical(
-            self,
-            "Datenbankfehler",
-            f"Datenbankviewer konnte nicht geöffnet werden:\n{str(e)}"
+            self, "Untersuchungen anzeigen",
+            f"Der Medieninspektor konnte nicht geöffnet werden:\n{error}",
         )
