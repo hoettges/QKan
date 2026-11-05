@@ -26,6 +26,7 @@
     QKan_Sanierungsbedarfszahl
     QKan_Substanzklassifizierung
     QKan_Synchronisation
+    QKan_untersucher_m150
 
 
 .. toctree::

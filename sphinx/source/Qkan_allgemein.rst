@@ -54,7 +54,7 @@ Funktionen von QGIS zur Verfügung. Insbesondere kann mit Hilfe der Datenbankspr
 Entwicklung
 -----------
 
-QKan ist ein Open-Source-Projekt von `Jörg Höttges`_ . Es wird seit Aug 2016 an der FH Aachen entwickelt. 
+QKan ist ein Open-Source-Projekt von `Jörg Höttges`_ . Es wird seit Aug 2016 an der FH Aachen zusammen mit externen Partnern entwickelt. 
 
 .. _`Jörg Höttges`: https://www.fh-aachen.de/menschen/hoettges  
 
@@ -76,12 +76,18 @@ das `Geoinformatikbüro Dassau GmbH (GBD) <https://www.gbd-consult.de/>`_ mit de
 
 .. image:: ./QKan_Bilder/png-DBU-Logo-gefoerdert-durch-RGB.png
 
-Team
-----
+Als Ergebnis ist in QKan eine Funktion enthalten, mit der die gesamte QKan-Datenbank für die direkte Nutzung in dem Online-Portal 
+"GBD WebSuite" (siehe <https://www.gbd-websuite.de/>) exportiert werden kann.
+
+Mitwirkende
+-----------
 
  - Jörg Höttges
  - Yannick Linke
  - Nora Blase
+ - René Müller, Stadt Brühl
+ - Benedykt Pasek, Erftverband
+
 
 Ehemalige
 

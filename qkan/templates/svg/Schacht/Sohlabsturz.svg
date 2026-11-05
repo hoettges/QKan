@@ -5,10 +5,12 @@
    fill="param(fill)"
    version="1.1"
    id="Layer_1"
-   viewBox="0 0 24 24"
+   viewBox="0 0 580 580"
    xml:space="preserve"
-   sodipodi:docname="Sohlabsturz.svg"
+   sodipodi:docname="Zulauf_oben_sw.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   width="580"
+   height="580"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -22,13 +24,13 @@
    inkscape:pageopacity="0.0"
    inkscape:pagecheckerboard="0"
    inkscape:deskcolor="#d1d1d1"
-   inkscape:zoom="28.844064"
-   inkscape:cx="11.042133"
-   inkscape:cy="12.792927"
+   inkscape:zoom="0.5"
+   inkscape:cx="381"
+   inkscape:cy="263"
    inkscape:window-width="1153"
    inkscape:window-height="663"
-   inkscape:window-x="2183"
-   inkscape:window-y="1387"
+   inkscape:window-x="565"
+   inkscape:window-y="330"
    inkscape:window-maximized="0"
    inkscape:current-layer="Layer_1" />
 <style
@@ -37,17 +39,22 @@
 	.st0{fill:none;}
 </style>
 <path
-   d="M 9.9322486,8.5 12.5,15.5 14.443706,8.5 Z"
+   d="M 126.82094,45.120871 310.50987,545.87913 449.5566,45.120871 Z"
    id="path1"
-   sodipodi:nodetypes="cccc" />
+   sodipodi:nodetypes="cccc"
+   style="stroke-width:71.5366" />
 <rect
    class="st0"
    width="24"
    height="24"
-   id="rect1" />
+   id="rect1"
+   x="0"
+   y="0" />
 <rect
    class="st0"
    width="24"
    height="24"
-   id="rect2" />
+   id="rect2"
+   x="0"
+   y="0" />
 </svg>
