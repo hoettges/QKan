@@ -293,7 +293,7 @@ def get_layer_mapping(tab_index):
         3: {
             "layer": "Sinkkästen",
             "col": "Name",
-            "tables": ["Sinkkästen", "Sinkkaesten", "sinkkaesten"],
+            "tables": ["sinkkaesten", "Sinkkästen", "Sinkkaesten"],
             "geoms": ["geom", "geop"],
             "qml": "Sinkkästen.qml",
             "pk": "Name",
