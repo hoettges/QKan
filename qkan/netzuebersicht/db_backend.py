@@ -118,7 +118,7 @@ class BaseBackend:
         "bauwerke_rv",
     ]
 
-    SINKKAESTEN_TABELLE = "Sinkkästen"
+    SINKKAESTEN_TABELLE = "sinkkaesten"
     RINNEN_TABELLE = "entwaesserungsrinnen"
     SONDERBAUWERKE_VIEW = "sonderbauwerke_view"
 
