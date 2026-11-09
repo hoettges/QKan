@@ -5626,45 +5626,31 @@ class Subkans_funkt:
 
         #Streckenschaden A-B
 
-        db.sql("""SELECT 
-                s.untersuchhal,
-                s.pk,
-                s.station,
-                s.streckenschaden_lfdnr,
-                s.streckenschaden,
-                (
-                    SELECT t.station
-                    FROM substanz_haltung_bewertung t
-                    WHERE s.streckenschaden_lfdnr = t.streckenschaden_lfdnr
-                      AND s.streckenschaden = 'A'
-                    ORDER BY t.untersuchhal ASC
-                    LIMIT 1
-                ) AS t_wert_a,
-                (
-                    SELECT t.station
-                    FROM substanz_haltung_bewertung t
-                    WHERE s.streckenschaden_lfdnr = t.streckenschaden_lfdnr
-                      AND t.streckenschaden = 'B'
-                    ORDER BY t.untersuchhal ASC
-                    LIMIT 1
-                ) AS t_wert_b,
-                (
-                    (
-                        SELECT t.station
-                        FROM substanz_haltung_bewertung t
-                        WHERE s.streckenschaden_lfdnr = t.streckenschaden_lfdnr
-                          AND t.streckenschaden = 'B'
-                        ORDER BY t.untersuchhal ASC
-                        LIMIT 1
-                    ) 
-                    - s.station
-                ) AS summe
-            FROM substanz_haltung_bewertung s Where s.streckenschaden = 'A'""")
+        db.sql("""SELECT
+                    a.untersuchhal,
+                    a.pk,
+                    a.streckenschaden_lfdnr,
+                    a.station AS station_a,
+                    b.station AS station_b,
+                    (b.station - a.station) AS summe
+                
+                FROM substanz_haltung_bewertung a
+                
+                LEFT JOIN substanz_haltung_bewertung b
+                    ON b.untersuchhal = a.untersuchhal
+                    AND b.streckenschaden_lfdnr = a.streckenschaden_lfdnr
+                    AND b.streckenschaden = 'B'
+                
+                WHERE a.streckenschaden = 'A'
+                
+                ORDER BY
+                    a.untersuchhal,
+                    a.streckenschaden_lfdnr;""")
         db1.commit()
 
         for attr in db.fetchall():
 
-            x = attr[7]
+            x = attr[5]
 
             sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
             data = (x, attr[1])
@@ -5678,45 +5664,31 @@ class Subkans_funkt:
 
         # Streckenschaden A-C
 
-        db.sql("""SELECT 
-                s.untersuchhal,
-                s.pk,
-                s.station,
-                s.streckenschaden_lfdnr,
-                s.streckenschaden,
-                (
-                    SELECT t.station
-                    FROM substanz_haltung_bewertung t
-                    WHERE s.streckenschaden_lfdnr = t.streckenschaden_lfdnr
-                      AND s.streckenschaden = 'A'
-                    ORDER BY t.untersuchhal ASC
-                    LIMIT 1
-                ) AS t_wert_a,
-                (
-                    SELECT t.station
-                    FROM substanz_haltung_bewertung t
-                    WHERE s.streckenschaden_lfdnr = t.streckenschaden_lfdnr
-                      AND t.streckenschaden = 'C'
-                    ORDER BY t.untersuchhal ASC
-                    LIMIT 1
-                ) AS t_wert_b,
-                (
-                    (
-                        SELECT t.station
-                        FROM substanz_haltung_bewertung t
-                        WHERE s.streckenschaden_lfdnr = t.streckenschaden_lfdnr
-                          AND t.streckenschaden = 'C'
-                        ORDER BY t.untersuchhal ASC
-                        LIMIT 1
-                    ) 
-                    - s.station
-                ) AS summe
-            FROM substanz_haltung_bewertung s Where s.streckenschaden = 'A' and summe >0
+        db.sql("""SELECT
+                    a.untersuchhal,
+                    a.pk,
+                    a.streckenschaden_lfdnr,
+                    a.station AS station_a,
+                    b.station AS station_b,
+                    (b.station - a.station) AS summe
+                
+                FROM substanz_haltung_bewertung a
+                
+                INNER JOIN substanz_haltung_bewertung b
+                    ON b.untersuchhal = a.untersuchhal
+                    AND b.streckenschaden_lfdnr = a.streckenschaden_lfdnr
+                    AND b.streckenschaden = 'C'
+                
+                WHERE a.streckenschaden = 'A'
+                
+                ORDER BY
+                    a.untersuchhal,
+                    a.streckenschaden_lfdnr;
                 """)
         db1.commit()
 
         for attr in db.fetchall():
-            x = attr[7]
+            x = attr[5]
 
             sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
             data = (x, attr[1])
@@ -5732,25 +5704,28 @@ class Subkans_funkt:
         #Streckenschaden C-C
 
         db.sql("""SELECT
-                    pk, 
-                    untersuchhal,
+                        pk,
+                        untersuchhal,
                         streckenschaden_lfdnr,
                         station AS s_station,
                         next_station,
                         next_station - station AS differenz
                     FROM (
-                        SELECT 
-                        pk,
-                    untersuchhal,
+                        SELECT
+                            pk,
+                            untersuchhal,
                             station,
                             streckenschaden_lfdnr,
+                    
                             LEAD(station) OVER (
                                 PARTITION BY streckenschaden_lfdnr, untersuchhal
-                                ORDER BY untersuchhal ASC
+                                ORDER BY station ASC
                             ) AS next_station
+                    
                         FROM substanz_haltung_bewertung
                         WHERE streckenschaden = 'C'
                     ) sub
+                    
                     WHERE next_station IS NOT NULL;
 
 
@@ -5775,17 +5750,36 @@ class Subkans_funkt:
 
         db.sql("""
                 SELECT 
-                    pk,
-                    streckenschaden_lfdnr,
-                    untersuchhal,
-                    MAX(CASE WHEN streckenschaden = 'B' THEN station END) -
-                    MAX(CASE WHEN streckenschaden = 'C' THEN station END) AS c_wert
-                FROM substanz_haltung_bewertung
-                WHERE streckenschaden IN ('B', 'C')
-                GROUP BY streckenschaden_lfdnr, untersuchhal
-                HAVING 
-                    MAX(CASE WHEN streckenschaden = 'B' THEN station END) IS NOT NULL
-                    AND MAX(CASE WHEN streckenschaden = 'C' THEN station END) IS NOT NULL;
+                streckenschaden_lfdnr,
+                untersuchhal,
+            
+                MAX(CASE
+                    WHEN streckenschaden = 'B' THEN station
+                END) AS station_b,
+            
+                MAX(CASE
+                    WHEN streckenschaden = 'C' THEN station
+                END) AS station_c,
+            
+                MAX(CASE
+                    WHEN streckenschaden = 'B' THEN station
+                END) -
+                MAX(CASE
+                    WHEN streckenschaden = 'C' THEN station
+                END) AS c_wert
+            
+            FROM substanz_haltung_bewertung
+            
+            WHERE streckenschaden IN ('B', 'C')
+            
+            GROUP BY
+                streckenschaden_lfdnr,
+                untersuchhal
+            
+            HAVING
+                MAX(CASE WHEN streckenschaden = 'B' THEN station END) IS NOT NULL
+                AND
+                MAX(CASE WHEN streckenschaden = 'C' THEN station END) IS NOT NULL;
                                 """)
         db1.commit()
 
@@ -7649,8 +7643,8 @@ class Subkans_funkt:
 
         for attr in db.fetchall():
             # abn = bsl/länge*100
-            if attr[2] not in ("","not found", None, None) and attr[3] not in ("","not found", None, None):
-                print(abn)
+            if attr[2] not in ("","not found", None, None) and attr[4] not in ("","not found", None, None):
+
                 abn=formf(float(attr[2])/float(attr[4])*100,8)
 
                 # #substanzklasse
@@ -7667,6 +7661,8 @@ class Subkans_funkt:
                 elif 33>sub_ges>5:
                     sbk = 1
                 elif 5>=sub_ges:
+                    sbk = 0
+                else:
                     sbk = 0
             elif attr[6] == 5:
                 abn = 0
@@ -7690,7 +7686,7 @@ class Subkans_funkt:
             #Sonderfall nur BDD in Haltung vorhanden als bewerteter Schaden
 
             sql= """
-                    UPDATE haltungen_substanz_bewertung SET Abnutzung = 0 WHERE 
+                    UPDATE haltungen_substanz_bewertung SET Abnutzung = 0 WHERE  haltnam IN
                     (     
                     SELECT untersuchhal
                         FROM untersuchdat_haltung_bewertung
@@ -7704,7 +7700,7 @@ class Subkans_funkt:
             db.sql(sql)
 
             sql = """
-                    UPDATE haltungen_substanz_bewertung SET Substanzklasse = 5 WHERE (
+                    UPDATE haltungen_substanz_bewertung SET Substanzklasse = 5 WHERE  haltnam IN (
                     SELECT untersuchhal
                         FROM untersuchdat_haltung_bewertung
                         GROUP BY untersuchhal
