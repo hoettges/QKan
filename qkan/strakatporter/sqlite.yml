@@ -185,11 +185,20 @@ WHERE schachtnummer <> 0           /* nicht gelöscht */
 # 1.1 Doppelte Haltungsbezeichnungen eindeutig machen. Erkennungsmerkmal zur späteren
 #     Analyse: Diese Haltungsnamen beginnen
 #     mit HA_ im Gegensatz zu den Haltungen ohne Namen, die mit HN_ beginnen
+#     Verglichen wird nur mit Datensätzen, die auch importiert werden (nicht gelöscht,
+#     kein Symbol). Sonst würde z.B. eine gelöschte alte Version einer Haltung den
+#     Namen "belegen" und die gültige Haltung erhielte einen HA_-Namen.
 strakat_prep4: "
 UPDATE t_strakatkanal
 SET haltungsname = 'HA_' || substr(printf('0000%d', t_strakatkanal.pk), -5)
-FROM (SELECT pk, haltungsname FROM t_strakatkanal) AS std
-WHERE t_strakatkanal.schachtnummer <> 0           /* nicht gelöscht */ 
+FROM (
+    SELECT pk, haltungsname
+    FROM t_strakatkanal
+    WHERE schachtnummer <> 0                                    /* nicht gelöscht */
+      AND (zuflussnummer1 > 0 OR abflussnummer1 > 0)            /* kein Symbol */
+) AS std
+WHERE t_strakatkanal.schachtnummer <> 0                         /* nicht gelöscht */
+  AND (t_strakatkanal.zuflussnummer1 > 0 OR t_strakatkanal.abflussnummer1 > 0)   /* kein Symbol */
   AND t_strakatkanal.haltungsname = std.haltungsname AND t_strakatkanal.pk > std.pk;"
 
 # 1.2.1 Schacht_unten auf Schacht_oben von Haltungen übertragen, 
@@ -225,12 +234,24 @@ WHERE t_strakatkanal.nummer = schaechte_unten.abflussnummer
   AND t_strakatkanal.schachtnummer <> 0;          /* nicht gelöscht */ "
 
 # Mehrfache "schacht_oben" mit SA_ im Gegensatz zu den Haltungen ohne Namen, die mit SN_ beginnen
+# Verglichen wird nur mit Datensätzen, die auch importiert werden (nicht gelöscht, kein Symbol).
+# Liegen zwei Datensätze mit gleichem schacht_oben innerhalb von :maxdiff (Option "maximale
+# Abweichung" im Importdialog), handelt es sich um denselben Schacht (z.B. Verzweigung) und es
+# wird nicht umbenannt.
 strakat_prep6: "
 UPDATE t_strakatkanal
 SET schacht_oben = 'SA_' || substr(printf('SA_00000%d_', t_strakatkanal.pk), -7) || t_strakatkanal.schacht_oben
-FROM (SELECT pk, schacht_oben FROM t_strakatkanal) AS std
-WHERE t_strakatkanal.schachtnummer <> 0           /* nicht gelöscht */ 
-  AND t_strakatkanal.schacht_oben = std.schacht_oben AND t_strakatkanal.pk > std.pk;"
+FROM (
+    SELECT pk, schacht_oben, rw_gerinne_o, hw_gerinne_o
+    FROM t_strakatkanal
+    WHERE schachtnummer <> 0                                    /* nicht gelöscht */
+      AND (zuflussnummer1 > 0 OR abflussnummer1 > 0)            /* kein Symbol */
+) AS std
+WHERE t_strakatkanal.schachtnummer <> 0                         /* nicht gelöscht */
+  AND (t_strakatkanal.zuflussnummer1 > 0 OR t_strakatkanal.abflussnummer1 > 0)   /* kein Symbol */
+  AND t_strakatkanal.schacht_oben = std.schacht_oben AND t_strakatkanal.pk > std.pk
+  AND (   abs(t_strakatkanal.rw_gerinne_o - std.rw_gerinne_o) > :maxdiff
+       OR abs(t_strakatkanal.hw_gerinne_o - std.hw_gerinne_o) > :maxdiff);"
 
 # 1.2.2 Abzweigende Haltungen (k1k), deren schacht_oben nicht mit dem eines durchlaufenden
 #       Stranges (schacht_unten = schacht_oben: k2k) übereinstimmt.
@@ -575,9 +596,15 @@ INSERT INTO t_strakatberichte (
 
 strakat_09: "
 INSERT INTO entwaesserungsarten (bezeichnung, kuerzel, bemerkung)
-    SELECT text, kurz, 'Importiert aus STRAKAT'
-    FROM t_reflists
-    WHERE tabtyp = 'kanalart';"
+    SELECT bez,
+           CASE bez WHEN 'Regenwasser' THEN 'R' WHEN 'Schmutzwasser' THEN 'S'
+                    WHEN 'Mischwasser' THEN 'M' ELSE min(kurz) END,
+           'Importiert aus STRAKAT'
+    FROM (SELECT CASE WHEN upper(trim(coalesce(kurz,''))) = 'KR' OR upper(trim(text)) = 'KR' OR upper(trim(text)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(coalesce(kurz,''))) = 'KS' OR upper(trim(text)) = 'KS' OR upper(trim(text)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(coalesce(kurz,''))) = 'KM' OR upper(trim(text)) = 'KM' OR upper(trim(text)) LIKE 'KM %' THEN 'Mischwasser' ELSE text END AS bez, kurz
+            FROM t_reflists
+           WHERE tabtyp = 'kanalart')
+    WHERE bez NOT IN (SELECT bezeichnung FROM entwaesserungsarten)
+    GROUP BY bez;"
 
 strakat_10: "
 INSERT INTO haltungstypen (bezeichnung, bemerkung)
@@ -703,7 +730,8 @@ SELECT
     strassen.name                               AS strasse,
     schachtmaterial.text                        AS material,
     1.0                                         AS durchm,
-    k2e.text                                    AS entwart,
+    CASE WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KR' OR upper(trim(k2e.text)) = 'KR' OR upper(trim(k2e.text)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KS' OR upper(trim(k2e.text)) = 'KS' OR upper(trim(k2e.text)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KM' OR upper(trim(k2e.text)) = 'KM' OR upper(trim(k2e.text)) LIKE 'KM %' THEN 'Mischwasser' ELSE k2e.text END
+                                                                AS entwart,   /* QKan-Standard statt KR/KS/KM */
     'Schacht'                                   AS schachttyp,
     k2t.text                                    AS knotentyp,
     stk.baujahr                                 AS baujahr,
@@ -815,7 +843,8 @@ SELECT
     stk.sohle_oben___v                                          AS sohleoben,
     stk.sohle_unten__v                                          AS sohleunten,
     profilarten.text                                            AS profilnam,
-    k2e.text                                                    AS entwart,
+    CASE WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KR' OR upper(trim(k2e.text)) = 'KR' OR upper(trim(k2e.text)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KS' OR upper(trim(k2e.text)) = 'KS' OR upper(trim(k2e.text)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KM' OR upper(trim(k2e.text)) = 'KM' OR upper(trim(k2e.text)) LIKE 'KM %' THEN 'Mischwasser' ELSE k2e.text END
+                                                                AS entwart,   /* QKan-Standard statt KR/KS/KM */
     CASE WHEN instr(lower(k2e.text),'druck') > 0
         THEN 1 ELSE 0 END                                       AS druckdicht,
     rohrmaterialien.text                                        AS material,
@@ -922,7 +951,8 @@ SELECT
     stk.sohle_oben___v                                          AS sohleoben,
     stk.sohle_unten__v                                          AS sohleunten,
     profilarten.text                                            AS profilnam,
-    k2e.text                                                    AS entwart,
+    CASE WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KR' OR upper(trim(k2e.text)) = 'KR' OR upper(trim(k2e.text)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KS' OR upper(trim(k2e.text)) = 'KS' OR upper(trim(k2e.text)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(coalesce(k2e.kurz,''))) = 'KM' OR upper(trim(k2e.text)) = 'KM' OR upper(trim(k2e.text)) LIKE 'KM %' THEN 'Mischwasser' ELSE k2e.text END
+                                                                AS entwart,   /* QKan-Standard statt KR/KS/KM */
     CASE WHEN instr(lower(k2e.text),'druck') > 0
         THEN 1 ELSE 0 END                                       AS druckdicht,
     rohrmaterialien.text                                        AS material,
@@ -945,6 +975,24 @@ FROM
     LEFT JOIN haltungen         ON haltungen.haltnam = stk.haltungsname
     LEFT JOIN eigentum  AS eg   ON eg.id = stk.eigentum 
 WHERE stk.nummer = :kanalnr;"
+
+strakat_entwart_qkanstandard_schaechte: "
+UPDATE schaechte
+   SET entwart = CASE WHEN upper(trim(entwart)) = 'KR' OR upper(trim(entwart)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(entwart)) = 'KS' OR upper(trim(entwart)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(entwart)) = 'KM' OR upper(trim(entwart)) LIKE 'KM %' THEN 'Mischwasser' ELSE entwart END
+ WHERE upper(trim(entwart)) IN ('KR', 'KS', 'KM')
+    OR upper(trim(entwart)) LIKE 'KR %' OR upper(trim(entwart)) LIKE 'KS %' OR upper(trim(entwart)) LIKE 'KM %';"
+
+strakat_entwart_qkanstandard_haltungen: "
+UPDATE haltungen
+   SET entwart = CASE WHEN upper(trim(entwart)) = 'KR' OR upper(trim(entwart)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(entwart)) = 'KS' OR upper(trim(entwart)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(entwart)) = 'KM' OR upper(trim(entwart)) LIKE 'KM %' THEN 'Mischwasser' ELSE entwart END
+ WHERE upper(trim(entwart)) IN ('KR', 'KS', 'KM')
+    OR upper(trim(entwart)) LIKE 'KR %' OR upper(trim(entwart)) LIKE 'KS %' OR upper(trim(entwart)) LIKE 'KM %';"
+
+strakat_entwart_qkanstandard_anschlussleitungen: "
+UPDATE anschlussleitungen
+   SET entwart = CASE WHEN upper(trim(entwart)) = 'KR' OR upper(trim(entwart)) LIKE 'KR %' THEN 'Regenwasser' WHEN upper(trim(entwart)) = 'KS' OR upper(trim(entwart)) LIKE 'KS %' THEN 'Schmutzwasser' WHEN upper(trim(entwart)) = 'KM' OR upper(trim(entwart)) LIKE 'KM %' THEN 'Mischwasser' ELSE entwart END
+ WHERE upper(trim(entwart)) IN ('KR', 'KS', 'KM')
+    OR upper(trim(entwart)) LIKE 'KR %' OR upper(trim(entwart)) LIKE 'KS %' OR upper(trim(entwart)) LIKE 'KM %';"
 
 strakat_anschlussleitungen: "
 WITH ha AS (
@@ -970,7 +1018,7 @@ strassen AS (
     WHERE tabtyp = 'strasse'
 )
 INSERT INTO anschlussleitungen (leitnam, schoben, schunten,
-    hoehe, breite, laenge, haltnam,
+    hoehe, breite, laenge, haltnam, entwart,
     strasse, urstation, ursprung,
     simstatus, kommentar, geom)
 SELECT
@@ -981,6 +1029,12 @@ SELECT
     ha.breite,
     round(GLength(ha.geom), 3)          AS laenge,
     stk.haltungsname                    AS haltnam,
+    coalesce(
+        (SELECT hal.entwart FROM haltungen AS hal               /* Entwässerungsart der Haltung, */
+          WHERE hal.haltnam = stk.haltungsname                 /* an der die Leitung angeschlossen ist */
+            AND hal.entwart IS NOT NULL
+          LIMIT 1),
+        'Regenwasser')                  AS entwart,
     stn.name                            AS strasse,
     ha.urstation,
     stn.name || ' ' || ha.hausnummer    AS ursprung,
@@ -995,6 +1049,19 @@ FROM
 WHERE anschlussleitungen.pk IS NULL                         /* nur neue Anschlussleitungen hinzufügen */ 
   AND stk.schachtnummer <> 0 AND stk.strangnr = 0           /* Haltung nicht gelöscht und kein Strang */
 ;"
+
+strakat_anschlussleitungen_entwart: "
+UPDATE anschlussleitungen
+   SET entwart = (SELECT hal.entwart FROM haltungen AS hal
+                   WHERE hal.haltnam = anschlussleitungen.haltnam
+                     AND hal.entwart IS NOT NULL
+                   LIMIT 1)
+ WHERE kommentar = 'QKan-STRAKAT-Import'                    /* nur Leitungen aus dem STRAKAT-Import */
+   AND haltnam IS NOT NULL
+   AND EXISTS (SELECT 1 FROM haltungen AS hal
+                WHERE hal.haltnam = anschlussleitungen.haltnam
+                  AND hal.entwart IS NOT NULL
+                  AND hal.entwart <> coalesce(anschlussleitungen.entwart, ''));"
 
 strakat_anschlussschaechte: "
 WITH ha AS (
@@ -1186,6 +1253,7 @@ uts AS (
         stb.fortsetzung                 AS streckenschaden_lfdnr,
         stb.pos_von                     AS pos_von, 
         stb.pos_bis                     AS pos_bis,
+        stb.station_untersucher         AS vertikale_lage,      /* Tiefe ab Deckel (m) */
         :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
                       || stb.foto_dateiname || '.jpg'
                                         AS foto_dateiname,
@@ -1209,7 +1277,7 @@ uts AS (
       AND stk.schachtnummer <> 0
       AND stb.geloescht = 0
       AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
-      AND (substr(stb.atv_kuerzel, 1, 1) in ('C', 'D') AND stb.bewertungsart = 'DWA')
+      AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D')         /* Schachtschaden (ohne Filter Bewertungsart) */
 )
 INSERT INTO untersuchdat_schacht (
     untersuchsch,
@@ -1217,7 +1285,7 @@ INSERT INTO untersuchdat_schacht (
     bandnr, videozaehler, timecode, langtext, 
     kuerzel, charakt1, charakt2, quantnr1, quantnr2,
     streckenschaden, streckenschaden_lfdnr,
-    pos_von, pos_bis,
+    pos_von, pos_bis, vertikale_lage,
     foto_dateiname, film_dateiname,
     filmtyp, video_start, video_ende,
     ZD, ZB, ZS, kommentar
@@ -1228,14 +1296,21 @@ SELECT
     uts.bandnr, uts.videozaehler, uts.timecode, uts.langtext, 
     uts.kuerzel, uts.charakt1, uts.charakt2, uts.quantnr1, uts.quantnr2,
     uts.streckenschaden, uts.streckenschaden_lfdnr,
-    uts.pos_von, uts.pos_bis,
+    uts.pos_von, uts.pos_bis, uts.vertikale_lage,
     uts.foto_dateiname, uts.film_dateiname,
     uts.filmtyp, uts.video_start, uts.video_ende,
     uts.ZD, uts.ZB, uts.ZS, uts.kommentar
 FROM uts
-LEFT JOIN untersuchdat_schacht AS usd                   /* nur neue Schächte untersucht hinzufügen */ 
-USING(untersuchsch, untersuchtag, kuerzel, bandnr, videozaehler, streckenschaden_lfdnr, langtext)
-WHERE usd.pk IS NULL;"
+WHERE NOT EXISTS (                                      /* nur neue Schachtschäden hinzufügen, */
+    SELECT 1 FROM untersuchdat_schacht AS usd           /* NULL-sicher über IS statt =         */
+    WHERE usd.untersuchsch          IS uts.untersuchsch
+      AND usd.untersuchtag          IS uts.untersuchtag
+      AND usd.kuerzel               IS uts.kuerzel
+      AND usd.bandnr                IS uts.bandnr
+      AND usd.videozaehler          IS uts.videozaehler
+      AND usd.streckenschaden_lfdnr IS uts.streckenschaden_lfdnr
+      AND usd.langtext              IS uts.langtext
+);"
 
 strakat_videos_schaechte: "
 WITH strassen AS (
@@ -1269,7 +1344,6 @@ WHERE stk.schachtnummer <> 0
   AND stb.geloescht = 0
   AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
   AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)            /* kein Symbol */ 
-  AND stb.bewertungsart = 'DWA'                                     /* DWA und Schachtschaden */ 
   AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D');"
 
 strakat_haltungen_untersucht: "
@@ -1653,3 +1727,105 @@ SELECT AddGeometryColumn('t_strakathausanschluesse', 'geom', :epsg, 'LINESTRING'
 
 strakat_index_t_strakathausanschluesse: "
 SELECT CreateSpatialIndex('t_strakathausanschluesse', 'geom');"
+
+
+# ======================================================================
+# Performance (ergänzt): Pragmas und Indizes
+# Pragmas gelten nur für die aktuelle Verbindung.
+# ======================================================================
+
+strakat_pragma_cache_size: "
+PRAGMA cache_size = -200000;"
+
+strakat_pragma_temp_store: "
+PRAGMA temp_store = MEMORY;"
+
+# Indizes der temporären STRAKAT-Tabellen (entstehen mit den Tabellen bei jedem Import neu)
+strakat_idx_kanal_nummer: "
+CREATE INDEX IF NOT EXISTS idx_t_strakatkanal_nummer ON t_strakatkanal (nummer);"
+
+strakat_idx_kanal_strakatid: "
+CREATE INDEX IF NOT EXISTS idx_t_strakatkanal_strakatid ON t_strakatkanal (strakatid);"
+
+strakat_idx_kanal_schacht_oben: "
+CREATE INDEX IF NOT EXISTS idx_t_strakatkanal_schacht_oben ON t_strakatkanal (schacht_oben);"
+
+strakat_idx_kanal_haltungsname: "
+CREATE INDEX IF NOT EXISTS idx_t_strakatkanal_haltungsname ON t_strakatkanal (haltungsname);"
+
+strakat_idx_reflists: "
+CREATE INDEX IF NOT EXISTS idx_t_reflists_tabtyp_n1 ON t_reflists (tabtyp, n1);"
+
+strakat_idx_berichte_strakatid: "
+CREATE INDEX IF NOT EXISTS idx_t_strakatberichte_strakatid ON t_strakatberichte (strakatid);"
+
+strakat_idx_berichte_hausanschlid: "
+CREATE INDEX IF NOT EXISTS idx_t_strakatberichte_hausanschlid ON t_strakatberichte (hausanschlid);"
+
+strakat_idx_hausanschl_name: "
+CREATE INDEX IF NOT EXISTS idx_t_strakathausanschl_name ON t_strakathausanschluesse (anschlusshalname);"
+
+strakat_idx_hausanschl_strakatid: "
+CREATE INDEX IF NOT EXISTS idx_t_strakathausanschl_strakatid ON t_strakathausanschluesse (strakatid);"
+
+strakat_idx_hausanschl_hausanschlid: "
+CREATE INDEX IF NOT EXISTS idx_t_strakathausanschl_hausanschlid ON t_strakathausanschluesse (hausanschlid);"
+
+strakat_idx_hausanschl_halnr: "
+CREATE INDEX IF NOT EXISTS idx_t_strakathausanschl_halnr ON t_strakathausanschluesse (anschlusshalnr);"
+
+# Temporäre Indizes auf QKan-Tabellen für die Prüfungen "nur neue Datensätze hinzufügen"
+# (LEFT JOIN ... WHERE pk IS NULL). Werden am Ende des Imports wieder entfernt.
+strakat_tmpidx_schaechte: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_schaechte ON schaechte (schnam);"
+
+strakat_tmpidx_haltungen: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_haltungen ON haltungen (haltnam);"
+
+strakat_tmpidx_anschlussleitungen: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_anschlussleitungen ON anschlussleitungen (leitnam, schoben, schunten);"
+
+strakat_tmpidx_schaechte_untersucht: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_schaechte_untersucht ON schaechte_untersucht (schnam, untersuchtag);"
+
+strakat_tmpidx_haltungen_untersucht: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_haltungen_untersucht ON haltungen_untersucht (haltnam, untersuchtag);"
+
+strakat_tmpidx_untersuchdat_schacht: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_untersuchdat_schacht ON untersuchdat_schacht (untersuchsch, untersuchtag);"
+
+strakat_tmpidx_untersuchdat_haltung: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_untersuchdat_haltung ON untersuchdat_haltung (untersuchhal, untersuchtag);"
+
+strakat_tmpidx_anschlussleitungen_untersucht: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_anschlussleitungen_untersucht ON anschlussleitungen_untersucht (leitnam, untersuchtag);"
+
+strakat_tmpidx_untersuchdat_anschlussleitung: "
+CREATE INDEX IF NOT EXISTS idx_strakatimport_untersuchdat_anschlussleitung ON untersuchdat_anschlussleitung (untersuchleit, untersuchtag);"
+
+strakat_drop_tmpidx_schaechte: "
+DROP INDEX IF EXISTS idx_strakatimport_schaechte;"
+
+strakat_drop_tmpidx_haltungen: "
+DROP INDEX IF EXISTS idx_strakatimport_haltungen;"
+
+strakat_drop_tmpidx_anschlussleitungen: "
+DROP INDEX IF EXISTS idx_strakatimport_anschlussleitungen;"
+
+strakat_drop_tmpidx_schaechte_untersucht: "
+DROP INDEX IF EXISTS idx_strakatimport_schaechte_untersucht;"
+
+strakat_drop_tmpidx_haltungen_untersucht: "
+DROP INDEX IF EXISTS idx_strakatimport_haltungen_untersucht;"
+
+strakat_drop_tmpidx_untersuchdat_schacht: "
+DROP INDEX IF EXISTS idx_strakatimport_untersuchdat_schacht;"
+
+strakat_drop_tmpidx_untersuchdat_haltung: "
+DROP INDEX IF EXISTS idx_strakatimport_untersuchdat_haltung;"
+
+strakat_drop_tmpidx_anschlussleitungen_untersucht: "
+DROP INDEX IF EXISTS idx_strakatimport_anschlussleitungen_untersucht;"
+
+strakat_drop_tmpidx_untersuchdat_anschlussleitung: "
+DROP INDEX IF EXISTS idx_strakatimport_untersuchdat_anschlussleitung;"

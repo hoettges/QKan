@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from struct import unpack
 from typing import Iterator
 from pathlib import Path
@@ -177,24 +178,36 @@ class ImportTask():
         self.progress_bar.setValue(0)
         logger.debug("progress_bar initialisiert")
 
-        result = all(
-            [
-                self._strakat_kanaltabelle(), self.progress_bar.setValue(5),            logger.debug("_strakat_kanaltabelle"),
-                self._strakat_reftables(), self.progress_bar.setValue(10),              logger.debug("_strakat_reftables"),
-                self._strakat_berichte(), self.progress_bar.setValue(40),               logger.debug("_strakat_berichte"),
-                self._reftables(), self.progress_bar.setValue(15),                      logger.debug("_reftables"),
-                self._schaechte(), self.progress_bar.setValue(20),                      logger.debug("_schaechte"),
-                self._haltungen(), self.progress_bar.setValue(25),                      logger.debug("_haltungen"),
-                self._adapt_refvals(),                                                  logger.debug("_adapt_refvals"),
-                self._symbole_kanal(),  self.progress_bar.setValue(29),                 logger.debug("_symbole"),
-                self._strakat_hausanschl(), self.progress_bar.setValue(30),             logger.debug("_strakat_hausanschl"),
-                self._anschlussleitungen(), self.progress_bar.setValue(35),             logger.debug("_anschlussleitungen"),
-                self._anschlussschaechte(), self.progress_bar.setValue(38),             logger.debug("_anschlussschaechte"),
-                self._schachtuntersuchungen(), self.progress_bar.setValue(45),          logger.debug("_schachtuntersuchungen"),
-                self._haltungsuntersuchungen(), self.progress_bar.setValue(60),         logger.debug("_haltungsuntersuchungen"),
-                self._anschlussleitungsuntersuchungen(), self.progress_bar.setValue(80),  logger.debug("_anschlussleitungsuntersuchungen"),
-            ]
-        )
+        # Performance: größerer Seiten-Cache und temporäre Daten im Arbeitsspeicher
+        # (gilt nur für diese Verbindung, keine dauerhafte Änderung der Datenbank)
+        for sqlnam in ("strakat_pragma_cache_size", "strakat_pragma_temp_store"):
+            self._sql_optional(sqlnam)
+
+        t_start = time.perf_counter()
+        try:
+            result = all(
+                [
+                    self._zeit(self._strakat_kanaltabelle), self.progress_bar.setValue(5),
+                    self._zeit(self._strakat_reftables), self.progress_bar.setValue(10),
+                    self._zeit(self._strakat_berichte), self.progress_bar.setValue(15),
+                    self._zeit(self._reftables), self.progress_bar.setValue(18),
+                    self._zeit(self._indizes_qkan_anlegen), self.progress_bar.setValue(20),
+                    self._zeit(self._schaechte), self.progress_bar.setValue(22),
+                    self._zeit(self._haltungen), self.progress_bar.setValue(25),
+                    self._zeit(self._adapt_refvals),
+                    self._zeit(self._symbole_kanal), self.progress_bar.setValue(29),
+                    self._zeit(self._strakat_hausanschl), self.progress_bar.setValue(30),
+                    self._zeit(self._anschlussleitungen), self.progress_bar.setValue(35),
+                    self._zeit(self._anschlussschaechte), self.progress_bar.setValue(38),
+                    self._zeit(self._schachtuntersuchungen), self.progress_bar.setValue(45),
+                    self._zeit(self._haltungsuntersuchungen), self.progress_bar.setValue(60),
+                    self._zeit(self._anschlussleitungsuntersuchungen), self.progress_bar.setValue(80),
+                ]
+            )
+        finally:
+            # temporäre Indizes auf den QKan-Tabellen wieder entfernen
+            self._indizes_qkan_entfernen()
+            logger.info(f"STRAKAT-Import gesamt: {time.perf_counter() - t_start:.1f} s")
 
         self.progress_bar.setValue(100)
         self.status_message.setText("Fertig! STRAKAT-Import abgeschlossen.")
@@ -202,6 +215,93 @@ class ImportTask():
         self.iface.messageBar().clearWidgets()
 
         return result
+
+    # ------------------------------------------------------------------
+    # Performance-Hilfen
+    # ------------------------------------------------------------------
+
+    # Indizes der temporären STRAKAT-Tabellen (werden mit den Tabellen neu erzeugt)
+    INDIZES_STRAKATKANAL = (
+        "strakat_idx_kanal_nummer",
+        "strakat_idx_kanal_strakatid",
+        "strakat_idx_kanal_schacht_oben",
+        "strakat_idx_kanal_haltungsname",
+    )
+    INDIZES_REFLISTS = ("strakat_idx_reflists",)
+    INDIZES_BERICHTE = (
+        "strakat_idx_berichte_strakatid",
+        "strakat_idx_berichte_hausanschlid",
+    )
+    INDIZES_HAUSANSCHLUESSE = (
+        "strakat_idx_hausanschl_name",
+        "strakat_idx_hausanschl_strakatid",
+        "strakat_idx_hausanschl_hausanschlid",
+        "strakat_idx_hausanschl_halnr",
+    )
+    # Temporäre Indizes auf QKan-Tabellen für die Prüfung "nur neue Datensätze hinzufügen"
+    # (werden am Ende des Imports wieder entfernt)
+    INDIZES_QKAN = (
+        "strakat_tmpidx_schaechte",
+        "strakat_tmpidx_haltungen",
+        "strakat_tmpidx_anschlussleitungen",
+        "strakat_tmpidx_schaechte_untersucht",
+        "strakat_tmpidx_haltungen_untersucht",
+        "strakat_tmpidx_untersuchdat_schacht",
+        "strakat_tmpidx_untersuchdat_haltung",
+        "strakat_tmpidx_anschlussleitungen_untersucht",
+        "strakat_tmpidx_untersuchdat_anschlussleitung",
+    )
+
+    def _zeit(self, schritt) -> bool:
+        """Führt einen Importschritt aus und protokolliert die Laufzeit."""
+        t0 = time.perf_counter()
+        ergebnis = schritt()
+        logger.info(f"STRAKAT-Import {schritt.__name__}: {time.perf_counter() - t0:.1f} s")
+        return ergebnis
+
+    def _sql_optional(self, sqlnam) -> bool:
+        """
+        Führt ein optionales Statement aus sqlite.yml direkt auf dem Cursor aus.
+        Fehler (z.B. Tabelle in älteren Datenbanken nicht vorhanden) werden nur
+        protokolliert und brechen den Import nicht ab.
+        """
+        sql = self.db_qkan.sqls.get(sqlnam)
+        if not sql:
+            logger.debug(f"STRAKAT-Import: SQL {sqlnam} nicht gefunden")
+            return False
+        try:
+            self.db_qkan.cursl.execute(sql.strip())
+            return True
+        except Exception as err:
+            logger.debug(f"STRAKAT-Import: {sqlnam} übersprungen: {err}")
+            return False
+
+    def _anzahl(self, tabelle):
+        """Anzahl Datensätze einer Tabelle (nur für Protokoll), None bei Fehler."""
+        try:
+            self.db_qkan.cursl.execute(f'SELECT count(*) FROM "{tabelle}"')
+            return self.db_qkan.cursl.fetchone()[0]
+        except Exception as err:
+            logger.debug(f"STRAKAT-Import: Anzahl {tabelle} nicht ermittelbar: {err}")
+            return None
+
+    def _indizes_anlegen(self, sqlnams) -> None:
+        """Legt Indizes an (optional, siehe _sql_optional)."""
+        for sqlnam in sqlnams:
+            self._sql_optional(sqlnam)
+
+    def _indizes_qkan_anlegen(self) -> bool:
+        self._indizes_anlegen(self.INDIZES_QKAN)
+        self.db_qkan.commit()
+        return True
+
+    def _indizes_qkan_entfernen(self) -> None:
+        try:
+            for sqlnam in self.INDIZES_QKAN:
+                self._sql_optional(sqlnam.replace("strakat_tmpidx_", "strakat_drop_tmpidx_"))
+            self.db_qkan.commit()
+        except Exception as err:
+            logger.debug(f"Temporäre Indizes konnten nicht entfernt werden: {err}")
 
     def _strakat_kanaltabelle(self) -> bool:
         """Import der Kanaldaten aus der STRAKAT-Datei 'kanal.rwtopen', entspricht ACCESS-Tabelle 'KANALTABELLE'
@@ -342,7 +442,9 @@ class ImportTask():
 
                     schacht_unten = b[965:b[965:980].find(b'\x00')+965].decode('latin_1').strip()
 
-                    yield Kanal_STRAKAT(
+                    # Performance: direkt als dict (statt Kanal_STRAKAT-Objekt), die Typen
+                    # entsprechen bereits den Annotationen von Kanal_STRAKAT
+                    yield dict(
                         nummer=nummer,
                         rw_gerinne_o=rw_gerinne_o,
                         hw_gerinne_o=hw_gerinne_o,
@@ -408,55 +510,27 @@ class ImportTask():
                     raise Exception(f'{self.__class__.__name__}:Programmfehler: Einlesen der Datei "kanal.rwtopen"'
                                     f' wurde nach 1000000 Datensätze abgebrochen!"')
 
-        params = ()                           # STRAKAT data stored in tuple of dicts for better performance
-        # with sql-statement executemany
-        logger.debug("{__name__}: Berichte werden gelesen und in data gespeichert ...")
+        # Performance: Datensätze in einer Liste sammeln (append ist O(1)); die frühere
+        # Tupel-Verkettung "params += (data,)" kopierte bei jedem Datensatz das ganze Tupel (O(n²)).
+        # Übergeben wird am Ende ein Tupel, weil DBConnection.sql() bei Tupeln nur die ersten
+        # Einträge protokolliert (bei Listen würde die komplette Liste in den Log-Text formatiert).
+        datensaetze = []
+        logger.debug("{__name__}: Kanaldaten werden gelesen ...")
 
         for _kanal in _iter():
-            data = {
-                'nummer': _kanal.nummer,
-                'rw_gerinne_o': _kanal.rw_gerinne_o, 'hw_gerinne_o': _kanal.hw_gerinne_o,
-                'rw_gerinne_u': _kanal.rw_gerinne_u, 'hw_gerinne_u': _kanal.hw_gerinne_u,
-                'rw_rohranfang': _kanal.rw_rohranfang, 'hw_rohranfang': _kanal.hw_rohranfang,
-                'rw_rohrende': _kanal.rw_rohrende, 'hw_rohrende': _kanal.hw_rohrende,
-                'zuflussnummer1': _kanal.zuflussnummer1, 'zuflussnummer2': _kanal.zuflussnummer2,
-                'zuflussnummer3': _kanal.zuflussnummer3, 'zuflussnummer4': _kanal.zuflussnummer4,
-                'zuflussnummer5': _kanal.zuflussnummer5, 'zuflussnummer6': _kanal.zuflussnummer6,
-                'zuflussnummer7': _kanal.zuflussnummer7, 'zuflussnummer8': _kanal.zuflussnummer8,
-                'abflussnummer1': _kanal.abflussnummer1, 'abflussnummer2': _kanal.abflussnummer2,
-                'abflussnummer3': _kanal.abflussnummer3, 'abflussnummer4': _kanal.abflussnummer4,
-                'abflussnummer5': _kanal.abflussnummer5,
-                'schacht_oben': _kanal.schacht_oben, 'schacht_unten': _kanal.schacht_unten,
-                'haltungsname': _kanal.haltungsname,
-                'rohrbreite_v': _kanal.rohrbreite_v, 'rohrhoehe___v': _kanal.rohrhoehe___v,
-                'flaechenfactor_v': _kanal.flaechenfactor_v,
-                'deckel_oben_v': _kanal.deckel_oben_v, 'deckel_unten_v': _kanal.deckel_unten_v,
-                'sohle_oben___v': _kanal.sohle_oben___v, 'sohle_unten__v': _kanal.sohle_unten__v,
-                's_sohle_oben_v': 0.0,
-                'sohle_zufluss1': _kanal.sohle_zufluss1, 'sohle_zufluss2': _kanal.sohle_zufluss2,
-                'sohle_zufluss3': _kanal.sohle_zufluss3, 'sohle_zufluss4': _kanal.sohle_zufluss4,
-                'sohle_zufluss5': _kanal.sohle_zufluss5, 'sohle_zufluss6': _kanal.sohle_zufluss6,
-                'sohle_zufluss7': _kanal.sohle_zufluss7, 'sohle_zufluss8': _kanal.sohle_zufluss8,
-                'kanalart': _kanal.kanalart, 'profilart_v': _kanal.profilart_v,
-                'material_v': _kanal.material_v,
-                'e_gebiet': _kanal.e_gebiet, 'strassennummer': _kanal.strassennummer,
-                'schachtnummer': _kanal.schachtnummer, 'schachtart': _kanal.schachtart,
-                'berichtsnummer': _kanal.berichtsnummer,
-                'laenge': _kanal.laenge, 'schachtmaterial': _kanal.schachtmaterial,
-                'oberflaeche': _kanal.oberflaeche,
-                'baujahr': _kanal.baujahr, 'wasserschutz': _kanal.wasserschutz, 'eigentum': _kanal.eigentum,
-                'naechste_halt': _kanal.naechste_halt, 'rueckadresse': _kanal.rueckadresse,
-                'strangnr': _kanal.strangnr, 'betriebspunkt': _kanal.betriebspunkt,
-                'strakatid': _kanal.strakatid,
-                "epsg": self.epsg, "coordsFromRohr": False   # für Netzlogik sind Gerinneschnittpunkte relevant
-            }
-            if all([
-                _kanal.rw_gerinne_o > 1,
-                _kanal.rw_gerinne_u > 1,
-                _kanal.hw_gerinne_o > 1,
-                _kanal.hw_gerinne_u > 1,
-            ]):
-                params += (data,)
+            if (
+                _kanal['rw_gerinne_o'] > 1
+                and _kanal['rw_gerinne_u'] > 1
+                and _kanal['hw_gerinne_o'] > 1
+                and _kanal['hw_gerinne_u'] > 1
+            ):
+                _kanal['s_sohle_oben_v'] = 0.0
+                _kanal['epsg'] = self.epsg
+                _kanal['coordsFromRohr'] = False   # für Netzlogik sind Gerinneschnittpunkte relevant
+                datensaetze.append(_kanal)
+
+        params = tuple(datensaetze)
+        del datensaetze
 
         logger.debug("{__name__}: Berichte werden in temporäre STRAKAT-Tabellen geschrieben ...")
 
@@ -491,6 +565,9 @@ class ImportTask():
         # ):
             # logger.error_code('Fehler bei strakat_import Kopie von t_strakatkanal')
             # raise QkanDbError
+
+        # Performance: Indizes für die folgenden Abfragen (Tabelle wird bei jedem Import neu erstellt)
+        self._indizes_anlegen(self.INDIZES_STRAKATKANAL)
 
         # Bereinigung inkonsistenter Schachtbezeichnungen
 
@@ -562,6 +639,7 @@ class ImportTask():
         }
 
         # Datei referenztabelle.strakat einlesen und in Tabelle schreiben
+        reflisten = []                      # Performance: gesammelt und mit executemany geschrieben
         blength = 128                       # Blocklänge in der STRAKAT-Datei
         with open(os.path.join(self.strakatdir, 'system', 'referenztabelle.strakat'), 'rb') as fo:
             idvor = -1                          # Erkennung eines neuen Tabellentyps
@@ -606,20 +684,21 @@ class ImportTask():
                 except UnicodeDecodeError:
                     logger.error_code(f"Fehlerhaftes Zeichen in Block {n}: {block}")
 
-                params = {'tabtyp': tabtyp, 'id': id,
-                          'n1': n1, 'n2': n2, 'n3': n3, 'n4': n4, 'n5': n5,
-                          'kurz': kurz, 'text': text}
-
-                if not self.db_qkan.sqlyml(
-                        sqlnam = "strakat_add_t_reflists",
-                        stmt_category= "strakat_import Referenztabellen",
-                        parameters=params):
-                    raise Exception(f'{self.__class__.__name__}:Fehler beim Lesen der Datei "system/referenztabelle.strakat"')
+                reflisten.append({'tabtyp': tabtyp, 'id': id,
+                                  'n1': n1, 'n2': n2, 'n3': n3, 'n4': n4, 'n5': n5,
+                                  'kurz': kurz, 'text': text})
             else:
                 raise Exception(f'{self.__class__.__name__}:Programmfehler: Einlesen der Datei '
                                 f'"system/referenztabelle.strakat" wurde nicht ordnungsgemäß abgeschlossen!')
 
-            self.db_qkan.commit()
+        if reflisten and not self.db_qkan.sqlyml(
+                sqlnam="strakat_add_t_reflists",
+                stmt_category="strakat_import Referenztabellen",
+                parameters=tuple(reflisten),
+                many=True):
+            raise Exception(f'{self.__class__.__name__}:Fehler beim Lesen der Datei "system/referenztabelle.strakat"')
+        self.db_qkan.commit()
+        reflisten = []
 
         blength = 256                       # Blocklänge in der STRAKAT-Datei
         with open(os.path.join(self.strakatdir, 'symbol.os'), 'rb') as fo:
@@ -665,19 +744,21 @@ class ImportTask():
                     # Verarbeitung erfolgt in der nächsten Schleife, wenn ein Folgesatz folgt
                     valid = False
 
-                    params = {'tabtyp': 'symbol', 'id': id,
-                              'n1': None, 'n2': None, 'n3': None, 'n4': None, 'n5': None,
-                              'kurz': str(id), 'text': bezeichnung}
-
-                    if not self.db_qkan.sqlyml(
-                            sqlnam="strakat_add_t_reflists",
-                            stmt_category="strakat_import Referenztabellen",
-                            parameters=params):
-                        raise Exception(f'{self.__class__.__name__}: SQL-Fehler beim Lesen der Datei "symbole.os"')
+                    reflisten.append({'tabtyp': 'symbol', 'id': id,
+                                      'n1': None, 'n2': None, 'n3': None, 'n4': None, 'n5': None,
+                                      'kurz': str(id), 'text': bezeichnung})
             else:
                 raise Exception(f'{self.__class__.__name__}:Programmfehler: Einlesen der Datei '
                                 '"symbole.os" wurde nicht ordnungsgemäß abgeschlossen!')
 
+        if reflisten and not self.db_qkan.sqlyml(
+                sqlnam="strakat_add_t_reflists",
+                stmt_category="strakat_import Referenztabellen",
+                parameters=tuple(reflisten),
+                many=True):
+            raise Exception(f'{self.__class__.__name__}: SQL-Fehler beim Lesen der Datei "symbole.os"')
+
+        self._indizes_anlegen(self.INDIZES_REFLISTS)
         self.db_qkan.commit()
 
         return True
@@ -714,6 +795,7 @@ class ImportTask():
                 raise Exception(f'{self.__class__.__name__}: Fehler beim Ergänzen von geom in t_strakathausanschluesse')
 
         # Datei haus.rwtopen einlesen und in Tabelle schreiben
+        hausanschluesse = []               # Performance: gesammelt und mit executemany geschrieben
         blength = 640                      # Blocklänge in der STRAKAT-Datei
         with open(os.path.join(self.strakatdir, 'haus.rwtopen'), 'rb') as fo:
             _ = fo.read(blength)               # Kopfzeile ohne Bedeutung?
@@ -812,17 +894,21 @@ class ImportTask():
                     'strakatid': strakatid, 'hausanschlid': hausanschlid, 'geomwkb': geomwkb, "epsg": self.epsg,
                 }
 
-                sqlnam = "strakat_04"
-
-                if not self.db_qkan.sqlyml(
-                    sqlnam=sqlnam,
-                    stmt_category="strakat_import Hausanschlüsse",
-                    parameters=params,
-                ):
-                    raise Exception(f'{self.__class__.__name__}: Fehler beim Lesen der Datei "haus.rwtopen"')
+                hausanschluesse.append(params)
             else:
                 raise Exception(f'{self.__class__.__name__}: Programmfehler: Einlesen der Datei kanal.rwtopen wurde'
                                 f' nicht ordnungsgemäß abgeschlossen!"')
+
+        if hausanschluesse and not self.db_qkan.sqlyml(
+            sqlnam="strakat_04",
+            stmt_category="strakat_import Hausanschlüsse",
+            parameters=tuple(hausanschluesse),
+            many=True,
+        ):
+            raise Exception(f'{self.__class__.__name__}: Fehler beim Lesen der Datei "haus.rwtopen"')
+        del hausanschluesse
+
+        self._indizes_anlegen(self.INDIZES_HAUSANSCHLUESSE)
 
         # Eindeutige Werte in anschlusshalnam
         sqlnam = "strakat_05"
@@ -860,6 +946,8 @@ class ImportTask():
             stmt_category='Erstellung Tabelle "t_strakatberichte"',
         ):
             return False
+
+        bewertungscodes = {}                    # Diagnose: STRAKAT-Code Bewertungsart -> Anzahl
 
         def _iter() -> Iterator[Bericht_STRAKAT]:
             # Datei kanal.rwtopen einlesen und in Tabelle schreiben
@@ -930,7 +1018,8 @@ class ImportTask():
                         logger.debug(f'Datenfehler: {bandnr=}, {videozaehler=}')
                         foto_dateiname = '00000000'
 
-                    wert8 = unpack('B', b[298:299])                         # STRAKAT: Bewertungsart
+                    wert8 = unpack('B', b[298:299])[0]                      # STRAKAT: Bewertungsart
+                    bewertungscodes[wert8] = bewertungscodes.get(wert8, 0) + 1   # Diagnose
                     if wert8 == 4:
                         bewertungsart = 'DWA'
                     else:
@@ -962,7 +1051,9 @@ class ImportTask():
                      ) = [hex(z).replace('0x', '0')[-2:] for z in unpack('B' * 16, b[675:691])]
                     berichtid = f'{h3}{h2}{h1}{h0}-{h5}{h4}-{h7}{h6}-{h8}{h9}-{ha}{hb}{hc}{hd}{he}{hf}'
 
-                    yield Bericht_STRAKAT(
+                    # Performance: direkt als dict (statt Bericht_STRAKAT-Objekt), die Typen
+                    # entsprechen bereits den Annotationen von Bericht_STRAKAT
+                    yield dict(
                         nummer=nummer,
                         datum=datum,
                         untersucher=untersucher,
@@ -1008,53 +1099,12 @@ class ImportTask():
                         raise Exception(f"{self.__class__.__name__}: Programmfehler: Einlesen der Datei "
                                         f"kanal.rwtopen wurde nicht ordnungsgemäß abgeschlossen!")
 
-        params = ()                           # STRAKAT data stored in tuple of dicts for better performance
-                                            # with sql-statement executemany
-        logger.debug("{__name__}: Berichte werden gelesen und in data gespeichert ...")
+        # Performance: Liste statt Tupel-Verkettung (siehe _strakat_kanaltabelle)
+        logger.debug("{__name__}: Berichte werden gelesen ...")
+        params = tuple(_iter())
+        logger.info(f"STRAKAT-Import Berichte: Codes Bewertungsart (4 = DWA, sonst ATV): {bewertungscodes}")
 
-        for _bericht in _iter():
-            data = {
-                'nummer': _bericht.nummer,
-                'datum': _bericht.datum,
-                'untersucher': _bericht.untersucher,
-                'ag_kontrolle': _bericht.ag_kontrolle,
-                'fahrzeug': _bericht.fahrzeug,
-                'inspekteur': _bericht.inspekteur,
-                'wetter': _bericht.wetter,
-                'bewertungsart': _bericht.bewertungsart,
-                'atv149': _bericht.atv149,
-                'fortsetzung': _bericht.fortsetzung,
-                'station_gegen': _bericht.station_gegen,
-                'station_untersucher': _bericht.station_untersucher,
-                'atv_kuerzel': _bericht.atv_kuerzel,
-                'atv_langtext': _bericht.atv_langtext,
-                'charakt1': _bericht.charakt1,
-                'charakt2': _bericht.charakt2,
-                'quantnr1': _bericht.quantnr1,
-                'quantnr2': _bericht.quantnr2,
-                'streckenschaden': _bericht.streckenschaden,
-                'pos_von': _bericht.pos_von,
-                'pos_bis': _bericht.pos_bis,
-                'sandatum': _bericht.sandatum,
-                'geloescht': _bericht.geloescht,
-                'schadensklasse': _bericht.schadensklasse,
-                'untersuchungsrichtung': _bericht.untersuchungsrichtung,
-                'bandnr': _bericht.bandnr,
-                'videozaehler': _bericht.videozaehler,
-                'foto_dateiname': _bericht.foto_dateiname,
-                'sanierung': _bericht.sanierung,
-                'atv143': _bericht.atv143,
-                'skdichtheit': _bericht.skdichtheit,
-                'skbetriebssicherheit': _bericht.skbetriebssicherheit,
-                'skstandsicherheit': _bericht.skstandsicherheit,
-                'kommentar': _bericht.kommentar,
-                'strakatid': _bericht.strakatid,
-                'hausanschlid': _bericht.hausanschlid,
-                'berichtid': _bericht.berichtid,
-            }
-            params += (data,)
-
-        logger.debug("{__name__}: Berichte werden in temporäre STRAKAT-Tabellen geschrieben ...")
+        logger.debug(f"{__name__}: {len(params)} Berichte werden in temporäre STRAKAT-Tabellen geschrieben ...")
 
         sqlnam = "strakat_08"
         if not self.db_qkan.sqlyml(
@@ -1064,7 +1114,9 @@ class ImportTask():
                 many=True,
         ):
             raise Exception(f'{self.__class__.__name__}: Fehler beim Lesen der Datei ENBericht.rwtopen')
+        del params
 
+        self._indizes_anlegen(self.INDIZES_BERICHTE)
         self.db_qkan.commit()
 
         logger.debug("{__name__}: Berichte werden in QKan-Tabellen geschrieben ...")
@@ -1226,6 +1278,16 @@ class ImportTask():
            Anschließend werden für Standardwerte die Schlüssel für diverse Exportformate ergänzt. """
 
         # Entwässerungsarten
+
+        # STRAKAT-Bezeichnungen (z.B. „KR Regenwasserkanal“) in den Objekttabellen auf den
+        # QKan-Standard setzen – betrifft auch Daten aus früheren Importen
+        for tabelle in ("schaechte", "haltungen", "anschlussleitungen"):
+            if not self.db_qkan.sqlyml(
+                sqlnam=f"strakat_entwart_qkanstandard_{tabelle}",
+                stmt_category=f"strakat_import Entwässerungsart QKan-Standard {tabelle}",
+            ):
+                return False
+        self.db_qkan.commit()
 
         # Bezeichnungen in Referenztabelle und bezogenen Tabellen (über trigger) an QKan-Standard anpassen
         # self.db_qkan._adapt_reftable('entwaesserungsarten')           # funktionierte sowieso nicht, jh 01.12.2025
@@ -1467,6 +1529,16 @@ class ImportTask():
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei ")
 
+        # Entwässerungsart von der Haltung übernehmen, an der die Leitung angeschlossen ist –
+        # auch für bereits früher importierte Leitungen (die bisher alle den Standardwert hatten)
+        sqlnam = "strakat_anschlussleitungen_entwart"
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category="strakat_import anschlussleitungen entwart von haltung",
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler beim Übernehmen der "
+                            "Entwässerungsart der Haltungen für die Anschlussleitungen")
+
         self.db_qkan.commit()
 
         return True
@@ -1513,6 +1585,8 @@ class ImportTask():
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei Videos Schächte")
 
+        anz_vorher = self._anzahl("untersuchdat_schacht")
+
         sqlnam = "strakat_untersuchdat_schacht"
         params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video, 'epsg': self.epsg}
         if not self.db_qkan.sqlyml(
@@ -1521,6 +1595,11 @@ class ImportTask():
             parameters=params,
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei Untersuchdat Schächte")
+
+        anz_nachher = self._anzahl("untersuchdat_schacht")
+        if anz_vorher is not None and anz_nachher is not None:
+            logger.info(f"STRAKAT-Import: {anz_nachher - anz_vorher} Schachtschäden in "
+                        f"untersuchdat_schacht eingefügt (gesamt {anz_nachher})")
 
         self.db_qkan.commit()
 
