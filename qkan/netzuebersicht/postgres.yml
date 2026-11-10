@@ -45,7 +45,7 @@ nz_postgis_extension: "
 CREATE EXTENSION IF NOT EXISTS postgis"
 
 nz_sinkkaesten_create: "
-CREATE TABLE \"Sinkkästen\" (
+CREATE TABLE \"sinkkaesten\" (
     \"Name\" TEXT PRIMARY KEY,
     \"Schacht_oben\" TEXT,
     \"Schacht_unten\" TEXT,
@@ -64,13 +64,13 @@ CREATE TABLE \"Sinkkästen\" (
 
 # Uebernahme der Strasseneinlaeufe aus der Tabelle symbole
 nz_sinkkaesten_import_symbole: "
-INSERT INTO \"Sinkkästen\" (\"Name\", geom)
+INSERT INTO \"sinkkaesten\" (\"Name\", geom)
 SELECT
     bezeichnung,
     geom
 FROM symbole
 WHERE art IN ('21 Straßeneinlauf', '22 Straßeneinlauf-SF', '23 Straßeneinlauf-SV')
-AND bezeichnung NOT IN (SELECT \"Name\" FROM \"Sinkkästen\")"
+AND bezeichnung NOT IN (SELECT \"Name\" FROM \"sinkkaesten\")"
 
 nz_rinnen_create: "
 CREATE TABLE \"entwaesserungsrinnen\" (

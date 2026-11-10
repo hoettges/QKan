@@ -35,7 +35,7 @@ SELECT COUNT(*) FROM {tabelle}"
 nz_postgis_extension: ~
 
 nz_sinkkaesten_create: "
-CREATE TABLE \"Sinkkästen\" (
+CREATE TABLE \"sinkkaesten\" (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT,
     Strasse TEXT,

@@ -745,6 +745,7 @@ class QKan:
             "sonderbauwerke_view",
             "Sinkkästen",
             "Sinkkaesten",
+            "sinkkaesten",
         }
 
         project = QgsProject.instance()

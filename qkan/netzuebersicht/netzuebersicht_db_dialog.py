@@ -122,6 +122,7 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
                         "sonderbauwerke_view",
                         "Sinkkästen",
                         "Sinkkaesten",
+                        "sinkkaesten",
                     }:
                         print("[Netzuebersicht_DB]  -> übersprungen: kein bekannter QKan-Tabellenname")
                         continue
@@ -341,7 +342,7 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
             0: ("haltungen", self.proxy_model_haltungen, self.model_haltungen, self.tableView_Haltungen),
             1: ("schaechte", self.proxy_model_schaechte, self.model_schaechte, self.tableView_Schaechte),
             2: ("anschlussleitungen", self.proxy_model_anschlussleitungen, self.model_anschlussleitungen, self.tableView_GAL),
-            3: ("Sinkkästen", self.proxy_model_sinkkaesten, self.model_sinkkaesten, self.tableView_Sinkkaesten),
+            3: (str(self.model_sinkkaesten.tableName()).strip('"'), self.proxy_model_sinkkaesten, self.model_sinkkaesten, self.tableView_Sinkkaesten),
             4: ("entwaesserungsrinnen", self.proxy_model_rinnen, self.model_rinnen, self.tableView_Rinnen),
         }
 
@@ -371,7 +372,7 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
 
 
         # Schlüssel ermitteln
-        if raw_table_name == "Sinkkästen":
+        if current_index == 3:
             name_idx = record.indexOf("Name")
             key_value = record.value(name_idx)
             key_field = "Name"
@@ -498,6 +499,7 @@ class Netzuebersicht_DB(QDialog, FORM_CLASS_netzuebersicht):
                         "schaechte": "Schächte",
                         "anschlussleitungen": "Anschlussleitungen",
                         "entwaesserungsrinnen": "Rinnen",
+                        "sinkkaesten": "Sinkkästen",
                     }
                     real_name = l_map.get(raw_table_name, raw_table_name)
                     ls = QgsProject.instance().mapLayersByName(real_name)
