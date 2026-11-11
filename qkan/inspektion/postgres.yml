@@ -470,3 +470,28 @@ inspektion_medien_schadenscodes: |-
   ) AS schadenscodes
   WHERE TRIM(COALESCE(code, '')) <> ''
   ORDER BY code;
+
+inspektion_medien_fotos_zusatz: |-
+  SELECT pk, name, untersuchtag, objekt, datei, NULL AS untersuchrichtung, 'fotos' AS quelle
+  FROM {schema}.fotos
+  WHERE objekt = :object_type AND name = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+    AND datei IS NOT NULL AND TRIM(datei) <> ''
+  ORDER BY untersuchtag DESC, pk;
+
+inspektion_medien_videos_zusatz: |-
+  SELECT pk, name, untersuchtag, objekt, datei, untersuchrichtung, 'videos' AS quelle
+  FROM {schema}.videos
+  WHERE objekt = :object_type AND name = :object_name
+    AND (:all_dates = 1 OR untersuchtag = :date_value)
+    AND datei IS NOT NULL AND TRIM(datei) <> ''
+  ORDER BY untersuchtag DESC, pk;
+
+inspektion_medien_zusatztermine: |-
+  SELECT untersuchtag FROM {schema}.fotos
+  WHERE objekt = :object_type AND name = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> ''
+  UNION
+  SELECT untersuchtag FROM {schema}.videos
+  WHERE objekt = :object_type AND name = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> '';

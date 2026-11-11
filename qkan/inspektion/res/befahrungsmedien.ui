@@ -513,7 +513,7 @@
               <attribute name="title">
                 <string>Videos</string>
               </attribute>
-              <layout class="QVBoxLayout" name="videoLayout" stretch="1,0,0,0">
+              <layout class="QVBoxLayout" name="videoLayout" stretch="1,0,0,0,0">
                 <item>
                   <widget class="QTableWidget" name="tw_videos">
                     <property name="selectionBehavior">
@@ -577,6 +577,13 @@
                     </property>
                     <property name="wordWrap">
                       <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QComboBox" name="cb_befahrungsvideo">
+                    <property name="toolTip">
+                      <string>Befahrungsvideo wählen; Zusatzvideos stammen aus der QKan-Tabelle videos.</string>
                     </property>
                   </widget>
                 </item>

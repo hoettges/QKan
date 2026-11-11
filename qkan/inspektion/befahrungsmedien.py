@@ -53,7 +53,6 @@ from qgis.core import (
     QgsFeature,
     QgsFeatureRequest,
     QgsGeometry,
-    QgsMessageLog,
     QgsPoint,
     QgsPointXY,
     QgsProject,
@@ -62,6 +61,8 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapToolIdentify
+
+from qkan.utils import get_logger
 
 from .datenquelle import (
     Datenquelle,
@@ -72,6 +73,8 @@ from .datenquelle import (
 )
 from .inspektionsgrafik import Inspektionsgrafik, inspektionsgrafik_pdf_schreiben
 
+
+LOGGER = get_logger("QKan.inspektion.befahrungsmedien")
 
 PLUGIN_GROUP = "QKanMediaInspector"
 IMAGE_EXTENSIONS = {
@@ -171,9 +174,24 @@ class Medieneintrag:
     resolution_status: str = ""
 
 
-def _loggen(message: str, level: Qgis.MessageLevel = Qgis.Info) -> None:
-    """Schreibt eine Meldung in das QGIS-Protokoll."""
-    QgsMessageLog.logMessage(message, "QKan Medieninspektor", level)
+def _loggen(
+    message: str, level: Qgis.MessageLevel = Qgis.Info, *, detail: bool = False
+) -> None:
+    """Protokolliert über QKans gemeinsamen Logger (QKan-Logdatei und QGIS).
+
+    Details einzelner Dateiprüfungen landen mit DEBUG ausschließlich in der
+    Logdatei. QKan zeigt Warnungen und Fehler sonst zusätzlich als Popup an:
+    Bei hunderten fehlenden Referenzen wäre das nicht sinnvoll. Stattdessen
+    folgt eine gemeinsame Warnung je abgeschlossenem Suchlauf im GUI-Thread.
+    """
+    if detail:
+        LOGGER.debug("TV-Tool: %s", message)
+    elif level == Qgis.Critical:
+        LOGGER.error("TV-Tool: %s", message)
+    elif level == Qgis.Warning:
+        LOGGER.warning("TV-Tool: %s", message)
+    else:
+        LOGGER.info("TV-Tool: %s", message)
 
 
 def _pfadtext_normalisieren(value: Any) -> str:
@@ -402,6 +420,11 @@ def _direkte_medientreffer(
     if not _text_sicher_lesen(stored_path).strip():
         return ()
     if not media_root_path or not Path(media_root_path).is_dir():
+        _loggen(
+            f"{media_type}-Dateisuche ohne erreichbaren QKan-Stammordner: "
+            f"Referenz={stored_path!r}; Basis={media_root_path!r}",
+            detail=True,
+        )
         return ()
 
     def treffende_pfade(paths: list[tuple[Path, str, int]]) -> tuple[Medientreffer, ...]:
@@ -431,7 +454,7 @@ def _direkte_medientreffer(
            if direct_paths else "keine zulässigen Kandidaten")
     )
     if media_type != "Video":
-        _loggen(diagnose, Qgis.Warning)
+        _loggen(diagnose, detail=True)
         return ()
 
     normalized = _pfadtext_normalisieren(stored_path)
@@ -469,14 +492,14 @@ def _direkte_medientreffer(
                             )
                             break
                 except OSError as error:
-                    _loggen(f"Videoordner konnte nicht gelesen werden: {band_folder}: {error}", Qgis.Warning)
+                    _loggen(f"Videoordner konnte nicht gelesen werden: {band_folder}: {error}", detail=True)
     bandtreffer = treffende_pfade(fallback_paths)
     _loggen(
         diagnose + (
             f"; Video stattdessen über STRAKAT-Bandordner gefunden: {bandtreffer[0].full_path}"
             if bandtreffer else "; auch kein Treffer im STRAKAT-Bandordner"
         ),
-        Qgis.Info if bandtreffer else Qgis.Warning,
+        detail=True,
     )
     return bandtreffer
 
@@ -493,12 +516,14 @@ class MediensucheArbeiter(QObject):
         object_column: str,
         foto_root_path: str,
         video_root_path: str,
+        additional_media: list[dict[str, Any]],
     ) -> None:
         super().__init__()
         self.damage_rows = damage_rows
         self.object_column = object_column
         self.foto_root_path = foto_root_path
         self.video_root_path = video_root_path
+        self.additional_media = additional_media
 
     @pyqtSlot()
     def ausfuehren(self) -> None:
@@ -529,7 +554,7 @@ class MediensucheArbeiter(QObject):
                         if code and clock is not None:
                             timeline.append((code, clock, path))
                 except OSError as error:
-                    _loggen(f"Videoordner konnte nicht gelesen werden: {folder}: {error}", Qgis.Warning)
+                    _loggen(f"Videoordner konnte nicht gelesen werden: {folder}: {error}", detail=True)
                 timeline.sort(key=lambda value: value[1])
                 video_timeline_cache[cache_key] = timeline
                 return timeline
@@ -613,6 +638,46 @@ class MediensucheArbeiter(QObject):
                         resolution_status=resolution_status,
                     )
                     (photos if media_type == "Bild" else videos).append(item)
+            # Ergänzende Medien aus QKans Tabellen fotos/videos. Die vorhandenen
+            # Schadensreferenzen behalten Vorrang; ergänzende Fotos werden ohne
+            # eindeutige Schadensreferenz auf Befahrungsebene angezeigt.
+            existing_photo_keys = {
+                (_text_sicher_lesen(self.damage_rows[item.damage_index].get(self.object_column)),
+                 _text_sicher_lesen(self.damage_rows[item.damage_index].get("untersuchtag")),
+                 _pfadtext_normalisieren(item.stored_path))
+                for item in photos
+            }
+            for record in self.additional_media:
+                if QThread.currentThread().isInterruptionRequested():
+                    return
+                media_type = record["media_type"]
+                stored_path = _text_sicher_lesen(record.get("datei")).strip()
+                if not stored_path:
+                    continue
+                key = (_text_sicher_lesen(record.get("name")),
+                       _text_sicher_lesen(record.get("untersuchtag")),
+                       _pfadtext_normalisieren(stored_path))
+                if media_type == "Bild" and key in existing_photo_keys:
+                    continue
+                root = self.foto_root_path if media_type == "Bild" else self.video_root_path
+                candidates = _direkte_medientreffer(media_type, stored_path, root)
+                caption = (
+                    f"{record.get('objekt', '')} · {record.get('name', '')} · "
+                    f"{record.get('untersuchtag', '')} · "
+                    f"{record.get('untersuchrichtung') or 'Richtung unbekannt'} · "
+                    f"{record.get('quelle', 'Medientabelle')} (Befahrungsebene)"
+                )
+                item = Medieneintrag(
+                    damage_index=-1, media_type=media_type,
+                    stored_path=stored_path, candidates=candidates,
+                    caption=caption, start_seconds=0.0,
+                    resolution_status=("Ergänzende Referenz: " +
+                                       (candidates[0].method if candidates else "Datei nicht gefunden")),
+                )
+                (photos if media_type == "Bild" else videos).append(item)
+                if media_type == "Bild":
+                    existing_photo_keys.add(key)
+
             inspection_video: Optional[Medieneintrag] = None
 
             # Eine bereits aufgelöste Videoreferenz aus der Inspektion hat Vorrang.
@@ -739,6 +804,9 @@ class MediensucheArbeiter(QObject):
             videos.sort(key=lambda item: item.damage_index)
             self.finished.emit(photos, videos, inspection_video)
         except Exception as error:  # Die QGIS-Oberfläche bei unerwarteten Ein-/Ausgabefehlern funktionsfähig halten
+            # Stacktrace nur in die Datei, keine Qt-Popups aus dem Arbeitsthread.
+            LOGGER.debug("TV-Tool: Unbehandelter Fehler in der Mediensuche", exc_info=True)
+            # Fehlerbehandlung und QGIS-Meldung erfolgen im GUI-Thread.
             self.failed.emit(str(error))
 
 def _text_sicher_lesen(value: Any) -> str:
@@ -1024,6 +1092,7 @@ class BefahrungsmedienDialog(QDialog):
         self.photo_items: list[Medieneintrag] = []
         self.video_items: list[Medieneintrag] = []
         self.inspection_video: Optional[Medieneintrag] = None
+        self.inspection_videos: list[Medieneintrag] = []
         self.current_photo_index = -1
         self.current_object_length = 1.0
         self.current_overall: Optional[dict[str, Any]] = None
@@ -1113,6 +1182,7 @@ class BefahrungsmedienDialog(QDialog):
         self.pb_foto_ordner_oeffnen.clicked.connect(self._fotoordner_oeffnen)
         self.tw_videos.currentCellChanged.connect(self._videoauswahl_geaendert)
         self.pb_schadensvideo_oeffnen.clicked.connect(self._ausgewaehltes_video_oeffnen)
+        self.cb_befahrungsvideo.currentIndexChanged.connect(self._befahrungsvideo_auswahl_geaendert)
         self.pb_befahrungsvideo_oeffnen.clicked.connect(self._befahrungsvideo_oeffnen)
         self.pb_video_ordner_oeffnen.clicked.connect(self._videoordner_oeffnen)
         self.pb_panoramo_oeffnen.clicked.connect(self._panoramo_oeffnen)
@@ -1216,7 +1286,8 @@ class BefahrungsmedienDialog(QDialog):
         except Exception as error:
             # Ein echter Lesefehler darf niemals wie "0 Schäden vorhanden" aussehen.
             self._datenbankfehler = str(error)
-            _loggen(f"Datenbankabfrage {sql_name} abgebrochen: {error}", Qgis.Warning)
+            LOGGER.debug("TV-Tool: Details der fehlgeschlagenen DB-Abfrage %s", sql_name, exc_info=True)
+            _loggen(f"Datenbankabfrage {sql_name} abgebrochen: {error}", Qgis.Critical)
             self.lbl_status.setText("QKan-Datenbank nicht lesbar: " + self._datenbankfehler)
             QMessageBox.warning(
                 self, "QKan-Datenbank nicht lesbar", self._datenbankfehler
@@ -1373,8 +1444,18 @@ class BefahrungsmedienDialog(QDialog):
         )
         if self._datenbankfehler:
             return
+        # Auch Medien ohne Einzelschadenszeile müssen über ihr Datum auswählbar sein.
+        # Die Schadenstabelle bleibt die primäre Quelle.
+        media_dates = self._datenbankabfrage(
+            "inspektion_medien_zusatztermine",
+            {"object_type": self.cb_objektart.currentText(),
+             "object_name": object_name},
+        )
+        if self._datenbankfehler:
+            return
         date_values = sorted(
-            (_text_sicher_lesen(row.get("untersuchtag")) for row in rows),
+            {_text_sicher_lesen(row.get("untersuchtag")) for row in rows + media_dates
+             if _text_sicher_lesen(row.get("untersuchtag")).strip()},
             key=_befahrungsdatum_sortierwert,
             reverse=True,
         )
@@ -2565,6 +2646,7 @@ class BefahrungsmedienDialog(QDialog):
         self.photo_items = []
         self.video_items = []
         self.inspection_video = None
+        self.inspection_videos = []
         self._befahrungsvideo_status_aktualisieren()
         self._mediensuche_abbrechen()
 
@@ -2595,12 +2677,44 @@ class BefahrungsmedienDialog(QDialog):
         else:
             self._last_media_path_error = ""
 
+        # Die Datenbank wird ausschließlich im GUI-Thread über QKans freigegebene
+        # Verbindung gelesen; der Medien-Arbeitsthread erhält nur Kopien der Zeilen.
+        additional_media = []
+        object_name = self.cb_objekt.currentText().strip()
+        for media_type, query_name in (("Bild", "inspektion_medien_fotos_zusatz"),
+                                       ("Video", "inspektion_medien_videos_zusatz")):
+            rows = self._datenbankabfrage(query_name, {
+                "object_name": object_name,
+                "object_type": self.cb_objektart.currentText(),
+                "date_value": self.current_date_value,
+                "all_dates": 1 if self.current_all_dates else 0,
+            })
+            if self._datenbankfehler:
+                return
+            additional_media.extend(dict(row, media_type=media_type) for row in rows)
+        fehlende_tabellenpfade = sum(
+            not _text_sicher_lesen(r.get("datei")).strip() for r in additional_media
+        )
+        _loggen(
+            f"Ergänzende Medientabellen für {self.cb_objektart.currentText()} "
+            f"{object_name!r}, Datum {self.current_date_value or 'alle'}: "
+            f"{sum(r['media_type'] == 'Bild' for r in additional_media)} Fotoeinträge, "
+            f"{sum(r['media_type'] == 'Video' for r in additional_media)} Videoeinträge, "
+            f"davon {fehlende_tabellenpfade} ohne Dateipfad (werden übersprungen)."
+        )
+        if not self.damage_rows and additional_media:
+            _loggen(
+                f"Keine Einzelschäden für {object_name!r}; "
+                "Medieneinträge werden ohne Schadenszuordnung auf Befahrungsebene geprüft."
+            )
+
         thread = QThread()
         worker = MediensucheArbeiter(
             [dict(row) for row in self.damage_rows],
             config["object_column"],
             foto_root_path,
             video_root_path,
+            additional_media,
         )
         worker.moveToThread(thread)
         thread.started.connect(worker.ausfuehren)
@@ -2693,13 +2807,13 @@ class BefahrungsmedienDialog(QDialog):
             item
             for item in resolved_photos
             if isinstance(item, Medieneintrag)
-            and 0 <= item.damage_index < len(self.damage_rows)
+            and (item.damage_index == -1 or 0 <= item.damage_index < len(self.damage_rows))
         ]
         self.video_items = [
             item
             for item in resolved_videos
             if isinstance(item, Medieneintrag)
-            and 0 <= item.damage_index < len(self.damage_rows)
+            and (item.damage_index == -1 or 0 <= item.damage_index < len(self.damage_rows))
         ]
         if (
             isinstance(inspection_video, Medieneintrag)
@@ -2713,6 +2827,31 @@ class BefahrungsmedienDialog(QDialog):
                 "Veraltete Medientreffer ohne passende Schadenszeile wurden verworfen.",
                 Qgis.Warning,
             )
+        # Befahrungsvideos sammeln, nicht nur den ersten Treffer verwenden.
+        # Schadensbezogene Treffer bleiben vorrangig; zusätzliche Referenzen
+        # erscheinen separat, ohne ungeprüfte Schadens- oder Richtungszuordnung.
+        self.inspection_videos = []
+        seen_files = set()
+        for item in ([self.inspection_video] if self.inspection_video else []) + self.video_items:
+            if item is None or not item.candidates:
+                continue
+            # Nur Dateien mit eigenständigem belegtem Start (Zusatzvideos)
+            # oder das bisherige Hauptvideo als Befahrungsvideo anbieten.
+            if item is not self.inspection_video and item.damage_index >= 0:
+                continue
+            path_key = _pfadtext_normalisieren(item.candidates[0].full_path)
+            if path_key not in seen_files:
+                seen_files.add(path_key)
+                self.inspection_videos.append(item)
+        self.cb_befahrungsvideo.blockSignals(True)
+        self.cb_befahrungsvideo.clear()
+        for item in self.inspection_videos:
+            source = "Zusatzvideo" if item.damage_index == -1 else "Befahrungsvideo"
+            self.cb_befahrungsvideo.addItem(
+                f"{source}: {_dateiname_aus_pfad(item.stored_path)} · {item.caption}"
+            )
+        self.cb_befahrungsvideo.blockSignals(False)
+        self.inspection_video = self.inspection_videos[0] if self.inspection_videos else None
         self._befahrungsvideo_status_aktualisieren()
         self._videotabelle_fuellen()
         self.current_photo_index = 0 if self.photo_items else -1
@@ -2726,6 +2865,26 @@ class BefahrungsmedienDialog(QDialog):
             + (" · Eingeschränkte Pfade: " + self._last_media_path_error
                if self._last_media_path_error else "")
         )
+        # Ein einziges QKan-Warning je Suchlauf; alle Einzelpfade stehen als
+        # DEBUG-Einträge in der datierten QKan-Logdatei im TEMP-Verzeichnis.
+        fehlende_fotos = sum(not item.candidates for item in self.photo_items)
+        fehlende_videos = sum(not item.candidates for item in self.video_items)
+        erfolg_fotos = len(self.photo_items) - fehlende_fotos
+        erfolg_videos = len(self.video_items) - fehlende_videos
+        info = (
+            f"Medienprüfung für {self.cb_objektart.currentText()} "
+            f"{self.cb_objekt.currentText()!r}, Befahrung "
+            f"{self.current_date_value or 'alle Daten'}: "
+            f"Fotos gefunden={erfolg_fotos}, nicht gefunden={fehlende_fotos}; "
+            f"Videoreferenzen gefunden={erfolg_videos}, nicht gefunden={fehlende_videos}; "
+            f"Befahrungsvideos auswählbar={len(self.inspection_videos)}. "
+            "Einzelheiten und geprüfte Pfade: QKan-Logdatei."
+        )
+        _loggen(
+            info,
+            Qgis.Warning if (fehlende_fotos or fehlende_videos) and not self._last_media_path_error
+            else Qgis.Info,
+        )
 
     @pyqtSlot(str, int)
     def _medienaufloesung_fehlgeschlagen(self, message: str, run_id: int) -> None:
@@ -2737,13 +2896,14 @@ class BefahrungsmedienDialog(QDialog):
             return
         if not self._medienzeitueberschreitung_stoppen():
             return
-        _loggen(f"Medienprüfung abgebrochen: {message}", Qgis.Warning)
+        _loggen(f"Medienprüfung abgebrochen: {message}", Qgis.Critical)
         self.close()
 
     def _medienaufloesung_zeitueberschritten(self) -> None:
         """Verwirft die aktuelle Anfrage und schließt nach drei Minuten."""
         self._media_run_id += 1
         self._mediensuche_abbrechen()
+        _loggen("Medienprüfung nach 180 Sekunden abgebrochen (Zeitüberschreitung).", Qgis.Warning)
         self.iface.messageBar().pushMessage(
             "QKan Medieninspektor",
             "Die Medienprüfung dauerte länger als 3 Minuten; die Ansicht wurde geschlossen.",
@@ -2757,7 +2917,7 @@ class BefahrungsmedienDialog(QDialog):
         valid_items = [
             media
             for media in self.video_items
-            if 0 <= media.damage_index < len(self.damage_rows)
+            if media.damage_index == -1 or 0 <= media.damage_index < len(self.damage_rows)
         ]
         if len(valid_items) != len(self.video_items):
             _loggen(
@@ -2767,7 +2927,7 @@ class BefahrungsmedienDialog(QDialog):
         self.video_items = valid_items
         self.tw_videos.setRowCount(len(self.video_items))
         for row_index, media in enumerate(self.video_items):
-            damage = self.damage_rows[media.damage_index]
+            damage = self.damage_rows[media.damage_index] if media.damage_index >= 0 else {}
             status = media.resolution_status or self._trefferstatus_bestimmen(media.candidates)
             filename = (
                 Path(media.candidates[0].full_path).name
@@ -2775,9 +2935,9 @@ class BefahrungsmedienDialog(QDialog):
                 else _dateiname_aus_pfad(media.stored_path)
             )
             values = [
-                _text_sicher_lesen(damage.get("untersuchtag")),
-                f"{_gleitkommazahl_sicher_lesen(damage.get('station'), 0.0):.2f}",
-                _text_sicher_lesen(damage.get("kuerzel")),
+                _text_sicher_lesen(damage.get("untersuchtag")) if damage else media.caption.split(" · ")[2],
+                f"{_gleitkommazahl_sicher_lesen(damage.get('station'), 0.0):.2f}" if damage else "–",
+                _text_sicher_lesen(damage.get("kuerzel")) if damage else "Zusatzvideo",
                 _text_sicher_lesen(damage.get("timecode")),
                 status,
                 filename,
@@ -2834,7 +2994,8 @@ class BefahrungsmedienDialog(QDialog):
         self.current_photo_index = (self.current_photo_index + offset) % len(self.photo_items)
         self._aktuelles_foto_anzeigen()
         damage_index = self.photo_items[self.current_photo_index].damage_index
-        self.tw_schaeden.selectRow(damage_index)
+        if damage_index >= 0:
+            self.tw_schaeden.selectRow(damage_index)
 
     def _aktuelles_foto(self) -> Optional[Medieneintrag]:
         """Liefert den aktuell ausgewählten Fotoeintrag."""
@@ -2875,6 +3036,7 @@ class BefahrungsmedienDialog(QDialog):
             return
         pixmap = QPixmap(candidate.full_path)
         if pixmap.isNull():
+            _loggen(f"Fotodatei kann nicht als Bild geladen werden: {candidate.full_path}", detail=True)
             self.lbl_fotovorschau.setPixmap(QPixmap())
             self.lbl_fotovorschau.setText(
                 "Die indexierte Bilddatei kann aktuell nicht geladen werden:\n"
@@ -2960,6 +3122,7 @@ class BefahrungsmedienDialog(QDialog):
             return
         candidate = item.candidates[0] if item.candidates else None
         if candidate is None:
+            _loggen(f"Foto nicht gefunden (manueller Öffnungsversuch): {item.stored_path!r}", Qgis.Warning)
             QMessageBox.warning(
                 self,
                 "Keine Bilddatei gefunden",
@@ -2981,7 +3144,8 @@ class BefahrungsmedienDialog(QDialog):
             return
         self.pb_video_ordner_oeffnen.setEnabled(bool(self.video_root_path))
         item = self.video_items[current_row]
-        self.tw_schaeden.selectRow(item.damage_index)
+        if item.damage_index >= 0:
+            self.tw_schaeden.selectRow(item.damage_index)
         paths = "\n".join(candidate.full_path for candidate in item.candidates[:5])
         if len(item.candidates) > 5:
             paths += f"\n… und {len(item.candidates) - 5} weitere"
@@ -2999,6 +3163,14 @@ class BefahrungsmedienDialog(QDialog):
             + (f"\n{paths}" if paths else "")
         )
 
+    def _befahrungsvideo_auswahl_geaendert(self, index: int) -> None:
+        """Wechselt nur das Befahrungsvideo, ohne Schadenszuordnungen anzupassen."""
+        self.inspection_video = (
+            self.inspection_videos[index]
+            if 0 <= index < len(self.inspection_videos) else None
+        )
+        self._befahrungsvideo_status_aktualisieren()
+
     def _befahrungsvideo_status_aktualisieren(self) -> None:
         """Zeigt an, ob ein vollständiges Befahrungsvideo verknüpft ist."""
         item = self.inspection_video
@@ -3010,7 +3182,7 @@ class BefahrungsmedienDialog(QDialog):
             candidate = item.candidates[0]
             filename = Path(candidate.full_path).name
             self.inspection_video_status.setText(
-                f"Befahrungsvideo verlinkt: Ja · {filename}"
+                f"Befahrungsvideos: {len(self.inspection_videos)} · ausgewählt: {filename}"
             )
             self.panoramo_info.setText(
                 "Panoramo verwendet das verlinkte Befahrungsvideo und öffnet es "
@@ -3104,6 +3276,7 @@ class BefahrungsmedienDialog(QDialog):
         """Öffnet ein aufgelöstes Video entweder am Schaden oder am Anfang."""
         candidate = item.candidates[0] if item.candidates else None
         if candidate is None:
+            _loggen(f"Video nicht gefunden (manueller Öffnungsversuch): {item.stored_path!r}", Qgis.Warning)
             QMessageBox.warning(
                 self,
                 "Keine Videodatei gefunden",
@@ -3111,6 +3284,7 @@ class BefahrungsmedienDialog(QDialog):
             )
             return
         if not Path(candidate.full_path).is_file():
+            _loggen(f"Videodatei beim Öffnen nicht mehr erreichbar: {candidate.full_path}", Qgis.Warning)
             QMessageBox.warning(
                 self,
                 "Videodatei nicht erreichbar",
@@ -3150,6 +3324,7 @@ class BefahrungsmedienDialog(QDialog):
                 close_fds=True,
             )
         except OSError as error:
+            _loggen(f"VLC konnte für {candidate.full_path!r} nicht gestartet werden: {error}", Qgis.Critical)
             QMessageBox.critical(self, "VLC konnte nicht gestartet werden", _text_sicher_lesen(error))
 
     def _ansicht_leeren(self) -> None:
@@ -3163,6 +3338,8 @@ class BefahrungsmedienDialog(QDialog):
         self.photo_items = []
         self.video_items = []
         self.inspection_video = None
+        self.inspection_videos = []
+        self.cb_befahrungsvideo.clear()
         self.current_photo_index = -1
         self.current_overall = None
         self.current_connections = []
