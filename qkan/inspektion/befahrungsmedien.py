@@ -188,9 +188,9 @@ def _pfadtext_normalisieren(value: Any) -> str:
 
 
 def _dateiname_aus_pfad(value: Any) -> str:
-    """Liefert einen Dateinamen unabhängig von der verwendeten Pfadtrennung."""
-    normalized = _pfadtext_normalisieren(value)
-    return normalized.rsplit("/", 1)[-1] if normalized else ""
+    """Liefert den ursprünglichen Dateinamen, unabhängig von / und \\."""
+    raw = "" if value is None else str(value).strip().strip('"').strip("'")
+    return raw.replace("\\", "/").rsplit("/", 1)[-1]
 
 
 def _dateistamm_aus_pfad(value: Any) -> str:
@@ -218,59 +218,71 @@ def _aufzeichnungscode_in_sekunden(code: str) -> Optional[int]:
 
 
 def _qkan_medienstammpfade_laden() -> tuple[str, str]:
-    """Liest die Foto- und Video-Stammordner aus derselben QKan-Konfiguration. QKan
-    speichert diese Werte als ``fotoRootPath`` und ``videoRootPath`` in
-    ``qkan.json``. Wenn die laufende QKan-Instanz verfügbar ist, wird deren bereits
-    geladene Konfiguration verwendet.
+    """Liest die *wirksamen* QKan-Pfade, protokolliert Quelle und Erreichbarkeit.
+
+    In QKan sind die beiden Pfade globale Werte von ``QKan.config``. Nur wenn
+    diese Konfiguration nicht verfügbar ist, wird dieselbe qkan.json gelesen,
+    die ``Config.load`` verwendet. Eine leere laufende Einstellung wird niemals
+    heimlich durch einen gespeicherten Altwert ersetzt.
     """
+    config_path = Path(site.getuserbase()) / "qkan" / "qkan.json"
     foto_root = ""
     video_root = ""
+    herkunft = "laufende QKan-Konfiguration"
+    aktive_config = None
+    gespeicherte_werte: dict[str, Any] = {}
 
     try:
         from qkan import QKan  # type: ignore
+        aktive_config = getattr(QKan, "config", None)
+    except (ImportError, AttributeError) as error:
+        _loggen(f"QKan-Konfiguration nicht verfügbar: {error}", Qgis.Warning)
 
-        qkan_config = getattr(QKan, "config", None)
-        if qkan_config is not None:
-            foto_root = _text_sicher_lesen(
-                getattr(qkan_config, "fotoRootPath", "")
-            ).strip()
-            video_root = _text_sicher_lesen(
-                getattr(qkan_config, "videoRootPath", "")
-            ).strip()
-    except Exception as error:
-        _loggen(
-            f"Laufende QKan-Konfiguration konnte nicht gelesen werden: {error}",
-            Qgis.Info,
-        )
+    if aktive_config is not None:
+        foto_root = _text_sicher_lesen(getattr(aktive_config, "fotoRootPath", "")).strip()
+        video_root = _text_sicher_lesen(getattr(aktive_config, "videoRootPath", "")).strip()
 
-    if not foto_root or not video_root:
-        config_path = Path(site.getuserbase()) / "qkan" / "qkan.json"
-        if config_path.is_file():
-            try:
-                config_data = json.loads(config_path.read_text(encoding="utf-8"))
-                if not foto_root:
-                    foto_root = _text_sicher_lesen(
-                        config_data.get("fotoRootPath", "")
-                    ).strip()
-                if not video_root:
-                    video_root = _text_sicher_lesen(
-                        config_data.get("videoRootPath", "")
-                    ).strip()
-            except (OSError, UnicodeError, json.JSONDecodeError) as error:
-                _loggen(
-                    f"QKan-Konfigurationsdatei konnte nicht gelesen werden: "
-                    f"{config_path}: {error}",
-                    Qgis.Warning,
-                )
+    if config_path.is_file():
+        try:
+            daten = json.loads(config_path.read_text(encoding="utf-8"))
+            if isinstance(daten, dict):
+                gespeicherte_werte = daten
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            _loggen(f"QKan-Konfiguration nicht lesbar: {config_path}: {error}", Qgis.Warning)
+
+    if aktive_config is None:
+        herkunft = f"qkan.json ({config_path})"
+        foto_root = _text_sicher_lesen(gespeicherte_werte.get("fotoRootPath", "")).strip()
+        video_root = _text_sicher_lesen(gespeicherte_werte.get("videoRootPath", "")).strip()
 
     def bereinigen(value: str) -> str:
         if not value:
             return ""
-        return os.path.normpath(
-            os.path.expandvars(os.path.expanduser(value.strip().strip('"').strip("'")))
-        )
+        return os.path.normpath(os.path.expandvars(os.path.expanduser(
+            value.strip().strip('"').strip("'")
+        )))
 
-    return bereinigen(foto_root), bereinigen(video_root)
+    foto_root = bereinigen(foto_root)
+    video_root = bereinigen(video_root)
+    _loggen(
+        "Tatsächlich verwendete QKan-Medienpfade: "
+        f"Foto={foto_root!r} (vorhanden: {bool(foto_root and Path(foto_root).is_dir())}); "
+        f"Video={video_root!r} (vorhanden: {bool(video_root and Path(video_root).is_dir())}); "
+        f"Quelle={herkunft}; Konfigurationsdatei={config_path}"
+    )
+    if aktive_config is not None:
+        for key, laufend in (("fotoRootPath", foto_root), ("videoRootPath", video_root)):
+            if key not in gespeicherte_werte:
+                continue
+            gespeichert = bereinigen(_text_sicher_lesen(gespeicherte_werte[key]))
+            if os.path.normcase(gespeichert) != os.path.normcase(laufend):
+                _loggen(
+                    f"QKan-Konfiguration weicht ab ({key}): "
+                    f"laufend={laufend!r}; gespeichert={gespeichert!r}. "
+                    "Für die Mediensuche wird der laufende Wert verwendet.",
+                    Qgis.Warning,
+                )
+    return foto_root, video_root
 
 
 def _pfad_innerhalb_stammordner(path: str, root: str) -> bool:
@@ -286,17 +298,19 @@ def _pfad_innerhalb_stammordner(path: str, root: str) -> bool:
 
 
 def _medien_suchwurzeln(media_type: str, media_root_path: str) -> list[Path]:
-    """Liefert die festgelegten Suchwurzeln innerhalb des verbindlichen
-    QKan-Medienstammordners.
-    """
+    """Gibt Basis und optional vorhandene übliche QKan-Unterordner zurück."""
     if not media_root_path:
         return []
-    media_root = Path(media_root_path)
-    roots = [media_root]
-    preferred_subdir = "Bilder" if media_type == "Bild" else "Video"
-    preferred_root = media_root / preferred_subdir
-    if preferred_root.is_dir():
-        roots.insert(0, preferred_root)
+    basis = Path(media_root_path)
+    roots = [basis]
+    names = ("Bilder", "bilder", "Fotos", "fotos") if media_type == "Bild" else ("Video", "video", "Videos", "videos")
+    known: set[str] = {os.path.normcase(os.path.normpath(str(basis)))}
+    for name in names:
+        candidate = basis / name
+        key = os.path.normcase(os.path.normpath(str(candidate)))
+        if key not in known and candidate.is_dir():
+            roots.append(candidate)
+            known.add(key)
     return roots
 
 
@@ -314,86 +328,157 @@ def _video_bandordner(media_root: Path, code: str) -> Optional[Path]:
     return None
 
 
+def _medien_pfadkandidaten(
+    media_type: str, stored_path: str, media_root_path: str
+) -> list[tuple[Path, str, int]]:
+    """Erstellt die tatsächlich zu prüfenden Pfade, ohne Namen kleinzuschreiben.
+
+    Alle relativen Referenzen werden nur innerhalb des konfigurierten
+    QKan-Stammordners geprüft. Sowohl Basis=.../videos + videos/datei.mp4
+    als auch Basis=... + videos/datei.mp4 werden unterstützt.
+    """
+    if not media_root_path:
+        return []
+    raw = _text_sicher_lesen(stored_path).strip().strip('"').strip("'").replace("\\", "/")
+    while raw.startswith("./"):
+        raw = raw[2:]
+    if not raw:
+        return []
+    filename = raw.rsplit("/", 1)[-1]
+    if not filename or filename in (".", ".."):
+        return []
+
+    result: list[tuple[Path, str, int]] = []
+    seen: set[str] = set()
+
+    def add(path: Path, method: str, score: int) -> None:
+        if not _pfad_innerhalb_stammordner(str(path), media_root_path):
+            return
+        key = _pfadtext_normalisieren(path)
+        if key not in seen:
+            seen.add(key)
+            result.append((path, method, score))
+
+    # Ein ausdrücklich gespeicherter absoluter Pfad ist nur im QKan-Stammordner zulässig.
+    original = Path(raw)
+    if original.is_absolute():
+        if _pfad_innerhalb_stammordner(str(original), media_root_path):
+            add(original, "absoluter QKan-Pfad", 105)
+            return result
+        # QKan verwendet teilweise /videos/datei oder \Bilder\datei als
+        # stammordnerrelative Referenz. Ein echtes Laufwerks-/UNC-Ziel außerhalb
+        # des QKan-Stammordners wird dagegen nicht umgedeutet.
+        if not (raw.startswith("/") and not raw.startswith("//")
+                and not re.match(r"^[a-zA-Z]:", raw)):
+            return result
+        raw = raw.lstrip("/")
+
+    parts = [part for part in raw.split("/") if part not in ("", ".")]
+    # Nie ein übergeordnetes Verzeichnis über '..' betreten.
+    if ".." in parts:
+        return []
+    for root in _medien_suchwurzeln(media_type, media_root_path):
+        # Ist der erste Teil der gespeicherten Referenz bereits der Name
+        # des Basispfades, wird zunächst die nicht verdoppelte Variante geprüft.
+        if len(parts) > 1 and parts[0].casefold() == root.name.casefold():
+            add(root.joinpath(*parts[1:]), "Stammordner-Präfix entfernt", 101)
+        add(root.joinpath(*parts), "direkter gespeicherter QKan-Pfad", 100)
+        add(root / filename, "Dateiname im QKan-Medienordner", 85)
+    return result
+
+
+def _erster_gepruefter_medienpfad(
+    media_type: str, stored_path: str, media_root_path: str
+) -> str:
+    """Gibt für die sichtbare Fehlerdiagnose den ersten erwarteten Pfad zurück."""
+    paths = _medien_pfadkandidaten(media_type, stored_path, media_root_path)
+    return str(paths[0][0]) if paths else ""
+
+
 def _direkte_medientreffer(
     media_type: str, stored_path: str, media_root_path: str
 ) -> tuple[Medientreffer, ...]:
-    """Löst QKan-Medienpfade ohne vollständige Archivsuche auf. Direkte Pfade haben
-    Vorrang. Für ältere Datenablagen ergänzt ein Legacy-Fallback die Suche, indem aus
-    dem führenden Aufzeichnungscode genau ein Bandordner abgeleitet und geprüft wird.
-    """
+    """Prüft zuerst gespeicherte Dateipfade; Bandlogik nur ohne direkten Treffer."""
+    if not _text_sicher_lesen(stored_path).strip():
+        return ()
+    if not media_root_path or not Path(media_root_path).is_dir():
+        return ()
+
+    def treffende_pfade(paths: list[tuple[Path, str, int]]) -> tuple[Medientreffer, ...]:
+        found: list[Medientreffer] = []
+        seen: set[str] = set()
+        for path, method, score in paths:
+            key = _pfadtext_normalisieren(path)
+            if key in seen or not path.is_file():
+                continue
+            if media_type == "Bild" and path.suffix.casefold() not in IMAGE_EXTENSIONS:
+                continue
+            if media_type == "Video" and path.suffix.casefold() not in VIDEO_EXTENSIONS:
+                continue
+            seen.add(key)
+            found.append(Medientreffer(None, None, str(path), method, score, False))
+        return tuple(found)
+
+    direct_paths = _medien_pfadkandidaten(media_type, stored_path, media_root_path)
+    direct_matches = treffende_pfade(direct_paths)
+    if direct_matches:
+        return direct_matches
+
+    diagnose = (
+        f"{media_type}-Datei direkt nicht gefunden: gespeichert={stored_path!r}; "
+        f"QKan-Basis={media_root_path!r}; vollständige geprüfte Pfade: "
+        + (" | ".join(str(path) for path, _method, _score in direct_paths)
+           if direct_paths else "keine zulässigen Kandidaten")
+    )
+    if media_type != "Video":
+        _loggen(diagnose, Qgis.Warning)
+        return ()
+
     normalized = _pfadtext_normalisieren(stored_path)
     filename = _dateiname_aus_pfad(stored_path)
-    if not normalized or not filename:
-        return ()
-
-    if not media_root_path:
-        return ()
     media_root = Path(media_root_path)
-    if not media_root.is_dir():
-        return ()
-
-    # Der in QKan konfigurierte Stammordner ist verbindlich. Ein festes Unterverzeichnis Bilder/Video
-    # ist nur zulässig, weil es innerhalb desselben Stammordners bleibt.
     roots = _medien_suchwurzeln(media_type, media_root_path)
-
-    parts = [part for part in normalized.split("/") if part not in ("", ".", "..")]
-    paths: list[tuple[Path, str, int]] = []
-
-    for candidate_root in roots:
-        if parts:
-            paths.append((candidate_root.joinpath(*parts), "direkter bereinigter QKan-Pfad", 100))
-        paths.append((candidate_root / filename, "Dateiname im Medienordner", 85))
-
+    fallback_paths: list[tuple[Path, str, int]] = []
     band_match = re.search(r"(?:^|/)band(\d{1,5})(?:/|$)", normalized)
     if band_match:
         band_number = band_match.group(1).zfill(5)
-        for candidate_root in roots:
-            paths.append((candidate_root / f"band{band_number}" / filename, "bereinigter Bandpfad", 98))
+        for root in roots:
+            fallback_paths.append(
+                (root / f"band{band_number}" / filename, "Bandpfad aus Referenz", 98)
+            )
 
-    # Legacy-Fallback für ältere Medienablagen: Der führende Code kann aus Bandnummer
-    # und fünfstelligem Aufzeichnungszähler bestehen. Es wird ausschließlich der
-    # daraus abgeleitete Ordner ``bandXXXXX`` geprüft.
-    prefix_candidate: Optional[Path] = None
-    if media_type == "Video":
-        number_match = re.match(r"[^0-9]*(\d{6,})", Path(filename).stem)
-        if number_match:
-            recording_code = number_match.group(1)
-            band_digits = recording_code[:-5]
-            if band_digits:
-                band_folder = media_root / f"band{band_digits.zfill(5)}"
-                if not band_folder.is_dir() and len(roots) > 1:
-                    band_folder = roots[0] / f"band{band_digits.zfill(5)}"
-                if band_folder.is_dir():
-                    wanted = recording_code.casefold()
-                    try:
-                        for entry in os.scandir(band_folder):
-                            if not entry.is_file():
-                                continue
-                            entry_path = Path(entry.path)
-                            if entry_path.suffix.casefold() not in VIDEO_EXTENSIONS:
-                                continue
-                            if entry.name.casefold().startswith(wanted):
-                                prefix_candidate = entry_path
-                                break
-                    except OSError as error:
-                        _loggen(f"Videoordner konnte nicht gelesen werden: {band_folder}: {error}", Qgis.Warning)
-
-    seen: set[str] = set()
-    found: list[Medientreffer] = []
-    if prefix_candidate is not None:
-        paths.append((prefix_candidate, "Videocode im abgeleiteten Bandordner", 97))
-
-    for path, method, score in paths:
-        key = _pfadtext_normalisieren(path)
-        if key in seen or not path.is_file():
-            continue
-        if media_type == "Bild" and path.suffix.casefold() not in IMAGE_EXTENSIONS:
-            continue
-        if media_type == "Video" and path.suffix.casefold() not in VIDEO_EXTENSIONS:
-            continue
-        seen.add(key)
-        found.append(Medientreffer(None, None, str(path), method, score, False))
-    return tuple(found)
+    # Historischer STRAKAT-Fallback: Bandnummer aus dem Aufzeichnungscode.
+    number_match = re.match(r"[^0-9]*(\d{6,})", Path(filename).stem)
+    if number_match:
+        recording_code = number_match.group(1)
+        band_digits = recording_code[:-5]
+        if band_digits:
+            for root in roots:
+                band_folder = root / f"band{band_digits.zfill(5)}"
+                if not band_folder.is_dir():
+                    continue
+                try:
+                    for entry in os.scandir(band_folder):
+                        if not entry.is_file():
+                            continue
+                        entry_path = Path(entry.path)
+                        if (entry_path.suffix.casefold() in VIDEO_EXTENSIONS
+                                and entry.name.casefold().startswith(recording_code.casefold())):
+                            fallback_paths.append(
+                                (entry_path, "Videocode im abgeleiteten Bandordner", 97)
+                            )
+                            break
+                except OSError as error:
+                    _loggen(f"Videoordner konnte nicht gelesen werden: {band_folder}: {error}", Qgis.Warning)
+    bandtreffer = treffende_pfade(fallback_paths)
+    _loggen(
+        diagnose + (
+            f"; Video stattdessen über STRAKAT-Bandordner gefunden: {bandtreffer[0].full_path}"
+            if bandtreffer else "; auch kein Treffer im STRAKAT-Bandordner"
+        ),
+        Qgis.Info if bandtreffer else Qgis.Warning,
+    )
+    return bandtreffer
 
 
 class MediensucheArbeiter(QObject):
@@ -955,6 +1040,7 @@ class BefahrungsmedienDialog(QDialog):
         self._media_worker: Optional[MediensucheArbeiter] = None
         self._media_run_id = 0
         self._last_media_path_error = ""
+        self._datenbankfehler = ""
         self._media_timeout = QTimer(self)
         self._media_timeout.setSingleShot(True)
         self._media_timeout.timeout.connect(self._medienaufloesung_zeitueberschritten)
@@ -1057,6 +1143,8 @@ class BefahrungsmedienDialog(QDialog):
     ) -> None:
         """Setzt eine SpatiaLite- oder PostgreSQL-QKan-Datenquelle."""
         self.datenquelle = datenquelle
+        # Bei erneut gewählter Datenquelle nach einem externen Update neu versuchen.
+        self._datenbankfehler = ""
         self.le_datenbank.setText(datenquelle.bezeichnung)
         if objekte_laden:
             self._objekte_laden()
@@ -1084,19 +1172,56 @@ class BefahrungsmedienDialog(QDialog):
     def _datenbankabfrage(
         self, sql_name: str, parameters: Optional[dict[str, Any]] = None
     ) -> list[dict[str, Any]]:
-        """Führt eine benannte Inspektionsabfrage providerneutral aus."""
-        if self.datenquelle is None:
+        """Liest QKan-Daten nur über eine von QKan freigegebene DB-Verbindung.
+
+        Bei einer alten SpatiaLite-Version schließt QKans DBConnection die
+        Verbindung bewusst. Wir umgehen diese Sperre nicht und vermeiden die
+        anschließende SQL-Ausführung auf einem bereits geschlossenen Cursor.
+        """
+        if self.datenquelle is None or self._datenbankfehler:
             return []
-        with datenbank_oeffnen(self.datenquelle) as db_qkan:
-            db_qkan.loadmodule("inspektion")
-            if not db_qkan.sqlyml(
-                sql_name,
-                "inspektion.befahrungsmedien",
-                parameters=parameters or {},
-            ):
-                raise RuntimeError(f"Datenbankabfrage fehlgeschlagen: {sql_name}")
-            columns = [str(column[0]) for column in db_qkan.cursl.description]
-            return [dict(zip(columns, row)) for row in db_qkan.fetchall()]
+        try:
+            with datenbank_oeffnen(self.datenquelle) as db_qkan:
+                if not getattr(db_qkan, "connected", False):
+                    vorhanden = getattr(db_qkan, "current_dbversion", None)
+                    erwartet = getattr(db_qkan, "actDbVersion", None)
+                    if (vorhanden is not None and erwartet is not None
+                            and vorhanden < erwartet):
+                        problem = (
+                            f"Die QKan-Datenbank hat Version {vorhanden.base_version}, "
+                            f"das installierte QKan benötigt {erwartet.base_version}.\n\n"
+                            "QKan hat die Datenbankverbindung deshalb geschlossen. "
+                            "Es wurden keine Daten verändert.\n\n"
+                            "Bitte die Datenbank über 'QKan-Datenbank aktualisieren' "
+                            "aktualisieren (vorher sichern) und anschließend die "
+                            "Befahrungsmedien erneut öffnen."
+                        )
+                    else:
+                        problem = (
+                            "Die QKan-Datenbankverbindung ist nicht verfügbar. "
+                            "Die Untersuchungstabellen konnten nicht gelesen werden."
+                        )
+                    raise RuntimeError(problem)
+                db_qkan.loadmodule("inspektion")
+                if not db_qkan.sqlyml(
+                    sql_name,
+                    "inspektion.befahrungsmedien",
+                    parameters=parameters or {},
+                ):
+                    raise RuntimeError(f"Datenbankabfrage fehlgeschlagen: {sql_name}")
+                if db_qkan.cursl is None:
+                    raise RuntimeError("QKan hat keinen Datenbankcursor bereitgestellt.")
+                columns = [str(column[0]) for column in db_qkan.cursl.description]
+                return [dict(zip(columns, row)) for row in db_qkan.fetchall()]
+        except Exception as error:
+            # Ein echter Lesefehler darf niemals wie "0 Schäden vorhanden" aussehen.
+            self._datenbankfehler = str(error)
+            _loggen(f"Datenbankabfrage {sql_name} abgebrochen: {error}", Qgis.Warning)
+            self.lbl_status.setText("QKan-Datenbank nicht lesbar: " + self._datenbankfehler)
+            QMessageBox.warning(
+                self, "QKan-Datenbank nicht lesbar", self._datenbankfehler
+            )
+            return []
 
     def _tabellenlayer(self, table_name: str) -> Optional[QgsVectorLayer]:
         """Öffnet eine Tabelle der aktuell gewählten QKan-Datenquelle."""
@@ -1150,6 +1275,8 @@ class BefahrungsmedienDialog(QDialog):
         # Hier nur füllen. Das Laden des ersten ComboBox-Eintrags würde bereits eine
         # Mediensuche für ein fremdes Objekt starten, bevor das angeklickte Objekt feststeht.
         self._objekte_laden(ansicht_laden=False)
+        if self._datenbankfehler:
+            return
         object_index = self.cb_objekt.findText(object_name, Qt.MatchFixedString)
         if object_index < 0:
             previous_block = self.cb_objekt.blockSignals(True)
@@ -1176,21 +1303,17 @@ class BefahrungsmedienDialog(QDialog):
             self.cb_objekt.blockSignals(previous_block)
 
         self._befahrungen_laden(ansicht_laden=False)
-        if self.cb_befahrung.count() <= 2:
-            self._ansicht_leeren()
-            self.lbl_status.setText(
-                f"Für {object_type} {object_name} ist kein Befahrungsdatum vorhanden."
-            )
-            QMessageBox.information(
-                self,
-                "Keine Befahrungsdaten",
-                f"Für {object_type} {object_name} ist kein Befahrungsdatum hinterlegt.",
-            )
+        if self._datenbankfehler:
             return
+        # Die Einzelschäden können existieren, obwohl kein gültiges
+        # Befahrungsdatum (und kein Gesamt-Datensatz) hinterlegt ist.
+        # In diesem Fall bleibt 'Alle Befahrungen' als Auswahl verfügbar.
 
         previous_block = self.cb_befahrung.blockSignals(True)
         try:
-            self.cb_befahrung.setCurrentIndex(0)
+            self.cb_befahrung.setCurrentIndex(
+                0 if self.cb_befahrung.count() > 2 else 1
+            )
         finally:
             self.cb_befahrung.blockSignals(previous_block)
         self._ansicht_laden()
@@ -1211,6 +1334,8 @@ class BefahrungsmedienDialog(QDialog):
         rows = self._datenbankabfrage(
             f"inspektion_medien_objekte_{config['sql_key']}"
         )
+        if self._datenbankfehler:
+            return
         vorherige_signalsperre = self.cb_objekt.blockSignals(True)
         try:
             self.cb_objekt.addItems(
@@ -1246,15 +1371,23 @@ class BefahrungsmedienDialog(QDialog):
             f"inspektion_medien_befahrungen_{config['sql_key']}",
             {"object_name": object_name},
         )
+        if self._datenbankfehler:
+            return
         date_values = sorted(
             (_text_sicher_lesen(row.get("untersuchtag")) for row in rows),
             key=_befahrungsdatum_sortierwert,
             reverse=True,
         )
         self.cb_befahrung.blockSignals(True)
-        for date_value in date_values:
-            self.cb_befahrung.addItem(date_value)
-        self.cb_befahrung.blockSignals(False)
+        try:
+            for date_value in date_values:
+                self.cb_befahrung.addItem(date_value)
+            if not date_values:
+                # Ohne gültiges Befahrungsdatum die undatierten Schäden zeigen,
+                # statt fälschlich "keine Inspektionsdaten" zu melden.
+                self.cb_befahrung.setCurrentIndex(1)  # Alle Befahrungen
+        finally:
+            self.cb_befahrung.blockSignals(False)
         if ansicht_laden:
             self._ansicht_laden()
 
@@ -1267,7 +1400,7 @@ class BefahrungsmedienDialog(QDialog):
             return selection, False
         if self.cb_befahrung.count() > 2:
             return self.cb_befahrung.itemText(2), False
-        return "", False
+        return "", True  # Ohne Datum alle Schadenszeilen laden
 
     def _ansicht_laden(self, _value: str = "") -> None:
         """Lädt Schäden, Gesamtbewertung, Schema und Medienlisten."""
@@ -1286,9 +1419,13 @@ class BefahrungsmedienDialog(QDialog):
             f"inspektion_medien_schaeden_{config['sql_key']}",
             parameters,
         )
+        if self._datenbankfehler:
+            return
         overall = self._gesamtbewertung_laden(
             object_name, date_value, all_dates
         )
+        if self._datenbankfehler:
+            return
 
         self.current_date_value = date_value
         self.current_all_dates = all_dates
@@ -1364,16 +1501,40 @@ class BefahrungsmedienDialog(QDialog):
             self.rating_zd_label.setText("ZD: –")
             self.rating_zb_label.setText("ZB: –")
             self.rating_zs_label.setText("ZS: –")
-            self.rating_info_label.setText(
-                f"Länge/Abmessung: {self.current_object_length:.2f}"
+            if self.damage_rows:
+                hinweis = (
+                    "Gesamtbewertung fehlt – die vorhandenen Einzelschäden "
+                    "werden trotzdem angezeigt."
+                )
+            else:
+                hinweis = "Keine Gesamtbewertung vorhanden."
+            self.rating_info_label.setText("Gesamtbewertung fehlt")
+            self.rating_info_label.setToolTip(
+                f"{hinweis} Länge/Abmessung: {self.current_object_length:.2f}"
+            )
+            _loggen(
+                f"{self.cb_objektart.currentText()} {object_name}: "
+                f"{hinweis} ({len(self.damage_rows)} Einzelschäden)",
+                Qgis.Warning,
             )
             return
-        self.rating_zd_label.setText(f"ZD: {_text_sicher_lesen(overall.get('max_ZD')) or '–'}")
-        self.rating_zb_label.setText(f"ZB: {_text_sicher_lesen(overall.get('max_ZB')) or '–'}")
-        self.rating_zs_label.setText(f"ZS: {_text_sicher_lesen(overall.get('max_ZS')) or '–'}")
-        self.rating_info_label.setText(
-            f"Länge/Abmessung: {self._objektlaenge_bestimmen(overall):.2f}"
-        )
+        values = {
+            field: _text_sicher_lesen(overall.get(f"max_{field}")).strip()
+            for field in ("ZD", "ZB", "ZS")
+        }
+        self.rating_zd_label.setText(f"ZD: {values['ZD'] or '–'}")
+        self.rating_zb_label.setText(f"ZB: {values['ZB'] or '–'}")
+        self.rating_zs_label.setText(f"ZS: {values['ZS'] or '–'}")
+        missing = [field for field, value in values.items() if not value]
+        info = f"Länge/Abmessung: {self._objektlaenge_bestimmen(overall):.2f}"
+        if missing:
+            self.rating_info_label.setText("Gesamtbewertung unvollständig")
+            self.rating_info_label.setToolTip(
+                "Fehlende Gesamtwerte: " + ", ".join(missing) + ". " + info
+            )
+        else:
+            self.rating_info_label.setText(info)
+            self.rating_info_label.setToolTip(info)
 
     @staticmethod
     def _wert_fuer_vergleich(value: Any) -> str:
@@ -2131,6 +2292,15 @@ class BefahrungsmedienDialog(QDialog):
         if self.datenquelle is None:
             QMessageBox.warning(self, "Speichern", "Die QKan-Datenquelle ist nicht verfügbar.")
             return
+        if self.current_overall is None:
+            QMessageBox.warning(
+                self, "Speichern nicht möglich",
+                "Für diese Befahrung fehlt der Gesamt-Datensatz. Die Einzelschäden "
+                "bleiben sichtbar, aber QKan kann den Bearbeitungszeitpunkt und "
+                "die Gesamtbewertung nicht gemeinsam speichern. "
+                "Es wurde nichts in die Datenbank geschrieben."
+            )
+            return
 
         self._tabelle_in_schadensdaten_uebernehmen()
         details_changed = self._table_dirty or bool(self._deleted_damage_pks)
@@ -2367,6 +2537,27 @@ class BefahrungsmedienDialog(QDialog):
         if answer == QMessageBox.Yes:
             QDesktopServices.openUrl(QUrl.fromLocalFile(str(target)))
 
+    def _medienstatus_setzen(self, status: str) -> None:
+        """Zeigt Medienpfade und den Datenstatus im bestehenden Dialog."""
+        if self.damage_rows:
+            if self.current_overall is None:
+                status += " | Gesamtbewertung fehlt – Einzelschäden sichtbar"
+            else:
+                fehlend = [
+                    field for field in ("ZD", "ZB", "ZS")
+                    if not _text_sicher_lesen(self.current_overall.get(f"max_{field}")).strip()
+                ]
+                if fehlend:
+                    status += " | Gesamtbewertung unvollständig: " + ", ".join(fehlend)
+        foto = self.foto_root_path or "(nicht eingestellt)"
+        video = self.video_root_path or "(nicht eingestellt)"
+        detail = f"QKan-Fotobasis: {foto}\nQKan-Videobasis: {video}"
+        self.lbl_status.setText(f"{status}\n{detail}")
+        self.lbl_status.setToolTip(
+            detail + "\nQuelle: laufende QKan-Konfiguration; bei nicht verfügbarer Konfiguration qkan.json."
+            "\nErfolglose Dateipfade stehen im QGIS-Protokoll unter 'QKan Medieninspektor'."
+        )
+
     def _medienlisten_erstellen(self) -> None:
         """Löst Medien in einem Arbeitsthread auf, damit die Oberfläche nicht
         blockiert.
@@ -2385,34 +2576,25 @@ class BefahrungsmedienDialog(QDialog):
         self.video_root_path = video_root_path
         errors: list[str] = []
         if not foto_root_path:
-            errors.append("In QKan ist kein Foto-Stammordner (fotoRootPath) eingestellt.")
+            errors.append("Foto-Stammordner (fotoRootPath) fehlt")
         elif not Path(foto_root_path).is_dir():
-            errors.append(f"Der in QKan eingestellte Foto-Stammordner ist nicht erreichbar:\n{foto_root_path}")
+            errors.append(f"Foto-Stammordner nicht erreichbar: {foto_root_path}")
         if not video_root_path:
-            errors.append("In QKan ist kein Video-Stammordner (videoRootPath) eingestellt.")
+            errors.append("Video-Stammordner (videoRootPath) fehlt")
         elif not Path(video_root_path).is_dir():
-            errors.append(f"Der in QKan eingestellte Video-Stammordner ist nicht erreichbar:\n{video_root_path}")
+            errors.append(f"Video-Stammordner nicht erreichbar: {video_root_path}")
+
+        # Eine fehlende Foto-Basis darf die Videosuche nicht verhindern (und umgekehrt).
+        # Die andere Medienart wird normal im Arbeitsthread geprüft.
+        self.pb_foto_ordner_oeffnen.setEnabled(bool(foto_root_path and Path(foto_root_path).is_dir()))
+        self.pb_video_ordner_oeffnen.setEnabled(bool(video_root_path and Path(video_root_path).is_dir()))
         if errors:
-            message = "\n\n".join(errors)
-            _loggen(message.replace("\n", " "), Qgis.Warning)
-            self.lbl_status.setText("Medienprüfung abgebrochen: QKan-Medienpfade fehlen oder sind nicht erreichbar.")
-            self.pb_foto_ordner_oeffnen.setEnabled(False)
-            self.pb_video_ordner_oeffnen.setEnabled(False)
-            self.pb_panoramo_ordner_oeffnen.setEnabled(False)
-            self.lbl_fotovorschau.setText("QKan-Fotopfad fehlt oder ist nicht erreichbar")
-            self.photo_caption.setText("")
-            self.tw_videos.setRowCount(0)
-            self.video_details.setText("")
-            self._befahrungsvideo_status_aktualisieren()
-            if message != self._last_media_path_error:
-                QMessageBox.critical(
-                    self,
-                    "QKan-Medienpfade fehlen",
-                    message + "\n\nBitte die Pfade in den QKan-Einstellungen festlegen.",
-                )
+            message = " | ".join(errors)
+            _loggen("Medienprüfung teilweise eingeschränkt: " + message, Qgis.Warning)
             self._last_media_path_error = message
-            return
-        self._last_media_path_error = ""
+        else:
+            self._last_media_path_error = ""
+
         thread = QThread()
         worker = MediensucheArbeiter(
             [dict(row) for row in self.damage_rows],
@@ -2440,7 +2622,19 @@ class BefahrungsmedienDialog(QDialog):
         ACTIVE_MEDIA_THREADS.append(thread)
         self._media_thread = thread
         self._media_worker = worker
-        self.lbl_status.setText("Medien werden geprüft …")
+        foto_referenzen = sum(bool(_text_sicher_lesen(row.get("foto_dateiname")).strip())
+                              for row in self.damage_rows)
+        video_referenzen = sum(bool(_text_sicher_lesen(row.get("film_dateiname")).strip())
+                               for row in self.damage_rows)
+        _loggen(
+            f"Medienreferenzen aus den untersuchdat-Tabellen: "
+            f"{foto_referenzen} Foto-Dateinamen, {video_referenzen} Video-Dateinamen "
+            f"in {len(self.damage_rows)} Schadenszeilen."
+        )
+        status = "Medien werden geprüft …"
+        if errors:
+            status += " (eingeschränkt: " + "; ".join(errors) + ")"
+        self._medienstatus_setzen(status)
         self._media_timeout.start(180000)
         thread.start()
 
@@ -2525,10 +2719,12 @@ class BefahrungsmedienDialog(QDialog):
         self._aktuelles_foto_anzeigen()
         if self.damage_rows:
             self.tw_schaeden.selectRow(0)
-        self.lbl_status.setText(
+        self._medienstatus_setzen(
             f"{len(self.damage_rows):,} Einzelschäden · "
             f"{len(self.photo_items):,} Fotoeinträge · "
             f"{len(self.video_items):,} Videostellen"
+            + (" · Eingeschränkte Pfade: " + self._last_media_path_error
+               if self._last_media_path_error else "")
         )
 
     @pyqtSlot(str, int)
@@ -2663,6 +2859,15 @@ class BefahrungsmedienDialog(QDialog):
             f"{item.caption}\nGespeichert: {item.stored_path}\nStatus: {status}"
         )
         if candidate is None:
+            expected_path = _erster_gepruefter_medienpfad(
+                "Bild", item.stored_path, self.foto_root_path
+            )
+            if expected_path:
+                self.photo_caption.setText(
+                    self.photo_caption.text()
+                    + f"\nErster geprüfter Dateipfad: {expected_path}"
+                    + "\nWeitere geprüfte Pfade: QGIS-Protokoll / QKan Medieninspektor"
+                )
             self.lbl_fotovorschau.setPixmap(QPixmap())
             self.lbl_fotovorschau.setText(
                 "Keine passende Bilddatei gefunden."
@@ -2780,6 +2985,13 @@ class BefahrungsmedienDialog(QDialog):
         paths = "\n".join(candidate.full_path for candidate in item.candidates[:5])
         if len(item.candidates) > 5:
             paths += f"\n… und {len(item.candidates) - 5} weitere"
+        if not paths:
+            expected_path = _erster_gepruefter_medienpfad(
+                "Video", item.stored_path, self.video_root_path
+            )
+            if expected_path:
+                paths = (f"Erster geprüfter Dateipfad: {expected_path}\n"
+                         "Weitere geprüfte Pfade: QGIS-Protokoll / QKan Medieninspektor")
         self.video_details.setText(
             f"{item.caption}\nStartzeit: {item.start_seconds:.2f} s\n"
             f"Gespeichert: {item.stored_path}\n"
@@ -2976,6 +3188,7 @@ class BefahrungsmedienDialog(QDialog):
         self.rating_zb_label.setText("ZB: –")
         self.rating_zs_label.setText("ZS: –")
         self.rating_info_label.setText("Länge/Abmessung: –")
+        self.rating_info_label.setToolTip("")
 
 
 class BefahrungsmedienPlugin:
