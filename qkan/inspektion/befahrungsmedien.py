@@ -626,7 +626,7 @@ class MediensucheArbeiter(QObject):
                                 resolution_status += " · keine Zeitposition gespeichert"
                         else:
                             resolution_status = (
-                                "Bilddatei nicht vorhanden"
+                                "Bilddatei nicht gefunden"
                                 if media_type == "Bild"
                                 else "Videodatei nicht gefunden"
                             )
@@ -2636,7 +2636,6 @@ class BefahrungsmedienDialog(QDialog):
         self.lbl_status.setText(f"{status}\n{detail}")
         self.lbl_status.setToolTip(
             detail + "\nQuelle: laufende QKan-Konfiguration; bei nicht verfügbarer Konfiguration qkan.json."
-            "\nErfolglose Dateipfade stehen im QGIS-Protokoll unter 'QKan Medieninspektor'."
         )
 
     def _medienlisten_erstellen(self) -> None:
@@ -3017,7 +3016,7 @@ class BefahrungsmedienDialog(QDialog):
         status = item.resolution_status or self._trefferstatus_bestimmen(item.candidates)
         self.photo_caption.setText(
             f"{self.current_photo_index + 1} von {len(self.photo_items)} · "
-            f"{item.caption}\nGespeichert: {item.stored_path}\nStatus: {status}"
+            f"{item.caption}\nStatus: {status}\nGespeichert: {item.stored_path}"
         )
         if candidate is None:
             expected_path = _erster_gepruefter_medienpfad(
@@ -3026,8 +3025,7 @@ class BefahrungsmedienDialog(QDialog):
             if expected_path:
                 self.photo_caption.setText(
                     self.photo_caption.text()
-                    + f"\nErster geprüfter Dateipfad: {expected_path}"
-                    + "\nWeitere geprüfte Pfade: QGIS-Protokoll / QKan Medieninspektor"
+                    + f"\nGesucht unter: {expected_path}"
                 )
             self.lbl_fotovorschau.setPixmap(QPixmap())
             self.lbl_fotovorschau.setText(
@@ -3154,8 +3152,7 @@ class BefahrungsmedienDialog(QDialog):
                 "Video", item.stored_path, self.video_root_path
             )
             if expected_path:
-                paths = (f"Erster geprüfter Dateipfad: {expected_path}\n"
-                         "Weitere geprüfte Pfade: QGIS-Protokoll / QKan Medieninspektor")
+                paths = f"Gesucht unter: {expected_path}"
         self.video_details.setText(
             f"{item.caption}\nStartzeit: {item.start_seconds:.2f} s\n"
             f"Gespeichert: {item.stored_path}\n"
