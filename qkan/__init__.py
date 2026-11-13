@@ -12,6 +12,7 @@ from qgis.PyQt.QtWidgets import QAction, QMenu, QMenuBar, QWidget
 from qgis.core import QgsProject, QgsSettings, QgsMapLayerType, QgsDataSourceUri, QgsMessageLog, Qgis
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
+from .tools.toolbar_manager import ToolbarManager
 
 from .config import Config
 from .utils import setup_logging, QkanAbortError
@@ -358,6 +359,7 @@ class QKan:
 
 
 
+        self._qkan_toolbar_manager = ToolbarManager(self)
         for plugin in self.plugins:
             if hasattr(plugin, 'initGui'):
                 plugin.initGui()
@@ -371,6 +373,7 @@ class QKan:
             parent=self.iface.mainWindow(),
         )
         self.sort_actions()
+        self._qkan_toolbar_manager.activate()
 
 
 
@@ -488,6 +491,9 @@ class QKan:
 
     def unload(self) -> None:
         from qgis.utils import unloadPlugin
+        manager = getattr(self, "_qkan_toolbar_manager", None)
+        if manager is not None:
+            manager.close()
 
         try:
             #Logger bereinigen
@@ -641,6 +647,7 @@ class QKan:
 
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
+        action.setProperty("_qkan_menu_enabled", add_to_menu)
         action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
 
@@ -724,6 +731,9 @@ class QKan:
             self.menu.addAction(action)
 
         self.actions.append(action)
+        manager = getattr(self, "_qkan_toolbar_manager", None)
+        if manager is not None:
+            manager.register_action(action, toolbar, add_to_menu, add_to_toolbar)
 
         return action
 
