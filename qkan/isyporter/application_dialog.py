@@ -57,6 +57,12 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     comboBox: QComboBox
     cb_selectedObjects: QCheckBox
 
+    lineEdit: QLineEdit
+    lineEdit_6: QLineEdit
+    lineEdit_11: QLineEdit
+    lineEdit_12: QLineEdit
+    lineEdit_13: QLineEdit
+
     def __init__(
         self,
         default_dir: str,
