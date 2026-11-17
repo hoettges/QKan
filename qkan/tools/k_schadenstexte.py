@@ -201,7 +201,6 @@ class Schadenstexte:
                   uh.station IS NOT NULL AND
                   hu.geom IS NOT NULL AND
                   uh.station IS NOT NULL 
-            GROUP BY hu.haltnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station"""
 
         if not db_qkan.sql(
@@ -220,7 +219,7 @@ class Schadenstexte:
             db_qkan.epsg
         )
 
-        # Nummerieren der Untersuchungen an der selben Haltung "haltungen_untersucht"
+        # Nummerieren der Untersuchungen an derselben Haltung "haltungen_untersucht"
 
         sql = """
             UPDATE haltungen_untersucht
@@ -248,7 +247,7 @@ class Schadenstexte:
                     iif(abs(coalesce(hu.laenge, 0)) > 0.01, hu.laenge, GLength(hu.geom)) AS laenge,
                     row_number() OVER (PARTITION BY hu.haltnam, hu.schoben, hu.schunten ORDER BY hu.untersuchtag DESC) AS row_number
                 FROM haltungen_untersucht AS hu
-                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.laenge
+                GROUP BY hu.haltnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.untersuchrichtung, round(hu.laenge, 3)
             )
             UPDATE untersuchdat_haltung
             SET id = uid.id
@@ -388,7 +387,6 @@ class Schadenstexte:
             WHERE su.schnam IS NOT NULL AND
                   su.untersuchtag IS NOT NULL AND
                   su.geop IS NOT NULL
-            GROUP BY su.schnam, su.untersuchtag, us.kuerzel
             ORDER BY id, station, us.pk"""
 
         if not db_qkan.sql(
@@ -670,7 +668,6 @@ class Schadenstexte:
                   hu.geom IS NOT NULL AND
                   abs(uh.station) < 10000 AND
                   hu.untersuchrichtung IS NOT NULL
-            GROUP BY hu.leitnam, hu.untersuchtag, round(station, 3), uh.kuerzel
             ORDER BY id, station"""
 
         if not db_qkan.sql(
@@ -718,7 +715,8 @@ class Schadenstexte:
                     row_number() OVER (PARTITION BY hu.leitnam, hu.schoben, hu.schunten 
                                        ORDER BY hu.untersuchtag DESC) AS row_number
                 FROM anschlussleitungen_untersucht AS hu
-                GROUP BY hu.leitnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.laenge
+                GROUP BY hu.leitnam, hu.schoben, hu.schunten, hu.untersuchtag, hu.untersuchrichtung, 
+                         round(hu.laenge, 3)
             )
             UPDATE untersuchdat_anschlussleitung
             SET id = uid.id

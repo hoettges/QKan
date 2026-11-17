@@ -195,10 +195,10 @@ class Wehr(ClassObject):
     schoben: str =""
     schunten: str =""
     wehrtyp: str =""
-    schwellenhoehe: float
-    kammerhoehe: float
-    laenge: float
-    uebeiwert: float
+    schwellenhoehe: float = 0.0
+    kammerhoehe: float = 0.0
+    laenge: float = 0.0
+    uebeiwert: float = 0.0
     simstatus: str = ""
     kommentar: str = ""
     entwart: str = ""
@@ -213,7 +213,7 @@ class Pumpe(ClassObject):
     volanf: float = 0.0
     volges: float = 0.0
     sohle: float = 0.0
-    laenge: float
+    laenge: float = 0.0
     steuersch: str = ""
     einschalthoehe: float = 0.0
     ausschalthoehe: float = 0.0
@@ -3040,7 +3040,7 @@ class ImportTask(Schadenstexte):
 
             sql = f"""
                 INSERT INTO haltungen
-                                (wnam, schoben, schunten, haltungstyp,
+                                (haltnam, schoben, schunten, haltungstyp,
                                  laenge, kommentar, baujahr, simstatus, entwart)
                 SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', 'Wehr', {wehr.laenge}, {wehr.kommentar}, {wehr.baujahr},
                 {simstatus},{entwart}

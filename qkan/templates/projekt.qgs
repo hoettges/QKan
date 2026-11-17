@@ -11337,7 +11337,7 @@ Zur Filterung nach Inspektionsdatum entsprechende Aktion im Layer "Zustand_Haltu
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 3 AND id = 1" label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" symbol="3"/>
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 4 AND id = 1" label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" symbol="4"/>
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 5 AND id = 1" label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" symbol="5"/>
-          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6" checkstate="0"/>
+          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="line" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
@@ -12885,7 +12885,7 @@ def my_form_open(dialog, layer, feature):
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 3 AND id = 1" label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" symbol="3"/>
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 4 AND id = 1" label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" symbol="4"/>
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 5 AND id = 1" label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" symbol="5"/>
-          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6" checkstate="0"/>
+          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="line" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
@@ -14372,7 +14372,7 @@ def my_form_open(dialog, layer, feature):
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 3 AND id = 1" label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" symbol="3"/>
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 4 AND id = 1" label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" symbol="4"/>
           <rule filter="min(coalesce(ZD, ZB, ZS), coalesce(ZB, ZS, ZD), coalesce(ZS, ZD, ZB)) = 5 AND id = 1" label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" symbol="5"/>
-          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6" checkstate="0"/>
+          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="line" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
@@ -16294,7 +16294,7 @@ def my_form_open(dialog, layer, feature):
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 3 AND id = 1" label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" symbol="3"/>
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 4 AND id = 1" label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" symbol="4"/>
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 5 AND id = 1" label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" symbol="5"/>
-          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6" checkstate="0"/>
+          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="line" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
@@ -28686,7 +28686,7 @@ def my_form_open(dialog, layer, feature):
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 3 AND id = 1" label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" symbol="3"/>
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 4 AND id = 1" label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" symbol="4"/>
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 5 AND id = 1" label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" symbol="5"/>
-          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6" checkstate="0"/>
+          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="line" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
@@ -38543,7 +38543,7 @@ def my_form_open(dialog, layer, feature):
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 3 AND id = 1" label="Zustandsklasse 3, leichter Mangel" key="{dbe7c6f4-43a6-47c8-8dd3-f4d395b62016}" symbol="3"/>
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 4 AND id = 1" label="Zustandsklasse 4, geringfügiger Mangel" key="{857733ab-acb9-405b-aa85-9270d8a95091}" symbol="4"/>
           <rule filter="min(coalesce(max_ZD, max_ZB, max_ZS), coalesce(max_ZB, max_ZS, max_ZD), coalesce(max_ZS, max_ZD, max_ZB)) = 5 AND id = 1" label="Zustandsklasse 5, kein Mangel" key="{a5aced04-09fd-409a-9f4b-ca71ca17d7bd}" symbol="5"/>
-          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6" checkstate="0"/>
+          <rule filter="ELSE" label="nicht ermittelt" key="{06fa0df9-3a60-4a3c-a72c-ca8f10d3ad45}" symbol="6"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="marker" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
