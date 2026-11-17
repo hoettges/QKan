@@ -65,11 +65,16 @@ def SubElementText(parent: Element, name: str, text: Union[str, int]) -> Element
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan: DBConnection, export_file: str, vorlage: str, auswahl_zustand:str):
+    def __init__(self, db_qkan: DBConnection, export_file: str, vorlage: str, auswahl_zustand:str, stamm_k, hyd_k, zus_k, auftrag_bez, auftrag_num):
         self.db_qkan = db_qkan
         self.export_file = export_file
         self.vorlage = ''
         self.auswahl_zustand = auswahl_zustand
+        self.stamm_k= stamm_k
+        self.hyd_k = hyd_k
+        self.zus_k = zus_k
+        self.auftrag_bez = auftrag_bez
+        self.auftrag_num = auftrag_num
 
         # XML base
         self.stamm: Optional[Element] = None
@@ -1767,7 +1772,7 @@ class ExportTask:
                         haltungen.entwart
                     FROM haltungen_untersucht
                     JOIN untersuchdat_haltung 
-                        ON haltungen_untersucht.haltnam = untersuchdat_haltung.untersuchhal
+                        ON haltungen_untersucht.haltnam = untersuchdat_haltung.untersuchhal {self.abfrage_h_sub_and}
                     JOIN haltungen 
                         ON haltungen_untersucht.haltnam = haltungen.haltnam
                     LEFT JOIN ea_bestaende AS ea 
@@ -1778,7 +1783,7 @@ class ExportTask:
                             AND ma.rn = 1
                         LEFT JOIN pr_bestaende AS pr 
                             ON haltungen.profilnam = pr.profilnam
-                            AND pr.rn = 1 {self.abfrage_h_sub_and}
+                            AND pr.rn = 1 
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1870,7 +1875,7 @@ class ExportTask:
                     ea.isybau AS entwart_isybau
                     FROM haltungen_untersucht_bewertung
                     JOIN untersuchdat_haltung_bewertung 
-                    JOIN haltungen where haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal and haltungen_untersucht_bewertung.haltnam = haltungen.haltnam
+                    JOIN haltungen where haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal and haltungen_untersucht_bewertung.haltnam = haltungen.haltnam {self.abfrage_h_sub_and}
                     LEFT JOIN ea_bestaende AS ea 
                             ON haltungen.entwart = ea.bezeichnung
                             AND ea.rn = 1
@@ -1879,7 +1884,7 @@ class ExportTask:
                             AND ma.rn = 1
                         LEFT JOIN pr_bestaende AS pr 
                             ON haltungen.profilnam = pr.profilnam
-                            AND pr.rn = 1 {self.abfrage_h_sub_and}
+                            AND pr.rn = 1 
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -1971,7 +1976,7 @@ class ExportTask:
                             ea.isybau AS entwart_isybau
                         FROM haltungen_substanz_bewertung
                         JOIN substanz_haltung_bewertung 
-                            ON haltungen_substanz_bewertung.haltnam = substanz_haltung_bewertung.untersuchhal
+                            ON haltungen_substanz_bewertung.haltnam = substanz_haltung_bewertung.untersuchhal {self.abfrage_h_sub_and}
                         JOIN haltungen 
                             ON haltungen_substanz_bewertung.haltnam = haltungen.haltnam
                         LEFT JOIN ea_bestaende AS ea 
@@ -1982,7 +1987,7 @@ class ExportTask:
                             AND ma.rn = 1
                         LEFT JOIN pr_bestaende AS pr 
                             ON haltungen.profilnam = pr.profilnam
-                            AND pr.rn = 1 {self.abfrage_h_sub_and}
+                            AND pr.rn = 1 
                     """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -2039,6 +2044,8 @@ class ExportTask:
                     entwart_nr,
                 ) = attr
 
+                print(attr)
+
                 if pk != last_pk:
                     insp = SubElement(self.zustand, "InspizierteAbwassertechnischeAnlage")
                     _create_children_text(
@@ -2069,19 +2076,21 @@ class ExportTask:
                         _create_children_text(
                             opt,
                             {
-                                "Auftragskennung": 1,
+                                "Auftragskennung": self.auftrag_num,
                                 "Inspektionsdatum": datum,
                                 "NameUntersucher": untersucher,
                                 "Wetter": wetter_nr,
+                                "Kodiersystem": 9,
                             },
                         )
                     else:
                         _create_children_text(
                             opt,
                             {
-                                "Auftragskennung": 1,
+                                "Auftragskennung": self.auftrag_num,
                                 "Inspektionsdatum": datum,
                                 "NameUntersucher": untersucher,
+                                "Kodiersystem": 9,
                             },
                         )
 
@@ -2137,69 +2146,69 @@ class ExportTask:
 
                     last_pk = pk
 
-                    parts = timekode.split(':')
-                    h = int(parts[0])
-                    m = int(parts[1])
-                    s = int(parts[2])
-                    f = 0  # Da keine Frames angegeben sind, setzen wir sie auf 0
+                parts = timekode.split(':')
+                h = int(parts[0])
+                m = int(parts[1])
+                s = int(parts[2])
+                f = 0  # Da keine Frames angegeben sind, setzen wir sie auf 0
 
-                    # Als kompakten, 8-stelligen String zusammensetzen (Format: HHMMSSFF)
-                    ziel_timecode = f"{h:02d}{m:02d}{s:02d}{f:02d}"
+                # Als kompakten, 8-stelligen String zusammensetzen (Format: HHMMSSFF)
+                ziel_timecode = f"{h:02d}{m:02d}{s:02d}{f:02d}"
 
 
-                    rzu = SubElement(inspdat, "RZustand")
-                    _create_children_text(
-                        rzu,
-                        {
-                            "Station": station,
-                            "Timecode": ziel_timecode,
-                            "InspektionsKode": kuerzel,
-                            "Charakterisierung1": charakt1,
-                            "Charakterisierung2": charakt2,
-                            "Quantifizierung1Numerisch": quantnr1,
-                            "Quantifizierung2Numerisch": quantnr2,
-                            "Streckenschaden": streckenschaden,
-                            "StreckenschadenLfdNr": streckenschadenlfdnr,
-                            "PositionVon": posvon,
-                            "PositionBis": posbis,
-                            "Fotodatei": foto,
-                        },
-                    )
-                    kl = SubElement(rzu, "Klassifizierung")
-                    d = SubElement(kl, "Dichtheit")
-                    s = SubElement(kl, "Standsicherheit")
-                    b = SubElement(kl, "Betriebssicherheit")
+                rzu = SubElement(inspdat, "RZustand")
+                _create_children_text(
+                    rzu,
+                    {
+                        "Station": station,
+                        "Timecode": ziel_timecode,
+                        "InspektionsKode": kuerzel,
+                        "Charakterisierung1": charakt1,
+                        "Charakterisierung2": charakt2,
+                        "Quantifizierung1Numerisch": quantnr1,
+                        "Quantifizierung2Numerisch": quantnr2,
+                        "Streckenschaden": streckenschaden,
+                        "StreckenschadenLfdNr": streckenschadenlfdnr,
+                        "PositionVon": posvon,
+                        "PositionBis": posbis,
+                        "Fotodatei": foto,
+                    },
+                )
+                kl = SubElement(rzu, "Klassifizierung")
+                d = SubElement(kl, "Dichtheit")
+                s = SubElement(kl, "Standsicherheit")
+                b = SubElement(kl, "Betriebssicherheit")
 
-                    _create_children_text(
-                        d,
-                        {
-                            "SKDvAuto": zd,
-                            "SKDvManu": zd,
-                            "SZDvAuto": 0,
-                            "SZDeAuto": 0,
-                            "SKDeAuto": zd,
-                        },
-                    )
-                    _create_children_text(
-                        s,
-                        {
-                            "SKSvAuto": zs,
-                            "SKSvManu": zs,
-                            "SZSvAuto": 0,
-                            "SZSeAuto": 0,
-                            "SKSeAuto": zs,
-                        },
-                    )
-                    _create_children_text(
-                        b,
-                        {
-                            "SKBvAuto": zb,
-                            "SKBvManu": zb,
-                            "SZBvAuto": 0,
-                            "SZBeAuto": 0,
-                            "SKBeAuto": zb,
-                        },
-                    )
+                _create_children_text(
+                    d,
+                    {
+                        "SKDvAuto": zd,
+                        "SKDvManu": zd,
+                        "SZDvAuto": 0,
+                        "SZDeAuto": 0,
+                        "SKDeAuto": zd,
+                    },
+                )
+                _create_children_text(
+                    s,
+                    {
+                        "SKSvAuto": zs,
+                        "SKSvManu": zs,
+                        "SZSvAuto": 0,
+                        "SZSeAuto": 0,
+                        "SKSeAuto": zs,
+                    },
+                )
+                _create_children_text(
+                    b,
+                    {
+                        "SKBvAuto": zb,
+                        "SKBvManu": zb,
+                        "SZBvAuto": 0,
+                        "SZBeAuto": 0,
+                        "SKBeAuto": zb,
+                    },
+                )
 
 
     def _export_zustandsdaten_anschlussleitungen(self):
@@ -2825,19 +2834,21 @@ class ExportTask:
                         _create_children_text(
                             opt,
                             {
-                                "Auftragskennung": 1,
+                                "Auftragskennung": self.auftrag_num,
                                 "Inspektionsdatum": datum,
                                 "NameUntersucher": untersucher,
                                 "Wetter": wetter_nr,
+                                "Kodiersystem": 9,
                             },
                         )
                     else:
                         _create_children_text(
                             opt,
                             {
-                                "Auftragskennung": 1,
+                                "Auftragskennung": self.auftrag_num,
                                 "Inspektionsdatum": datum,
                                 "NameUntersucher": untersucher,
+                                "Kodiersystem": 9,
                             },
                         )
 
@@ -3030,7 +3041,7 @@ class ExportTask:
                             pr.isybau AS profil_isybau
                         FROM schaechte_untersucht
                         JOIN untersuchdat_schacht 
-                            ON schaechte_untersucht.schnam = untersuchdat_schacht.untersuchsch
+                            ON schaechte_untersucht.schnam = untersuchdat_schacht.untersuchsch {self.abfrage_s_and}
                         JOIN schaechte 
                             ON schaechte_untersucht.schnam = schaechte.schnam
                         LEFT JOIN ea_bestaende AS ea 
@@ -3042,7 +3053,7 @@ class ExportTask:
                         LEFT JOIN pr_bestaende AS pr 
                             ON schaechte.profilnam = pr.profilnam
                             AND pr.rn = 1
-                        {self.abfrage_s_and}
+                        
                  """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -3128,7 +3139,7 @@ class ExportTask:
                             pr.isybau AS profil_isybau
                         FROM schaechte_untersucht_bewertet
                         JOIN untersuchdat_schacht_bewertet 
-                            ON schaechte_untersucht_bewertet.schnam = untersuchdat_schacht_bewertet.untersuchsch
+                            ON schaechte_untersucht_bewertet.schnam = untersuchdat_schacht_bewertet.untersuchsch {self.abfrage_s_and}
                         JOIN schaechte 
                             ON schaechte_untersucht_bewertet.schnam = schaechte.schnam
                         LEFT JOIN ea_bestaende AS ea 
@@ -3140,7 +3151,7 @@ class ExportTask:
                         LEFT JOIN pr_bestaende AS pr 
                             ON schaechte.profilnam = pr.profilnam
                             AND pr.rn = 1
-                        {self.abfrage_s_and}
+                        
                  """
 
                 if not self.db_qkan.sql(sql, "db_qkan: export_zustandsdaten"):
@@ -3220,19 +3231,21 @@ class ExportTask:
                         _create_children_text(
                             opt,
                             {
-                                "Auftragskennung": 1,
+                                "Auftragskennung": self.auftrag_num,
                                 "Inspektionsdatum": datum,
                                 "NameUntersucher": untersucher,
                                 "Wetter": wetter_nr,
+                                "Kodiersystem": 9,
                             },
                         )
                     else:
                         _create_children_text(
                             opt,
                             {
-                                "Auftragskennung": 1,
+                                "Auftragskennung": self.auftrag_num,
                                 "Inspektionsdatum": datum,
                                 "NameUntersucher": untersucher,
+                                "Kodiersystem": 9,
                             },
                         )
 
@@ -3440,7 +3453,7 @@ class ExportTask:
         _create_children_text(
             koll1,
             {
-                "Kennung": "STA01",
+                "Kennung": self.stamm_k,
                 "Kollektivart": "1",
             },
         )
@@ -3469,7 +3482,7 @@ class ExportTask:
         _create_children_text(
             koll2,
             {
-                "Kennung": "HYD01",
+                "Kennung": self.hyd_k,
                 "Kollektivart": "3",
             },
         )
@@ -3494,18 +3507,19 @@ class ExportTask:
             },
         )
 
-        #TODO: aufträge ergänzen zur Vollständigkeit bei stammdaten und zustandsdaten
-        #wenn nur zahl in auftragsbezeichnung, dann auftragskennung sonst als auftragsbezeichnung
+
+        #TODO "Kodiersystem": 9, ändern abhängig vom bewertungsart
+
 
         self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
-        _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
+        _create_children_text(self.stamm, {"Kennung":self.stamm_k, "Beschreibung": "Stammdaten",},)
 
         if QKan.config.check_export.zustandsdaten:
             koll3 = SubElement(kennungen, "Kollektiv")
             _create_children_text(
                 koll3,
                 {
-                    "Kennung": "ZUS01",
+                    "Kennung": self.zus_k,
                     "Kollektivart": "2",
                 },
             )
@@ -3527,14 +3541,14 @@ class ExportTask:
                 },
             )
             self.zustand = SubElement(daten_kollektive, "Zustandsdatenkollektiv")
-            _create_children_text(self.zustand, {"Kennung": "ZUS01", "Beschreibung": "Zustandsdaten", }, )
+            _create_children_text(self.zustand, {"Kennung": self.zus_k, "Beschreibung": "Zustandsdaten", }, )
             self.auftraege = SubElement(self.zustand, "Auftraege")
             self.auftrag = SubElement(self.auftraege, "Auftrag")
-            _create_children_text( self.auftrag, {"Auftragsbezeichnung": '1',
-                                                  "Auftragsnummer": 1,
+            _create_children_text( self.auftrag, {"Auftragsbezeichnung": self.auftrag_bez,
+                                                  "Auftragsnummer": self.auftrag_num,
                                                   "Auftragskennung": '1',
                                                   "Auftragsdatum": str(date.today()),
-                                                    "Auftragsart": 1,}, )
+                                                    "Auftragsart": 1, "Kodiersystem": 9 })
 
         hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
         _create_children_text(
@@ -3545,7 +3559,7 @@ class ExportTask:
         _create_children_text(
             rechen,
             {
-                "Stammdatenkennung": 'STA01',
+                "Stammdatenkennung": self.stamm_k,
             },
         )
         #SubElement(rechen, "Stammdatenkennung",'STA01')
@@ -3586,9 +3600,12 @@ class ExportTask:
             for attr in self.db_qkan.fetchall():
                 select_h.append(attr[0])
 
-            select_s_t = tuple(select_s)
+            #select_s_t = tuple(select_s)
 
-            select_h_t = tuple(select_h)
+            #select_h_t = tuple(select_h)
+
+            select_s_t = str(tuple(select_s)).replace(",)", ")")
+            select_h_t = str(tuple(select_h)).replace(",)", ")")
 
 
             self.abfrage_s_and = f"AND schaechte.pk in {select_s_t}"

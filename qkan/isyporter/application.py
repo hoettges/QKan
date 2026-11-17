@@ -107,6 +107,11 @@ class IsyPorter(QKanPlugin):
 
         auswahl_zustand = self.export_dlg.comboBox.currentText()
         #auswahl_zustand = None
+        stamm_k = self.export_dlg.lineEdit.text()
+        hyd_k = self.export_dlg.lineEdit_6.text()
+        zus_k = self.export_dlg.lineEdit_11.text()
+        auftrag_bez = self.export_dlg.lineEdit_12.text()
+        auftrag_num = self.export_dlg.lineEdit_13.text()
 
         with DBConnection(dbname=QKan.config.database.qkan) as db_qkan:
             if not db_qkan.connected:
@@ -117,7 +122,7 @@ class IsyPorter(QKanPlugin):
                 raise Exception(f"{self.__class__.__name__}: {QKan.config.database.qkan} wurde nicht gefunden!")
 
             # Run export
-            ExportTask(db_qkan, QKan.config.xml.export_file, QKan.config.xml.vorlage, auswahl_zustand).run()
+            ExportTask(db_qkan, QKan.config.xml.export_file, QKan.config.xml.vorlage, auswahl_zustand , stamm_k, hyd_k, zus_k, auftrag_bez, auftrag_num).run()
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
@@ -130,9 +135,8 @@ class IsyPorter(QKanPlugin):
             QKan.config.project.file = self.import_dlg.tf_project.text()
             #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
             QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
-
-            QKan.config.fotoPathCurrent = self.import_dlg.tf_ordnerFotos.text()
-            QKan.config.videoPathCurrent = self.import_dlg.tf_ordnervideo.text()
+            QKan.config.fotoRootPath = self.import_dlg.tf_ordnerFotos.text()
+            QKan.config.videoRootPath = self.import_dlg.tf_ordnervideo.text()
 
             QKan.config.xml.import_stamm = (
                 self.import_dlg.checkBox.isChecked()
@@ -195,6 +199,10 @@ class IsyPorter(QKanPlugin):
 
         Einspringpunkt für Test
         """
+        #QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+        QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
+        QKan.config.fotoRootPath = self.import_dlg.tf_ordnerFotos.text()
+        QKan.config.videoRootPath = self.import_dlg.tf_ordnervideo.text()
 
         self.log.info("Creating DB")
         with DBConnection(
