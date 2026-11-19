@@ -14,9 +14,6 @@ from qkan.tools.qkan_utils import get_qkanlayer_attributes, Patterns
 from datetime import datetime
 from qkan.utils import get_logger
 
-if TYPE_CHECKING:
-    from qkan.tools.application import QKanTools
-
 logger = get_logger("QKan.tools.dialogs.read_data")
 
 

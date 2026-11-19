@@ -13,9 +13,6 @@ from qgis.PyQt.QtWidgets import (
 )
 from qkan import QKan
 
-if TYPE_CHECKING:
-    from qkan.tools.application import QKanTools
-
 class _Dialog(QDialog):
     def __init__(
         self,

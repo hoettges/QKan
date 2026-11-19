@@ -6,7 +6,6 @@ from qgis.utils import iface, pluginDirectory
 from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import get_database_QKan
-from qkan.tools.application import QKanTools
 from qkan.tools.k_layersadapt import layersadapt
 from qkan.utils import get_logger
 

@@ -19,10 +19,6 @@ from qgis.PyQt.QtWidgets import (
 )
 
 
-
-if TYPE_CHECKING:
-    from qkan.tools.application import QKanTools
-
 SELECT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), ".", "res", "selection.ui")
 )

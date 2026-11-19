@@ -14,6 +14,7 @@ from qgis.core import (
     QgsDataProvider,
     QgsDataSourceUri,
     QgsProject,
+    QgsExpression,
 )
 from qgis.gui import QgisInterface
 from qgis.utils import iface
@@ -42,7 +43,6 @@ from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadData
 from .dialogs.runoffparams import RunoffParamsDialog
 from .dialogs.transform import TransformDialog
-from .dialogs.zoom_clipboard import QgsZoomDialog
 from .k_filepath import setfilepath
 from .k_bericht import bericht
 from .k_layersadapt import layersadapt
@@ -73,12 +73,9 @@ class QKanTools(QKanPlugin):
         self.dlghp = QgsHelpDialog(self)
         self.dlgfp = QgsFileDialog(self)
         self.dlgbf = QgsBefahrungDialog(self)
-        self.dlgzc = QgsZoomDialog(self)
         self.dlgb =  QgsBerichtDialog(self)
         self.dlgtr = TransformDialog(self.default_dir, tr=self.tr)
         self.iface = iface
-
-        self.clip = QApplication.clipboard()
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -171,12 +168,11 @@ class QKanTools(QKanPlugin):
             icon_file_path,
             text=self.tr("Zur Auswahl zoomen"),
             toolbar='QKan-Allgemein',
-            callback=self.run_zoom_clipboard,
+            callback=self.toggle_zoom_clipboard,
+            checkable=True,
+            status_tip="Autozoom an/aus",
             parent=self.iface.mainWindow(),
         )
-        self.action.setCheckable(True)
-        self.action.toggled.connect(self.run_zoom_clipboard)
-
 
         icon_befahrung = ":/plugins/qkan/tools/res/icon_befahrung.png"
         QKan.instance.add_action(
@@ -1200,55 +1196,43 @@ class QKanTools(QKanPlugin):
             task.run()
 
     def on_change(self):
-        text = self.clip.text()
-        self.text = text
+        self.cliptext = self.clipboard.text().strip()
+        if self.cliptext == '':
+            return
+        text = QgsExpression.quotedValue(self.cliptext)
 
-    def zoom_clip2(self):
-        get_database_QKan()
-        with DBConnection(dbname=QKan.config.database.qkan) as db_qkan:
-            if not db_qkan.connected:
-                self.log.error(
-                    "Fehler im XML-Export\n"
-                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                )
-                raise Exception(f"{self.__class__.__name__}: {QKan.config.database.qkan} wurde nicht gefunden!")
+        layer = QgsProject.instance().mapLayersByName('Haltungen')[0]
+        if layer is not None and text is not None:
+            layer.removeSelection()
 
-            clip = self.text
+            expr = f'"Bezeichnung" = \'{text}\''
+            layer.selectByExpression(expr)
+            iface.mapCanvas().zoomToSelected(layer)
 
-            layer = QgsProject.instance().mapLayersByName('Haltungen')[0]
-            if layer is not None and clip is not None:
-                value = str(clip)
-                field = "Bezeichnung"
-                layer.removeSelection()
+            sel = layer.selectedFeatureIds()
+            if sel is not None:
+                return
 
-                if value != '':
+        layer = QgsProject.instance().mapLayersByName('Schächte')[0]
+        if layer is not None and text is not None:
+            layer.removeSelection()
+            expr = f'"Schachtname" = \'{text}\''
+            layer.selectByExpression(expr)
+            iface.mapCanvas().zoomToSelected(layer)
 
-                    expr = f'"{field}" = \'{value}\''
-                    layer.selectByExpression(expr)
-                    iface.mapCanvas().zoomToSelected(layer)
-
-                    sel = layer.selectedFeatureIds()
-
-                    if not sel:
-                        layer = QgsProject.instance().mapLayersByName('Schächte')[0]
-                        layer.removeSelection()
-                        value = str(clip)
-                        field = "Schachtname"
-
-                        expr = f'"{field}" = \'{value}\''
-                        layer.selectByExpression(expr)
-                        iface.mapCanvas().zoomToSelected(layer)
-                        # 42780133
-
-    def run_zoom_clipboard(self):
-        text = self.clip.text()
-        self.text = text
-
+    def toggle_zoom_clipboard(self):
         if self.action.isChecked():
-            self.clip.dataChanged.connect(self.on_change)
-            self.dlgzc.clip.dataChanged.connect(self.zoom_clip2)
+            logger.info(f"Autozoom eingeschaltet")
+            self.clipboard = QApplication.clipboard()
+            self.clipboard.dataChanged.connect(self.on_change)
         else:
-            self.clip.dataChanged.disconnect(self.on_change)
+            try:
+                self.clipboard.dataChanged.disconnect()
+                logger.info(f"Autozoom ausgeschaltet")
+            except TypeError:
+                logger.error(f"{self.__class__.__name__}: Autozoom ausschalten fehlgeschlagen")
+                pass
+            self.cliptext = None
 
     def run_befahrung(self) -> None:
 
