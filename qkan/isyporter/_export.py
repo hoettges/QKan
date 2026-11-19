@@ -3623,7 +3623,7 @@ class ExportTask:
             self.abfrage_s_where = ""
             self.abfrage_h_and = ""
             self.abfrage_h_where = ""
-            self.abfrage_h_sub_an = ""
+            self.abfrage_h_sub_and = ""
 
 
         # Export
