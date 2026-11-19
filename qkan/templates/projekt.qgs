@@ -6709,7 +6709,7 @@ def my_form_open(dialog, layer, feature):
       <vectorjoins/>
       <layerDependencies/>
       <dataDependencies/>
-      <expressionfields/>
+      <expressionfields><field name="anschluss_hinweis" type="10" typeName="text" length="-1" precision="0" subType="0" expression="with_variable('p',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('s',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@p)&lt;=0.1),with_variable('h',aggregate('haltungen20161016203756230','array_agg',&quot;haltnam&quot;,filter:=distance($geometry,@p)&lt;=0.1),CASE WHEN layer_property('schaechte20161220162259105','id') IS NULL THEN 'Schachtlayer fehlt' WHEN array_length(@s)&gt;1 THEN 'Mehrere Schächte im Suchradius' WHEN array_length(@s)=1 THEN 'Direkter Anschluss an Schacht ' || @s[0] WHEN layer_property('haltungen20161016203756230','id') IS NULL THEN 'Haltungslayer fehlt' WHEN array_length(@h)&gt;1 THEN 'Mehrere Haltungen im Suchradius' WHEN array_length(@h)=1 THEN 'Haltung am Leitungsende: ' || @h[0] ELSE 'Kein Anschluss innerhalb von 10 cm erkannt' END)))" /></expressionfields>
       <map-layer-style-manager current="default">
         <map-layer-style name="default"/>
       </map-layer-style-manager>
@@ -7140,46 +7140,10 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="schoben" configurationFlags="NoFlag">
-          <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="false"/>
-                <Option name="AllowNull" type="bool" value="true"/>
-                <Option name="Description" type="invalid"/>
-                <Option name="FilterExpression" type="invalid"/>
-                <Option name="Key" type="QString" value="schnam"/>
-                <Option name="Layer" type="QString" value="anschlussschaechte_40ba3139_67b9_43cf_9c10_1b62ad11f61b"/>
-                <Option name="LayerName" type="QString" value="HA-Schächte"/>
-                <Option name="LayerProviderName" type="QString" value="spatialite"/>
-                <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;anschlussschaechte&quot; (geom)"/>
-                <Option name="NofColumns" type="int" value="1"/>
-                <Option name="OrderByValue" type="bool" value="true"/>
-                <Option name="UseCompleter" type="bool" value="true"/>
-                <Option name="Value" type="QString" value="schnam"/>
-              </Option>
-            </config>
-          </editWidget>
+          <editWidget type="TextEdit"><config><Option type="Map"/></config></editWidget>
         </field>
         <field name="schunten" configurationFlags="NoFlag">
-          <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="false"/>
-                <Option name="AllowNull" type="bool" value="true"/>
-                <Option name="Description" type="invalid"/>
-                <Option name="FilterExpression" type="invalid"/>
-                <Option name="Key" type="QString" value="schnam"/>
-                <Option name="Layer" type="QString" value="anschlussschaechte_40ba3139_67b9_43cf_9c10_1b62ad11f61b"/>
-                <Option name="LayerName" type="QString" value="HA-Schächte"/>
-                <Option name="LayerProviderName" type="QString" value="spatialite"/>
-                <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;anschlussschaechte&quot; (geom)"/>
-                <Option name="NofColumns" type="int" value="1"/>
-                <Option name="OrderByValue" type="bool" value="true"/>
-                <Option name="UseCompleter" type="bool" value="true"/>
-                <Option name="Value" type="QString" value="schnam"/>
-              </Option>
-            </config>
-          </editWidget>
+          <editWidget type="TextEdit"><config><Option type="Map"/></config></editWidget>
         </field>
         <field name="hoehe" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
@@ -7280,12 +7244,7 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="teilgebiet" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="Teilgebiete_786fa926_704f_4cb1_bc67_eb8571f2f6c0" /><Option name="LayerName" type="QString" value="Teilgebiete" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;teilgebiete&quot; (geom)" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="tgnam" /><Option name="Value" type="QString" value="tgnam" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="strasse" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -7297,26 +7256,11 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="profilnam" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="profile20161018090721921" /><Option name="LayerName" type="QString" value="Profile" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;profile&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="profilnam" /><Option name="Value" type="QString" value="profilnam" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="entwart" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="entwaesserungsarten20161018090806784" /><Option name="LayerName" type="QString" value="Entwässerungsarten" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;entwaesserungsarten&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="material" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="material_12f10425_b411_437a_86a9_64521d629453" /><Option name="LayerName" type="QString" value="Material" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;material&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="profilauskleidung" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -7339,12 +7283,7 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="simstatus" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="simulationsstatus20161201095050780" /><Option name="LayerName" type="QString" value="Planungsstatus" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;simulationsstatus&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="xschob" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -7489,9 +7428,9 @@ def my_form_open(dialog, layer, feature):
       </duplicatePolicies>
       <defaults>
         <default expression="" field="pk" applyOnUpdate="0"/>
-        <default expression="" field="leitnam" applyOnUpdate="0"/>
-        <default expression="" field="schoben" applyOnUpdate="0"/>
-        <default expression="" field="schunten" applyOnUpdate="0"/>
+        <default expression="with_variable('namen',coalesce(aggregate(@layer,'array_agg',to_string(&quot;leitnam&quot;),filter:=&quot;leitnam&quot; IS NOT NULL),array()),with_variable('reihe', coalesce(@qkan_anschlussleitung_praefix,''),&#10; with_variable('ziffern', array_foreach(array_filter(@namen,&#10;   regexp_match(@element,'[0-9]+$')&gt;0 AND regexp_replace(@element,'[0-9]+$','')=@reihe),&#10;   regexp_substr(@element,'[0-9]+$')),&#10; with_variable('naechste',to_string(coalesce(array_max(array_foreach(@ziffern,to_int(@element))),0)+1),&#10; @reihe || lpad(@naechste,max(length(@naechste),coalesce(array_max(array_foreach(@ziffern,length(@element))),1)),'0')))))" field="leitnam" applyOnUpdate="0" />
+        <default expression="if(layer_property('schaechte20161220162259105','id') IS NULL,NULL,with_variable('endpoint',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('nodes',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(coalesce(array_length(@nodes),0)&gt;0,NULL,with_variable('matches',aggregate('haltungen20161016203756230','array_agg',&quot;schoben&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(array_length(@matches)=1,@matches[0],NULL))))))" field="schoben" applyOnUpdate="0"/>
+        <default expression="if(layer_property('schaechte20161220162259105','id') IS NULL,NULL,with_variable('endpoint',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('nodes',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(coalesce(array_length(@nodes),0)&gt;0,if(array_length(@nodes)=1,@nodes[0],NULL),with_variable('matches',aggregate('haltungen20161016203756230','array_agg',&quot;schunten&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(array_length(@matches)=1,@matches[0],NULL))))))" field="schunten" applyOnUpdate="0"/>
         <default expression="" field="hoehe" applyOnUpdate="0"/>
         <default expression="" field="breite" applyOnUpdate="0"/>
         <default expression="" field="laenge" applyOnUpdate="0"/>
@@ -7499,7 +7438,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="sohleoben" applyOnUpdate="0"/>
         <default expression="" field="sohleunten" applyOnUpdate="0"/>
         <default expression="" field="baujahr" applyOnUpdate="0"/>
-        <default expression="" field="haltnam" applyOnUpdate="0"/>
+        <default expression="if(layer_property('schaechte20161220162259105','id') IS NULL,NULL,with_variable('endpoint',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('nodes',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(coalesce(array_length(@nodes),0)&gt;0,NULL,with_variable('matches',aggregate('haltungen20161016203756230','array_agg',&quot;haltnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(array_length(@matches)=1,@matches[0],NULL))))))" field="haltnam" applyOnUpdate="0"/>
         <default expression="" field="urstation" applyOnUpdate="0"/>
         <default expression="" field="ursprung" applyOnUpdate="0"/>
         <default expression="" field="anschlusstyp" applyOnUpdate="0"/>
@@ -7522,7 +7461,7 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <constraints>
         <constraint notnull_strength="1" field="pk" unique_strength="1" exp_strength="0" constraints="3"/>
-        <constraint notnull_strength="0" field="leitnam" unique_strength="0" exp_strength="0" constraints="0"/>
+        <constraint notnull_strength="0" field="leitnam" unique_strength="1" exp_strength="0" constraints="2" />
         <constraint notnull_strength="0" field="schoben" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="schunten" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="hoehe" unique_strength="0" exp_strength="0" constraints="0"/>
@@ -25342,7 +25281,7 @@ def my_form_open(dialog, layer, feature):
       <id>haltungen20161016203756230</id>
       <datasource>dbname='./demo.sqlite' table="haltungen" (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'</datasource>
       <keywordList>
-        <value></value>
+        <value/>
       </keywordList>
       <layername>Haltungen</layername>
       <srs>
@@ -25359,25 +25298,25 @@ def my_form_open(dialog, layer, feature):
         </spatialrefsys>
       </srs>
       <resourceMetadata>
-        <identifier></identifier>
-        <parentidentifier></parentidentifier>
-        <language></language>
+        <identifier/>
+        <parentidentifier/>
+        <language/>
         <type>dataset</type>
-        <title></title>
-        <abstract></abstract>
+        <title/>
+        <abstract/>
         <contact>
-          <name></name>
-          <organization></organization>
-          <position></position>
-          <voice></voice>
-          <fax></fax>
-          <email></email>
-          <role></role>
+          <name/>
+          <organization/>
+          <position/>
+          <voice/>
+          <fax/>
+          <email/>
+          <role/>
         </contact>
         <links/>
         <dates/>
-        <fees></fees>
-        <encoding></encoding>
+        <fees/>
+        <encoding/>
         <crs>
           <spatialrefsys nativeFormat="Wkt">
             <wkt>PROJCRS["ETRS89 / UTM zone 32N",BASEGEOGCRS["ETRS89",ENSEMBLE["European Terrestrial Reference System 1989 ensemble",MEMBER["European Terrestrial Reference Frame 1989"],MEMBER["European Terrestrial Reference Frame 1990"],MEMBER["European Terrestrial Reference Frame 1991"],MEMBER["European Terrestrial Reference Frame 1992"],MEMBER["European Terrestrial Reference Frame 1993"],MEMBER["European Terrestrial Reference Frame 1994"],MEMBER["European Terrestrial Reference Frame 1996"],MEMBER["European Terrestrial Reference Frame 1997"],MEMBER["European Terrestrial Reference Frame 2000"],MEMBER["European Terrestrial Reference Frame 2005"],MEMBER["European Terrestrial Reference Frame 2014"],MEMBER["European Terrestrial Reference Frame 2020"],ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[0.1]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4258]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Engineering survey, topographic mapping."],AREA["Europe between 6°E and 12°E: Austria; Denmark - onshore and offshore; Germany - onshore and offshore; Italy - onshore and offshore; Norway including Svalbard - onshore and offshore; Spain - offshore."],BBOX[36.53,6,84.01,12.01]],USAGE[SCOPE["Pan-European conformal mapping at scales larger than 1:500,000."],AREA["Europe between 6°E and 12°E and approximately 36°30'N to 84°N."],BBOX[36.53,6,84.01,12.01]],ID["EPSG",25832]]</wkt>
@@ -25395,8 +25334,8 @@ def my_form_open(dialog, layer, feature):
           <spatial dimensions="2" minx="0" maxx="0" crs="EPSG:25832" maxy="0" miny="0" minz="0" maxz="0"/>
           <temporal>
             <period>
-              <start></start>
-              <end></end>
+              <start/>
+              <end/>
             </period>
           </temporal>
         </extent>
@@ -25407,7 +25346,7 @@ def my_form_open(dialog, layer, feature):
       <dataDependencies/>
       <expressionfields>
         <field name="laenge_3d" subType="0" expression="round(sqrt(length3d($geometry)^2 + coalesce(sohleoben-sohleunten, 0.0)^2), 3)" type="6" comment="" typeName="double precision" precision="0" length="-1"/>
-      </expressionfields>
+      <field name="schacht_oben_sohle" type="6" typeName="double precision" subType="0" length="-1" precision="0" expression="attribute(get_feature('schaechte20161220162259105','schnam',&quot;schoben&quot;),'sohlhoehe')"/><field name="schacht_oben_deckel" type="6" typeName="double precision" subType="0" length="-1" precision="0" expression="attribute(get_feature('schaechte20161220162259105','schnam',&quot;schoben&quot;),'deckelhoehe')"/><field name="schacht_unten_sohle" type="6" typeName="double precision" subType="0" length="-1" precision="0" expression="attribute(get_feature('schaechte20161220162259105','schnam',&quot;schunten&quot;),'sohlhoehe')"/><field name="schacht_unten_deckel" type="6" typeName="double precision" subType="0" length="-1" precision="0" expression="attribute(get_feature('schaechte20161220162259105','schnam',&quot;schunten&quot;),'deckelhoehe')"/></expressionfields>
       <map-layer-style-manager current="Vorgabe">
         <map-layer-style name="Vorgabe"/>
       </map-layer-style-manager>
@@ -25421,8 +25360,8 @@ def my_form_open(dialog, layer, feature):
       </flags>
       <temporal fixedDuration="0" enabled="0" mode="0" endField="" startField="" durationField="" accumulate="0" durationUnit="min" endExpression="" startExpression="" limitMode="0">
         <fixedRange>
-          <start></start>
-          <end></end>
+          <start/>
+          <end/>
         </fixedRange>
       </temporal>
       <elevation zoffset="0" type="IndividualFeatures" extrusionEnabled="0" showMarkerSymbolInSurfacePlots="0" extrusion="0" binding="Centroid" symbology="Line" clamping="Terrain" respectLayerSymbol="1" zscale="1">
@@ -25559,7 +25498,7 @@ def my_form_open(dialog, layer, feature):
       </elevation>
       <renderer-v2 forceraster="0" type="RuleRenderer" symbollevels="0" enableorderby="0" referencescale="-1">
         <rules key="{228d5431-8f44-40a0-9f32-4ab249f2b5b8}">
-          <rule label="> 1:500" key="{7a315328-c986-4768-8f34-85184ac94014}" scalemaxdenom="500">
+          <rule label="&gt; 1:500" key="{7a315328-c986-4768-8f34-85184ac94014}" scalemaxdenom="500">
             <rule filter="&quot;entwart&quot; = 'Mischwasser'" label="Mischwasser" key="{90add3db-d470-469a-aa61-fb145e19656f}" symbol="0"/>
             <rule filter="&quot;entwart&quot; = 'Regenwasser'" label="Regenwasser" key="{70bf1df3-eafd-463d-b68e-c0f640e20674}" symbol="1"/>
             <rule filter="&quot;entwart&quot; = 'Schmutzwasser'" label="Schmutzwasser" key="{e7360ab6-96c3-4d12-bb06-015e14a1d486}" symbol="2"/>
@@ -27399,7 +27338,7 @@ def my_form_open(dialog, layer, feature):
                 </dd_properties>
                 <substitutions/>
               </text-style>
-              <text-format autoWrapLength="0" leftDirectionSymbol="&lt;" multilineAlign="0" reverseDirectionSymbol="0" plussign="0" formatNumbers="0" placeDirectionSymbol="0" decimals="3" addDirectionSymbol="0" rightDirectionSymbol=">" wrapChar="" useMaxLineLengthForAutoWrap="1"/>
+              <text-format autoWrapLength="0" leftDirectionSymbol="&lt;" multilineAlign="0" reverseDirectionSymbol="0" plussign="0" formatNumbers="0" placeDirectionSymbol="0" decimals="3" addDirectionSymbol="0" rightDirectionSymbol="&gt;" wrapChar="" useMaxLineLengthForAutoWrap="1"/>
               <placement repeatDistance="0" layerType="LineGeometry" fitInPolygonOnly="0" offsetUnits="MapUnit" maxCurvedCharAngleIn="20" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" lineAnchorType="0" lineAnchorClipping="0" distUnits="MM" lineAnchorPercent="0.5" dist="2" maxCurvedCharAngleOut="-20" prioritization="PreferCloser" priority="5" geometryGeneratorEnabled="0" xOffset="0" overrunDistanceUnit="MM" maximumDistance="0" overrunDistance="0" maximumDistanceMapUnitScale="3x:0,0,0,0,0,0" lineAnchorTextPoint="CenterOfText" preserveRotation="1" yOffset="0" placementFlags="10" polygonPlacementFlags="2" rotationUnit="AngleDegrees" maximumDistanceUnit="MM" offsetType="0" centroidWhole="0" repeatDistanceUnits="MM" distMapUnitScale="3x:0,0,0,0,0,0" quadOffset="4" geometryGeneratorType="PointGeometry" overlapHandling="PreventOverlap" allowDegraded="0" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" rotationAngle="0" placement="2" geometryGenerator="" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" centroidInside="0"/>
               <rendering obstacleFactor="1" fontMinPixelSize="3" fontMaxPixelSize="10000" mergeLines="0" maxNumLabels="2000" scaleMax="5000" labelPerPart="0" fontLimitPixelSize="0" obstacleType="0" zIndex="0" obstacle="1" limitNumLabels="0" scaleVisibility="1" minFeatureSize="0" unplacedVisibility="0" scaleMin="1" upsidedownLabels="0" drawLabels="1"/>
               <dd_properties>
@@ -27427,7 +27366,7 @@ def my_form_open(dialog, layer, feature):
                   <Option name="drawToAllParts" type="bool" value="false"/>
                   <Option name="enabled" type="QString" value="0"/>
                   <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"/>
-                  <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; force_rhr=&quot;0&quot; type=&quot;line&quot; clip_to_extent=&quot;1&quot; alpha=&quot;1&quot; is_animated=&quot;0&quot; frame_rate=&quot;10&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer class=&quot;SimpleLine&quot; locked=&quot;0&quot; enabled=&quot;1&quot; pass=&quot;0&quot; id=&quot;{dd383e3d-1a2e-4a88-a6e1-a12148b097c1}&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/>&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/>&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/>&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255,rgb:0.23529411764705882,0.23529411764705882,0.23529411764705882,1&quot;/>&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/>&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/>&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"/>
+                  <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; force_rhr=&quot;0&quot; type=&quot;line&quot; clip_to_extent=&quot;1&quot; alpha=&quot;1&quot; is_animated=&quot;0&quot; frame_rate=&quot;10&quot;&gt;&lt;data_defined_properties&gt;&lt;Option type=&quot;Map&quot;&gt;&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/&gt;&lt;Option name=&quot;properties&quot;/&gt;&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/&gt;&lt;/Option&gt;&lt;/data_defined_properties&gt;&lt;layer class=&quot;SimpleLine&quot; locked=&quot;0&quot; enabled=&quot;1&quot; pass=&quot;0&quot; id=&quot;{dd383e3d-1a2e-4a88-a6e1-a12148b097c1}&quot;&gt;&lt;Option type=&quot;Map&quot;&gt;&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/&gt;&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/&gt;&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/&gt;&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255,rgb:0.23529411764705882,0.23529411764705882,0.23529411764705882,1&quot;/&gt;&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/&gt;&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/&gt;&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;/Option&gt;&lt;data_defined_properties&gt;&lt;Option type=&quot;Map&quot;&gt;&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/&gt;&lt;Option name=&quot;properties&quot;/&gt;&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/&gt;&lt;/Option&gt;&lt;/data_defined_properties&gt;&lt;/layer&gt;&lt;/symbol&gt;"/>
                   <Option name="minLength" type="double" value="0"/>
                   <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"/>
                   <Option name="minLengthUnit" type="QString" value="MM"/>
@@ -27529,7 +27468,7 @@ def my_form_open(dialog, layer, feature):
                 </dd_properties>
                 <substitutions/>
               </text-style>
-              <text-format autoWrapLength="0" leftDirectionSymbol="&lt;" multilineAlign="0" reverseDirectionSymbol="0" plussign="0" formatNumbers="0" placeDirectionSymbol="0" decimals="3" addDirectionSymbol="0" rightDirectionSymbol=">" wrapChar="" useMaxLineLengthForAutoWrap="1"/>
+              <text-format autoWrapLength="0" leftDirectionSymbol="&lt;" multilineAlign="0" reverseDirectionSymbol="0" plussign="0" formatNumbers="0" placeDirectionSymbol="0" decimals="3" addDirectionSymbol="0" rightDirectionSymbol="&gt;" wrapChar="" useMaxLineLengthForAutoWrap="1"/>
               <placement repeatDistance="0" layerType="LineGeometry" fitInPolygonOnly="0" offsetUnits="MM" maxCurvedCharAngleIn="25" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" lineAnchorType="0" lineAnchorClipping="0" distUnits="MM" lineAnchorPercent="0.5" dist="0" maxCurvedCharAngleOut="-25" prioritization="PreferCloser" priority="5" geometryGeneratorEnabled="0" xOffset="0" overrunDistanceUnit="MM" maximumDistance="0" overrunDistance="0" maximumDistanceMapUnitScale="3x:0,0,0,0,0,0" lineAnchorTextPoint="CenterOfText" preserveRotation="1" yOffset="0" placementFlags="10" polygonPlacementFlags="2" rotationUnit="AngleDegrees" maximumDistanceUnit="MM" offsetType="0" centroidWhole="0" repeatDistanceUnits="MM" distMapUnitScale="3x:0,0,0,0,0,0" quadOffset="4" geometryGeneratorType="PointGeometry" overlapHandling="PreventOverlap" allowDegraded="0" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" rotationAngle="0" placement="2" geometryGenerator="" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" centroidInside="0"/>
               <rendering obstacleFactor="1" fontMinPixelSize="3" fontMaxPixelSize="10000" mergeLines="0" maxNumLabels="2000" scaleMax="0" labelPerPart="0" fontLimitPixelSize="0" obstacleType="1" zIndex="0" obstacle="1" limitNumLabels="0" scaleVisibility="0" minFeatureSize="0" unplacedVisibility="0" scaleMin="0" upsidedownLabels="0" drawLabels="1"/>
               <dd_properties>
@@ -27551,7 +27490,7 @@ def my_form_open(dialog, layer, feature):
                   <Option name="drawToAllParts" type="bool" value="false"/>
                   <Option name="enabled" type="QString" value="0"/>
                   <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"/>
-                  <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; force_rhr=&quot;0&quot; type=&quot;line&quot; clip_to_extent=&quot;1&quot; alpha=&quot;1&quot; is_animated=&quot;0&quot; frame_rate=&quot;10&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer class=&quot;SimpleLine&quot; locked=&quot;0&quot; enabled=&quot;1&quot; pass=&quot;0&quot; id=&quot;{b0eed0e2-1969-4679-b568-89e13f9918af}&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/>&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/>&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/>&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255,rgb:0.23529411764705882,0.23529411764705882,0.23529411764705882,1&quot;/>&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/>&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/>&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"/>
+                  <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; force_rhr=&quot;0&quot; type=&quot;line&quot; clip_to_extent=&quot;1&quot; alpha=&quot;1&quot; is_animated=&quot;0&quot; frame_rate=&quot;10&quot;&gt;&lt;data_defined_properties&gt;&lt;Option type=&quot;Map&quot;&gt;&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/&gt;&lt;Option name=&quot;properties&quot;/&gt;&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/&gt;&lt;/Option&gt;&lt;/data_defined_properties&gt;&lt;layer class=&quot;SimpleLine&quot; locked=&quot;0&quot; enabled=&quot;1&quot; pass=&quot;0&quot; id=&quot;{b0eed0e2-1969-4679-b568-89e13f9918af}&quot;&gt;&lt;Option type=&quot;Map&quot;&gt;&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/&gt;&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/&gt;&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/&gt;&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255,rgb:0.23529411764705882,0.23529411764705882,0.23529411764705882,1&quot;/&gt;&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/&gt;&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/&gt;&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/&gt;&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/&gt;&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/&gt;&lt;/Option&gt;&lt;data_defined_properties&gt;&lt;Option type=&quot;Map&quot;&gt;&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/&gt;&lt;Option name=&quot;properties&quot;/&gt;&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/&gt;&lt;/Option&gt;&lt;/data_defined_properties&gt;&lt;/layer&gt;&lt;/symbol&gt;"/>
                   <Option name="minLength" type="double" value="0"/>
                   <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"/>
                   <Option name="minLengthUnit" type="QString" value="MM"/>
@@ -27694,46 +27633,44 @@ def my_form_open(dialog, layer, feature):
         </field>
         <field name="schoben" configurationFlags="NoFlag">
           <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="false"/>
-                <Option name="AllowNull" type="bool" value="true"/>
-                <Option name="Description" type="invalid"/>
-                <Option name="FilterExpression" type="invalid"/>
-                <Option name="Key" type="QString" value="schnam"/>
-                <Option name="Layer" type="QString" value="knotentyp_20161204084617148"/>
-                <Option name="LayerName" type="QString" value="Knotentyp"/>
-                <Option name="LayerProviderName" type="QString" value="spatialite"/>
-                <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;schaechte&quot; (geop)"/>
-                <Option name="NofColumns" type="int" value="1"/>
-                <Option name="OrderByValue" type="bool" value="true"/>
-                <Option name="UseCompleter" type="bool" value="true"/>
-                <Option name="Value" type="QString" value="schnam"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+        <config>
+          <Option type="Map">
+            <Option name="AllowMulti" type="bool" value="false"/>
+            <Option name="AllowNull" type="bool" value="true"/>
+            <Option name="Description" type="invalid"/>
+            <Option name="FilterExpression" type="invalid"/>
+            <Option name="Key" type="QString" value="schnam"/>
+            <Option name="Layer" type="QString" value="schaechte20161220162259105"/>
+            <Option name="LayerName" type="QString" value="Schächte"/>
+            <Option name="LayerProviderName" type="QString" value="spatialite"/>
+            <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;schaechte&quot; (geop)"/>
+            <Option name="NofColumns" type="int" value="1"/>
+            <Option name="OrderByValue" type="bool" value="true"/>
+            <Option name="UseCompleter" type="bool" value="true"/>
+            <Option name="Value" type="QString" value="schnam"/>
+          </Option>
+        </config>
+      </editWidget></field>
         <field name="schunten" configurationFlags="NoFlag">
           <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="false"/>
-                <Option name="AllowNull" type="bool" value="true"/>
-                <Option name="Description" type="invalid"/>
-                <Option name="FilterExpression" type="invalid"/>
-                <Option name="Key" type="QString" value="schnam"/>
-                <Option name="Layer" type="QString" value="knotentyp_20161204084617148"/>
-                <Option name="LayerName" type="QString" value="Knotentyp"/>
-                <Option name="LayerProviderName" type="QString" value="spatialite"/>
-                <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;schaechte&quot; (geop)"/>
-                <Option name="NofColumns" type="int" value="1"/>
-                <Option name="OrderByValue" type="bool" value="true"/>
-                <Option name="UseCompleter" type="bool" value="true"/>
-                <Option name="Value" type="QString" value="schnam"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+        <config>
+          <Option type="Map">
+            <Option name="AllowMulti" type="bool" value="false"/>
+            <Option name="AllowNull" type="bool" value="true"/>
+            <Option name="Description" type="invalid"/>
+            <Option name="FilterExpression" type="invalid"/>
+            <Option name="Key" type="QString" value="schnam"/>
+            <Option name="Layer" type="QString" value="schaechte20161220162259105"/>
+            <Option name="LayerName" type="QString" value="Schächte"/>
+            <Option name="LayerProviderName" type="QString" value="spatialite"/>
+            <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;schaechte&quot; (geop)"/>
+            <Option name="NofColumns" type="int" value="1"/>
+            <Option name="OrderByValue" type="bool" value="true"/>
+            <Option name="UseCompleter" type="bool" value="true"/>
+            <Option name="Value" type="QString" value="schnam"/>
+          </Option>
+        </config>
+      </editWidget></field>
         <field name="hoehe" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -27909,15 +27846,7 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="material" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="false"/>
-                <Option name="UseHtml" type="bool" value="false"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="material_12f10425_b411_437a_86a9_64521d629453" /><Option name="LayerName" type="QString" value="Material" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;material&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="profilauskleidung" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -27980,12 +27909,11 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="rwanschluss" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="CheckBox">
+        <config>
+          <Option/>
+        </config>
+      </editWidget></field>
         <field name="druckdicht" configurationFlags="NoFlag">
           <editWidget type="CheckBox">
             <config>
@@ -28172,15 +28100,15 @@ def my_form_open(dialog, layer, feature):
       </duplicatePolicies>
       <defaults>
         <default expression="" field="pk" applyOnUpdate="0"/>
-        <default expression="" field="haltnam" applyOnUpdate="0"/>
-        <default expression="" field="schoben" applyOnUpdate="0"/>
-        <default expression="" field="schunten" applyOnUpdate="0"/>
+        <default expression="with_variable('namen',coalesce(aggregate(@layer,'array_agg',to_string(&quot;haltnam&quot;),filter:=&quot;haltnam&quot; IS NOT NULL),array()),with_variable('startname',coalesce(nullif(trim(&quot;schoben&quot;),''),with_variable('p',start_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('q',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('a',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@p) &lt;= 0.1,order_by:=distance($geometry,@p))[0],with_variable('b',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@q) &lt;= 0.1,order_by:=distance($geometry,@q))[0],if(map_get(@a,'z') &lt; map_get(@b,'z'),map_get(@b,'n'),map_get(@a,'n'))))))),if(@startname IS NOT NULL AND NOT array_contains(@namen,@startname),@startname,with_variable('reihe', if(@startname IS NOT NULL AND regexp_match(@startname,'[0-9]+$')&gt;0, regexp_replace(@startname,'[0-9]+$',''), coalesce(@qkan_haltung_praefix,'')),&#10; with_variable('ziffern', array_foreach(array_filter(@namen,&#10;   regexp_match(@element,'[0-9]+$')&gt;0 AND regexp_replace(@element,'[0-9]+$','')=@reihe),&#10;   regexp_substr(@element,'[0-9]+$')),&#10; with_variable('naechste',to_string(coalesce(array_max(array_foreach(@ziffern,to_int(@element))),0)+1),&#10; @reihe || lpad(@naechste,max(length(@naechste),coalesce(array_max(array_foreach(@ziffern,length(@element))),1)),'0')))))))" field="haltnam" applyOnUpdate="0" />
+        <default expression="with_variable('p',start_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('q',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('a',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@p) &lt;= 0.1,order_by:=distance($geometry,@p))[0],with_variable('b',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@q) &lt;= 0.1,order_by:=distance($geometry,@q))[0],if(map_get(@a,'z') &lt; map_get(@b,'z'),map_get(@b,'n'),map_get(@a,'n'))))))" field="schoben" applyOnUpdate="0"/>
+        <default expression="with_variable('p',start_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('q',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('a',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@p) &lt;= 0.1,order_by:=distance($geometry,@p))[0],with_variable('b',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@q) &lt;= 0.1,order_by:=distance($geometry,@q))[0],if(map_get(@a,'z') &lt; map_get(@b,'z'),map_get(@a,'n'),map_get(@b,'n'))))))" field="schunten" applyOnUpdate="0"/>
         <default expression="" field="hoehe" applyOnUpdate="0"/>
         <default expression="" field="breite" applyOnUpdate="0"/>
-        <default expression="" field="laenge" applyOnUpdate="0"/>
+        <default expression="round(length($geometry),3)" field="laenge" applyOnUpdate="0"/>
         <default expression="" field="aussendurchmesser" applyOnUpdate="0"/>
-        <default expression="" field="sohleoben" applyOnUpdate="0"/>
-        <default expression="" field="sohleunten" applyOnUpdate="0"/>
+        <default expression="with_variable('p',start_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('q',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('a',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@p) &lt;= 0.1,order_by:=distance($geometry,@p))[0],with_variable('b',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@q) &lt;= 0.1,order_by:=distance($geometry,@q))[0],if(map_get(@a,'z') &lt; map_get(@b,'z'),map_get(@b,'z'),map_get(@a,'z'))))))" field="sohleoben" applyOnUpdate="0"/>
+        <default expression="with_variable('p',start_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('q',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('a',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@p) &lt;= 0.1,order_by:=distance($geometry,@p))[0],with_variable('b',aggregate('schaechte20161220162259105','array_agg',map('n',&quot;schnam&quot;,'z',&quot;sohlhoehe&quot;),filter:=distance($geometry,@q) &lt;= 0.1,order_by:=distance($geometry,@q))[0],if(map_get(@a,'z') &lt; map_get(@b,'z'),map_get(@a,'z'),map_get(@b,'z'))))))" field="sohleunten" applyOnUpdate="0"/>
         <default expression="" field="baujahr" applyOnUpdate="0"/>
         <default expression="" field="eigentum" applyOnUpdate="0"/>
         <default expression="" field="teilgebiet" applyOnUpdate="0"/>
@@ -28206,7 +28134,7 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <constraints>
         <constraint notnull_strength="1" field="pk" unique_strength="1" exp_strength="0" constraints="3"/>
-        <constraint notnull_strength="0" field="haltnam" unique_strength="0" exp_strength="0" constraints="0"/>
+        <constraint notnull_strength="0" field="haltnam" unique_strength="1" exp_strength="0" constraints="2" />
         <constraint notnull_strength="0" field="schoben" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="schunten" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="hoehe" unique_strength="0" exp_strength="0" constraints="0"/>
@@ -28320,11 +28248,11 @@ def my_form_open(dialog, layer, feature):
         <fieldstyles/>
       </conditionalstyles>
       <storedexpressions/>
-      <editform tolerant="1">../Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
+      <editform tolerant="1">../forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath></editforminitfilepath>
-      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+      <editforminitfilepath/>
+      <editforminitcode># -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
 
@@ -28338,8 +28266,8 @@ from PyQt4.QtGui import QWidget
 def my_form_open(dialog, layer, feature):
 	geom = feature.geometry()
 	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
-      <featformsuppress>0</featformsuppress>
+</editforminitcode>
+      <featformsuppress>2</featformsuppress>
       <editorlayout>uifilelayout</editorlayout>
       <editable>
         <field name="abflussart" editable="1"/>
@@ -28458,7 +28386,7 @@ def my_form_open(dialog, layer, feature):
       <dataDefinedFieldProperties/>
       <widgets/>
       <previewExpression>"haltnam"</previewExpression>
-      <mapTip enabled="1"></mapTip>
+      <mapTip enabled="1"/>
     </maplayer>
     <maplayer minScale="100000000" legendPlaceholderImage="" simplifyDrawingTol="1" readOnly="0" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" wkbType="LineString" autoRefreshTime="0" simplifyLocal="1" refreshOnNotifyEnabled="0" labelsEnabled="0" geometry="Line" styleCategories="AllStyleCategories" autoRefreshMode="Disabled" simplifyAlgorithm="0" symbologyReferenceScale="-1" maxScale="0" refreshOnNotifyMessage="" simplifyDrawingHints="1" type="vector">
       <id>haltungen_untersucht_aa82edb8_17a1_46de_9c85_52ebc93a3d0d</id>
@@ -37922,15 +37850,7 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="auslasstyp" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="false"/>
-                <Option name="UseHtml" type="bool" value="false"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="auslasstypen20161201095045204" /><Option name="LayerName" type="QString" value="Auslasstypen" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;auslasstypen&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="schachttyp" configurationFlags="NoFlag">
           <editWidget type="ValueRelation">
             <config>
@@ -37974,15 +37894,7 @@ def my_form_open(dialog, layer, feature):
           </editWidget>
         </field>
         <field name="material" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="false"/>
-                <Option name="UseHtml" type="bool" value="false"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="material_12f10425_b411_437a_86a9_64521d629453" /><Option name="LayerName" type="QString" value="Material" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;material&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="xsch" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -38111,7 +38023,7 @@ def my_form_open(dialog, layer, feature):
       </duplicatePolicies>
       <defaults>
         <default expression="" field="pk" applyOnUpdate="0"/>
-        <default expression="" field="schnam" applyOnUpdate="0"/>
+        <default expression="with_variable('namen',coalesce(aggregate(@layer,'array_agg',to_string(&quot;schnam&quot;),filter:=&quot;schnam&quot; IS NOT NULL),array()),with_variable('reihe', coalesce(@qkan_schacht_praefix,''),&#10; with_variable('ziffern', array_foreach(array_filter(@namen,&#10;   regexp_match(@element,'[0-9]+$')&gt;0 AND regexp_replace(@element,'[0-9]+$','')=@reihe),&#10;   regexp_substr(@element,'[0-9]+$')),&#10; with_variable('naechste',to_string(coalesce(array_max(array_foreach(@ziffern,to_int(@element))),0)+1),&#10; @reihe || lpad(@naechste,max(length(@naechste),coalesce(array_max(array_foreach(@ziffern,length(@element))),1)),'0')))))" field="schnam" applyOnUpdate="0" />
         <default expression="" field="sohlhoehe" applyOnUpdate="0"/>
         <default expression="" field="deckelhoehe" applyOnUpdate="0"/>
         <default expression="" field="durchm" applyOnUpdate="0"/>
@@ -38135,7 +38047,7 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <constraints>
         <constraint notnull_strength="1" field="pk" unique_strength="1" exp_strength="0" constraints="3"/>
-        <constraint notnull_strength="0" field="schnam" unique_strength="0" exp_strength="0" constraints="0"/>
+        <constraint notnull_strength="0" field="schnam" unique_strength="1" exp_strength="0" constraints="2" />
         <constraint notnull_strength="0" field="sohlhoehe" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="deckelhoehe" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="durchm" unique_strength="0" exp_strength="0" constraints="0"/>

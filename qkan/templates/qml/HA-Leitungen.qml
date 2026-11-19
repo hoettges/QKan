@@ -426,46 +426,10 @@
           </editWidget>
         </field>
         <field name="schoben" configurationFlags="NoFlag">
-          <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="false"/>
-                <Option name="AllowNull" type="bool" value="true"/>
-                <Option name="Description" type="invalid"/>
-                <Option name="FilterExpression" type="invalid"/>
-                <Option name="Key" type="QString" value="schnam"/>
-                <Option name="Layer" type="QString" value="anschlussschaechte_40ba3139_67b9_43cf_9c10_1b62ad11f61b"/>
-                <Option name="LayerName" type="QString" value="HA-Schächte"/>
-                <Option name="LayerProviderName" type="QString" value="spatialite"/>
-                <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;anschlussschaechte&quot; (geom)"/>
-                <Option name="NofColumns" type="int" value="1"/>
-                <Option name="OrderByValue" type="bool" value="true"/>
-                <Option name="UseCompleter" type="bool" value="true"/>
-                <Option name="Value" type="QString" value="schnam"/>
-              </Option>
-            </config>
-          </editWidget>
+          <editWidget type="TextEdit"><config><Option type="Map"/></config></editWidget>
         </field>
         <field name="schunten" configurationFlags="NoFlag">
-          <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="false"/>
-                <Option name="AllowNull" type="bool" value="true"/>
-                <Option name="Description" type="invalid"/>
-                <Option name="FilterExpression" type="invalid"/>
-                <Option name="Key" type="QString" value="schnam"/>
-                <Option name="Layer" type="QString" value="anschlussschaechte_40ba3139_67b9_43cf_9c10_1b62ad11f61b"/>
-                <Option name="LayerName" type="QString" value="HA-Schächte"/>
-                <Option name="LayerProviderName" type="QString" value="spatialite"/>
-                <Option name="LayerSource" type="QString" value="dbname='demo.sqlite' table=&quot;anschlussschaechte&quot; (geom)"/>
-                <Option name="NofColumns" type="int" value="1"/>
-                <Option name="OrderByValue" type="bool" value="true"/>
-                <Option name="UseCompleter" type="bool" value="true"/>
-                <Option name="Value" type="QString" value="schnam"/>
-              </Option>
-            </config>
-          </editWidget>
+          <editWidget type="TextEdit"><config><Option type="Map"/></config></editWidget>
         </field>
         <field name="hoehe" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
@@ -566,12 +530,7 @@
           </editWidget>
         </field>
         <field name="teilgebiet" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="Teilgebiete_786fa926_704f_4cb1_bc67_eb8571f2f6c0" /><Option name="LayerName" type="QString" value="Teilgebiete" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;teilgebiete&quot; (geom)" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="tgnam" /><Option name="Value" type="QString" value="tgnam" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="strasse" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -583,26 +542,11 @@
           </editWidget>
         </field>
         <field name="profilnam" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="profile20161018090721921" /><Option name="LayerName" type="QString" value="Profile" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;profile&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="profilnam" /><Option name="Value" type="QString" value="profilnam" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="entwart" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="entwaesserungsarten20161018090806784" /><Option name="LayerName" type="QString" value="Entwässerungsarten" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;entwaesserungsarten&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="material" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="material_12f10425_b411_437a_86a9_64521d629453" /><Option name="LayerName" type="QString" value="Material" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;material&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="profilauskleidung" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -625,12 +569,7 @@
           </editWidget>
         </field>
         <field name="simstatus" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="simulationsstatus20161201095050780" /><Option name="LayerName" type="QString" value="Planungsstatus" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;simulationsstatus&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="xschob" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -775,9 +714,9 @@
       </duplicatePolicies>
       <defaults>
         <default expression="" field="pk" applyOnUpdate="0"/>
-        <default expression="" field="leitnam" applyOnUpdate="0"/>
-        <default expression="" field="schoben" applyOnUpdate="0"/>
-        <default expression="" field="schunten" applyOnUpdate="0"/>
+        <default expression="with_variable('namen',coalesce(aggregate(@layer,'array_agg',to_string(&quot;leitnam&quot;),filter:=&quot;leitnam&quot; IS NOT NULL),array()),with_variable('reihe', coalesce(@qkan_anschlussleitung_praefix,''),&#10; with_variable('ziffern', array_foreach(array_filter(@namen,&#10;   regexp_match(@element,'[0-9]+$')&gt;0 AND regexp_replace(@element,'[0-9]+$','')=@reihe),&#10;   regexp_substr(@element,'[0-9]+$')),&#10; with_variable('naechste',to_string(coalesce(array_max(array_foreach(@ziffern,to_int(@element))),0)+1),&#10; @reihe || lpad(@naechste,max(length(@naechste),coalesce(array_max(array_foreach(@ziffern,length(@element))),1)),'0')))))" field="leitnam" applyOnUpdate="0" />
+        <default expression="if(layer_property('schaechte20161220162259105','id') IS NULL,NULL,with_variable('endpoint',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('nodes',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(coalesce(array_length(@nodes),0)&gt;0,NULL,with_variable('matches',aggregate('haltungen20161016203756230','array_agg',&quot;schoben&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(array_length(@matches)=1,@matches[0],NULL))))))" field="schoben" applyOnUpdate="0"/>
+        <default expression="if(layer_property('schaechte20161220162259105','id') IS NULL,NULL,with_variable('endpoint',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('nodes',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(coalesce(array_length(@nodes),0)&gt;0,if(array_length(@nodes)=1,@nodes[0],NULL),with_variable('matches',aggregate('haltungen20161016203756230','array_agg',&quot;schunten&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(array_length(@matches)=1,@matches[0],NULL))))))" field="schunten" applyOnUpdate="0"/>
         <default expression="" field="hoehe" applyOnUpdate="0"/>
         <default expression="" field="breite" applyOnUpdate="0"/>
         <default expression="" field="laenge" applyOnUpdate="0"/>
@@ -785,7 +724,7 @@
         <default expression="" field="sohleoben" applyOnUpdate="0"/>
         <default expression="" field="sohleunten" applyOnUpdate="0"/>
         <default expression="" field="baujahr" applyOnUpdate="0"/>
-        <default expression="" field="haltnam" applyOnUpdate="0"/>
+        <default expression="if(layer_property('schaechte20161220162259105','id') IS NULL,NULL,with_variable('endpoint',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('nodes',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(coalesce(array_length(@nodes),0)&gt;0,NULL,with_variable('matches',aggregate('haltungen20161016203756230','array_agg',&quot;haltnam&quot;,filter:=distance($geometry,@endpoint)&lt;=0.1),if(array_length(@matches)=1,@matches[0],NULL))))))" field="haltnam" applyOnUpdate="0"/>
         <default expression="" field="urstation" applyOnUpdate="0"/>
         <default expression="" field="ursprung" applyOnUpdate="0"/>
         <default expression="" field="anschlusstyp" applyOnUpdate="0"/>
@@ -808,7 +747,7 @@
       </defaults>
       <constraints>
         <constraint notnull_strength="1" field="pk" unique_strength="1" exp_strength="0" constraints="3"/>
-        <constraint notnull_strength="0" field="leitnam" unique_strength="0" exp_strength="0" constraints="0"/>
+        <constraint notnull_strength="0" field="leitnam" unique_strength="1" exp_strength="0" constraints="2" />
         <constraint notnull_strength="0" field="schoben" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="schunten" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="hoehe" unique_strength="0" exp_strength="0" constraints="0"/>
@@ -872,7 +811,7 @@
         <constraint desc="" exp="" field="kommentar"/>
         <constraint desc="" exp="" field="createdat"/>
       </constraintExpressions>
-      <expressionfields/>
+      <expressionfields><field name="anschluss_hinweis" type="10" typeName="text" length="-1" precision="0" subType="0" expression="with_variable('p',end_point(coalesce(geometry_n($geometry,1),$geometry)),with_variable('s',aggregate('schaechte20161220162259105','array_agg',&quot;schnam&quot;,filter:=distance($geometry,@p)&lt;=0.1),with_variable('h',aggregate('haltungen20161016203756230','array_agg',&quot;haltnam&quot;,filter:=distance($geometry,@p)&lt;=0.1),CASE WHEN layer_property('schaechte20161220162259105','id') IS NULL THEN 'Schachtlayer fehlt' WHEN array_length(@s)&gt;1 THEN 'Mehrere Schächte im Suchradius' WHEN array_length(@s)=1 THEN 'Direkter Anschluss an Schacht ' || @s[0] WHEN layer_property('haltungen20161016203756230','id') IS NULL THEN 'Haltungslayer fehlt' WHEN array_length(@h)&gt;1 THEN 'Mehrere Haltungen im Suchradius' WHEN array_length(@h)=1 THEN 'Haltung am Leitungsende: ' || @h[0] ELSE 'Kein Anschluss innerhalb von 10 cm erkannt' END)))" /></expressionfields>
       <attributeactions>
         <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
       </attributeactions>
