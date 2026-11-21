@@ -447,6 +447,17 @@ def _direkte_medientreffer(
     if direct_matches:
         return direct_matches
 
+    # STRAKAT speichert numerische Bildnamen teils ohne führende Nullen.
+    if media_type == "Bild" and direct_paths:
+        filename = direct_paths[0][0]
+        if re.fullmatch(r"[0-9]{1,9}", filename.stem) and filename.stem.strip("0"):
+            padded_name = filename.stem.zfill(10) + filename.suffix
+            padded_paths = [(path.with_name(padded_name), "Zehnstelliger STRAKAT-Bildname", score)
+                            for path, _, score in direct_paths]
+            matches = treffende_pfade(padded_paths)
+            if matches:
+                return matches
+
     diagnose = (
         f"{media_type}-Datei direkt nicht gefunden: gespeichert={stored_path!r}; "
         f"QKan-Basis={media_root_path!r}; vollständige geprüfte Pfade: "
@@ -1181,6 +1192,7 @@ class BefahrungsmedienDialog(QDialog):
         self.pb_foto_extern_oeffnen.clicked.connect(self._foto_extern_oeffnen)
         self.pb_foto_ordner_oeffnen.clicked.connect(self._fotoordner_oeffnen)
         self.tw_videos.currentCellChanged.connect(self._videoauswahl_geaendert)
+        self.tw_videos.cellClicked.connect(self._videozeile_oeffnen)
         self.pb_schadensvideo_oeffnen.clicked.connect(self._ausgewaehltes_video_oeffnen)
         self.cb_befahrungsvideo.currentIndexChanged.connect(self._befahrungsvideo_auswahl_geaendert)
         self.pb_befahrungsvideo_oeffnen.clicked.connect(self._befahrungsvideo_oeffnen)
@@ -1445,7 +1457,6 @@ class BefahrungsmedienDialog(QDialog):
         if self._datenbankfehler:
             return
         # Auch Medien ohne Einzelschadenszeile müssen über ihr Datum auswählbar sein.
-        # Die Schadenstabelle bleibt die primäre Quelle.
         media_dates = self._datenbankabfrage(
             "inspektion_medien_zusatztermine",
             {"object_type": self.cb_objektart.currentText(),
@@ -1453,14 +1464,18 @@ class BefahrungsmedienDialog(QDialog):
         )
         if self._datenbankfehler:
             return
+        inspection_dates = {_text_sicher_lesen(row.get("untersuchtag")) for row in rows}
+        extra_dates = {_text_sicher_lesen(row.get("untersuchtag")) for row in media_dates}
         date_values = sorted(
-            {_text_sicher_lesen(row.get("untersuchtag")) for row in rows + media_dates
-             if _text_sicher_lesen(row.get("untersuchtag")).strip()},
+            (date for date in inspection_dates | extra_dates if date.strip()),
             key=_befahrungsdatum_sortierwert,
             reverse=True,
         )
         self.cb_befahrung.blockSignals(True)
         try:
+            if date_values:
+                latest = next((date for date in date_values if date in inspection_dates), date_values[0])
+                self.cb_befahrung.setItemData(0, latest)
             for date_value in date_values:
                 self.cb_befahrung.addItem(date_value)
             if not date_values:
@@ -1479,8 +1494,9 @@ class BefahrungsmedienDialog(QDialog):
             return "", True
         if selection != "Aktuellste Befahrung":
             return selection, False
-        if self.cb_befahrung.count() > 2:
-            return self.cb_befahrung.itemText(2), False
+        latest = self.cb_befahrung.itemData(0)
+        if latest:
+            return latest, False
         return "", True  # Ohne Datum alle Schadenszeilen laden
 
     def _ansicht_laden(self, _value: str = "") -> None:
@@ -3264,10 +3280,11 @@ class BefahrungsmedienDialog(QDialog):
 
     def _ausgewaehltes_video_oeffnen(self) -> None:
         """Öffnet das ausgewählte Video direkt am Schadens-Timecode."""
-        item = self._aktuelles_video()
-        if item is None:
-            return
-        self._videoeintrag_oeffnen(item, start_at_damage=True)
+        self._videozeile_oeffnen(self.tw_videos.currentRow())
+
+    def _videozeile_oeffnen(self, row: int) -> None:
+        if 0 <= row < len(self.video_items):
+            self._videoeintrag_oeffnen(self.video_items[row], start_at_damage=True)
 
     def _videoeintrag_oeffnen(self, item: Medieneintrag, start_at_damage: bool) -> None:
         """Öffnet ein aufgelöstes Video entweder am Schaden oder am Anfang."""

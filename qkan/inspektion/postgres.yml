@@ -401,19 +401,34 @@ inspektion_medien_objekte_schacht: |-
   ORDER BY untersuchsch;
 
 inspektion_medien_befahrungen_haltung: |-
-  SELECT DISTINCT untersuchtag
+  SELECT untersuchtag
   FROM {schema}.untersuchdat_haltung
   WHERE untersuchhal = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> ''
+  UNION
+  SELECT untersuchtag
+  FROM {schema}.haltungen_untersucht
+  WHERE haltnam = :object_name
     AND TRIM(COALESCE(untersuchtag, '')) <> '';
 inspektion_medien_befahrungen_anschlussleitung: |-
-  SELECT DISTINCT untersuchtag
+  SELECT untersuchtag
   FROM {schema}.untersuchdat_anschlussleitung
   WHERE untersuchleit = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> ''
+  UNION
+  SELECT untersuchtag
+  FROM {schema}.anschlussleitungen_untersucht
+  WHERE leitnam = :object_name
     AND TRIM(COALESCE(untersuchtag, '')) <> '';
 inspektion_medien_befahrungen_schacht: |-
-  SELECT DISTINCT untersuchtag
+  SELECT untersuchtag
   FROM {schema}.untersuchdat_schacht
   WHERE untersuchsch = :object_name
+    AND TRIM(COALESCE(untersuchtag, '')) <> ''
+  UNION
+  SELECT untersuchtag
+  FROM {schema}.schaechte_untersucht
+  WHERE schnam = :object_name
     AND TRIM(COALESCE(untersuchtag, '')) <> '';
 
 inspektion_medien_schaeden_haltung: |-
