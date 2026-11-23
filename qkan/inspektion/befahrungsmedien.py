@@ -1192,7 +1192,7 @@ class BefahrungsmedienDialog(QDialog):
         self.pb_foto_extern_oeffnen.clicked.connect(self._foto_extern_oeffnen)
         self.pb_foto_ordner_oeffnen.clicked.connect(self._fotoordner_oeffnen)
         self.tw_videos.currentCellChanged.connect(self._videoauswahl_geaendert)
-        self.tw_videos.cellClicked.connect(self._videozeile_oeffnen)
+        self.tw_videos.cellDoubleClicked.connect(self._videozeile_oeffnen)
         self.pb_schadensvideo_oeffnen.clicked.connect(self._ausgewaehltes_video_oeffnen)
         self.cb_befahrungsvideo.currentIndexChanged.connect(self._befahrungsvideo_auswahl_geaendert)
         self.pb_befahrungsvideo_oeffnen.clicked.connect(self._befahrungsvideo_oeffnen)
