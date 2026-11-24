@@ -10,9 +10,8 @@
 #   sync_{table}_del,
 #   sync_{table}_mod
 
-import os
 import textwrap
-from qkan import QKan, enums
+from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger, QkanDbError, QkanError
 
@@ -21,7 +20,7 @@ logger = get_logger("QKan.sync._create_yml")
 def _create_yml_postgis(db_qkan: DBConnection):
     """Erstellt die SQL-Anweisungen für die Synchronisation für eine POSTGIS-Datenbank
        und ergänzt sie in QKan.sqls['sync']"""
-    
+    pass
 
 def _create_yml_spatialite(db_qkan: DBConnection):
     """Erstellt die SQL-Anweisungen für die Synchronisation für eine SpatiaLite-Datenbank
@@ -47,7 +46,7 @@ def _create_yml_spatialite(db_qkan: DBConnection):
     tables = TABLES_GEOM + TABLES_GEOP + TABLES_GLINK + TABLES_ATTR
     t_ = sorted(list(set(tables)))
     if len(tables) != len(t_):
-        logger.error_code(f'Fehler: Keine Tabelle darf in mehr als einer Liste "TABLES_XXXX" vorkommen!')
+        logger.error_code('Fehler: Keine Tabelle darf in mehr als einer Liste "TABLES_XXXX" vorkommen!')
         raise QkanError
 
     # Initialisierung
@@ -61,7 +60,7 @@ def _create_yml_spatialite(db_qkan: DBConnection):
         ):
             logger.error_data(f'Tabellenattribute für {tabnam} konnten nicht abgerufen werden')
             raise QkanDbError
-        fields_be = db_qkan.fetchall()
+        fields_be = db_qkan.fetchall()          #note_1: Attributnamen aus PRAGMA-Abfrage
 
         if not db_qkan.sql(
                 sql=f'PRAGMA ext.table_info({tabnam});',
@@ -75,16 +74,14 @@ def _create_yml_spatialite(db_qkan: DBConnection):
         if len(fields_ex) == 0 or len(fields_be) == 0:
             continue
 
-        tabtitle = tabnam.title()
-
         attrlis = []
         typlis  = []
         fieldlis = []
         objnam = None
         igeo = None            # Index des ersten Geoobjekts
-        ngeo   = None          # Index des zu synchronisierenden Geoobjekts in attrlis und typlis. 
-                                # Bei Attributtabellen ohne Geo-Objekt ist ngeo = None
-        nattr  = 0              # Gesamtlänge der Attributliste inkl. Geoobjekte
+        ngeo = None            # Index des zu synchronisierenden Geoobjekts in attrlis und typlis.
+                               # Bei Attributtabellen ohne Geo-Objekt ist ngeo = None
+        nattr = 0              # Gesamtlänge der Attributliste inkl. Geoobjekte
 
         if tabnam in TABLES_GEOM:
             gobj = 'geom'
@@ -191,7 +188,7 @@ def _create_yml_spatialite(db_qkan: DBConnection):
             sqls[f'sync_create_{tabnam}_geom'] = \
             f'''SELECT AddGeometryColumn('sync_{tabnam}', 'geom', :epsg, '{typ}', 2);'''
 
-        sqls[f'sync_reset_{tabnam}'] = f'DELETE FROM sync_{tabnam};'
+        sqls[f'sync_reset_{tabnam}'] = f'DELETE FROM sync_{tabnam};'        # nosec B608 - only internal strings
 
         # ---------------------------------------------------------------------------------------------------------------------
         # Datensätze, die nur in der externen Datenbank vorkommen, Vergleich anhand Objektbezeichnung
@@ -234,16 +231,19 @@ def _create_yml_spatialite(db_qkan: DBConnection):
                 ex.{objnam},''' + \
         ("" if gobj is None else f"\n    iif(be.{gobj} <> ex.{gobj}, printf('Geometrie geändert'), '') AS objekt,") + f'''
                 'ändern' AS aktion,
-                :status_mod AS status'''
+                :status_mod AS status'''    # nosec B608 - only internal strings or: note_1
         for attr, typ in fieldlis[:nlis]:
             if attr == 'createdat':
                 pass
             elif typ == 'TEXT':
-                sql += f",\n    iif(be.{attr} <> ex.{attr}, printf('%s -> %s', be.{attr}, ex.{attr}), '') AS {attr}"
+                sql += (f",\n    iif(be.{attr} <> ex.{attr}, printf('%s -> %s', be.{attr}, ex.{attr}), '') "
+                        f"AS {attr}")                                   # nosec B608 - note_1
             elif typ[:3] == 'INT':
-                sql += f",\n    iif(be.{attr} <> ex.{attr}, printf('%d -> %d', be.{attr}, ex.{attr}), '') AS {attr}"
+                sql += (f",\n    iif(be.{attr} <> ex.{attr}, printf('%d -> %d', be.{attr}, ex.{attr}), '') "
+                        f"AS {attr}")                                   # nosec B608 - note_1
             elif typ == 'REAL':
-                sql += f",\n    iif(coalesce(abs(be.{attr} - ex.{attr}), 0) > 0.001, printf('%.3f -> %.3f', be.{attr}, ex.{attr}), '') AS {attr}"
+                sql += (f",\n    iif(coalesce(abs(be.{attr} - ex.{attr}), 0) > 0.001, printf('%.3f -> %.3f', "
+                        f"be.{attr}, ex.{attr}), '') AS {attr}")        # nosec B608 - note_1
             else:
                 logger.error_code(f'Fehler: {attr=}, {typ=}')
                 raise QkanError
@@ -262,7 +262,7 @@ def _create_yml_spatialite(db_qkan: DBConnection):
             ) AS ex
             ON ex.{objnam} = be.{objnam}
             WHERE
-            '''
+            '''         # nosec B608 - only internal strings or: note_1
         prefix = ''
         for attr, typ in fieldlis[:nlis]:
             if attr == 'createdat':
@@ -279,7 +279,7 @@ def _create_yml_spatialite(db_qkan: DBConnection):
         # ---------------------------------------------------------------------------------------------------------------------
         # Doppelte Datensätze in externer Datenbank
         if tabnam not in TABLES_UNTERSUCH:
-            sqls[f'sync_{tabnam}_ex_redundant'] = f'''            WITH ex AS (
+            sql = f'''            WITH ex AS (
                     SELECT {objnam}, count() AS anz
                     FROM ext.{tabnam}
                     GROUP BY {objnam}
@@ -292,51 +292,53 @@ def _create_yml_spatialite(db_qkan: DBConnection):
                     pk_best, pk_ext, {objnam}, {objattr}aktion, status,
                     {attributes}{geoattr})
                 SELECT
-                    NULL AS pk_best, t.pk AS pk_ext, t.{objnam},''' + \
-            ("" if gobj is None else "\n    '' AS objekt,") + f'''
-                    'Bezeichnung extern nicht eindeutig' AS aktion, NULL AS status,
+                    NULL AS pk_best, t.pk AS pk_ext, t.{objnam},'''     # nosec B608 - only internal strings or: note_1
+            sql += "" if gobj is None else "\n    '' AS objekt,"
+            sql += f'''                    'Bezeichnung extern nicht eindeutig' AS aktion, NULL AS status,
                     t.{attributes_t}{geoattr_t}
                 FROM {tabnam} AS t
                 JOIN ex ON ex.{objnam} = t.{objnam}
                 JOIN be ON be.{objnam} = t.{objnam}
-                WHERE ex.anz > 1;'''
+                WHERE ex.anz > 1;'''                                    # nosec B608 - only internal strings or: note_1
+            sqls[f'sync_{tabnam}_ex_redundant'] = sql
 
         # ---------------------------------------------------------------------------------------------------------------------
         # Doppelte Datensätze in bestehender Datenbank
-            if tabnam not in TABLES_UNTERSUCH:
-                sqls[f'sync_{tabnam}_be_redundant'] = f'''            WITH be AS (
-                    SELECT {objnam}, count() AS anz
-                    FROM main.{tabnam}
-                    GROUP BY {objnam}
-                ),
-                ex AS (
-                    SELECT DISTINCT {objnam}
-                    FROM ext.{tabnam}
-                )
-                INSERT INTO sync_{tabnam} (
-                    pk_best, pk_ext, {objnam}, {objattr}aktion, status,
-                    {attributes}{geoattr})
-                SELECT
-                    t.pk AS pk_best, NULL AS pk_ext, t.{objnam},''' + \
-            ("" if gobj is None else "\n    '' AS objekt,") + f'''
-                    'Bezeichnung im Bestand nicht eindeutig' AS aktion, NULL AS status,
-                    t.{attributes_t}{geoattr_t}
-                FROM {tabnam} AS t
-                JOIN be ON be.{objnam} = t.{objnam}
-                JOIN ex ON ex.{objnam} = t.{objnam}
-                WHERE be.anz > 1;'''
+            sql = f'''            WITH be AS (
+                SELECT {objnam}, count() AS anz
+                FROM main.{tabnam}
+                GROUP BY {objnam}
+            ),
+            ex AS (
+                SELECT DISTINCT {objnam}
+                FROM ext.{tabnam}
+            )
+            INSERT INTO sync_{tabnam} (
+                pk_best, pk_ext, {objnam}, {objattr}aktion, status,
+                {attributes}{geoattr})
+            SELECT
+                t.pk AS pk_best, NULL AS pk_ext, t.{objnam},'''     # nosec B608 - only internal strings or: note_1
+            sql += "" if gobj is None else "\n    '' AS objekt,"
+            sql += f'''                'Bezeichnung im Bestand nicht eindeutig' AS aktion, NULL AS status,
+                t.{attributes_t}{geoattr_t}
+            FROM {tabnam} AS t
+            JOIN be ON be.{objnam} = t.{objnam}
+            JOIN ex ON ex.{objnam} = t.{objnam}
+            WHERE be.anz > 1;'''                                    # nosec B608 - only internal strings or: note_1
+            sqls[f'sync_{tabnam}_be_redundant'] = sql
 
         # ---------------------------------------------------------------------------------------------------------------------
         # Datensätze hinzufügen
-        sqls[f'sync_{tabnam}_add'] = f'''            INSERT INTO main.{tabnam} (
+        sql = f'''            INSERT INTO main.{tabnam} (
                 {objnam}, {attributes}{geoattrs})
             SELECT
-                ex.{objnam}, ex.{attributes_ex}''' + \
-         ("" if gobj is None else f",\n    ex.{gobj} AS {gobj}") + f'''
-            FROM ext.{tabnam} AS ex
+                ex.{objnam}, ex.{attributes_ex}'''                      # nosec B608 - only internal strings or: note_1
+        sql += "" if gobj is None else f",\n    ex.{gobj} AS {gobj}"    # nosec B608 - only internal strings
+        sql += f'''            FROM ext.{tabnam} AS ex
             JOIN sync_{tabnam} AS sy ON ex.pk = sy.pk_ext
             WHERE sy.aktion = 'hinzufügen'
-              AND sy.status;'''
+              AND sy.status;'''                                         # nosec B608 - only internal strings
+        sqls[f'sync_{tabnam}_add'] = sql
 
         # ---------------------------------------------------------------------------------------------------------------------
         # Datensätze löschen
@@ -345,22 +347,24 @@ def _create_yml_spatialite(db_qkan: DBConnection):
                 SELECT pk_best
                 FROM sync_{tabnam}
                 WHERE aktion = 'löschen'
-                  AND status);'''
+                  AND status);'''   # nosec B608 - only internal strings
 
         # ---------------------------------------------------------------------------------------------------------------------
         # Datensätze ändern
         sql = f'''            UPDATE main.{tabnam}
-            SET\n    ''' + \
-            ',\n    '.join([f'{el} = mo.{el}' for el in attrlis[:nlis]]) + \
-        ('\n' if gobj is None else f',\n    {gobj} = mo.{gobj}\n') + \
-           '''           FROM (
-               SELECT
-                   sy.pk_best AS pk_best'''
+            SET\n    '''     # nosec B608 - only internal strings
+        sql += ',\n    '.join([f'{el} = mo.{el}' for el in attrlis[:nlis]])     # nosec B608 - note_1
+        sql += '\n' if gobj is None else f',\n    {gobj} = mo.{gobj}\n'         # nosec B608 - only internal strings
+        sql += '''           FROM (
+           SELECT
+               sy.pk_best AS pk_best'''     # nosec B608 - only internal strings or: note_1
         for attr, typ in fieldlis[:nlis]:
             if typ == 'TEXT':
-                sql += f",\n        iif(sy.{attr} IS NOT NULL AND sy.{attr} <> '', ex.{attr}, be.{attr}) AS {attr}"
+                sql += (f",\n        iif(sy.{attr} IS NOT NULL AND sy.{attr} <> '', ex.{attr}, be.{attr}) "
+                        f"AS {attr}")           # nosec B608 - note_1
             elif typ in ['REAL', 'INT', 'INTEGER']:
-                sql += f",\n        iif(sy.{attr} IS NOT NULL, ex.{attr}, be.{attr}) AS {attr}"
+                sql += (f",\n        iif(sy.{attr} IS NOT NULL, ex.{attr}, be.{attr}) "
+                        f"AS {attr}")           # nosec B608 - note_1
             else:
                 logger.error_code(f'Fehler: {attr=}, {typ=}')
                 raise QkanError
@@ -376,7 +380,7 @@ def _create_yml_spatialite(db_qkan: DBConnection):
         sqls[f'sync_{tabnam}_mod'] = sql
         # ---------------------------------------------------------------------------------------------------------------------
         # Datensätze auflisten
-        sqls[f'sync_{tabnam}_prot'] = f'SELECT * FROM sync_{tabnam} WHERE status;'
+        sqls[f'sync_{tabnam}_prot'] = f'SELECT * FROM sync_{tabnam} WHERE status;'  # nosec B608 - only internal strings
 
     db_qkan.sqls.update(sqls)
 

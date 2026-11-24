@@ -78,7 +78,7 @@
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer name="Geometrien" patch_size="-1,-1" providerKey="spatialite" legend_split_behavior="0" expanded="1" checked="Qt::Unchecked" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geom) sql=geom IS NOT NULL" legend_exp="" id="Geometrien_53c691ed_4408_4aea_a1e3_95482f944a0b">
+        <layer-tree-layer name="Geometrien" patch_size="-1,-1" providerKey="spatialite" legend_split_behavior="0" expanded="1" checked="Qt::Unchecked" source="dbname='./demo.sqlite' table=&quot;schaechte&quot; (geom)" legend_exp="" id="Geometrien_53c691ed_4408_4aea_a1e3_95482f944a0b">
           <customproperties>
             <Option/>
           </customproperties>
@@ -5534,7 +5534,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minScale="100000000" legendPlaceholderImage="" simplifyDrawingTol="1" readOnly="0" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" wkbType="MultiLineString" autoRefreshTime="0" simplifyLocal="1" refreshOnNotifyEnabled="0" labelsEnabled="1" geometry="Line" styleCategories="AllStyleCategories" autoRefreshMode="Disabled" simplifyAlgorithm="0" symbologyReferenceScale="-1" maxScale="100000" refreshOnNotifyMessage="" simplifyDrawingHints="0" type="vector">
       <id>Geometrien_53c691ed_4408_4aea_a1e3_95482f944a0b</id>
-      <datasource>dbname='./demo.sqlite' table="schaechte" (geom) sql=geom IS NOT NULL</datasource>
+      <datasource>dbname='./demo.sqlite' table="schaechte" (geom)</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -37388,12 +37388,83 @@ def my_form_open(dialog, layer, feature):
       </elevation>
       <renderer-v2 forceraster="0" type="RuleRenderer" symbollevels="0" enableorderby="0" referencescale="-1">
         <rules key="{768237f4-5e8a-4ffd-91b9-7f7ae414c2f6}">
-          <rule scalemindenom="5000" label="&lt; 1:5.000" key="{555c4b0c-0ac1-4f0d-830e-3b5a42fc7b29}" symbol="0"/>
-          <rule scalemindenom="500" label="1:500 bis 1:5.000" key="{ffa1abd3-02c8-4574-9fb2-5c87b0e49566}" symbol="1" scalemaxdenom="5000"/>
-          <rule label="> 1:500" key="{7b62dc7d-874e-4d73-bd4f-7e4fb3bb6b32}" symbol="2" scalemaxdenom="500"/>
+          <rule filter="geom is not NULL" label="Schachtbauwerk" scalemaxdenom="5000" checkstate="0" key="{bb8e4e4f-c7ee-4b1a-a024-a3dfa4858fc1}" symbol="0"/>
+          <rule scalemindenom="5000" label="&lt; 1:5.000" key="{555c4b0c-0ac1-4f0d-830e-3b5a42fc7b29}" symbol="1"/>
+          <rule scalemindenom="500" label="1:500 bis 1:5.000" key="{ffa1abd3-02c8-4574-9fb2-5c87b0e49566}" symbol="2" scalemaxdenom="5000"/>
+          <rule label="> 1:500" key="{7b62dc7d-874e-4d73-bd4f-7e4fb3bb6b32}" symbol="3" scalemaxdenom="500"/>
         </rules>
         <symbols>
           <symbol name="0" force_rhr="0" type="marker" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
+            <data_defined_properties>
+              <Option type="Map">
+                <Option type="QString" name="name" value=""/>
+                <Option name="properties"/>
+                <Option type="QString" name="type" value="collection"/>
+              </Option>
+            </data_defined_properties>
+            <layer enabled="1" locked="0" pass="0" id="{dbf72711-2098-4d02-9f92-7115d6acfbd9}" class="GeometryGenerator">
+              <Option type="Map">
+                <Option type="QString" name="SymbolType" value="Line"/>
+                <Option type="QString" name="geometryModifier" value="geom_from_wkt(geom)"/>
+                <Option type="QString" name="units" value="MapUnit"/>
+              </Option>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option type="QString" name="name" value=""/>
+                  <Option name="properties"/>
+                  <Option type="QString" name="type" value="collection"/>
+                </Option>
+              </data_defined_properties>
+              <symbol type="line" name="@0@0" alpha="1" force_rhr="0" frame_rate="10" is_animated="0" clip_to_extent="1">
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option type="QString" name="name" value=""/>
+                    <Option name="properties"/>
+                    <Option type="QString" name="type" value="collection"/>
+                  </Option>
+                </data_defined_properties>
+                <layer enabled="1" locked="0" pass="0" id="{d43608a5-5060-486b-a68d-98020f0a5e12}" class="SimpleLine">
+                  <Option type="Map">
+                    <Option type="QString" name="align_dash_pattern" value="0"/>
+                    <Option type="QString" name="capstyle" value="square"/>
+                    <Option type="QString" name="customdash" value="5;2"/>
+                    <Option type="QString" name="customdash_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+                    <Option type="QString" name="customdash_unit" value="MM"/>
+                    <Option type="QString" name="dash_pattern_offset" value="0"/>
+                    <Option type="QString" name="dash_pattern_offset_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+                    <Option type="QString" name="dash_pattern_offset_unit" value="MM"/>
+                    <Option type="QString" name="draw_inside_polygon" value="0"/>
+                    <Option type="QString" name="joinstyle" value="bevel"/>
+                    <Option type="QString" name="line_color" value="92,92,92,255,rgb:0.3607843,0.3607843,0.3607843,1"/>
+                    <Option type="QString" name="line_style" value="solid"/>
+                    <Option type="QString" name="line_width" value="0.26"/>
+                    <Option type="QString" name="line_width_unit" value="MM"/>
+                    <Option type="QString" name="offset" value="0"/>
+                    <Option type="QString" name="offset_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+                    <Option type="QString" name="offset_unit" value="MM"/>
+                    <Option type="QString" name="ring_filter" value="0"/>
+                    <Option type="QString" name="trim_distance_end" value="0"/>
+                    <Option type="QString" name="trim_distance_end_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+                    <Option type="QString" name="trim_distance_end_unit" value="MM"/>
+                    <Option type="QString" name="trim_distance_start" value="0"/>
+                    <Option type="QString" name="trim_distance_start_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+                    <Option type="QString" name="trim_distance_start_unit" value="MM"/>
+                    <Option type="QString" name="tweak_dash_pattern_on_corners" value="0"/>
+                    <Option type="QString" name="use_custom_dash" value="0"/>
+                    <Option type="QString" name="width_map_unit_scale" value="3x:0,0,0,0,0,0"/>
+                  </Option>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option type="QString" name="name" value=""/>
+                      <Option name="properties"/>
+                      <Option type="QString" name="type" value="collection"/>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+            </layer>
+          </symbol>
+          <symbol name="1" force_rhr="0" type="marker" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
             <data_defined_properties>
               <Option type="Map">
                 <Option name="name" type="QString" value=""/>
@@ -37432,7 +37503,7 @@ def my_form_open(dialog, layer, feature):
               </data_defined_properties>
             </layer>
           </symbol>
-          <symbol name="1" force_rhr="0" type="marker" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
+          <symbol name="2" force_rhr="0" type="marker" clip_to_extent="1" alpha="1" is_animated="0" frame_rate="10">
             <data_defined_properties>
               <Option type="Map">
                 <Option name="name" type="QString" value=""/>
@@ -37471,7 +37542,7 @@ def my_form_open(dialog, layer, feature):
               </data_defined_properties>
             </layer>
           </symbol>
-          <symbol name="2" force_rhr="0" type="marker" clip_to_extent="1" alpha="0.8" is_animated="0" frame_rate="10">
+          <symbol name="3" force_rhr="0" type="marker" clip_to_extent="1" alpha="0.8" is_animated="0" frame_rate="10">
             <data_defined_properties>
               <Option type="Map">
                 <Option name="name" type="QString" value=""/>
