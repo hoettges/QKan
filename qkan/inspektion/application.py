@@ -11,6 +11,7 @@ from qgis.gui import QgisInterface
 from qkan import QKan
 from qkan.plugin import QKanPlugin
 
+from .atlas_layout import AtlasLayoutBeimLesen
 from .befahrungsmedien import BefahrungsmedienPlugin
 
 
@@ -23,6 +24,7 @@ class Inspektion(QKanPlugin):
         :param iface: Aktive QGIS-Schnittstelle.
         """
         super().__init__(iface)
+        self._atlas_layout = AtlasLayoutBeimLesen()
         self.medienplayer = BefahrungsmedienPlugin(iface)
 
     def initGui(self):
@@ -125,6 +127,9 @@ class Inspektion(QKanPlugin):
 
         self.iface.actionAddFeature().triggered.connect(self._prepare_haltung_form)
         self.iface.currentLayerChanged.connect(self._capture_layer_changed)
+        projekt = QgsProject.instance()
+        projekt.readMapLayer.connect(self._atlas_layout.layer_gelesen)
+        projekt.readProject.connect(self._atlas_layout.projekt_gelesen)
         self.iface.projectRead.connect(self._prepare_project_forms)
         self._prepare_project_forms()
         self.iface.actionAddFeature().changed.connect(self._sync_haltung_button)
@@ -306,6 +311,9 @@ class Inspektion(QKanPlugin):
         """Bereinigt den integrierten Medienplayer beim Entladen."""
         self.iface.actionAddFeature().triggered.disconnect(self._prepare_haltung_form)
         self.iface.currentLayerChanged.disconnect(self._capture_layer_changed)
+        projekt = QgsProject.instance()
+        projekt.readMapLayer.disconnect(self._atlas_layout.layer_gelesen)
+        projekt.readProject.disconnect(self._atlas_layout.projekt_gelesen)
         self.iface.projectRead.disconnect(self._prepare_project_forms)
         self.iface.actionAddFeature().changed.disconnect(self._sync_haltung_button)
         self.medienplayer.unload()
