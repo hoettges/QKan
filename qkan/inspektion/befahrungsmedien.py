@@ -44,6 +44,7 @@ from qgis.PyQt.QtWidgets import (
     QDialogButtonBox,
     QFileDialog,
     QHeaderView,
+    QMenu,
     QMessageBox,
     QTableWidgetItem,
     QWidget,
@@ -446,6 +447,17 @@ def _direkte_medientreffer(
     direct_matches = treffende_pfade(direct_paths)
     if direct_matches:
         return direct_matches
+
+    # STRAKAT speichert numerische Bildnamen teils ohne führende Nullen.
+    if media_type == "Bild" and direct_paths:
+        filename = direct_paths[0][0]
+        if re.fullmatch(r"[0-9]{1,9}", filename.stem) and filename.stem.strip("0"):
+            padded_name = filename.stem.zfill(10) + filename.suffix
+            padded_paths = [(path.with_name(padded_name), "Zehnstelliger STRAKAT-Bildname", score)
+                            for path, _, score in direct_paths]
+            matches = treffende_pfade(padded_paths)
+            if matches:
+                return matches
 
     diagnose = (
         f"{media_type}-Datei direkt nicht gefunden: gespeichert={stored_path!r}; "
@@ -1174,13 +1186,17 @@ class BefahrungsmedienDialog(QDialog):
         self.pb_eintrag_loeschen.clicked.connect(self._schadenseintrag_loeschen)
         self.pb_speichern.clicked.connect(self._schadensaenderungen_speichern)
         self.pb_neu_bewerten.clicked.connect(self._bewertung_neu_berechnen)
-        self.pb_grafik_exportieren.clicked.connect(self._grafik_exportieren)
+        exportmenue = QMenu(self.pb_grafik_exportieren)
+        exportmenue.addAction("Grafik als PDF", self._grafik_exportieren)
+        exportmenue.addAction("Inspektionsbericht als PDF", self._bericht_exportieren)
+        self.pb_grafik_exportieren.setMenu(exportmenue)
         self.inspektionsgrafik.damage_clicked.connect(self._schadenszeile_auswaehlen)
         self.pb_foto_vorheriges.clicked.connect(lambda: self._foto_wechseln(-1))
         self.pb_foto_naechstes.clicked.connect(lambda: self._foto_wechseln(1))
         self.pb_foto_extern_oeffnen.clicked.connect(self._foto_extern_oeffnen)
         self.pb_foto_ordner_oeffnen.clicked.connect(self._fotoordner_oeffnen)
         self.tw_videos.currentCellChanged.connect(self._videoauswahl_geaendert)
+        self.tw_videos.cellDoubleClicked.connect(self._videozeile_oeffnen)
         self.pb_schadensvideo_oeffnen.clicked.connect(self._ausgewaehltes_video_oeffnen)
         self.cb_befahrungsvideo.currentIndexChanged.connect(self._befahrungsvideo_auswahl_geaendert)
         self.pb_befahrungsvideo_oeffnen.clicked.connect(self._befahrungsvideo_oeffnen)
@@ -1445,7 +1461,6 @@ class BefahrungsmedienDialog(QDialog):
         if self._datenbankfehler:
             return
         # Auch Medien ohne Einzelschadenszeile müssen über ihr Datum auswählbar sein.
-        # Die Schadenstabelle bleibt die primäre Quelle.
         media_dates = self._datenbankabfrage(
             "inspektion_medien_zusatztermine",
             {"object_type": self.cb_objektart.currentText(),
@@ -1453,14 +1468,18 @@ class BefahrungsmedienDialog(QDialog):
         )
         if self._datenbankfehler:
             return
+        inspection_dates = {_text_sicher_lesen(row.get("untersuchtag")) for row in rows}
+        extra_dates = {_text_sicher_lesen(row.get("untersuchtag")) for row in media_dates}
         date_values = sorted(
-            {_text_sicher_lesen(row.get("untersuchtag")) for row in rows + media_dates
-             if _text_sicher_lesen(row.get("untersuchtag")).strip()},
+            (date for date in inspection_dates | extra_dates if date.strip()),
             key=_befahrungsdatum_sortierwert,
             reverse=True,
         )
         self.cb_befahrung.blockSignals(True)
         try:
+            if date_values:
+                latest = next((date for date in date_values if date in inspection_dates), date_values[0])
+                self.cb_befahrung.setItemData(0, latest)
             for date_value in date_values:
                 self.cb_befahrung.addItem(date_value)
             if not date_values:
@@ -1479,8 +1498,9 @@ class BefahrungsmedienDialog(QDialog):
             return "", True
         if selection != "Aktuellste Befahrung":
             return selection, False
-        if self.cb_befahrung.count() > 2:
-            return self.cb_befahrung.itemText(2), False
+        latest = self.cb_befahrung.itemData(0)
+        if latest:
+            return latest, False
         return "", True  # Ohne Datum alle Schadenszeilen laden
 
     def _ansicht_laden(self, _value: str = "") -> None:
@@ -2365,14 +2385,14 @@ class BefahrungsmedienDialog(QDialog):
                 layer.rollBack()
             raise
 
-    def _schadensaenderungen_speichern(self) -> None:
+    def _schadensaenderungen_speichern(self) -> bool:
         """Speichert vorgemerkte Änderungen an Schäden, Geometrien und Gesamtbewertung."""
         if not self._table_dirty and not self._deleted_damage_pks and not self._rating_dirty:
             QMessageBox.information(self, "Speichern", "Es gibt keine ungespeicherten Änderungen.")
-            return
+            return False
         if self.datenquelle is None:
             QMessageBox.warning(self, "Speichern", "Die QKan-Datenquelle ist nicht verfügbar.")
-            return
+            return False
         if self.current_overall is None:
             QMessageBox.warning(
                 self, "Speichern nicht möglich",
@@ -2381,7 +2401,7 @@ class BefahrungsmedienDialog(QDialog):
                 "die Gesamtbewertung nicht gemeinsam speichern. "
                 "Es wurde nichts in die Datenbank geschrieben."
             )
-            return
+            return False
 
         self._tabelle_in_schadensdaten_uebernehmen()
         details_changed = self._table_dirty or bool(self._deleted_damage_pks)
@@ -2401,7 +2421,7 @@ class BefahrungsmedienDialog(QDialog):
                     "Die Änderungen wurden nicht gespeichert, weil die Schadensgeometrien "
                     f"nicht erzeugt werden konnten.\n\n{error}",
                 )
-                return
+                return False
 
             layer = self._tabellenlayer(table_name)
             if layer is None or not layer.isValid():
@@ -2410,14 +2430,14 @@ class BefahrungsmedienDialog(QDialog):
                     "Speichern fehlgeschlagen",
                     f"Die QKan-Tabelle {table_name} konnte nicht über den QGIS-Provider geöffnet werden.",
                 )
-                return
+                return False
             if not layer.startEditing():
                 QMessageBox.critical(
                     self,
                     "Speichern fehlgeschlagen",
                     "Für die QKan-Tabelle konnte keine Bearbeitungssitzung gestartet werden.",
                 )
-                return
+                return False
 
             fields = layer.fields()
             editable_fields = [
@@ -2458,7 +2478,7 @@ class BefahrungsmedienDialog(QDialog):
                     "Speichern fehlgeschlagen",
                     f"Das Primärschlüsselfeld pk fehlt in {table_name}.",
                 )
-                return
+                return False
             feature_ids_by_pk: dict[int, int] = {}
             for feature in layer.getFeatures():
                 try:
@@ -2522,7 +2542,7 @@ class BefahrungsmedienDialog(QDialog):
                     "Speichern fehlgeschlagen",
                     f"Die Änderungen wurden nicht gespeichert.\n\n{error}",
                 )
-                return
+                return False
 
         if details_changed or self._rating_dirty:
             try:
@@ -2551,7 +2571,7 @@ class BefahrungsmedienDialog(QDialog):
                     "Speichern teilweise fehlgeschlagen",
                     f"{prefix}\n\n{error}",
                 )
-                return
+                return False
 
         self._table_dirty = False
         self._rating_dirty = False
@@ -2562,11 +2582,46 @@ class BefahrungsmedienDialog(QDialog):
             "Die Änderungen wurden in der QKan-Datenquelle gespeichert.",
         )
         self._ansicht_laden()
+        return True
+
+    def _export_freigegeben(self) -> bool:
+        if not (self._table_dirty or self._rating_dirty or self._deleted_damage_pks):
+            return True
+        dialog = QMessageBox(self)
+        dialog.setWindowTitle("PDF-Export")
+        dialog.setText("Es gibt ungespeicherte Änderungen.")
+        speichern = dialog.addButton("Speichern und exportieren", QMessageBox.AcceptRole)
+        dialog.addButton("Abbrechen", QMessageBox.RejectRole)
+        dialog.exec()
+        return dialog.clickedButton() == speichern and self._schadensaenderungen_speichern()
+
+    def _bericht_exportieren(self) -> None:
+        if self.datenquelle is None or not self.cb_objekt.currentText().strip():
+            QMessageBox.information(self, "Inspektionsbericht", "Bitte zuerst ein Objekt auswählen.")
+            return
+        if not self._export_freigegeben():
+            return
+        datum, alle = self._ausgewaehltes_datum()
+        termine = [datum]
+        if alle:
+            # Das TV-Tool führt seine Termine bereits absteigend, einschließlich Medienterminen.
+            termine = [self.cb_befahrung.itemText(i) for i in range(self.cb_befahrung.count() - 1, 1, -1)]
+            if not termine:
+                termine = [None]
+        try:
+            from .inspektionsbericht.export import bericht_dialog
+            bericht_dialog(self, self.datenquelle, self.cb_objektart.currentText(),
+                           self.cb_objekt.currentText().strip(), termine, self.foto_root_path)
+        except Exception as error:
+            _loggen(f"Inspektionsbericht fehlgeschlagen: {error}", Qgis.Critical)
+            QMessageBox.critical(self, "Inspektionsbericht", str(error))
 
     def _grafik_exportieren(self) -> None:
         """Exportiert die ausgewählte Inspektion als grafisches A4-PDF in den
         Download-Ordner.
         """
+        if not self._export_freigegeben():
+            return
         if not self.damage_rows:
             QMessageBox.information(self, "Grafik exportieren", "Für die aktuelle Auswahl sind keine Befahrungsdaten vorhanden.")
             return
@@ -3264,10 +3319,11 @@ class BefahrungsmedienDialog(QDialog):
 
     def _ausgewaehltes_video_oeffnen(self) -> None:
         """Öffnet das ausgewählte Video direkt am Schadens-Timecode."""
-        item = self._aktuelles_video()
-        if item is None:
-            return
-        self._videoeintrag_oeffnen(item, start_at_damage=True)
+        self._videozeile_oeffnen(self.tw_videos.currentRow())
+
+    def _videozeile_oeffnen(self, row: int) -> None:
+        if 0 <= row < len(self.video_items):
+            self._videoeintrag_oeffnen(self.video_items[row], start_at_damage=True)
 
     def _videoeintrag_oeffnen(self, item: Medieneintrag, start_at_damage: bool) -> None:
         """Öffnet ein aufgelöstes Video entweder am Schaden oder am Anfang."""
