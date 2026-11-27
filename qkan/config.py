@@ -477,7 +477,7 @@ class XmlConfig(ClassObject):
     import_file: str = ""
     richt_choice: str = ""
     data_choice: str = ""
-    ordner_bild: str = ""
+    ordner_foto: str = ""
     ordner_video: str = ""
     # init_database: bool = True
     import_stamm: bool = True

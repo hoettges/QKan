@@ -84,7 +84,7 @@ class Untersuchdat_schacht(ClassObject):
     vertikale_lage: float = 0.0
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
-    ordner_bild: str = ""
+    ordner_foto: str = ""
     film_dateiname: str = ""
     ordner_video: str = ""
     ZD: int = 63
@@ -166,7 +166,7 @@ class Untersuchdat_haltung(ClassObject):
     pos_bis: int = 0
     foto_dateiname: str = ""
     film_dateiname: str = ""
-    ordner_bild: str = ""
+    ordner_foto: str = ""
     ordner_video: str = ""
     richtung: str = ""
     ZD: int = 63
@@ -286,9 +286,9 @@ def _get_int(value: Union[str, int], default: int = 0) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
-    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, data_choice: str, ordner_bild: str, ordner_video: str):
+    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, data_choice: str, ordner_foto: str, ordner_video: str):
         self.db_qkan = db_qkan
-        self.ordner_bild = ordner_bild
+        self.ordner_foto = ordner_foto
         self.ordner_video = ordner_video
 
         #Richutung der Untersuchungsdaten
@@ -878,9 +878,6 @@ class ImportTask:
         def _iter() -> Iterator[Untersuchdat_schacht]:
             blocks = self.xml.findall("d:BW/d:IN/d:FS/..", self.NS)
 
-            ordner_bild = self.ordner_bild
-            ordner_video = self.ordner_video
-
             logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(blocks)}")
 
             name = ""
@@ -954,9 +951,7 @@ class ImportTask:
                     inspektionslaenge = inspektionslaenge,
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
-                    ordner_bild = ordner_bild,
                     film_datainame=film_datainame,
-                    ordner_video = ordner_video,
                     ZD=ZD,
                     ZB=ZB,
                     ZS=ZS,
@@ -973,8 +968,8 @@ class ImportTask:
                       'streckenschaden_lfdnr': untersuchdat_schacht.streckenschaden_lfdnr, 'pos_von': untersuchdat_schacht.pos_von,
                       'pos_bis': untersuchdat_schacht.pos_bis, 'vertikale_lage': untersuchdat_schacht.vertikale_lage,
                       'inspektionslage': untersuchdat_schacht.inspektionslaenge, 'bereich': untersuchdat_schacht.bereich,
-                      'foto_dateiname': untersuchdat_schacht.foto_dateiname, 'ordner_bild': untersuchdat_schacht.ordner_bild,
-                      'film_dateiname': untersuchdat_schacht.film_dateiname, 'ordner_video': untersuchdat_schacht.ordner_video,
+                      'foto_dateiname': untersuchdat_schacht.foto_dateiname,
+                      'film_dateiname': untersuchdat_schacht.film_dateiname,
                       'ZD': untersuchdat_schacht.ZD, 'ZB': untersuchdat_schacht.ZB, 'ZS': untersuchdat_schacht.ZS, 'epsg': QKan.config.epsg}
 
             # logger.debug(f'm150porter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
@@ -1585,9 +1580,6 @@ class ImportTask:
 
             logger.debug(f"Anzahl Untersuchungsdaten Haltung: {len(blocks)}")
 
-            ordner_bild = self.ordner_bild
-            ordner_video = self.ordner_video
-
             name = ""
             untersuchrichtung = ""
             schoben = ""
@@ -1674,8 +1666,6 @@ class ImportTask:
                     pos_bis=pos_bis,
                     foto_dateiname=foto_dateiname,
                     film_dateiname=film_dateiname,
-                    ordner_bild=ordner_bild,
-                    ordner_video=ordner_video,
                     richtung=richtung,
                     ZD=ZD,
                     ZB=ZB,
@@ -1695,7 +1685,6 @@ class ImportTask:
                       'streckenschaden': untersuchdat_haltung.streckenschaden, 'streckenschaden_lfdnr': untersuchdat_haltung.streckenschaden_lfdnr,
                       'pos_von': untersuchdat_haltung.pos_von, 'pos_bis': untersuchdat_haltung.pos_bis,
                       'foto_dateiname': untersuchdat_haltung.foto_dateiname, 'film_dateiname': untersuchdat_haltung.film_dateiname,
-                      'ordner_bild': untersuchdat_haltung.ordner_bild, 'ordner_video': untersuchdat_haltung.ordner_video,
                       'richtung': untersuchdat_haltung.richtung, 'ZD': untersuchdat_haltung.ZD,
                       'ZB': untersuchdat_haltung.ZB, 'ZS': untersuchdat_haltung.ZS}
 

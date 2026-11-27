@@ -14,7 +14,7 @@ from pathlib import Path
 from qgis.core import Qgis, QgsMessageLog, QgsProject, QgsDataSourceUri, QgsVectorLayer
 from qgis.utils import iface, pluginDirectory
 from math import ceil
-from qkan import QKan, enums
+from qkan import QKan, enums, QkanAbortError
 from ..utils import get_logger, QkanUserError
 
 if TYPE_CHECKING:
@@ -652,13 +652,14 @@ def loadLayer(
         layerbez,
         table,
         geom_column,
-        qmlfile,
-        filter = '',
+        qmlfile: str = None,
+        filter: str = '',
         uifile = None,
         group: Union[List, str] = 'QKan',
         exclusive: bool = False,
-        gpos=0,
-        qkan_db: str = None
+        gpos: int = None,
+        qkan_db: str = None,
+        lpos: Union[List, int] = None,
 ) -> bool:
     """Lädt einen Layer aus einer qml-Datei in eine bestimmte Gruppe an eine bestimmte Position
     :layerbez:              Bezeichnung des Layers
@@ -691,6 +692,9 @@ def loadLayer(
     :qkan_db:               andere als die Standard-QKan-DB
     :type qkan_db:          str
 
+    :lpos:                  Index oder Liste von Indizes der Position/en der Gruppe
+    :type gpos:             int
+
     :returns:               bool
     """
 
@@ -710,16 +714,17 @@ def loadLayer(
     uri.setDataSource(schema, table, geom_column, filter)
     layer = QgsVectorLayer(uri.uri(), layerbez, 'spatialite')
 
-    templatepath = os.path.join(pluginDirectory("qkan"), "templates")
-    qmlpath = os.path.join(templatepath, "qml", qmlfile)
-    formsDir = os.path.join(pluginDirectory("qkan"), "forms")
+    if qmlfile is not None:
+        templatepath = os.path.join(pluginDirectory("qkan"), "templates")
+        qmlpath = os.path.join(templatepath, "qml", qmlfile)
+        formsDir = os.path.join(pluginDirectory("qkan"), "forms")
 
-    try:
-        layer.loadNamedStyle(qmlpath)
-        layer.triggerRepaint()
-    except:
-        logger.error_code(f'Stildatei "{qmlfile}" wurde nicht gefunden!\nAbbruch!')
-        return False
+        try:
+            layer.loadNamedStyle(qmlpath)
+            layer.triggerRepaint()
+        except:
+            logger.error_code(f'Stildatei "{qmlfile}" wurde nicht gefunden!\nAbbruch!')
+            return False
 
     # Adapt path to forms directory
     if uifile is not None:
@@ -732,18 +737,33 @@ def loadLayer(
     layersRoot = project.layerTreeRoot()
     if isinstance(group, str):
         logger.debug(f"Einfache Gruppe: {group}")
+        if not isinstance(lpos, int) and lpos is not None:
+            logger.error((f"Fehler: Wenn typ(group)=str dann muss typ(lpos)=int, ist aber {type(lpos)}!"))
+            raise QkanAbortError
         actGroup = layersRoot.findGroup(group)
         if actGroup is None:
-            actGroup = layersRoot.addGroup(group)
-        actGroup.insertLayer(gpos, layer)
+            if lpos is None:
+                actGroup = layersRoot.addGroup(group)
+            else:
+                actGroup = layersRoot.insertGroup(lpos, group)
+        if gpos is None:
+            actGroup.addLayer(layer)
+        else:
+            actGroup.insertLayer(gpos, layer)
     elif isinstance(group, List):
         logger.debug((f"Verkettete Gruppe..."))
+        if not isinstance(lpos, List):
+            logger.error((f"Fehler: Wenn typ(group)=List dann muss typ(lpos)=int, ist aber {type(lpos)}!"))
+            raise QkanAbortError
         actGroup = layersRoot           # Start ist root
-        for subgroup in group:
+        for subgroup, pos in zip(group, lpos):
             logger.debug(f"Haupt- oder Untergruppe: {subgroup}")
             newGroup = layersRoot.findGroup(subgroup)
             if newGroup is None:
-                actGroup = actGroup.addGroup(subgroup)
+                if pos is None:
+                    actGroup = actGroup.addGroup(subgroup)
+                else:
+                    actGroup = actGroup.insertGroup(pos, subgroup)
                 if exclusive:
                     # Gruppe zeigt Elemente exklusiv an
                     actGroup.setIsMutuallyExclusive(True)

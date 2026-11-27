@@ -171,14 +171,14 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
     def select_ordnerbild(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
-        ordner_bild = QFileDialog.getExistingDirectory(
+        ordner_foto = QFileDialog.getExistingDirectory(
             self,
             self.tr("Ordner zur Speicherung der Fotos"),
             self.default_dir,
         )
-        if ordner_bild:
-            self.tf_ordnerFotos.setText(ordner_bild)
-            self.default_dir = os.path.dirname(ordner_bild)
+        if ordner_foto:
+            self.tf_ordnerFotos.setText(ordner_foto)
+            self.default_dir = os.path.dirname(ordner_foto)
 
     def select_ordnervideo(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

@@ -356,10 +356,7 @@ class QKan:
             self.toolbar_6 = self.iface.addToolBar("QKan-Inspektion")
             self.toolbar_6.setObjectName("QKan-Inspektion")
 
-
-
-
-        self._qkan_toolbar_manager = ToolbarManager(self)
+        self._qkan_toolbar_manager = ToolbarManager(self)           # todo: erzeugt bei Modultests Fehler
         for plugin in self.plugins:
             if hasattr(plugin, 'initGui'):
                 plugin.initGui()
@@ -373,9 +370,7 @@ class QKan:
             parent=self.iface.mainWindow(),
         )
         self.sort_actions()
-        self._qkan_toolbar_manager.activate()
-
-
+        self._qkan_toolbar_manager.activate()                       # todo: erzeugt bei Modultests Fehler
 
     def sort_actions(self) -> None:
         # Finally sort all actions

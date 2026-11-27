@@ -7,7 +7,7 @@ from qkan.plugin import QKanPlugin
 
 # noinspection PyUnresolvedReferences
 from . import resources  # noqa: F401
-from ._SWMM_erg import ImportTask
+from ._swmm_erg import ImportTask
 from .application_dialog import ImportDialog
 from ..utils import QkanUserError, QkanAbortError, get_logger
 
@@ -29,7 +29,7 @@ class SWMMErg(QKanPlugin):
         super().__init__(iface)
 
         default_dir = get_default_dir()
-        self.log.debug(f"SWMM_erg: default_dir: {default_dir}")
+        self.log.debug(f"swmm_erg: default_dir: {default_dir}")
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
 
     # noinspection PyPep8Naming

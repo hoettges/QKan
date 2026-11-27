@@ -65,21 +65,21 @@ class QgsFileDialog(QKanDBDialog, FORM_CLASS_filepath):  # type: ignore
 
     def select_fotopath1(self) -> None:
 
-        ordner_bild = QFileDialog.getExistingDirectory(
+        ordner_foto = QFileDialog.getExistingDirectory(
             self,
             self.tr("Dateiname Foto")
         )
-        if ordner_bild:
-            self.lineEdit_2.setText(ordner_bild)
+        if ordner_foto:
+            self.lineEdit_2.setText(ordner_foto)
 
     def select_fotopath2(self) -> None:
 
-        ordner_bild = QFileDialog.getExistingDirectory(
+        ordner_foto = QFileDialog.getExistingDirectory(
             self,
             self.tr("Dateiname Foto")
         )
-        if ordner_bild:
-            self.lineEdit_3.setText(ordner_bild)
+        if ordner_foto:
+            self.lineEdit_3.setText(ordner_foto)
 
     def select_videopath2(self) -> None:
 
@@ -101,9 +101,9 @@ class QgsFileDialog(QKanDBDialog, FORM_CLASS_filepath):  # type: ignore
 
     def select_fotopath3(self) -> None:
 
-        ordner_bild = QFileDialog.getExistingDirectory(
+        ordner_foto = QFileDialog.getExistingDirectory(
             self,
             self.tr("Dateiname Foto")
         )
-        if ordner_bild:
-            self.lineEdit_6.setText(ordner_bild)
+        if ordner_foto:
+            self.lineEdit_6.setText(ordner_foto)

@@ -6,7 +6,7 @@ from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 
-from qkan import QKan, enums
+from qkan import QKan, enums, QkanAbortError
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import eval_node_types
 
@@ -19,6 +19,7 @@ from ._export import ExportTask
 from ._import import ImportTask
 from ._results import ResultsTask
 from .application_dialog import ExportDialog, ImportDialog, ResultsDialog
+from ..utils import QkanDbError
 
 
 class He8Porter(QKanPlugin):
@@ -140,20 +141,18 @@ class He8Porter(QKanPlugin):
         if os.path.exists(QKan.config.he8.template):
             try:
                 shutil.copyfile(QKan.config.he8.template, QKan.config.he8.export_file)
-            except BaseException:
-                fehlermeldung(
-                    "Fehler in Export nach HE8",
+            except Exception:
+                self.log.error_data(
+                    "Fehler in Export nach HE8\n"
                     "Fehler beim Kopieren der Vorlage: \n   {QKan.config.he8.template}\n"
-                    + "nach Ziel: {QKan.config.he8.export_file}\n",
+                    f"nach Ziel: {QKan.config.he8.export_file}\n",
                 )
+            raise QkanDbError
 
         # Attach SQLite-Database with HE8 Data
 
         # Für Test muss noch die Datenbankverbindung hergestellt werden
-        with DBConnection(
-            dbname=QKan.config.database.qkan,
-            epsg=QKan.config.epsg
-        ) as db_qkan:
+        with DBConnection() as db_qkan:
 
             db_qkan.loadmodule('he8porter')
             if not db_qkan.sqlyml(
@@ -164,7 +163,7 @@ class He8Porter(QKanPlugin):
                 self.log.error_code(
                     f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}"
                 )
-                raise Exception(f"{self.__class__.__name__}")
+                raise QkanDbError(f"{self.__class__.__name__}")
 
             # Run export
             ExportTask(db_qkan).run()
@@ -234,12 +233,7 @@ class He8Porter(QKanPlugin):
             # QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
 
             if not QKan.config.he8.import_file:
-                fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")
-                self.iface.messageBar().pushMessage(
-                    "Fehler beim Import",
-                    "Es wurde keine Datei ausgewählt!",
-                    level=Qgis.MessageLevel.Critical,
-                )
+                self.log.warning_user("Fehler beim Import: Es wurde keine Datei ausgewählt!")
                 return
             else:
                 crs: QgsCoordinateReferenceSystem = self.import_dlg.pw_epsg.crs()
@@ -282,14 +276,9 @@ class He8Porter(QKanPlugin):
             epsg=QKan.config.epsg
         ) as db_qkan:
             if not db_qkan.connected:
-                fehlermeldung(
-                    "Fehler im HE8-Import",
-                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                )
-                self.iface.messageBar().pushMessage(
-                    "Fehler im HE8-Import",
-                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                    level=Qgis.MessageLevel.Critical,
+                self.log.warning_user(
+                    "Fehler im HE8-Import\n"
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!"
                 )
                 return False
 
@@ -368,8 +357,8 @@ class He8Porter(QKanPlugin):
             elif self.results_dlg.rb_none.isChecked():
                 qml_choice = enums.QmlChoice.NONE
             else:
-                fehlermeldung("Fehler im Programmcode (2)", "Nicht definierte Option")
-                return False
+                self.log.error_code("Fehler im Programmcode (2)", "Nicht definierte Option")
+                raise QkanAbortError
             # Konfigurationsdaten schreiben
 
             QKan.config.he8.results_file = database_ErgHE
@@ -378,10 +367,29 @@ class He8Porter(QKanPlugin):
 
             QKan.config.save()
 
-            # Start der Verarbeitung
+            self._doresults()
 
-            # Modulaufruf in Logdatei schreiben
-            self.log.debug(f"""QKan-Modul Aufruf importResults()""")
+    def _doresults(self):
+        """Verarbeitung der Simulationsergebnisse aus HE"""
 
-            ResultsTask().run()
+        # Modulaufruf in Logdatei schreiben
+        self.log.debug(f"""QKan-Modul Aufruf importResults()""")
 
+        with DBConnection() as db_qkan:
+            db_qkan.loadmodule('he8porter')
+            if not db_qkan.sqlyml(
+                    'he8_attach',
+                    "He8Porter.run_export_to_he8 Attach HE8",
+                    replacefun=lambda sqltext: sqltext.format(filnam=QKan.config.he8.results_file)
+            ):
+                self.log.error_code(
+                    f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.results_file}"
+                )
+                raise QkanDbError(f"{self.__class__.__name__}")
+
+            # Run results
+            ResultsTask(db_qkan).run()
+
+        self.log.debug("Closed DB")
+
+        return True

@@ -1254,7 +1254,7 @@ uts AS (
         stb.pos_von                     AS pos_von, 
         stb.pos_bis                     AS pos_bis,
         stb.station_untersucher         AS vertikale_lage,      /* Tiefe ab Deckel (m) */
-        :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+        :ordner_foto  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
                       || stb.foto_dateiname || '.jpg'
                                         AS foto_dateiname,
         :ordner_video || '\\'  || stb.foto_dateiname
@@ -1319,16 +1319,12 @@ WITH strassen AS (
     WHERE tabtyp = 'strasse'
 )
 INSERT INTO videos (
-name, untersuchtag, untersuchrichtung,
+name, untersuchtag,
 objekt, datei, createdat
 )
 SELECT
     stk.schacht_oben                AS name,
     stb.datum                       AS untersuchtag,
-    CASE stb.untersuchungsrichtung
-    WHEN 0 THEN 'gegen Fließrichtung'
-    WHEN 1 THEN 'in Fließrichtung'
-    ELSE NULL END                   AS untersuchrichtung,
     'Schacht'                       AS objekt,
     :ordner_video || '\\'  || stb.foto_dateiname
                   || ' von '  || stk.schacht_oben
@@ -1340,6 +1336,28 @@ FROM
     t_strakatberichte  AS stb
     JOIN t_strakatkanal AS stk      ON stk.strakatid = stb.strakatid
     LEFT JOIN strassen              ON stk.strassennummer = strassen.id
+WHERE stk.schachtnummer <> 0
+  AND stb.geloescht = 0
+  AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
+  AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)            /* kein Symbol */ 
+  AND substr(stb.atv_kuerzel, 1, 1) in ('C', 'D');"
+
+strakat_fotos_schaechte: "
+INSERT INTO fotos (
+name, untersuchtag,
+objekt, datei, createdat
+)
+SELECT
+    stk.schacht_oben                AS name,
+    stb.datum                       AS untersuchtag,
+    'Schacht'                       AS objekt,
+    :ordner_foto  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                  || stb.foto_dateiname || '.jpg'
+                                    AS datei,
+    CURRENT_TIMESTAMP               AS createdat
+FROM
+    t_strakatberichte  AS stb
+    JOIN t_strakatkanal AS stk      ON stk.strakatid = stb.strakatid
 WHERE stk.schachtnummer <> 0
   AND stb.geloescht = 0
   AND stb.hausanschlid = '00000000-0000-0000-0000-000000000000'
@@ -1457,7 +1475,7 @@ SELECT
     stb.fortsetzung                 AS streckenschaden_lfdnr,
     stb.pos_von                     AS pos_von, 
     stb.pos_bis                     AS pos_bis,
-        :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+        :ordner_foto  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
                       || stb.foto_dateiname || '.jpg'
                                     AS foto_dateiname,
         :ordner_video || '\\'  || stb.foto_dateiname
@@ -1520,6 +1538,24 @@ FROM
     JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
     LEFT JOIN strassen              ON stk.strassennummer = strassen.id
 GROUP BY stk.haltungsname, stk.schacht_oben, stk.schacht_unten, stb.datum, stb.untersuchungsrichtung;"
+
+strakat_fotos_haltungen: "
+INSERT INTO fotos (
+name, untersuchtag,
+objekt, datei, createdat
+)
+SELECT
+    stk.haltungsname                AS name,
+    stb.datum                       AS untersuchtag,
+    'Haltung'                       AS objekt,
+    :ordner_foto  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                  || stb.foto_dateiname || '.jpg'
+                                    AS datei,
+    CURRENT_TIMESTAMP               AS createdat
+FROM
+    t_strakatkanal          AS stk
+    JOIN t_strakatberichte  AS stb  ON stb.strakatid = stk.strakatid
+GROUP BY stk.haltungsname, stk.schacht_oben, stk.schacht_unten, stb.datum;"
 
 strakat_anschlussleitungen_untersucht: "
 WITH stb AS (
@@ -1625,7 +1661,7 @@ ua AS (
         stb.fortsetzung                         AS streckenschaden_lfdnr,
         stb.pos_von                             AS pos_von, 
         stb.pos_bis                             AS pos_bis,
-        :ordner_bild  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+        :ordner_foto  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
                       || stb.foto_dateiname || '.jpg'
                                                 AS foto_dateiname,
         :ordner_video || '\\'  || stb.foto_dateiname
@@ -1698,7 +1734,7 @@ ua AS (
                       || ' von '  || stk.schacht_oben
                       || ' nach ' || stk.schacht_unten
                       || ' - '    || strassen.name  || '.mpg' 
-                                                AS film_dateiname
+                                                AS datei
     FROM
         t_strakathausanschluesse    AS sha
         JOIN                           stb  ON stb.hausanschlid = sha.hausanschlid
@@ -1716,11 +1752,48 @@ SELECT
     ua.untersuchtag AS untersuchtag,
     ua.untersuchrichtung AS untersuchrichtung,
     'Anschlussleitung'              AS objekt,
-    ua.film_dateiname               AS datei,
+    ua.datei                        AS datei,
     CURRENT_TIMESTAMP               AS createdat
 FROM
     ua
 GROUP BY ua.untersuchleit, ua.schoben, ua.schunten, ua.untersuchtag, ua.untersuchrichtung;"
+
+strakat_fotos_anschlussleitungen: "
+WITH stb AS (
+    SELECT *
+    FROM t_strakatberichte
+    WHERE hausanschlid <> '00000000-0000-0000-0000-000000000000'
+),
+ua AS (
+    SELECT
+        sha.anschlusshalname                    AS untersuchleit,
+        sha.anschlussschob                      AS schoben,
+        sha.anschlussschun                      AS schunten,
+        NULL                                    AS id, 
+        stb.datum                               AS untersuchtag,
+        :ordner_foto  || replace(printf('\\band%d\\', 1000000 + stb.bandnr), 'band10', 'band')
+                      || stb.foto_dateiname || '.jpg'
+                                                AS datei
+    FROM
+        t_strakathausanschluesse    AS sha
+        JOIN                           stb  ON stb.hausanschlid = sha.hausanschlid
+        JOIN t_strakatkanal         AS stk  ON stk.nummer = sha.anschlusshalnr
+    WHERE stb.geloescht = 0
+      AND (stk.zuflussnummer1 > 0 OR stk.abflussnummer1 > 0)                  /* kein Symbol */ 
+)
+INSERT INTO fotos (
+name, untersuchtag,
+objekt, datei, createdat
+)
+SELECT
+    ua.untersuchleit AS name,
+    ua.untersuchtag AS untersuchtag,
+    'Anschlussleitung'              AS objekt,
+    ua.datei                        AS datei,
+    CURRENT_TIMESTAMP               AS createdat
+FROM
+    ua
+GROUP BY ua.untersuchleit, ua.schoben, ua.schunten, ua.untersuchtag;"
 
 strakat_addgeom_t_strakathausanschluesse: "
 SELECT AddGeometryColumn('t_strakathausanschluesse', 'geom', :epsg, 'LINESTRING');"

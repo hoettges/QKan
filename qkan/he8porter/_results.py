@@ -37,140 +37,138 @@ from qkan.database.dbfunc import DBConnection
 from qkan.tools.qkan_utils import get_database_QKan
 from qkan import enums
 from qkan.utils import get_logger
+from qkan.tools.qkan_utils import loadLayer
 
 logger = get_logger("QKan")
 
 
 class ResultsTask:
-    def __init__(self):
-        pass
+    def __init__(self, db_qkan):
+        self.db_qkan = db_qkan
 
     def run(self) -> bool:
 
-        get_database_QKan()
-        database_qkan, epsg = QKan.config.database.qkan, QKan.config.epsg
+        # Vorbereiten der temporären Ergebnistabellen
+        sqllis = [
+            ["he8_create_results_attr", ()],
+            ["he8_create_results_geom", {'epsg': self.db_qkan.epsg}],
+            ["he8_reset_results", ()],
+        ]
+        # , '''CREATE TABLE IF NOT EXISTS ResultsHal(
+        # pk INTEGER PRIMARY KEY AUTOINCREMENT,
+        # haltnam TEXT,
+        # uebstauhaeuf REAL,
+        # uebstauanz REAL,
+        # maxuebstauvol REAL,
+        # kommentar TEXT,
+        # createdat TEXT DEFAULT CURRENT_DATE)''',
+        # """SELECT AddGeometryColumn('ResultsHal','geom',{},'LINESTRING',2)""".format(epsg)
+        # '''DELETE FROM ResultsHal''']
 
-        # Attach SQLite-Database with HE8 Data
-        sql = f'ATTACH DATABASE "{QKan.config.he8.results_file}" AS he'
-
-        with DBConnection(dbname=database_qkan) as db_qkan:
-            if not db_qkan.connected:
+        for sql, params in sqllis:
+            if not self.db_qkan.sqlyml(
+                sqlnam=sql,
+                stmt_category="QKan_Import_Results (1)",
+                parameters=params,
+            ):
                 return False
 
-            if db_qkan is None:
-                errormsg = "Fehler in QKan_Import_from_HE\n" + \
-                           "QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(database_qkan)
-                logger.error(errormsg)
-                raise Exception(f"{__name__}: {errormsg}")
+        # Die folgende Abfrage gilt sowohl bei Einzel- als auch bei Seriensimulationen:
+        sql = "he8_insertresults"
 
-            if not db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
-                errormsg = f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.results_file}"
-                logger.error(errormsg)
-                raise Exception(f"{__name__}: {errormsg}")
+        if not self.db_qkan.sqlyml(
+                sqlnam= sql,
+                stmt_category="QKan_Import_Results (4)",
+        ):
+            return False
 
-            # Vorbereiten der temporären Ergebnistabellen
-            sqllist = [
-                """CREATE TABLE IF NOT EXISTS ResultsSch(
-                    pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                    schnam TEXT,
-                    uebstauhaeuf REAL,
-                    uebstauanz REAL, 
-                    maxuebstauvol REAL,
-                    kommentar TEXT,
-                    createdat TEXT DEFAULT CURRENT_DATE)""",
-                """SELECT AddGeometryColumn('ResultsSch','geom',{},'POINT',2)""".format(
-                    epsg
-                ),
-                """DELETE FROM ResultsSch""",
-            ]
-            # , '''CREATE TABLE IF NOT EXISTS ResultsHal(
-            # pk INTEGER PRIMARY KEY AUTOINCREMENT,
-            # haltnam TEXT,
-            # uebstauhaeuf REAL,
-            # uebstauanz REAL,
-            # maxuebstauvol REAL,
-            # kommentar TEXT,
-            # createdat TEXT DEFAULT CURRENT_DATE)''',
-            # """SELECT AddGeometryColumn('ResultsHal','geom',{},'LINESTRING',2)""".format(epsg)
-            # '''DELETE FROM ResultsHal''']
+        self.db_qkan.commit()
 
-            for sql in sqllist:
-                if not db_qkan.sql(sql, "QKan_Import_Results (1)"):
-                    return False
+        # Einfügen der Ergebnistabelle in die Layerliste, wenn nicht schon geladen
+        project = QgsProject.instance()
+        logger.debug(f'project.mapLayersByName("Überstau Schächte")= {project.mapLayersByName("Überstau Schächte")}')
+        if not project.mapLayersByName(enums.LAYERBEZ.UEBERSTAUSCHAECHTE.value):
 
-            # Die folgende Abfrage gilt sowohl bei Einzel- als auch bei Seriensimulationen:
-            sql = f"""INSERT INTO ResultsSch
-                    (schnam, uebstauhaeuf, uebstauanz, maxuebstauvol, geom, kommentar)
-                    SELECT 
-                        MR.KNOTEN, LZ.HAEUFIGKEITUEBERSTAU, 
-                        LZ.ANZAHLUEBERSTAU, MR.UEBERSTAUVOLUMEN, SC.geop,  '{QKan.config.he8.results_file}'
-                    FROM he.LAU_MAX_S AS MR
-                    LEFT JOIN LANGZEITKNOTEN AS LZ
-                    ON MR.KNOTEN = LZ.KNOTEN
-                    JOIN schaechte AS SC
-                    ON SC.schnam = MR.KNOTEN
-                    """
+            # database_qkan = self.db_qkan.dbname
+            # uri = QgsDataSourceUri()
+            # uri.setDatabase(database_qkan)
+            # logger.debug(f"database_qkan (1): {database_qkan}")
+            # uri.setDataSource("", "ResultsSch", "geom")
+            # logger.debug(f"(2) uri.database(): {uri.database()}")
+            # vlayer = QgsVectorLayer(uri.uri(), "Überstau Schächte", "spatialite")
+            #
+            # #root = project.layerTreeRoot()
+            # #group = root.addGroup("Ergebnisse")
+            # #project.addMapLayer(vlayer, False)
+            # #group.addLayer(vlayer)
+            #
+            # group = 'Ergebnisse'
+            # layersRoot = QgsProject.instance().layerTreeRoot()
+            # QgsProject.instance().addMapLayer(vlayer, False)
+            # actGroup = layersRoot.findGroup(group)
+            # if actGroup is None:
+            #     actGroup = layersRoot.addGroup(group)
+            # actGroup.addLayer(vlayer)
+            # vlayer.triggerRepaint()
+            #
+            # # Stilvorlage nach Benutzerwahl laden
+            # templatepath = os.path.join(pluginDirectory("qkan"), "templates")
+            # if QKan.config.he8.qml_choice == enums.QmlChoice.UEBH:
+            #     template = os.path.join(templatepath, "qml", "ueberstauhaeufigkeit.qml")
+            #     try:
+            #         vlayer.loadNamedStyle(template)
+            #         vlayer.triggerRepaint()
+            #     except:
+            #         errormsg = "Fehler in QKan_Results_from_HE\n" + \
+            #                    'Stildatei "Überstauhäufigkeit.qml" wurde nicht gefunden!\nAbbruch!'
+            #         logger.warning(errormsg)
+            #
+            # elif QKan.config.he8.qml_choice == enums.QmlChoice.UEBVOL:
+            #     template = os.path.join(templatepath, "qml", "ueberstauvolumen.qml")
+            #     try:
+            #         vlayer.loadNamedStyle(template)
+            #         vlayer.triggerRepaint()
+            #     except:
+            #         errormsg = "Fehler in QKan_Results_from_HE\n" + \
+            #                    'Stildatei "Überstauvolumen.qml" wurde nicht gefunden!\nAbbruch!'
+            #         logger.warning(errormsg)
+            #
+            # elif QKan.config.he8.qml_choice == enums.QmlChoice.USERQML:
+            #     try:
+            #         vlayer.loadNamedStyle(QKan.config.he8.qml_file_results)
+            #         vlayer.triggerRepaint()
+            #     except:
+            #         errormsg = "Fehler in QKan_Results_from_HE\n" + \
+            #                   f"Benutzerdefinierte Stildatei {QKan.config.he8.qml_choice.value}\n" + \
+            #                    "wurde nicht gefunden!\nAbbruch!"
+            #         logger.warning(errormsg)
 
-            if not db_qkan.sql(sql, stmt_category="QKan_Import_Results (4)"):
-                return False
-
-            db_qkan.commit()
-
-            # Einfügen der Ergebnistabelle in die Layerliste, wenn nicht schon geladen
-            project = QgsProject.instance()
-            logger.debug(f'project.mapLayersByName("Überstau Schächte")= {project.mapLayersByName("Überstau Schächte")}')
-            if not project.mapLayersByName(enums.LAYERBEZ.UEBERSTAUSCHAECHTE.value):
-
-                uri = QgsDataSourceUri()
-                uri.setDatabase(database_qkan)
-                logger.debug(f"database_qkan (1): {database_qkan}")
-                uri.setDataSource("", "ResultsSch", "geom")
-                logger.debug(f"(2) uri.database(): {uri.database()}")
-                vlayer = QgsVectorLayer(uri.uri(), "Überstau Schächte", "spatialite")
-
-                #root = project.layerTreeRoot()
-                #group = root.addGroup("Ergebnisse")
-                #project.addMapLayer(vlayer, False)
-                #group.addLayer(vlayer)
-
-                group = 'Ergebnisse'
-                layersRoot = QgsProject.instance().layerTreeRoot()
-                QgsProject.instance().addMapLayer(vlayer, False)
-                actGroup = layersRoot.findGroup(group)
-                if actGroup is None:
-                    actGroup = layersRoot.addGroup(group)
-                actGroup.addLayer(vlayer)
-                vlayer.triggerRepaint()
-
-                # Stilvorlage nach Benutzerwahl laden
-                templatepath = os.path.join(pluginDirectory("qkan"), "templates")
-                if QKan.config.he8.qml_choice == enums.QmlChoice.UEBH:
-                    template = os.path.join(templatepath, "qml", "ueberstauhaeufigkeit.qml")
-                    try:
-                        vlayer.loadNamedStyle(template)
-                        vlayer.triggerRepaint()
-                    except:
-                        errormsg = "Fehler in QKan_Results_from_HE\n" + \
-                                   'Stildatei "Überstauhäufigkeit.qml" wurde nicht gefunden!\nAbbruch!'
-                        logger.warning(errormsg)
-
-                elif QKan.config.he8.qml_choice == enums.QmlChoice.UEBVOL:
-                    template = os.path.join(templatepath, "qml", "ueberstauvolumen.qml")
-                    try:
-                        vlayer.loadNamedStyle(template)
-                        vlayer.triggerRepaint()
-                    except:
-                        errormsg = "Fehler in QKan_Results_from_HE\n" + \
-                                   'Stildatei "Überstauvolumen.qml" wurde nicht gefunden!\nAbbruch!'
-                        logger.warning(errormsg)
-
-                elif QKan.config.he8.qml_choice == enums.QmlChoice.USERQML:
-                    try:
-                        vlayer.loadNamedStyle(QKan.config.he8.qml_file_results)
-                        vlayer.triggerRepaint()
-                    except:
-                        errormsg = "Fehler in QKan_Results_from_HE\n" + \
-                                  f"Benutzerdefinierte Stildatei {QKan.config.he8.qml_choice.value}\n" + \
-                                   "wurde nicht gefunden!\nAbbruch!"
-                        logger.warning(errormsg)
-        del db_qkan
+            templatepath = os.path.join(pluginDirectory("qkan"), "templates")
+            if QKan.config.he8.qml_choice == enums.QmlChoice.UEBH:
+                loadLayer(
+                    layerbez=enums.LAYERBEZ.UEBERSTAUSCHAECHTE,
+                    gpos=1,
+                    table='ResultsSch',
+                    geom_column='geom',
+                    qmlfile=os.path.join(templatepath, "qml", "ueberstauhaeufigkeit.qml"),
+                    filter='',
+                    group=[enums.LAYERBEZ.ERGEBNISSE_GROUP],
+                )
+            elif QKan.config.he8.qml_choice == enums.QmlChoice.UEBVOL:
+                loadLayer(
+                    layerbez=enums.LAYERBEZ.UEBERSTAUSCHAECHTE,
+                    table='ResultsSch',
+                    geom_column='geom',
+                    qmlfile=os.path.join(templatepath, "qml", "ueberstauvolumen.qml"),
+                    filter='',
+                    group=[enums.LAYERBEZ.ERGEBNISSE_GROUP],
+                )
+            elif QKan.config.he8.qml_choice == enums.QmlChoice.USERQML:
+                loadLayer(
+                    layerbez=enums.LAYERBEZ.UEBERSTAUSCHAECHTE,
+                    table='ResultsSch',
+                    geom_column='geom',
+                    qmlfile=QKan.config.he8.qml_file_results,
+                    filter='',
+                    group=[enums.LAYERBEZ.ERGEBNISSE_GROUP],
+                )

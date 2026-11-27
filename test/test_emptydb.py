@@ -1,11 +1,5 @@
-import os
-import sys
-from pathlib import Path
-
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
-
-#sys.path.append(os.path.join(os.path.split(__file__)[0], ".."))
 
 from .base_test import BASE_WORK, QgisTest, iface
 from qkan import QKan
@@ -31,6 +25,7 @@ class TestEmptyDB(QgisTest):
         test = EmptyDBDialog(iface())
         test._doemptydb()
         del test
+
         # self.assertTrue(False, "Fehlernachricht")
 
 if __name__ == "__main__":

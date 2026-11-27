@@ -42,6 +42,7 @@ class DBConnection:
     ):
         """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat,
            mit dem Attribut isCurrentDbVersion.
+           Wenn dbname = None ist, werden self.dbname, self.dbtype und self.epsg aus dem geladenen Projekt ermittelt
 
         :param dbname:          Pfad zur SpatiaLite-Datenbankdatei.
                                  - Falls angegeben und nicht vorhanden, wird es angelegt.
@@ -297,7 +298,7 @@ class DBConnection:
                     )
                 except BaseException as err:
                     logger.debug(f"Datenbank ist nicht vorhanden: {self.dbname}")
-                    errormsg=(
+                    errormsg = (
                         f"Fehler in dbqkan.DBConnection:\n{err}\n"
                         f"Kopieren von: {QKan.template_dir}\nnach: {self.dbname}\n nicht möglich"
                         )
@@ -489,7 +490,7 @@ class DBConnection:
                         logger.error_code(f"{self.__class__.__name__}: {sqlnam}")
 
                 # 9. Referenztabelle mit Parametern
-                sqlnam = f"database_insert_info"
+                sqlnam = "database_insert_info"
                 parameters = (str(self.actDbVersion.base_version),)
                 if not self.sqlyml(
                         sqlnam=sqlnam,
@@ -499,7 +500,7 @@ class DBConnection:
                     logger.error_code(f"{self.__class__.__name__}: {sqlnam}")
 
                 # 10. Views
-                sqlnam = f"database_createview_untersuchdat_aktuell"
+                sqlnam = "database_createview_untersuchdat_aktuell"
                 if not self.sqlyml(
                         sqlnam=sqlnam,
                         stmt_category=sqlnam,
@@ -514,7 +515,6 @@ class DBConnection:
             logger.error_code(
                 f'{self.__class__.__name__}: '
                 f'Datenbanktyp {self.dbtype} unbekannt: Abbruch')
-
 
     def _disconnect(self) -> None:
         """Closes database connection."""
@@ -713,11 +713,10 @@ class DBConnection:
                 fehlermeldung = (f"dbqkan.DBConnection.sql: \nsql: {sql}\n"
                                  f"parameters: {logparams}\n"
                                  f"dbqkan.DBConnection.sql: SQL-Fehler {repr(err)} in {stmt_category}"
-                )
+                                 )
                 logger.error(fehlermeldung)
                 raise Exception(f"{self.__class__.__name__}: {fehlermeldung}")
             return False
-
 
     def insertdata(
             self,
@@ -749,7 +748,7 @@ class DBConnection:
             with open(filename) as fr:
                 self.patternDict = yaml.safe_load(fr.read())
 
-        if (parlis:= self.patternDict.get(tabnam, None)) is not None:
+        if (parlis := self.patternDict.get(tabnam, None)) is not None:
             for el in (parlis | {'epsg': 'epsg'}):
                 if param1.get(el, None) is None:
                     if isinstance(parameters, tuple):
@@ -768,7 +767,7 @@ class DBConnection:
             return False
 
         if isinstance(parameters, dict):
-            logger.debug(f'read_data.insertdata: einzelner Datensatz')
+            logger.debug('read_data.insertdata: einzelner Datensatz')
             result = self.sqlyml(
                 sqlnam,
                 stmt_category,
@@ -777,7 +776,7 @@ class DBConnection:
                 mute_logger=mute_logger,
                 ignore=ignore)
         else:
-            logger.debug(f'read_data.insertdata: Tuple von Datensaetzen')
+            logger.debug('read_data.insertdata: Tuple von Datensaetzen')
             result = self.sqlyml(
                 sqlnam,
                 stmt_category,
@@ -808,8 +807,9 @@ class DBConnection:
                 if '{' in sqltext:
                     logger.error_code(
                         f'{self.__class__.__name__}: '
-                        f'Fehler in yaml-Datei: sql enthält Parameter, obwohl keine ersetzen-Funktion'
-                        f'im Aufruf geliefert wird.')
+                        'Fehler in yaml-Datei: sql enthält Parameter, obwohl keine ersetzen-Funktion'
+                        'im Aufruf geliefert wird.'
+                     )
             else:
                 sqltext = sql_txt
 
@@ -907,9 +907,7 @@ class DBConnection:
         #                    "Bitte führen Sie ein Upgrade des QKan-Plugins aus")
         return self.isCurrentDbVersion
 
-
     # Ändern der Attribute einer Tabelle
-
     def alter_table(
         self,
         tabnam: str,
@@ -1115,7 +1113,7 @@ class DBConnection:
                 'database_altertable_addgeometrycolumn',
                 "dbqkan.DBConnection.alter_table (7)",
                 parameters=(f'{tabnam}_t', gnam, epsg, geotype, nccords),
-                ):
+            ):
                 return False
 
         # 3. Hilfstabelle entleeren
@@ -1144,7 +1142,7 @@ class DBConnection:
                 'database_altertable_discardgeometrycolumn',
                 "dbqkan.DBConnection.alter_table (10)",
                 parameters=(tabnam, attr),
-                ):
+            ):
                 return False
 
         # 5.2. Löschen der Tabelle
@@ -1170,14 +1168,14 @@ class DBConnection:
                 'database_altertable_addgeometrycolumn',
                 "dbqkan.DBConnection.alter_table (13)",
                 parameters=(tabnam, gnam, epsg, geotype, nccords),
-                ):
+            ):
                 return False
 
             if not self.sqlyml(
                 'database_altertable_createspatialindex',
                 "dbqkan.DBConnection.alter_table (14)",
                 parameters=(tabnam, attr),
-                ):
+            ):
                 return False
 
         # 7. Daten aus Hilfstabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
@@ -1194,7 +1192,7 @@ class DBConnection:
                 'database_altertable_discardgeometrycolumn',
                 "dbqkan.DBConnection.alter_table (16)",
                 parameters=(f"{tabnam}_t", attr),
-                ):
+            ):
                 return False
 
         # 9. Löschen der Hilfstabelle

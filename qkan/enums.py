@@ -125,6 +125,7 @@ class LAYERBEZ(enum.Enum):
     M150_GROUP              = "M150"
     PLAUSI_GROUP            = "Plausibilitätsprüfungen"
     WMS_GROUP               = "WMS-Dienste"
+    ERGEBNISSE_GROUP        = "Ergebnisse"
 
     #Referenztabellen
     ENTWAESSERUNGSARTEN     = "Entwässerungsarten"

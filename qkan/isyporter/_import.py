@@ -80,7 +80,7 @@ class Untersuchdat_schacht(ClassObject):
     vertikale_lage: float = 0.0
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
-    ordner_bild: str = ""
+    ordner_foto: str = ""
     film_dateiname: str = ""
     ordner_video: str = ""
     ZD: int = None
@@ -175,7 +175,7 @@ class Untersuchdat_haltung(ClassObject):
     foto_dateiname: str = ""
     film_dateiname: str = ""
     bandnr: int = 0
-    ordner_bild: str = ""
+    ordner_foto: str = ""
     ordner_video: str = ""
     ZD: int = None
     ZB: int = None
@@ -277,9 +277,9 @@ def _get_int(value: Union[str, int], default: int = None) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask(Schadenstexte):
-    def __init__(self, db_qkan: DBConnection, xml_file: str, data_choice: str, ordner_bild: str, ordner_video: str):
+    def __init__(self, db_qkan: DBConnection, xml_file: str, data_choice: str, ordner_foto: str, ordner_video: str):
         self.db_qkan = db_qkan
-        self.ordner_bild = ordner_bild
+        self.ordner_foto = ordner_foto
         self.ordner_video = ordner_video
 
         self.data_coice = data_choice
@@ -1163,7 +1163,7 @@ class ImportTask(Schadenstexte):
     def _untersuchdat_schaechte(self) -> None:
         def _iter() -> Iterator[Untersuchdat_schacht]:
 
-            ordner_bild = self.ordner_bild
+            ordner_foto = self.ordner_foto
 
             x_anlagen = self.xml.findall(
                 "Datenkollektive/Zustandsdatenkollektiv/InspizierteAbwassertechnischeAnlage/[Anlagentyp='3']",
@@ -1203,8 +1203,8 @@ class ImportTask(Schadenstexte):
                         bereich = _untersuchdat.findtext("Schachtbereich", None, self.NS)
 
                         foto_dateiname = _untersuchdat.findtext("Fotodatei", None, self.NS)
-                        #if _datei is not None and self.ordner_bild is not None:
-                        #    foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        #if _datei is not None and self.ordner_foto is not None:
+                        #    foto_dateiname = os.path.join(self.ordner_foto, _datei)
                         #else:
                         #    foto_dateiname = None
 
@@ -1223,7 +1223,7 @@ class ImportTask(Schadenstexte):
                         #     for _untersuchdat_schacht in x_film.findall("Film", self.NS):
                         #
                         #         _datei = _untersuchdat_schacht.findtext("Filmname", None, self.NS)
-                        #         if _datei is not None and self.ordner_bild is not None:
+                        #         if _datei is not None and self.ordner_foto is not None:
                         #             film_dateiname = os.path.join(self.ordner_video, _datei)
                         #         else:
                         #             film_dateiname = None
@@ -1246,7 +1246,7 @@ class ImportTask(Schadenstexte):
                         inspektionslaenge = inspektionslaenge,
                         bereich = bereich,
                         foto_dateiname = foto_dateiname,
-                        ordner_bild = ordner_bild,
+                        ordner_foto = ordner_foto,
                         ZD=ZD,
                         ZS=ZS,
                         ZB=ZB,
@@ -1980,7 +1980,7 @@ class ImportTask(Schadenstexte):
 
             logger.debug(f"Anzahl Untersuchungsdaten Haltung: {len(x_anlagen)}")
 
-            ordner_bild = self.ordner_bild
+            ordner_foto = self.ordner_foto
             ordner_video = self.ordner_video
 
             name = ""
@@ -2044,8 +2044,8 @@ class ImportTask(Schadenstexte):
                         pos_bis = _get_int(_untersuchdat.findtext("PositionBis", None, self.NS))
 
                         foto_dateiname = _untersuchdat.findtext("Fotodatei", None, self.NS)
-                        #if _datei is not None and self.ordner_bild is not None:
-                        #    foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        #if _datei is not None and self.ordner_foto is not None:
+                        #    foto_dateiname = os.path.join(self.ordner_foto, _datei)
                         #else:
                         #    foto_dateiname = None
 
@@ -2075,7 +2075,7 @@ class ImportTask(Schadenstexte):
                         pos_bis=pos_bis,
                         foto_dateiname=foto_dateiname,
                         film_dateiname=film_dateiname,
-                        ordner_bild=ordner_bild,
+                        ordner_foto=ordner_foto,
                         ordner_video=ordner_video,
                         ZD=ZD,
                         ZS=ZS,
@@ -2097,7 +2097,7 @@ class ImportTask(Schadenstexte):
         #                 name = _untersuchdat_haltung.findtext("FilmObjekte/FilmObjekt/Objektbezeichnung", None, self.NS)
         #
         #                 _datei = _untersuchdat_haltung.findtext("Filmname", None, self.NS)
-        #                 if _datei is not None and self.ordner_bild is not None:
+        #                 if _datei is not None and self.ordner_foto is not None:
         #                     film_dateiname = os.path.join(self.ordner_video, _datei)
         #                 else:
         #                     film_dateiname = None
@@ -2580,7 +2580,7 @@ class ImportTask(Schadenstexte):
 
             logger.debug(f"Anzahl Untersuchungsdaten Anschluesse: {len(x_anlagen)}")
 
-            ordner_bild = self.ordner_bild
+            ordner_foto = self.ordner_foto
             ordner_video = self.ordner_video
 
             name = ""
@@ -2646,8 +2646,8 @@ class ImportTask(Schadenstexte):
                         pos_bis = _get_int(_untersuchdat.findtext("PositionBis", None, self.NS))
 
                         foto_dateiname = _untersuchdat.findtext("Fotodatei", None, self.NS)
-                        #if _datei is not None and self.ordner_bild is not None:
-                        #    foto_dateiname = os.path.join(self.ordner_bild, _datei)
+                        #if _datei is not None and self.ordner_foto is not None:
+                        #    foto_dateiname = os.path.join(self.ordner_foto, _datei)
                         #else:
                         #    foto_dateiname = None
 
@@ -2679,7 +2679,7 @@ class ImportTask(Schadenstexte):
                             pos_bis=pos_bis,
                             foto_dateiname=foto_dateiname,
                             film_dateiname=film_dateiname,
-                            ordner_bild=ordner_bild,
+                            ordner_foto=ordner_foto,
                             ordner_video=ordner_video,
                             ZD=ZD,
                             ZS=ZS,

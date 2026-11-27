@@ -146,13 +146,13 @@ class ImportTask():
         if QKan.config.fotoRootPath != '':
             pathroot = Path(QKan.config.fotoRootPath)
             try:
-                self.ordner_bild = str(pathfull.relative_to(pathroot))
+                self.ordner_foto = str(pathfull.relative_to(pathroot))
             except ValueError as err:
                 logger.error_user('Der Wurzelpfad zu den Fotos passt nicht zum ausgewählten Verzeichnis.\n'
                                   'Bitte in Maske "Optionen" korrigieren')
                 return False
         else:
-            self.ordner_bild = str(pathfull)
+            self.ordner_foto = str(pathfull)
 
         pathfull = Path(QKan.config.videoPathCurrent)
         if QKan.config.videoRootPath != '':
@@ -350,7 +350,7 @@ class ImportTask():
 
         self.db_qkan.commit()
 
-        def _iter() -> Iterator[Kanal_STRAKAT]:
+        def _iter() -> Iterator[dict]:
             # Datei kanal.rwtopen einlesen und in Tabelle schreiben
             blength = 1024                      # Blocklänge in der STRAKAT-Datei
             with open(os.path.join(self.strakatdir, 'kanal.rwtopen'), 'rb') as fo:
@@ -949,7 +949,7 @@ class ImportTask():
 
         bewertungscodes = {}                    # Diagnose: STRAKAT-Code Bewertungsart -> Anzahl
 
-        def _iter() -> Iterator[Bericht_STRAKAT]:
+        def _iter() -> Iterator[dict]:
             # Datei kanal.rwtopen einlesen und in Tabelle schreiben
             blength = 1024                      # Blocklänge in der STRAKAT-Datei
             leer = b'\x00'*128
@@ -1585,10 +1585,19 @@ class ImportTask():
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei Videos Schächte")
 
+        sqlnam = "strakat_fotos_schaechte"
+        params = {'ordner_foto': self.ordner_foto,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei Fotos Schächte")
+
         anz_vorher = self._anzahl("untersuchdat_schacht")
 
         sqlnam = "strakat_untersuchdat_schacht"
-        params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video, 'epsg': self.epsg}
+        params = {'ordner_foto': self.ordner_foto, 'ordner_video': self.ordner_video, 'epsg': self.epsg}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import der Schachtschäden",
@@ -1633,8 +1642,17 @@ class ImportTask():
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
 
+        sqlnam = "strakat_fotos_haltungen"
+        params = {'ordner_foto': self.ordner_foto,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
+
         sqlnam = "strakat_untersuchdat_haltung"
-        params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video}
+        params = {'ordner_foto': self.ordner_foto, 'ordner_video': self.ordner_video}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Haltungsschäden",
@@ -1672,8 +1690,17 @@ class ImportTask():
         ):
             raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
 
+        sqlnam = "strakat_fotos_anschlussleitungen"
+        params = {'ordner_foto': self.ordner_foto,}
+        if not self.db_qkan.sqlyml(
+            sqlnam=sqlnam,
+            stmt_category=sqlnam,
+            parameters=params,
+        ):
+            raise Exception(f"{self.__class__.__name__}: Fehler bei {sqlnam}")
+
         sqlnam = "strakat_untersuchdat_anschlussleitung"
-        params = {'ordner_bild': self.ordner_bild, 'ordner_video': self.ordner_video}
+        params = {'ordner_foto': self.ordner_foto, 'ordner_video': self.ordner_video}
         if not self.db_qkan.sqlyml(
             sqlnam=sqlnam,
             stmt_category= "strakat_import Untersuchungsdaten Anschlussleitungen",

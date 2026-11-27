@@ -3337,3 +3337,32 @@ SELECT count() FROM he.AbflussParameter"
 
 he8_count_he_bodenklasse: "
 SELECT count() FROM he.Bodenklasse"
+
+he8_create_results_attr: "
+CREATE TABLE IF NOT EXISTS ResultsSch(
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    schnam TEXT,
+    uebstauhaeuf REAL,
+    uebstauanz REAL, 
+    maxuebstauvol REAL,
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE);"
+
+he8_create_results_geom: "
+SELECT AddGeometryColumn('ResultsSch','geom', :epsg,'POINT',2);"
+
+he8_reset_results: "
+DELETE FROM ResultsSch;"
+
+he8_insertresults: "
+INSERT INTO ResultsSch
+(schnam, uebstauhaeuf, uebstauanz, maxuebstauvol, geom, kommentar)
+SELECT 
+    MR.KNOTEN, LZ.HAEUFIGKEITUEBERSTAU, 
+    LZ.ANZAHLUEBERSTAU, MR.UEBERSTAUVOLUMEN, SC.geop,  '{QKan.config.he8.results_file}'
+FROM he.LAU_MAX_S AS MR
+LEFT JOIN LANGZEITKNOTEN AS LZ
+ON MR.KNOTEN = LZ.KNOTEN
+JOIN schaechte AS SC
+ON SC.schnam = MR.KNOTEN;"
+

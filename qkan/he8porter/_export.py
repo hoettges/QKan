@@ -54,8 +54,7 @@ class ExportTask:
         data = self.db_qkan.fetchone()
         if not data:
             logger.error(
-                "he8porter._export.run: SELECT NextId, Version FROM he.Itwh$ProgInfo"
-                f"\nAbfrageergebnis ist leer: {data}"
+                "he8porter._export.run: Abfrageergebnis ist leer: {data}"
             )
         self.nextid = int(data[0]) + 1
         he_db_version = data[1].split(".")
