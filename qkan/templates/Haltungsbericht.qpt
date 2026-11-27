@@ -349,7 +349,7 @@
    </customproperties>
   </LayoutObject>
  </LayoutItem>
- <LayoutItem referencePoint="0" valign="32" background="false" labelText="Schacht von: [%&quot;schoben&quot;%]&#xa;Schacht nach: [%&quot;schunten&quot;%]&#xa;Material: [%aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:=&quot;material&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)%]&#xa;Profil: [%aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;profilnam&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)%]&#xa;DN: [%max(aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;breite&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;),aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;hoehe&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;))%]&#xa;Länge: [%&quot;laenge&quot;%] &#xa;Straße: [%&quot;strasse&quot;%]" htmlState="0" itemRotation="0" positionLock="false" zValue="2" frameJoinStyle="miter" marginY="0" id="" size="115.115,41.4604,mm" opacity="1" groupUuid="" type="65641" positionOnPage="217.28,7.6428,mm" uuid="{3f23dc75-b463-4c2a-b651-540706718363}" outlineWidthM="0.3,mm" marginX="0" templateUuid="{3f23dc75-b463-4c2a-b651-540706718363}" position="217.28,7.6428,mm" visibility="1" blendMode="0" excludeFromExports="0" frame="false" halign="1">
+ <LayoutItem referencePoint="0" valign="32" background="false" labelText="Schacht von: [%&quot;schoben&quot;%]&#xa;Schacht nach: [%&quot;schunten&quot;%]&#xa;Material: [%if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:=&quot;material&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)))%]&#xa;Profil: [%if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;profilnam&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)))%]&#xa;DN: [%if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (max(aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;breite&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;),aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;hoehe&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;))))%]&#xa;Länge: [%&quot;laenge&quot;%] &#xa;Straße: [%&quot;strasse&quot;%]" htmlState="0" itemRotation="0" positionLock="false" zValue="2" frameJoinStyle="miter" marginY="0" id="" size="115.115,41.4604,mm" opacity="1" groupUuid="" type="65641" positionOnPage="217.28,7.6428,mm" uuid="{3f23dc75-b463-4c2a-b651-540706718363}" outlineWidthM="0.3,mm" marginX="0" templateUuid="{3f23dc75-b463-4c2a-b651-540706718363}" position="217.28,7.6428,mm" visibility="1" blendMode="0" excludeFromExports="0" frame="false" halign="1">
   <FrameColor green="0" alpha="255" blue="0" red="0"/>
   <BackgroundColor green="255" alpha="255" blue="255" red="255"/>
   <LayoutObject>
@@ -803,7 +803,7 @@
      <Option type="QgsProperty" name="content">
       <Option type="Map">
        <Option value="true" type="bool" name="active"/>
-       <Option value="aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;profilnam&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)" type="QString" name="expression"/>
+       <Option value="if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;profilnam&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)))" type="QString" name="expression"/>
        <Option value="3" type="int" name="type"/>
       </Option>
      </Option>
@@ -852,7 +852,7 @@
      <Option type="QgsProperty" name="content">
       <Option type="Map">
        <Option value="true" type="bool" name="active"/>
-       <Option value="aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;hoehe&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)  ||  ' / ' || aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;breite&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)" type="QString" name="expression"/>
+       <Option value="if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;hoehe&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)  ||  ' / ' || aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;breite&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)))" type="QString" name="expression"/>
        <Option value="3" type="int" name="type"/>
       </Option>
      </Option>
@@ -895,7 +895,7 @@
      <Option type="QgsProperty" name="content">
       <Option type="Map">
        <Option value="true" type="bool" name="active"/>
-       <Option value="aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:=&quot;material&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)" type="QString" name="expression"/>
+       <Option value="if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:=&quot;material&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)))" type="QString" name="expression"/>
        <Option value="3" type="int" name="type"/>
       </Option>
      </Option>
@@ -1498,7 +1498,7 @@
      <Option type="QgsProperty" name="content">
       <Option type="Map">
        <Option value="true" type="bool" name="active"/>
-       <Option value="aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;profilnam&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)" type="QString" name="expression"/>
+       <Option value="if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:= &quot;profilnam&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)))" type="QString" name="expression"/>
        <Option value="3" type="int" name="type"/>
       </Option>
      </Option>
@@ -1547,7 +1547,7 @@
      <Option type="QgsProperty" name="content">
       <Option type="Map">
        <Option value="true" type="bool" name="active"/>
-       <Option value="aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;hoehe&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)  ||  ' / ' || aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;breite&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)" type="QString" name="expression"/>
+       <Option value="if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;hoehe&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)  ||  ' / ' || aggregate(&#xd;&#xa;    layer:='Haltungen',&#xd;&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xd;&#xa;    expression:= &quot;breite&quot;,&#xd;&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xd;&#xa;)))" type="QString" name="expression"/>
        <Option value="3" type="int" name="type"/>
       </Option>
      </Option>
@@ -1590,7 +1590,7 @@
      <Option type="QgsProperty" name="content">
       <Option type="Map">
        <Option value="true" type="bool" name="active"/>
-       <Option value="aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:=&quot;material&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)" type="QString" name="expression"/>
+       <Option value="if(attribute(@atlas_feature, 'Name') IS NULL, NULL, (aggregate(&#xa;    layer:='Haltungen',&#xa;    aggregate:='max',  -- oder 'sum', 'min', etc.&#xa;    expression:=&quot;material&quot;,&#xa;    filter:=&quot;haltnam&quot; = attribute(@atlas_feature, 'Name')&#xa;)))" type="QString" name="expression"/>
        <Option value="3" type="int" name="type"/>
       </Option>
      </Option>

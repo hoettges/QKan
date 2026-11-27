@@ -264,6 +264,14 @@ def _schacht_einfuegen(backend, cursor, daten, geom):
         backend.execute(cursor, "nz_schacht_umriss", (schnam,), srid=int(srid))
 
 
+def _load_layer_style(layer, qml_path, plugin_dir):
+    layer.loadNamedStyle(qml_path)
+    if os.path.basename(qml_path) == "Haltungen.qml":
+        config = layer.editFormConfig()
+        config.setUiForm(os.path.join(plugin_dir, "forms", "qkan_haltungen.ui"))
+        layer.setEditFormConfig(config)
+
+
 def get_layer_mapping(tab_index):
     mapping = {
         0: {
@@ -485,7 +493,7 @@ def zoom_to_selected_features(self, retry=False):
                         plugin_dir, "templates", "qml", info["qml"]
                     )
                     if os.path.exists(qml_path):
-                        vlayer.loadNamedStyle(qml_path)
+                        _load_layer_style(vlayer, qml_path, plugin_dir)
 
                     QgsProject.instance().addMapLayer(vlayer)
                     # wichtig: eigene Methode erneut aufrufen, aber mit retry=True
@@ -675,7 +683,7 @@ def layer_import_aktuell(self):
     qml_path = os.path.join(plugin_dir, "templates", "qml", qml_file)
 
     if qml_file and os.path.exists(qml_path):
-        layer.loadNamedStyle(qml_path)
+        _load_layer_style(layer, qml_path, plugin_dir)
     elif qml_file:
         QMessageBox.warning(
             self,

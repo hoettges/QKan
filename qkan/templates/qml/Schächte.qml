@@ -681,15 +681,7 @@
           </editWidget>
         </field>
         <field name="auslasstyp" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="false"/>
-                <Option name="UseHtml" type="bool" value="false"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="auslasstypen20161201095045204" /><Option name="LayerName" type="QString" value="Auslasstypen" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;auslasstypen&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="schachttyp" configurationFlags="NoFlag">
           <editWidget type="ValueRelation">
             <config>
@@ -733,15 +725,7 @@
           </editWidget>
         </field>
         <field name="material" configurationFlags="NoFlag">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="false"/>
-                <Option name="UseHtml" type="bool" value="false"/>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
+          <editWidget type="ValueRelation"><config><Option type="Map"><Option name="Layer" type="QString" value="material_12f10425_b411_437a_86a9_64521d629453" /><Option name="LayerName" type="QString" value="Material" /><Option name="LayerSource" type="QString" value="dbname='./demo.sqlite' table=&quot;material&quot;" /><Option name="LayerProviderName" type="QString" value="spatialite" /><Option name="Key" type="QString" value="bezeichnung" /><Option name="Value" type="QString" value="bezeichnung" /><Option name="AllowNull" type="bool" value="true" /><Option name="OrderByValue" type="bool" value="true" /></Option></config></editWidget></field>
         <field name="xsch" configurationFlags="NoFlag">
           <editWidget type="TextEdit">
             <config>
@@ -870,7 +854,7 @@
       </duplicatePolicies>
       <defaults>
         <default expression="" field="pk" applyOnUpdate="0"/>
-        <default expression="" field="schnam" applyOnUpdate="0"/>
+        <default expression="with_variable('namen',coalesce(aggregate(@layer,'array_agg',to_string(&quot;schnam&quot;),filter:=&quot;schnam&quot; IS NOT NULL),array()),with_variable('reihe', coalesce(@qkan_schacht_praefix,''),&#10; with_variable('ziffern', array_foreach(array_filter(@namen,&#10;   regexp_match(@element,'[0-9]+$')&gt;0 AND regexp_replace(@element,'[0-9]+$','')=@reihe),&#10;   regexp_substr(@element,'[0-9]+$')),&#10; with_variable('naechste',to_string(coalesce(array_max(array_foreach(@ziffern,to_int(@element))),0)+1),&#10; @reihe || lpad(@naechste,max(length(@naechste),coalesce(array_max(array_foreach(@ziffern,length(@element))),1)),'0')))))" field="schnam" applyOnUpdate="0" />
         <default expression="" field="sohlhoehe" applyOnUpdate="0"/>
         <default expression="" field="deckelhoehe" applyOnUpdate="0"/>
         <default expression="" field="durchm" applyOnUpdate="0"/>
@@ -894,7 +878,7 @@
       </defaults>
       <constraints>
         <constraint notnull_strength="1" field="pk" unique_strength="1" exp_strength="0" constraints="3"/>
-        <constraint notnull_strength="0" field="schnam" unique_strength="0" exp_strength="0" constraints="0"/>
+        <constraint notnull_strength="0" field="schnam" unique_strength="1" exp_strength="0" constraints="2" />
         <constraint notnull_strength="0" field="sohlhoehe" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="deckelhoehe" unique_strength="0" exp_strength="0" constraints="0"/>
         <constraint notnull_strength="0" field="durchm" unique_strength="0" exp_strength="0" constraints="0"/>
